@@ -10,12 +10,13 @@ config_version=5
 
 [application]
 
-config/name="Cravera Test"
+config/name="Cravara"
 run/main_scene="uid://dhsl7a8i1sc12"
 config/features=PackedStringArray("4.4", "Forward Plus")
 
 [autoload]
 
+SignalBus="*res://Autoloads/SignalBus.gd"
 InventoryManager="*res://Player/Scripts/InventoryManager.gd"
 CraftingManager="*res://Scripts/CraftingManager.gd"
 DragController="*res://UI/DragController.gd"
