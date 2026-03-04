@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://b2ojamkxf6bp1"]
+
+[ext_resource type="TileSet" uid="uid://dro5ixp1pj2ar" path="res://Tile Maps/cravara_tileset.tres" id="1_bqw61"]
+
+[node name="Firsttilemap" type="TileMap"]
+z_index = -1
+position = Vector2(243, 134)
+tile_set = ExtResource("1_bqw61")
+format = 2

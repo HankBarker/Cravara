@@ -1,0 +1,30 @@
+[gd_scene load_steps=5 format=3 uid="uid://jliq6l5owhg1"]
+
+[ext_resource type="Texture2D" uid="uid://cdndmwmsdjkbh" path="res://WorldObjects/Images/Workbench.png" id="1_8pwpj"]
+[ext_resource type="Script" uid="uid://2jkscnb0rea0" path="res://WorldObjects/Workbench.gd" id="1_hurgd"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_hurgd"]
+radius = 96.0469
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_u2qg1"]
+size = Vector2(38.5, 25)
+
+[node name="Workbench" type="Area2D"]
+collision_layer = 64
+script = ExtResource("1_hurgd")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("1_8pwpj")
+region_enabled = true
+region_rect = Rect2(-1.51651, 81.8381, 36.5166, 33.1619)
+
+[node name="DetectionShape" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_hurgd")
+
+[node name="PhysicalBody" type="StaticBody2D" parent="."]
+collision_layer = 16
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PhysicalBody"]
+position = Vector2(-1.25, 0.5)
+shape = SubResource("RectangleShape2D_u2qg1")

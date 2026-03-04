@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3 uid="uid://ps2cvmab13eg"]
+
+[ext_resource type="Script" uid="uid://u8252y4vuoux" path="res://WorldObjects/Fallenlog.gd" id="1_rh3mi"]
+[ext_resource type="Texture2D" uid="uid://b2ovaoppwh4al" path="res://WorldObjects/Images/Trees_source.png" id="2_iu50h"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_p8ni2"]
+size = Vector2(29, 13)
+
+[node name="Fallenlog" type="StaticBody2D"]
+collision_layer = 12
+collision_mask = 12
+script = ExtResource("1_rh3mi")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(0, 1.19209e-07)
+scale = Vector2(0.95, 0.884615)
+texture = ExtResource("2_iu50h")
+region_enabled = true
+region_rect = Rect2(325.181, 146.182, 40.6371, 26.3636)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0.5, -0.5)
+shape = SubResource("RectangleShape2D_p8ni2")

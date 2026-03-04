@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3 uid="uid://c0naj4jjnq2wx"]
+
+[ext_resource type="Script" uid="uid://c4h6ukr1qq21d" path="res://WorldObjects/SimpleRock.gd" id="1_gic7j"]
+[ext_resource type="Texture2D" uid="uid://be5gqoy6uj1ko" path="res://WorldObjects/Images/WorldRocksTransparent.png" id="2_hwxpm"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_rnjda"]
+radius = 6.0
+height = 16.0
+
+[node name="SimpleRock" type="StaticBody2D"]
+collision_layer = 12
+collision_mask = 12
+script = ExtResource("1_gic7j")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("2_hwxpm")
+region_enabled = true
+region_rect = Rect2(453.59, 383.923, 56.5129, 50.6667)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+rotation = 1.5708
+shape = SubResource("CapsuleShape2D_rnjda")

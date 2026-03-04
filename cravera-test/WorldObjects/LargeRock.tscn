@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3 uid="uid://tldbj6irktu8"]
+
+[ext_resource type="Texture2D" uid="uid://be5gqoy6uj1ko" path="res://WorldObjects/Images/WorldRocksTransparent.png" id="1_21quu"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_xgnbq"]
+size = Vector2(107, 87)
+
+[node name="LargeRock" type="StaticBody2D"]
+collision_layer = 4
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_21quu")
+region_enabled = true
+region_rect = Rect2(599.453, 19.1893, 122.727, 116.997)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0.5, -3.5)
+shape = SubResource("RectangleShape2D_xgnbq")
