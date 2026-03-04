@@ -15,13 +15,9 @@ func _ready():
 	# Initialize empty inventory
 	for i in range(MAX_INVENTORY_SIZE):
 		inventory.append({"item": null, "quantity": 0})
-	
-	print("📦 Inventory System initialized with ", MAX_INVENTORY_SIZE, " slots")
 
 func add_item(item: Item, quantity: int = 1) -> bool:
-	print("📦 Attempting to add ", quantity, "x ", item.name)
-
-	# 🔁 First, try stacking in the HOTBAR (slots 0–7)
+	# First, try stacking in the hotbar (slots 0-7)
 	for i in range(8):
 		var slot = inventory[i]
 		if slot.item and slot.item.id == item.id:
@@ -30,13 +26,12 @@ func add_item(item: Item, quantity: int = 1) -> bool:
 				var amount_to_add = min(quantity, space_available)
 				slot.quantity += amount_to_add
 				quantity -= amount_to_add
-				print("📦 Stacked ", amount_to_add, "x ", item.name, " in hotbar slot ", i)
 				if quantity <= 0:
 					inventory_changed.emit()
 					item_picked_up.emit(item, amount_to_add)
 					return true
 
-	# 🔁 Then stack in slots 8+
+	# Then stack in slots 8+
 	for i in range(8, inventory.size()):
 		var slot = inventory[i]
 		if slot.item and slot.item.id == item.id:
@@ -45,35 +40,31 @@ func add_item(item: Item, quantity: int = 1) -> bool:
 				var amount_to_add = min(quantity, space_available)
 				slot.quantity += amount_to_add
 				quantity -= amount_to_add
-				print("📦 Stacked ", amount_to_add, "x ", item.name, " in inventory slot ", i)
 				if quantity <= 0:
 					inventory_changed.emit()
 					item_picked_up.emit(item, amount_to_add)
 					return true
 
-	# ✅ Try to add to EMPTY hotbar slots
+	# Try to add to empty hotbar slots
 	for i in range(8):
 		if inventory[i].item == null:
 			var amount_to_add = min(quantity, item.max_stack)
 			inventory[i] = {"item": item, "quantity": amount_to_add}
 			quantity -= amount_to_add
-			print("📦 Added ", amount_to_add, "x ", item.name, " to empty hotbar slot ", i)
 			inventory_changed.emit()
 			item_picked_up.emit(item, amount_to_add)
 			return true
 
-	# 🔚 Then to empty slots in the rest of inventory
+	# Then to empty slots in the rest of inventory
 	for i in range(8, inventory.size()):
 		if inventory[i].item == null:
 			var amount_to_add = min(quantity, item.max_stack)
 			inventory[i] = {"item": item, "quantity": amount_to_add}
 			quantity -= amount_to_add
-			print("📦 Added ", amount_to_add, "x ", item.name, " to empty inventory slot ", i)
 			inventory_changed.emit()
 			item_picked_up.emit(item, amount_to_add)
 			return true
 
-	print("📦 Inventory full! Couldn't add ", quantity, "x ", item.name)
 	return false
 
 
@@ -103,13 +94,6 @@ func get_item_count(item_id: String) -> int:
 			total += slot.quantity
 	return total
 
-func print_inventory():
-	print("📦 === INVENTORY ===")
-	for i in range(inventory.size()):
-		var slot = inventory[i]
-		if slot.item:
-			print("Slot ", i, ": ", slot.quantity, "x ", slot.item.name)
-			
 func get_selected_item() -> Item:
 	if selected_slot_index < 0 or selected_slot_index >= inventory.size():
 		return null

@@ -20,6 +20,7 @@ SignalBus="*res://Autoloads/SignalBus.gd"
 InventoryManager="*res://Player/Scripts/InventoryManager.gd"
 CraftingManager="*res://Scripts/CraftingManager.gd"
 DragController="*res://UI/DragController.gd"
+DropAnimationUtil="*res://Scripts/DropAnimationUtil.gd"
 
 [display]
 

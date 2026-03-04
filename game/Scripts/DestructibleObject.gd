@@ -72,7 +72,6 @@ func hide_interaction_hint():
 func take_damage(damage: int = 1, tool_used: String = "none"):
 	# Check if correct tool is being used
 	if harvest_tool_required != "none" and tool_used != harvest_tool_required:
-		print("Wrong tool! Need: " + harvest_tool_required)
 		return false
 	
 	if is_being_harvested:
@@ -157,41 +156,7 @@ func spawn_dropped_item(item_class: Script):
 	# Add to scene
 	get_tree().current_scene.add_child(dropped_item)
 	
-	# Create a satisfying "pop up and land" animation
-	create_drop_animation(dropped_item)
-
-func create_drop_animation(dropped_item):
-	# Create the animation tween
-	var tween = get_tree().create_tween()
-	tween.set_parallel(true)  # Allow multiple properties to animate at once
-	
-	# Calculate a small random landing spot near the original position
-	var land_offset = Vector2(
-		randf_range(-20, 20),
-		randf_range(-20, 20)
-	)
-	var final_position = global_position + land_offset
-	
-	# Start slightly smaller and grow to normal size (satisfying pop effect)
-	dropped_item.scale = Vector2(0.5, 0.5)
-	tween.tween_property(dropped_item, "scale", Vector2(1.0, 1.0), 0.3)
-	
-	# Arc animation - go up then down
-	var peak_height = global_position + Vector2(0, -30)  # 30 pixels up
-	
-	# First part: shoot up and grow
-	tween.tween_property(dropped_item, "global_position", peak_height, 0.15)
-	
-	# Second part: fall down to landing spot with a slight bounce
-	tween.tween_property(dropped_item, "global_position", final_position, 0.15).set_delay(0.15)
-	
-	# Add a subtle bounce effect when it lands
-	tween.tween_property(dropped_item, "scale", Vector2(1.1, 0.9), 0.1).set_delay(0.3)
-	tween.tween_property(dropped_item, "scale", Vector2(1.0, 1.0), 0.1).set_delay(0.4)
-	
-	# Optional: Add a subtle glow or highlight effect
-	tween.tween_property(dropped_item, "modulate", Color(1.2, 1.2, 1.2, 1.0), 0.1).set_delay(0.3)
-	tween.tween_property(dropped_item, "modulate", Color.WHITE, 0.2).set_delay(0.4)
+	DropAnimationUtil.animate_drop(get_tree(), dropped_item, global_position)
 
 func show_destruction_effect():
 	# Add visual effects here (particles, sound, etc.)

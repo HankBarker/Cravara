@@ -39,13 +39,13 @@ Last updated: March 2026
 
 ## Known Issues
 
-1. **Debug logging every frame**: `player.gd` line 48-56 prints position data every second (every 60 physics frames)
-2. **Hardcoded scene path**: `player.gd` line 9 uses `get_node("/root/Playground/UI/UIContainer/PlayerHealthBar")` which breaks if the scene structure changes
+1. ~~**Debug logging every frame**~~ - FIXED: Removed debug prints from player.gd, trex.gd, InventoryManager.gd
+2. ~~**Hardcoded scene path**~~ - FIXED: Health bar now uses `@export var health_bar: ProgressBar` with null guards
 3. **Hardcoded resource spawner path**: `ResourceSpawner.gd` line 47 uses `get_node_or_null("/root/Playground/Resources")`
 4. **Placement system hardcoded to workbench**: `PlacementController.gd` line 48 calls `InventoryManager.remove_item("workbench", 1)` regardless of what's being placed
 5. **Item factory uses match statement**: `CraftingManager.create_item_by_id()` must be manually updated for every new item
 6. **T-Rex script in wrong directory**: `trex.gd` lives in `Sprites/` instead of with game logic
-7. **Inventory display only updates first 12 slots**: `InventoryUI.update_inventory_display()` line 157 uses `min(12, inventory_slots.size())`
+7. ~~**Inventory display only updates first 12 slots**~~ - FIXED: Now updates all 27 inventory slots with correct index mapping
 
 ## Technical Debt
 
@@ -53,7 +53,7 @@ Last updated: March 2026
 - **Items are hardcoded classes**: Each item is a GDScript class rather than a data-driven resource file. Adding new items requires creating a new `.gd` file.
 - **Crafting recipes are hardcoded**: Recipes are defined as arrays in `CraftingManager.gd` rather than external data files.
 - **Inconsistent file naming**: Mix of PascalCase (`Run.gd`) and lowercase (`walk.gd`) for state scripts. Mix of styles for world objects (`Fallenlog.gd` vs `LargeRock.gd`).
-- **Excessive debug print statements**: Most scripts contain emoji-prefixed debug prints that should be removed or replaced with a logging system.
+- ~~**Excessive debug print statements**~~: Cleaned up in player.gd, trex.gd, InventoryManager.gd, DestructibleObject.gd, Attack.gd
 - **No base class for enemies**: The T-Rex uses inline AI logic rather than a shared enemy base class.
 - **Drop system uses Script arrays**: `DestructibleObject.guaranteed_drops: Array[Script]` stores script references and calls `.new()`, which is fragile if items move to data-driven design.
 
@@ -68,4 +68,4 @@ Last updated: March 2026
 7. **Taming system**: First major gameplay system to implement after infrastructure is stable
 8. **Audio integration**: Connect existing music tracks from `assets_raw/Music/` to scene playback
 9. **File naming standardization**: Rename files to consistent PascalCase
-10. **Remove debug prints**: Clean up or gate behind a debug flag
+10. ~~**Remove debug prints**~~: Done — cleaned up across all core scripts

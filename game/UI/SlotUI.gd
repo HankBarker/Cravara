@@ -11,6 +11,8 @@ func _process(_delta):
 		DragController.update_drag_position()
 
 func _on_gui_input(event):
+	if slot_index < 0 or slot_index >= InventoryManager.inventory.size():
+		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		if event.pressed:
 			var slot_data = InventoryManager.inventory[slot_index]

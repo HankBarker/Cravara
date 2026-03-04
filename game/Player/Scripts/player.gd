@@ -5,8 +5,7 @@ extends CharacterBody2D
 @export var max_health := 3
 @onready var animated_sprite := $AnimatedSprite2D
 @onready var sword_hitbox := $SwordHitbox
-# 🩸 Reference to the UI health bar
-@onready var health_bar := get_node("/root/Playground/UI/UIContainer/PlayerHealthBar")  # Change 'Main' if your scene is named differently
+@export var health_bar: Range
 
 var current_health := max_health
 var direction := Vector2.ZERO
@@ -27,8 +26,9 @@ var states = {
 
 func _ready():
 	switch_state("idle")
-	health_bar.max_value = max_health
-	health_bar.value = current_health
+	if health_bar:
+		health_bar.max_value = max_health
+		health_bar.value = current_health
 
 func switch_state(state_name: String):
 	if states.has(state_name):
@@ -44,19 +44,24 @@ func switch_state(state_name: String):
 		print("❌ Tried to switch to missing state:", state_name)
 
 func _physics_process(delta):
-	# DEBUG: Player position tracking
-	if Engine.get_physics_frames() % 60 == 0:  # Every second
-		print("=== PLAYER POSITION DEBUG ===")
-		print("Player global_position: ", global_position)
-		print("Player position: ", position)
-		print("Player sprite global_position: ", animated_sprite.global_position)
-		print("Player sprite position: ", animated_sprite.position)
-		print("Player velocity: ", velocity)
-		print("Player current state: ", state)
-		print("=============================")
-	
 	if current_state and current_state.has_method("update_state"):
 		current_state.update_state(delta)
+
+func get_movement_input() -> Vector2:
+	var input = Vector2.ZERO
+	if Input.is_action_pressed("Right"):
+		input.x += 1
+		last_facing = "right"
+	elif Input.is_action_pressed("Left"):
+		input.x -= 1
+		last_facing = "left"
+	if Input.is_action_pressed("Down"):
+		input.y += 1
+		last_facing = "down"
+	elif Input.is_action_pressed("Up"):
+		input.y -= 1
+		last_facing = "up"
+	return input.normalized()
 
 func _on_SwordHitbox_area_entered(area):
 	if area.name == "Hurtbox":
@@ -72,8 +77,8 @@ func take_damage(amount):
 	if state == "dead":
 		return
 	current_health -= amount
-	health_bar.value = current_health  # 🔁 Sync health bar with current health
-	print("Player took damage! Health:", current_health)
+	if health_bar:
+		health_bar.value = current_health
 	if current_health <= 0:
 		await die()
 	else:

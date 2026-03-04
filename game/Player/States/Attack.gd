@@ -43,19 +43,14 @@ func _check_for_destructible_objects():
 			var required_tool = body.harvest_tool_required
 
 			if required_tool == "" or required_tool == "none":
-				body.take_damage(1)
-				print("🪓 Hit destructible object (no tool required): ", body.object_name)
+				body.take_damage(1, "none")
 				continue
 
 			if selected_item == null:
-				print("⛔ You need a %s to break this!" % required_tool)
 				continue
 
 			if selected_item.tool_type == required_tool:
-				body.take_damage(1)
-				print("✅ Hit destructible with correct tool: ", selected_item.name)
-			else:
-				print("⛔ Incorrect tool! You need a %s to break this." % required_tool)
+				body.take_damage(1, selected_item.tool_type)
 
 func on_attack_done():
 	player.switch_state("idle")
