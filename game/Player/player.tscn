@@ -7,7 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://c7s5kp00b2u8g" path="res://Sprites/Base Character/Unarmed_Hurt_full.png" id="3_b26j0"]
 [ext_resource type="Texture2D" uid="uid://bw07jkbpsgipx" path="res://Sprites/Base Character/Unarmed_Walk_full.png" id="3_hqtel"]
 [ext_resource type="Texture2D" uid="uid://dpybgq0br6wrb" path="res://Sprites/Base Character/Unarmed_Run_full.png" id="4_2hs0m"]
-[ext_resource type="Script" uid="uid://3ndiirkb23w7" path="res://camera_2d.gd" id="6_2hs0m"]
+[ext_resource type="Script" uid="uid://3ndiirkb23w7" path="res://Player/Scripts/camera_2d.gd" id="6_2hs0m"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_sweqy"]
 radius = 6.0
