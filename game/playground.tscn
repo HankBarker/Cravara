@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://dhsl7a8i1sc12"]
+[gd_scene format=3 uid="uid://dhsl7a8i1sc12"]
 
 [ext_resource type="PackedScene" uid="uid://eafflyry56j3" path="res://Player/player.tscn" id="1_rupst"]
 [ext_resource type="PackedScene" uid="uid://dsm7g22v86nxj" path="res://Sprites/T-Rex/Trex.tscn" id="4_is3ju"]
@@ -13,51 +13,51 @@
 [ext_resource type="PackedScene" uid="uid://tldbj6irktu8" path="res://WorldObjects/LargeRock.tscn" id="10_pio1y"]
 [ext_resource type="PackedScene" uid="uid://rhyyy24tlpsi" path="res://WorldObjects/Tree.tscn" id="11_te8jg"]
 
-[node name="Playground" type="Node2D"]
+[node name="Playground" type="Node2D" unique_id=1906420016]
 
-[node name="Player" parent="." instance=ExtResource("1_rupst")]
+[node name="Player" parent="." unique_id=602129651 instance=ExtResource("1_rupst")]
 motion_mode = 1
 
-[node name="Environments" type="Node2D" parent="."]
+[node name="Environments" type="Node2D" parent="." unique_id=480342613]
 z_index = -1
 
-[node name="GrasslandBiome" parent="Environments" instance=ExtResource("4_pi42a")]
+[node name="GrasslandBiome" parent="Environments" unique_id=1516037546 instance=ExtResource("4_pi42a")]
 z_index = -5
-position = Vector2(342, 1)
+position = Vector2(357, 18)
 
-[node name="Enemies" type="Node2D" parent="."]
+[node name="Enemies" type="Node2D" parent="." unique_id=2140649440]
 z_index = 1
 
-[node name="Trex" parent="Enemies" instance=ExtResource("4_is3ju")]
+[node name="Trex" parent="Enemies" unique_id=37284392 instance=ExtResource("4_is3ju")]
 z_index = 1
 position = Vector2(269, 181)
 start_position = Vector2(150, 150)
 
-[node name="Resources" type="Node2D" parent="."]
+[node name="Resources" type="Node2D" parent="." unique_id=951695532]
 
-[node name="Rocks" type="Node2D" parent="Resources"]
+[node name="Rocks" type="Node2D" parent="Resources" unique_id=1531939459]
 
-[node name="SimpleRock2" parent="Resources/Rocks" instance=ExtResource("8_v7dth")]
+[node name="SimpleRock2" parent="Resources/Rocks" unique_id=699397763 instance=ExtResource("8_v7dth")]
 position = Vector2(-8, 57)
 
-[node name="SimpleRock" parent="Resources/Rocks" instance=ExtResource("8_v7dth")]
+[node name="SimpleRock" parent="Resources/Rocks" unique_id=2085408240 instance=ExtResource("8_v7dth")]
 position = Vector2(-48, 76)
 
-[node name="Trees" type="Node2D" parent="Resources"]
+[node name="Trees" type="Node2D" parent="Resources" unique_id=1110060164]
 
-[node name="Bushes" type="Node2D" parent="Resources"]
+[node name="Bushes" type="Node2D" parent="Resources" unique_id=151318525]
 
-[node name="UI" type="CanvasLayer" parent="."]
+[node name="UI" type="CanvasLayer" parent="." unique_id=1435786852]
 layer = 10
 script = ExtResource("7_ynsuh")
 
-[node name="UIContainer" type="Control" parent="UI"]
+[node name="UIContainer" type="Control" parent="UI" unique_id=726450186]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="PlayerHealthBar" type="TextureProgressBar" parent="UI/UIContainer"]
+[node name="PlayerHealthBar" type="TextureProgressBar" parent="UI/UIContainer" unique_id=251849653]
 layout_mode = 0
 offset_top = -18.0
 offset_right = 1024.0
@@ -70,7 +70,7 @@ texture_under = ExtResource("5_4bqqs")
 texture_progress = ExtResource("6_4bqqs")
 texture_progress_offset = Vector2(0, -6)
 
-[node name="InventoryPanel" type="Panel" parent="UI/UIContainer"]
+[node name="InventoryPanel" type="Panel" parent="UI/UIContainer" unique_id=66508738]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 2.75
@@ -81,7 +81,7 @@ grow_horizontal = 2
 grow_vertical = 0
 size_flags_horizontal = 4
 
-[node name="GridContainer" type="GridContainer" parent="UI/UIContainer/InventoryPanel"]
+[node name="GridContainer" type="GridContainer" parent="UI/UIContainer/InventoryPanel" unique_id=1733178100]
 layout_mode = 0
 offset_left = 110.0
 offset_top = 20.0
@@ -89,7 +89,7 @@ offset_right = 110.0
 offset_bottom = 20.0
 columns = 7
 
-[node name="PersonalCraftingPanel" type="Panel" parent="UI/UIContainer"]
+[node name="PersonalCraftingPanel" type="Panel" parent="UI/UIContainer" unique_id=1837295467]
 visible = false
 layout_mode = 1
 anchors_preset = -1
@@ -98,7 +98,7 @@ offset_right = 125.0
 offset_bottom = 90.0
 grow_horizontal = 0
 
-[node name="HotbarPanel" type="HBoxContainer" parent="UI/UIContainer"]
+[node name="HotbarPanel" type="HBoxContainer" parent="UI/UIContainer" unique_id=1585865664]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 5.15
@@ -112,39 +112,39 @@ offset_bottom = 43.0
 grow_horizontal = 2
 grow_vertical = 0
 
-[node name="Slot_0" type="Panel" parent="UI/UIContainer/HotbarPanel"]
+[node name="Slot_0" type="Panel" parent="UI/UIContainer/HotbarPanel" unique_id=1195530972]
 layout_mode = 2
 script = ExtResource("8_te8jg")
 
-[node name="Slot_1" type="Panel" parent="UI/UIContainer/HotbarPanel"]
+[node name="Slot_1" type="Panel" parent="UI/UIContainer/HotbarPanel" unique_id=814193750]
 layout_mode = 2
 script = ExtResource("8_te8jg")
 
-[node name="Slot_2" type="Panel" parent="UI/UIContainer/HotbarPanel"]
+[node name="Slot_2" type="Panel" parent="UI/UIContainer/HotbarPanel" unique_id=1694944262]
 layout_mode = 2
 script = ExtResource("8_te8jg")
 
-[node name="Slot_3" type="Panel" parent="UI/UIContainer/HotbarPanel"]
+[node name="Slot_3" type="Panel" parent="UI/UIContainer/HotbarPanel" unique_id=240558517]
 layout_mode = 2
 script = ExtResource("8_te8jg")
 
-[node name="Slot_4" type="Panel" parent="UI/UIContainer/HotbarPanel"]
+[node name="Slot_4" type="Panel" parent="UI/UIContainer/HotbarPanel" unique_id=1547734024]
 layout_mode = 2
 script = ExtResource("8_te8jg")
 
-[node name="Slot_5" type="Panel" parent="UI/UIContainer/HotbarPanel"]
+[node name="Slot_5" type="Panel" parent="UI/UIContainer/HotbarPanel" unique_id=1927885225]
 layout_mode = 2
 script = ExtResource("8_te8jg")
 
-[node name="Slot_6" type="Panel" parent="UI/UIContainer/HotbarPanel"]
+[node name="Slot_6" type="Panel" parent="UI/UIContainer/HotbarPanel" unique_id=1037144979]
 layout_mode = 2
 script = ExtResource("8_te8jg")
 
-[node name="Slot_7" type="Panel" parent="UI/UIContainer/HotbarPanel"]
+[node name="Slot_7" type="Panel" parent="UI/UIContainer/HotbarPanel" unique_id=1635266693]
 layout_mode = 2
 script = ExtResource("8_te8jg")
 
-[node name="ResourceSpawner" type="Node2D" parent="."]
+[node name="ResourceSpawner" type="Node2D" parent="." unique_id=600605520]
 script = ExtResource("8_pi42a")
 resource_scenes = Array[PackedScene]([ExtResource("8_v7dth"), ExtResource("9_h1jm5"), ExtResource("10_pio1y"), ExtResource("11_te8jg")])
 avoid_water = false
