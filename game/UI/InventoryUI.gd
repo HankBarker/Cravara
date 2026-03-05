@@ -47,14 +47,9 @@ func _input(event):
 
 		if selected_item != null:
 			if selected_item.id == "workbench":
-				print("🎯 Initiating placement mode for:", selected_item.name)
 				var placement_controller = preload("res://Systems/Placement/PlacementController.tscn").instantiate()
 				placement_controller.object_to_place = preload("res://WorldObjects/Workbench.tscn")
 				get_tree().get_root().add_child(placement_controller)
-			else:
-				print("🛠️ Using non-placeable item:", selected_item.name)
-		else:
-			print("❌ No item in selected hotbar slot.")
 
 	# Handle hotbar selection 1–8
 	for i in range(8):
@@ -132,33 +127,27 @@ func create_hotbar_slots():
 		hotbar_panel.add_child(slot)
 		hotbar_slots.append(slot)
 
+		# Apply hotbar-specific darker styling
 		var style = StyleBoxFlat.new()
 		style.bg_color = Color(0.1, 0.1, 0.1, 0.9)
 		style.set_border_width_all(1)
 		style.border_color = Color(1, 1, 1, 1) if i == selected_hotbar_index else Color(0.5, 0.5, 0.5, 1)
 		slot.add_theme_stylebox_override("panel", style)
 
-		var icon = TextureRect.new()
-		icon.name = "Icon"
-		icon.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
-		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		slot.add_child(icon)
-
-		hotbar_panel.add_child(slot)
-		hotbar_slots.append(slot)
-
 func _on_inventory_changed():
 	update_inventory_display()
 
 func _on_item_picked_up(item: Item, quantity: int):
-	print("Picked up ", quantity, "x ", item.name)
+	pass
 
 func update_inventory_display():
-	for i in range(min(12, inventory_slots.size())):
+	# Update main inventory slots (indices 8-34 in InventoryManager)
+	for i in range(inventory_slots.size()):
 		var slot = inventory_slots[i]
+		var inventory_index = i + 8  # Inventory slots start at index 8
 		var inventory_item = null
-		if i < InventoryManager.inventory.size():
-			inventory_item = InventoryManager.inventory[i]
+		if inventory_index < InventoryManager.inventory.size():
+			inventory_item = InventoryManager.inventory[inventory_index]
 		var icon = slot.get_node("Icon")
 		var quantity_label = slot.get_node("Quantity")
 
@@ -169,16 +158,19 @@ func update_inventory_display():
 			icon.texture = null
 			quantity_label.text = ""
 
-	# Update hotbar
+	# Update hotbar (indices 0-7 in InventoryManager)
 	for i in range(min(8, hotbar_slots.size())):
 		var slot = hotbar_slots[i]
 		var inventory_item = InventoryManager.inventory[i]
 		var icon = slot.get_node("Icon")
+		var quantity_label = slot.get_node("Quantity")
 
 		if inventory_item and inventory_item.item:
 			icon.texture = inventory_item.item.icon
+			quantity_label.text = str(inventory_item.quantity) if inventory_item.quantity > 1 else ""
 		else:
 			icon.texture = null
+			quantity_label.text = ""
 
 func populate_personal_crafting():
 	for child in recipe_list.get_children():

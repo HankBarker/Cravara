@@ -13,23 +13,7 @@ func update_state(delta):
 		player.switch_state("attack")
 		return
 
-	var input = Vector2.ZERO
-
-	if Input.is_action_pressed("Right"):
-		input.x += 1
-		player.last_facing = "right"
-	elif Input.is_action_pressed("Left"):
-		input.x -= 1
-		player.last_facing = "left"
-
-	if Input.is_action_pressed("Down"):
-		input.y += 1
-		player.last_facing = "down"
-	elif Input.is_action_pressed("Up"):
-		input.y -= 1
-		player.last_facing = "up"
-
-	input = input.normalized()
+	var input = player.get_movement_input()
 
 	if input == Vector2.ZERO:
 		player.switch_state("idle")

@@ -17,6 +17,7 @@
 
 [node name="Player" parent="." unique_id=602129651 instance=ExtResource("1_rupst")]
 motion_mode = 1
+health_bar = NodePath("../UI/UIContainer/PlayerHealthBar")
 
 [node name="Environments" type="Node2D" parent="." unique_id=480342613]
 z_index = -1
