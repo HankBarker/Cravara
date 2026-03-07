@@ -1,10 +1,8 @@
-[gd_scene load_steps=12 format=3 uid="uid://dhsl7a8i1sc12"]
+[gd_scene load_steps=10 format=3 uid="uid://dhsl7a8i1sc12"]
 
 [ext_resource type="PackedScene" uid="uid://eafflyry56j3" path="res://Player/player.tscn" id="1_rupst"]
 [ext_resource type="PackedScene" uid="uid://dsm7g22v86nxj" path="res://Sprites/T-Rex/Trex.tscn" id="4_is3ju"]
 [ext_resource type="PackedScene" uid="uid://c2dbun1u4n5r2" path="res://GrasslandBiome.tscn" id="4_pi42a"]
-[ext_resource type="Texture2D" uid="uid://d2fr00c0cy4wa" path="res://UI/Textures/under.png" id="5_4bqqs"]
-[ext_resource type="Texture2D" uid="uid://bqjn6oku1nemn" path="res://UI/Textures/Progress (12).png" id="6_4bqqs"]
 [ext_resource type="Script" uid="uid://bp2afv4sgm437" path="res://UI/InventoryUI.gd" id="7_ynsuh"]
 [ext_resource type="Script" uid="uid://fns0w2dxvn8d" path="res://Scripts/ResourceSpawner.gd" id="8_pi42a"]
 [ext_resource type="PackedScene" uid="uid://c0naj4jjnq2wx" path="res://WorldObjects/SimpleRock.tscn" id="8_v7dth"]
@@ -16,7 +14,6 @@
 
 [node name="Player" parent="." instance=ExtResource("1_rupst")]
 motion_mode = 1
-health_bar = NodePath("../UI/UIContainer/PlayerHealthBar")
 
 [node name="Environments" type="Node2D" parent="."]
 z_index = -1
@@ -56,19 +53,6 @@ layout_mode = 3
 anchors_preset = 0
 offset_right = 480.0
 offset_bottom = 270.0
-
-[node name="PlayerHealthBar" type="TextureProgressBar" parent="UI/UIContainer"]
-layout_mode = 0
-offset_top = -18.0
-offset_right = 1024.0
-offset_bottom = 1006.0
-scale = Vector2(0.1, 0.1)
-max_value = 3.0
-value = 3.0
-rounded = true
-texture_under = ExtResource("5_4bqqs")
-texture_progress = ExtResource("6_4bqqs")
-texture_progress_offset = Vector2(0, -6)
 
 [node name="InventoryPanel" type="Panel" parent="UI/UIContainer"]
 layout_mode = 0

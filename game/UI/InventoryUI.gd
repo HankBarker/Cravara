@@ -16,6 +16,12 @@ var selected_hotbar_index: int = 0
 var selected_category: String = "All"
 var category_buttons: Array[Button] = []
 
+# Health bar references
+var health_bar_border: Panel
+var health_bar_bg: ColorRect
+var health_bar_fill: ColorRect
+var health_label: Label
+
 # --- Colors (Terraria-inspired) ---
 const PANEL_BG = Color(0.08, 0.07, 0.1, 0.92)
 const PANEL_BORDER = Color(0.35, 0.3, 0.4, 0.8)
@@ -49,6 +55,9 @@ func _ready():
 
 	inventory_panel.visible = false
 	crafting_panel.visible = false
+
+	# Sync initial hotbar selection with InventoryManager
+	InventoryManager.selected_slot_index = selected_hotbar_index
 
 # =========================================
 # UI CONSTRUCTION
@@ -205,6 +214,73 @@ func _build_ui():
 	# Position hotbar centered at bottom
 	_position_hotbar()
 
+	# Build health bar
+	_build_health_bar()
+
+func _build_health_bar():
+	var ui = $UIContainer
+
+	# Border panel
+	health_bar_border = Panel.new()
+	health_bar_border.name = "HealthBarBorder"
+	var border_style = StyleBoxFlat.new()
+	border_style.bg_color = Color(0.15, 0.12, 0.08, 0.9)
+	border_style.set_border_width_all(1)
+	border_style.border_color = Color(0.3, 0.25, 0.15, 1.0)
+	border_style.set_corner_radius_all(1)
+	health_bar_border.add_theme_stylebox_override("panel", border_style)
+	health_bar_border.position = Vector2(3, 3)
+	health_bar_border.size = Vector2(56, 8)
+	ui.add_child(health_bar_border)
+
+	# Background (dark fill behind the bar)
+	health_bar_bg = ColorRect.new()
+	health_bar_bg.name = "HealthBarBG"
+	health_bar_bg.color = Color(0.08, 0.06, 0.04, 0.85)
+	health_bar_bg.position = Vector2(4, 4)
+	health_bar_bg.size = Vector2(54, 6)
+	ui.add_child(health_bar_bg)
+
+	# Fill (the actual green bar)
+	health_bar_fill = ColorRect.new()
+	health_bar_fill.name = "HealthBarFill"
+	health_bar_fill.color = Color(0.2, 0.7, 0.2, 0.9)
+	health_bar_fill.position = Vector2(4, 4)
+	health_bar_fill.size = Vector2(54, 6)
+	ui.add_child(health_bar_fill)
+
+	# Label showing current/max
+	health_label = Label.new()
+	health_label.name = "HealthLabel"
+	health_label.add_theme_font_size_override("font_size", 5)
+	health_label.add_theme_color_override("font_color", Color(0.85, 0.85, 0.85))
+	health_label.position = Vector2(61, 2)
+	ui.add_child(health_label)
+
+	SignalBus.player_health_changed.connect(_on_player_health_changed)
+
+func _on_player_health_changed(current: int, max_hp: int):
+	if not health_bar_fill:
+		return
+	var ratio = clampf(float(current) / float(max_hp), 0.0, 1.0)
+	var target_width = 54.0 * ratio
+
+	# Smooth tween animation
+	var tween = create_tween()
+	tween.tween_property(health_bar_fill, "size:x", target_width, 0.3).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+
+	# Color shift based on health ratio
+	var target_color: Color
+	if ratio > 0.5:
+		target_color = Color(0.2, 0.7, 0.2, 0.9)  # Green
+	elif ratio > 0.25:
+		target_color = Color(0.8, 0.7, 0.1, 0.9)  # Yellow
+	else:
+		target_color = Color(0.8, 0.2, 0.1, 0.9)  # Red
+	tween.parallel().tween_property(health_bar_fill, "color", target_color, 0.3)
+
+	health_label.text = str(current) + "/" + str(max_hp)
+
 func _make_panel_style() -> StyleBoxFlat:
 	var style = StyleBoxFlat.new()
 	style.bg_color = PANEL_BG
@@ -241,11 +317,13 @@ func _input(event):
 			if selected_item.id == "workbench":
 				var placement_controller = preload("res://Systems/Placement/PlacementController.tscn").instantiate()
 				placement_controller.object_to_place = preload("res://WorldObjects/Workbench.tscn")
+				placement_controller.item_id = "workbench"
 				get_tree().get_root().add_child(placement_controller)
 
 	for i in range(8):
 		if Input.is_action_just_pressed("hotbar_" + str(i + 1)):
 			selected_hotbar_index = i
+			InventoryManager.selected_slot_index = i
 			_update_hotbar_selection()
 
 func toggle_inventory():

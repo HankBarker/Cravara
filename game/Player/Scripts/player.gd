@@ -2,10 +2,9 @@ extends CharacterBody2D
 
 @export var walk_speed := 100
 @export var sprint_speed := 180
-@export var max_health := 3
+@export var max_health := 100
 @onready var animated_sprite := $AnimatedSprite2D
 @onready var sword_hitbox := $SwordHitbox
-@export var health_bar: Range
 
 var current_health := max_health
 var direction := Vector2.ZERO
@@ -26,9 +25,8 @@ var states = {
 
 func _ready():
 	switch_state("idle")
-	if health_bar:
-		health_bar.max_value = max_health
-		health_bar.value = current_health
+	# Emit initial health so the UI bar can initialize
+	SignalBus.player_health_changed.emit(current_health, max_health)
 
 func switch_state(state_name: String):
 	if states.has(state_name):
@@ -41,7 +39,7 @@ func switch_state(state_name: String):
 		if current_state.has_method("enter_state"):
 			current_state.enter_state()
 	else:
-		print("❌ Tried to switch to missing state:", state_name)
+		print("Tried to switch to missing state:", state_name)
 
 func _physics_process(delta):
 	if current_state and current_state.has_method("update_state"):
@@ -77,9 +75,9 @@ func take_damage(amount):
 	if state == "dead":
 		return
 	current_health -= amount
-	if health_bar:
-		health_bar.value = current_health
+	SignalBus.player_health_changed.emit(current_health, max_health)
 	if current_health <= 0:
+		SignalBus.player_died.emit()
 		await die()
 	else:
 		switch_state("hurt")
