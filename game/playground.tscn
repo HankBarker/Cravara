@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://dhsl7a8i1sc12"]
+[gd_scene load_steps=11 format=3 uid="uid://dhsl7a8i1sc12"]
 
 [ext_resource type="PackedScene" uid="uid://eafflyry56j3" path="res://Player/player.tscn" id="1_rupst"]
 [ext_resource type="PackedScene" uid="uid://dsm7g22v86nxj" path="res://Sprites/T-Rex/Trex.tscn" id="4_is3ju"]
@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://ps2cvmab13eg" path="res://WorldObjects/Fallenlog.tscn" id="9_h1jm5"]
 [ext_resource type="PackedScene" uid="uid://tldbj6irktu8" path="res://WorldObjects/LargeRock.tscn" id="10_pio1y"]
 [ext_resource type="PackedScene" uid="uid://rhyyy24tlpsi" path="res://WorldObjects/Tree.tscn" id="11_te8jg"]
+[ext_resource type="Script" path="res://Scripts/DecorativeSpawner.gd" id="12_deco"]
 
 [node name="Playground" type="Node2D"]
 
@@ -75,3 +76,6 @@ script = ExtResource("8_pi42a")
 resource_scenes = Array[PackedScene]([ExtResource("8_v7dth"), ExtResource("9_h1jm5"), ExtResource("10_pio1y"), ExtResource("11_te8jg")])
 avoid_water = false
 avoid_edges = false
+
+[node name="DecorativeSpawner" type="Node2D" parent="."]
+script = ExtResource("12_deco")
