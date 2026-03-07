@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 [gd_scene format=3 uid="uid://dhsl7a8i1sc12"]
+=======
+[gd_scene load_steps=12 format=3 uid="uid://dhsl7a8i1sc12"]
+>>>>>>> 58da3ae801db5ee652602a3c8bf22435ef901703
 
 [ext_resource type="PackedScene" uid="uid://eafflyry56j3" path="res://Player/player.tscn" id="1_rupst"]
 [ext_resource type="PackedScene" uid="uid://dsm7g22v86nxj" path="res://Sprites/T-Rex/Trex.tscn" id="4_is3ju"]
@@ -7,7 +11,6 @@
 [ext_resource type="Texture2D" uid="uid://bqjn6oku1nemn" path="res://UI/Textures/Progress (12).png" id="6_4bqqs"]
 [ext_resource type="Script" uid="uid://bp2afv4sgm437" path="res://UI/InventoryUI.gd" id="7_ynsuh"]
 [ext_resource type="Script" uid="uid://fns0w2dxvn8d" path="res://Scripts/ResourceSpawner.gd" id="8_pi42a"]
-[ext_resource type="Script" uid="uid://x0q02p5gq1v0" path="res://UI/SlotUI.gd" id="8_te8jg"]
 [ext_resource type="PackedScene" uid="uid://c0naj4jjnq2wx" path="res://WorldObjects/SimpleRock.tscn" id="8_v7dth"]
 [ext_resource type="PackedScene" uid="uid://ps2cvmab13eg" path="res://WorldObjects/Fallenlog.tscn" id="9_h1jm5"]
 [ext_resource type="PackedScene" uid="uid://tldbj6irktu8" path="res://WorldObjects/LargeRock.tscn" id="10_pio1y"]
@@ -55,8 +58,8 @@ script = ExtResource("7_ynsuh")
 [node name="UIContainer" type="Control" parent="UI" unique_id=726450186]
 layout_mode = 3
 anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_right = 480.0
+offset_bottom = 270.0
 
 [node name="PlayerHealthBar" type="TextureProgressBar" parent="UI/UIContainer" unique_id=251849653]
 layout_mode = 0
@@ -71,6 +74,7 @@ texture_under = ExtResource("5_4bqqs")
 texture_progress = ExtResource("6_4bqqs")
 texture_progress_offset = Vector2(0, -6)
 
+<<<<<<< HEAD
 [node name="InventoryPanel" type="Panel" parent="UI/UIContainer" unique_id=66508738]
 layout_mode = 1
 anchors_preset = -1
@@ -83,22 +87,20 @@ grow_vertical = 0
 size_flags_horizontal = 4
 
 [node name="GridContainer" type="GridContainer" parent="UI/UIContainer/InventoryPanel" unique_id=1733178100]
+=======
+[node name="InventoryPanel" type="Panel" parent="UI/UIContainer"]
+>>>>>>> 58da3ae801db5ee652602a3c8bf22435ef901703
 layout_mode = 0
-offset_left = 110.0
-offset_top = 20.0
-offset_right = 110.0
-offset_bottom = 20.0
-columns = 7
+offset_right = 280.0
+offset_bottom = 100.0
 
 [node name="PersonalCraftingPanel" type="Panel" parent="UI/UIContainer" unique_id=1837295467]
 visible = false
-layout_mode = 1
-anchors_preset = -1
-offset_left = 45.0
-offset_right = 125.0
-offset_bottom = 90.0
-grow_horizontal = 0
+layout_mode = 0
+offset_right = 155.0
+offset_bottom = 100.0
 
+<<<<<<< HEAD
 [node name="HotbarPanel" type="HBoxContainer" parent="UI/UIContainer" unique_id=1585865664]
 layout_mode = 1
 anchors_preset = -1
@@ -144,6 +146,12 @@ script = ExtResource("8_te8jg")
 [node name="Slot_7" type="Panel" parent="UI/UIContainer/HotbarPanel" unique_id=1635266693]
 layout_mode = 2
 script = ExtResource("8_te8jg")
+=======
+[node name="HotbarPanel" type="HBoxContainer" parent="UI/UIContainer"]
+layout_mode = 0
+offset_right = 260.0
+offset_bottom = 30.0
+>>>>>>> 58da3ae801db5ee652602a3c8bf22435ef901703
 
 [node name="ResourceSpawner" type="Node2D" parent="." unique_id=600605520]
 script = ExtResource("8_pi42a")
