@@ -10,10 +10,6 @@ func _ready():
 	connect("mouse_entered", _on_mouse_entered)
 	connect("mouse_exited", _on_mouse_exited)
 
-func _process(_delta):
-	if DragController.dragged_icon:
-		DragController.update_drag_position()
-
 func _on_gui_input(event):
 	if slot_index < 0 or slot_index >= InventoryManager.inventory.size():
 		return

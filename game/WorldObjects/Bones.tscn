@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://WorldObjects/Bones.gd" id="1_bones"]
+
+[node name="Bones" type="Node2D"]
+script = ExtResource("1_bones")

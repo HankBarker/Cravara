@@ -5,6 +5,18 @@ var dragged_icon: TextureRect = null
 var _quantity_label: Label = null
 var _quantity_shadow: Label = null
 
+func _process(_delta):
+	if dragged_icon:
+		update_drag_position()
+
+func _unhandled_input(event):
+	if dragged_slot == null:
+		return
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
+		# Mouse released outside any slot — cancel the drag
+		end_drag()
+		get_viewport().set_input_as_handled()
+
 func start_drag(slot: Control, icon_texture: Texture, quantity: int = 1):
 	if dragged_icon:
 		dragged_icon.queue_free()

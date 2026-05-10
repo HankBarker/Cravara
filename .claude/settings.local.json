@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs ls -la)",
+      "Bash(file /c/Cravera/game/Items/Icons/*.png)",
+      "Bash(xargs grep -i \"texture\")",
+      "Bash(file /c/Cravera/game/UI/Textures/*.png)"
+    ]
+  }
+}

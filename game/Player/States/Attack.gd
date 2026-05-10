@@ -44,6 +44,7 @@ func _check_for_destructible_objects():
 
 			if required_tool == "" or required_tool == "none":
 				body.take_damage(1, "none")
+				AudioManager.play_sfx("chop_wood")
 				continue
 
 			if selected_item == null:
@@ -51,6 +52,10 @@ func _check_for_destructible_objects():
 
 			if selected_item.tool_type == required_tool:
 				body.take_damage(1, selected_item.tool_type)
+				if required_tool == "axe":
+					AudioManager.play_sfx("chop_wood")
+				elif required_tool == "pickaxe":
+					AudioManager.play_sfx("mine_rock")
 
 func on_attack_done():
 	player.switch_state("idle")

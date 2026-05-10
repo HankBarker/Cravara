@@ -4,7 +4,10 @@ extends CharacterBody2D
 @onready var attack_area = $AttackArea
 @onready var player = null
 
-var health := 1
+# Balanced stats: T-Rex is a real threat
+var max_health := 8
+var health := 8
+var attack_damage := 20
 var move_speed := 20
 var chase_speed := 40
 var direction := Vector2.ZERO
@@ -20,22 +23,25 @@ const AGGRO_RANGE := 100
 @export var start_position := Vector2(200, 200)
 @export var use_manual_position := true
 
+# Health bar nodes (created at runtime)
+var health_bar_bg: ColorRect
+var health_bar_fill: ColorRect
+
 func _ready():
 	if use_manual_position:
 		global_position = start_position
 
 	player = get_node_or_null("/root/Playground/Player")
 
-	# Connect AggroRange signals if they exist
 	if has_node("AggroRange"):
 		var aggro = $AggroRange
 		aggro.body_entered.connect(_on_AggroRange_body_entered)
 		aggro.body_exited.connect(_on_AggroRange_body_exited)
 
 	set_new_wander_direction()
+	_create_health_bar()
 
 func _physics_process(delta):
-	# Manual aggro detection backup
 	if player and not is_chasing:
 		var distance = global_position.distance_to(player.global_position)
 		if distance <= AGGRO_RANGE:
@@ -44,13 +50,11 @@ func _physics_process(delta):
 	if player and is_chasing:
 		var distance = global_position.distance_to(player.global_position)
 
-		# Stop chasing if too far
 		if distance > AGGRO_RANGE * 1.5:
 			is_chasing = false
 			set_new_wander_direction()
 			return
 
-		# Attack if close enough
 		if distance < ATTACK_RANGE:
 			velocity = Vector2.ZERO
 			face_player()
@@ -64,13 +68,14 @@ func _physics_process(delta):
 	move_and_slide()
 	animate()
 
+func get_attack_damage() -> int:
+	return attack_damage
+
 func chase_player():
 	if not player:
 		return
-
 	var to_player = player.global_position - global_position
 	direction = to_player.normalized()
-
 	update_facing_from_direction(direction)
 	velocity = direction * chase_speed
 
@@ -93,13 +98,11 @@ func wander(delta):
 	wander_timer += delta
 	if wander_timer >= wander_duration:
 		set_new_wander_direction()
-
 	velocity = direction * move_speed
 
 func set_new_wander_direction():
 	wander_timer = 0.0
 	wander_duration = randf_range(1.0, 3.0)
-
 	if randf() < 0.7:
 		var dirs = [Vector2.UP, Vector2.DOWN, Vector2.LEFT, Vector2.RIGHT]
 		direction = dirs[randi() % dirs.size()]
@@ -115,21 +118,18 @@ func animate():
 
 func bite_player():
 	bite_cooldown = true
-
 	sprite.play("bite_" + last_facing)
 	position_attack_area()
-
 	attack_area.monitoring = true
+	AudioManager.play_sfx("enemy_attack")
 
 	await get_tree().create_timer(0.3).timeout
 	attack_area.monitoring = false
-
 	await get_tree().create_timer(1.5).timeout
 	bite_cooldown = false
 
 func position_attack_area():
 	var offset_distance = 30
-
 	match last_facing:
 		"up":
 			attack_area.position = Vector2(0, -offset_distance)
@@ -142,6 +142,8 @@ func position_attack_area():
 
 func take_damage(amount):
 	health -= amount
+	_update_health_bar()
+	AudioManager.play_sfx("enemy_hurt")
 
 	# Flash red
 	modulate = Color.RED
@@ -155,10 +157,10 @@ func die():
 	is_chasing = false
 	sprite.play("death")
 	set_physics_process(false)
-
+	AudioManager.play_sfx("enemy_death")
 	drop_loot()
+	SignalBus.creature_defeated.emit(self)
 
-	# Disable areas
 	if has_node("Hurtbox"):
 		$Hurtbox.monitoring = false
 	if has_node("AttackArea"):
@@ -174,7 +176,6 @@ func drop_loot():
 		{"item": TRexScale.new(), "quantity": randi_range(1, 3), "chance": 100},
 		{"item": TRexMeat.new(), "quantity": randi_range(1, 2), "chance": 60}
 	]
-
 	for loot in loot_items:
 		var roll = randi_range(1, 100)
 		if roll <= loot.chance:
@@ -182,18 +183,15 @@ func drop_loot():
 
 func spawn_dropped_item(item: Item, quantity: int):
 	var dropped_item = preload("res://Items/DroppedItem.tscn").instantiate()
-
 	dropped_item.global_position = global_position
 	dropped_item.setup_item(item, quantity)
-
 	get_tree().current_scene.add_child(dropped_item)
-
 	DropAnimationUtil.animate_drop(get_tree(), dropped_item, global_position, 40.0, 40.0)
 
 func _on_attack_area_area_entered(area):
 	if area.name == "PlayerHurtbox" and attack_area.monitoring:
 		if player and player.has_method("take_damage"):
-			player.take_damage(1)
+			player.take_damage(attack_damage, self)
 			attack_area.monitoring = false
 
 func _on_AggroRange_body_entered(body):
@@ -204,3 +202,29 @@ func _on_AggroRange_body_exited(body):
 	if body.name == "Player":
 		is_chasing = false
 		set_new_wander_direction()
+
+# --- Health Bar ---
+func _create_health_bar():
+	health_bar_bg = ColorRect.new()
+	health_bar_bg.color = Color(0.2, 0.0, 0.0, 0.7)
+	health_bar_bg.size = Vector2(32, 3)
+	health_bar_bg.position = Vector2(-16, -28)
+	add_child(health_bar_bg)
+
+	health_bar_fill = ColorRect.new()
+	health_bar_fill.color = Color(0.8, 0.1, 0.1, 0.9)
+	health_bar_fill.size = Vector2(32, 3)
+	health_bar_fill.position = Vector2(-16, -28)
+	add_child(health_bar_fill)
+
+	# Only show when damaged
+	health_bar_bg.visible = false
+	health_bar_fill.visible = false
+
+func _update_health_bar():
+	if not health_bar_fill or not health_bar_bg:
+		return
+	health_bar_bg.visible = true
+	health_bar_fill.visible = true
+	var ratio = clampf(float(health) / float(max_health), 0.0, 1.0)
+	health_bar_fill.size.x = 32.0 * ratio

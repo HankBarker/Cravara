@@ -21,3 +21,9 @@ signal player_died
 # Creatures
 signal creature_tamed(creature: Node)
 signal creature_defeated(creature: Node)
+
+# Equipment
+signal armor_changed(slot: String, item)
+
+# Settings
+signal settings_menu_toggled(is_open: bool)

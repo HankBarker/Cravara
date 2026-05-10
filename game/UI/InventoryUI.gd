@@ -16,6 +16,21 @@ var selected_hotbar_index: int = 0
 var selected_category: String = "All"
 var category_buttons: Array[Button] = []
 
+# Health bar references
+var health_bar_border: Panel
+var health_bar_bg: ColorRect
+var health_bar_fill: ColorRect
+var health_label: Label
+
+# Settings panel
+var settings_panel: Panel
+var settings_panel_visible := false
+
+# Armor equipment panel
+var armor_panel: Panel
+var armor_slots_ui: Dictionary = {}
+var defense_label: Label
+
 # --- Colors (Terraria-inspired) ---
 const PANEL_BG = Color(0.08, 0.07, 0.1, 0.92)
 const PANEL_BORDER = Color(0.35, 0.3, 0.4, 0.8)
@@ -49,6 +64,9 @@ func _ready():
 
 	inventory_panel.visible = false
 	crafting_panel.visible = false
+
+	# Sync initial hotbar selection with InventoryManager
+	InventoryManager.selected_slot_index = selected_hotbar_index
 
 # =========================================
 # UI CONSTRUCTION
@@ -205,6 +223,79 @@ func _build_ui():
 	# Position hotbar centered at bottom
 	_position_hotbar()
 
+	# Build health bar
+	_build_health_bar()
+
+	# Build armor equipment panel
+	_build_armor_panel()
+
+	# Build settings menu (hidden by default)
+	_build_settings_panel()
+
+func _build_health_bar():
+	var ui = $UIContainer
+
+	# Border panel
+	health_bar_border = Panel.new()
+	health_bar_border.name = "HealthBarBorder"
+	var border_style = StyleBoxFlat.new()
+	border_style.bg_color = Color(0.15, 0.12, 0.08, 0.9)
+	border_style.set_border_width_all(1)
+	border_style.border_color = Color(0.3, 0.25, 0.15, 1.0)
+	border_style.set_corner_radius_all(1)
+	health_bar_border.add_theme_stylebox_override("panel", border_style)
+	health_bar_border.position = Vector2(3, 3)
+	health_bar_border.size = Vector2(56, 8)
+	ui.add_child(health_bar_border)
+
+	# Background (dark fill behind the bar)
+	health_bar_bg = ColorRect.new()
+	health_bar_bg.name = "HealthBarBG"
+	health_bar_bg.color = Color(0.08, 0.06, 0.04, 0.85)
+	health_bar_bg.position = Vector2(4, 4)
+	health_bar_bg.size = Vector2(54, 6)
+	ui.add_child(health_bar_bg)
+
+	# Fill (the actual green bar)
+	health_bar_fill = ColorRect.new()
+	health_bar_fill.name = "HealthBarFill"
+	health_bar_fill.color = Color(0.2, 0.7, 0.2, 0.9)
+	health_bar_fill.position = Vector2(4, 4)
+	health_bar_fill.size = Vector2(54, 6)
+	ui.add_child(health_bar_fill)
+
+	# Label showing current/max
+	health_label = Label.new()
+	health_label.name = "HealthLabel"
+	health_label.add_theme_font_size_override("font_size", 5)
+	health_label.add_theme_color_override("font_color", Color(0.85, 0.85, 0.85))
+	health_label.position = Vector2(61, 2)
+	ui.add_child(health_label)
+
+	SignalBus.player_health_changed.connect(_on_player_health_changed)
+
+func _on_player_health_changed(current: int, max_hp: int):
+	if not health_bar_fill:
+		return
+	var ratio = clampf(float(current) / float(max_hp), 0.0, 1.0)
+	var target_width = 54.0 * ratio
+
+	# Smooth tween animation
+	var tween = create_tween()
+	tween.tween_property(health_bar_fill, "size:x", target_width, 0.3).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+
+	# Color shift based on health ratio
+	var target_color: Color
+	if ratio > 0.5:
+		target_color = Color(0.2, 0.7, 0.2, 0.9)  # Green
+	elif ratio > 0.25:
+		target_color = Color(0.8, 0.7, 0.1, 0.9)  # Yellow
+	else:
+		target_color = Color(0.8, 0.2, 0.1, 0.9)  # Red
+	tween.parallel().tween_property(health_bar_fill, "color", target_color, 0.3)
+
+	health_label.text = str(current) + "/" + str(max_hp)
+
 func _make_panel_style() -> StyleBoxFlat:
 	var style = StyleBoxFlat.new()
 	style.bg_color = PANEL_BG
@@ -230,22 +321,36 @@ func _position_hotbar():
 # =========================================
 
 func _input(event):
+	# Escape key priority: settings > inventory > open settings
 	if Input.is_action_just_pressed("ui_cancel"):
-		toggle_inventory()
+		if settings_panel_visible:
+			_toggle_settings_menu()
+		elif inventory_panel.visible:
+			toggle_inventory()
+		else:
+			_toggle_settings_menu()
+		return
 
 	if Input.is_action_just_pressed("use_hotbar_item"):
+		if inventory_panel.visible or settings_panel_visible:
+			return
+		if get_viewport().gui_get_hovered_control():
+			return
+
 		var selected_item: Item = null
 		if selected_hotbar_index < InventoryManager.inventory.size():
 			selected_item = InventoryManager.inventory[selected_hotbar_index].item
-		if selected_item != null:
-			if selected_item.id == "workbench":
-				var placement_controller = preload("res://Systems/Placement/PlacementController.tscn").instantiate()
-				placement_controller.object_to_place = preload("res://WorldObjects/Workbench.tscn")
-				get_tree().get_root().add_child(placement_controller)
+		if selected_item != null and selected_item.placeable and selected_item.place_scene != "":
+			var placement_controller = preload("res://Systems/Placement/PlacementController.tscn").instantiate()
+			placement_controller.object_to_place = load(selected_item.place_scene)
+			placement_controller.item_id = selected_item.id
+			get_tree().get_root().add_child(placement_controller)
+			AudioManager.play_sfx("place_object")
 
 	for i in range(8):
 		if Input.is_action_just_pressed("hotbar_" + str(i + 1)):
 			selected_hotbar_index = i
+			InventoryManager.selected_slot_index = i
 			_update_hotbar_selection()
 
 func toggle_inventory():
@@ -593,3 +698,244 @@ func show_slot_tooltip(slot_index: int, global_pos: Vector2):
 
 func hide_slot_tooltip():
 	tooltip.hide_tooltip()
+
+# =========================================
+# SETTINGS PANEL
+# =========================================
+
+func _build_settings_panel():
+	var ui = $UIContainer
+
+	settings_panel = Panel.new()
+	settings_panel.name = "SettingsPanel"
+	var style = _make_panel_style()
+	style.bg_color = Color(0.06, 0.05, 0.08, 0.95)
+	settings_panel.add_theme_stylebox_override("panel", style)
+	settings_panel.size = Vector2(160, 120)
+	settings_panel.position = Vector2((480 - 160) / 2.0, (270 - 120) / 2.0)
+	settings_panel.visible = false
+	ui.add_child(settings_panel)
+
+	var title = Label.new()
+	title.text = "Settings"
+	title.add_theme_font_size_override("font_size", 8)
+	title.add_theme_color_override("font_color", Color(0.85, 0.8, 0.95))
+	title.position = Vector2(55, 4)
+	settings_panel.add_child(title)
+
+	# Volume sliders
+	var y_offset = 20
+	_add_settings_slider(settings_panel, "Master", AudioManager.master_volume, y_offset,
+		func(val): AudioManager.set_master_volume(val))
+	y_offset += 22
+	_add_settings_slider(settings_panel, "SFX", AudioManager.sfx_volume, y_offset,
+		func(val): AudioManager.set_sfx_volume(val))
+	y_offset += 22
+	_add_settings_slider(settings_panel, "Music", AudioManager.music_volume, y_offset,
+		func(val): AudioManager.set_music_volume(val))
+
+	# Buttons row
+	y_offset += 26
+	var btn_style = StyleBoxFlat.new()
+	btn_style.bg_color = Color(0.2, 0.18, 0.25, 0.9)
+	btn_style.set_border_width_all(1)
+	btn_style.border_color = Color(0.4, 0.35, 0.5, 0.8)
+	btn_style.set_corner_radius_all(2)
+	btn_style.content_margin_left = 3
+	btn_style.content_margin_right = 3
+	btn_style.content_margin_top = 1
+	btn_style.content_margin_bottom = 1
+
+	var btn_hover = btn_style.duplicate()
+	btn_hover.bg_color = Color(0.3, 0.25, 0.4, 0.95)
+
+	var save_btn = Button.new()
+	save_btn.text = "Save"
+	save_btn.add_theme_font_size_override("font_size", 6)
+	save_btn.custom_minimum_size = Vector2(40, 14)
+	save_btn.position = Vector2(35, y_offset)
+	save_btn.focus_mode = Control.FOCUS_NONE
+	save_btn.add_theme_stylebox_override("normal", btn_style)
+	save_btn.add_theme_stylebox_override("hover", btn_hover)
+	save_btn.pressed.connect(func():
+		GameSettings.save_settings()
+		AudioManager.play_sfx("ui_click")
+	)
+	settings_panel.add_child(save_btn)
+
+	var close_btn = Button.new()
+	close_btn.text = "Close"
+	close_btn.add_theme_font_size_override("font_size", 6)
+	close_btn.custom_minimum_size = Vector2(40, 14)
+	close_btn.position = Vector2(85, y_offset)
+	close_btn.focus_mode = Control.FOCUS_NONE
+	close_btn.add_theme_stylebox_override("normal", btn_style.duplicate())
+	close_btn.add_theme_stylebox_override("hover", btn_hover.duplicate())
+	close_btn.pressed.connect(_toggle_settings_menu)
+	settings_panel.add_child(close_btn)
+
+func _add_settings_slider(parent: Panel, label_text: String, initial_value: float, y_pos: int, callback: Callable):
+	var lbl = Label.new()
+	lbl.text = label_text
+	lbl.add_theme_font_size_override("font_size", 6)
+	lbl.add_theme_color_override("font_color", Color(0.7, 0.65, 0.8))
+	lbl.position = Vector2(8, y_pos + 1)
+	parent.add_child(lbl)
+
+	var slider = HSlider.new()
+	slider.min_value = 0.0
+	slider.max_value = 1.0
+	slider.step = 0.05
+	slider.value = initial_value
+	slider.custom_minimum_size = Vector2(80, 12)
+	slider.position = Vector2(48, y_pos)
+	slider.size = Vector2(80, 12)
+	slider.value_changed.connect(callback)
+	parent.add_child(slider)
+
+	var val_label = Label.new()
+	val_label.text = str(int(initial_value * 100)) + "%"
+	val_label.add_theme_font_size_override("font_size", 5)
+	val_label.add_theme_color_override("font_color", Color(0.6, 0.6, 0.65))
+	val_label.position = Vector2(132, y_pos + 2)
+	parent.add_child(val_label)
+
+	slider.value_changed.connect(func(val): val_label.text = str(int(val * 100)) + "%")
+
+func _toggle_settings_menu():
+	settings_panel_visible = !settings_panel_visible
+	settings_panel.visible = settings_panel_visible
+	SignalBus.settings_menu_toggled.emit(settings_panel_visible)
+	if settings_panel_visible:
+		AudioManager.play_sfx("ui_click")
+
+# =========================================
+# ARMOR EQUIPMENT PANEL
+# =========================================
+
+func _build_armor_panel():
+	var ui = $UIContainer
+
+	armor_panel = Panel.new()
+	armor_panel.name = "ArmorPanel"
+	var style = _make_panel_style()
+	armor_panel.add_theme_stylebox_override("panel", style)
+	armor_panel.size = Vector2(38, 108)
+	armor_panel.position = Vector2(3, 14)
+	ui.add_child(armor_panel)
+
+	var title = Label.new()
+	title.text = "Armor"
+	title.add_theme_font_size_override("font_size", 5)
+	title.add_theme_color_override("font_color", Color(0.65, 0.6, 0.75))
+	title.position = Vector2(5, 2)
+	armor_panel.add_child(title)
+
+	var slot_names = ["head", "chest", "legs"]
+	var slot_labels = ["H", "C", "L"]
+	var y_start = 14
+
+	for i in range(slot_names.size()):
+		var slot_name = slot_names[i]
+
+		var slot = Panel.new()
+		slot.name = "ArmorSlot_" + slot_name
+		slot.custom_minimum_size = Vector2(SLOT_SIZE, SLOT_SIZE)
+		slot.size = Vector2(SLOT_SIZE, SLOT_SIZE)
+		slot.position = Vector2(5, y_start + i * (SLOT_SIZE + 4))
+
+		var slot_style = StyleBoxFlat.new()
+		slot_style.bg_color = Color(0.15, 0.12, 0.18, 0.95)
+		slot_style.set_border_width_all(1)
+		slot_style.border_color = Color(0.4, 0.35, 0.5, 0.8)
+		slot_style.set_corner_radius_all(2)
+		slot.add_theme_stylebox_override("panel", slot_style)
+
+		# Slot type indicator
+		var s_label = Label.new()
+		s_label.text = slot_labels[i]
+		s_label.add_theme_font_size_override("font_size", 5)
+		s_label.add_theme_color_override("font_color", Color(0.4, 0.35, 0.45, 0.6))
+		s_label.position = Vector2(1, 1)
+		s_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		slot.add_child(s_label)
+
+		# Icon for equipped armor
+		var icon = TextureRect.new()
+		icon.name = "Icon"
+		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		icon.set_anchors_preset(Control.PRESET_FULL_RECT)
+		icon.offset_left = 2
+		icon.offset_top = 2
+		icon.offset_right = -2
+		icon.offset_bottom = -2
+		icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		slot.add_child(icon)
+
+		slot.gui_input.connect(_on_armor_slot_input.bind(slot_name))
+		slot.mouse_filter = Control.MOUSE_FILTER_STOP
+
+		armor_panel.add_child(slot)
+		armor_slots_ui[slot_name] = slot
+
+	# Defense stat display
+	defense_label = Label.new()
+	defense_label.name = "DefenseLabel"
+	defense_label.text = "DEF: 0"
+	defense_label.add_theme_font_size_override("font_size", 5)
+	defense_label.add_theme_color_override("font_color", Color(0.6, 0.7, 0.9))
+	defense_label.position = Vector2(4, y_start + 3 * (SLOT_SIZE + 4))
+	armor_panel.add_child(defense_label)
+
+	SignalBus.armor_changed.connect(_on_armor_changed)
+
+func _on_armor_slot_input(event: InputEvent, slot_name: String):
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		_on_armor_slot_clicked(slot_name)
+
+func _on_armor_slot_clicked(slot_name: String):
+	var player = get_node_or_null("/root/Playground/Player")
+	if not player:
+		return
+
+	# If armor is equipped, unequip it back to inventory
+	if player.equipped_armor.get(slot_name):
+		var old_item = player.unequip_armor(slot_name)
+		if old_item:
+			InventoryManager.add_item(old_item)
+			AudioManager.play_sfx("ui_click")
+		update_armor_display()
+		return
+
+	# Try to equip the currently selected hotbar item
+	var selected_item: Item = null
+	if selected_hotbar_index < InventoryManager.inventory.size():
+		selected_item = InventoryManager.inventory[selected_hotbar_index].item
+
+	if selected_item and selected_item.armor_slot == slot_name:
+		InventoryManager.remove_item(selected_item.id, 1)
+		player.equip_armor(slot_name, selected_item)
+		AudioManager.play_sfx("ui_click")
+		update_armor_display()
+
+func update_armor_display():
+	var player = get_node_or_null("/root/Playground/Player")
+	if not player:
+		return
+
+	for slot_name in armor_slots_ui:
+		var slot = armor_slots_ui[slot_name]
+		var icon = slot.get_node("Icon")
+		var armor_item = player.equipped_armor.get(slot_name)
+
+		if armor_item and armor_item is Item:
+			icon.texture = armor_item.icon
+		else:
+			icon.texture = null
+
+	if defense_label:
+		defense_label.text = "DEF: " + str(player.get_defense())
+
+func _on_armor_changed(_slot: String, _item):
+	update_armor_display()
