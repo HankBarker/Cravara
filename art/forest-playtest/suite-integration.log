@@ -1,0 +1,36 @@
+﻿Godot Engine v4.6.1.stable.official.14d19694e - https://godotengine.org
+
+📦 ItemDB loaded 62 items: basic_axe, basic_pickaxe, berry, berry_compote, berry_seed, bone_arrow, bone_chestplate, bone_dagger, bone_helmet, bone_leggings, bucket, campfire, chest, cooked_fish, cooked_meat, crystal_axe, crystal_chestplate, crystal_flask, crystal_helmet, crystal_leggings, crystal_pendant, crystal_pickaxe, crystal_shard, dodo_egg, fishing_rod, forest_omelet, garden_hoe, hide_bed, hunter_charm, lantern, leather_chestplate, leather_helmet, leather_leggings, log, moonscale, mushroom, mushroom_potion, mushroom_spore, net, plank, plant_fiber, prism_crystal, raptor_fang, reed_bow, reed_perch, river_totem, shardfin, shard_sword, stego_saddle, stone, tent, thatch_roof, torch, trex_meat, trex_scale, trike_saddle, water_bucket, water_flask, wood_door, wood_floor, wood_wall, workbench
+PASS: Spawn is dry and clear
+PASS: Twelve creatures spawn across six species
+PASS: Bucket accessible in seventh hotbar slot
+PASS: Torches accessible in eighth hotbar slot
+PASS: Axe cannot bypass pickaxe mining requirement
+PASS: Mining removes solid tile collision
+PASS: Bucket scoops water
+PASS: Scoop changes terrain and exchanges bucket
+PASS: Filled bucket places water
+PASS: Water placement returns empty bucket
+PASS: Wading slows actual player movement
+PASS: Dry ground restores walk speed
+PASS: Timber wall placement consumes material
+PASS: Placed wall has blocking collision
+PASS: Cannot trap player inside placed wall
+PASS: Player physics cannot walk through a placed wall
+PASS: Wild predator refuses meat without restraint
+PASS: Net restrains predator and consumes once
+PASS: Repeated net cannot consume while already restrained
+PASS: Restrained predator accepts food
+PASS: Feed cooldown prevents item waste
+PASS: Three feeds tame raptor
+PASS: Tamed companion accepts order change
+PASS: Equipped weapon damages creature exactly once per swing
+PASS: Forest state writes to isolated test save
+PASS: Atomic save replaces existing file successfully
+PASS: Forest state loads
+PASS: Player and journal survive reload
+PASS: Water, building, and mining survive reload
+PASS: Reload replaces creatures without duplication
+PASS: Companion trust survives reload
+PASS: Journal fits native viewport ((326.0, 244.0))
+FOREST INTEGRATION: 32 checks, 0 failures

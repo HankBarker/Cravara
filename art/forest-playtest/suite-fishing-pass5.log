@@ -1,0 +1,85 @@
+﻿Godot Engine v4.6.1.stable.official.14d19694e - https://godotengine.org
+OpenGL API 3.3.0 Core Profile Context 24.10.36.04.250109 - Compatibility - Using Device: ATI Technologies Inc. - AMD Radeon RX 7700S
+
+📦 ItemDB loaded 62 items: basic_axe, basic_pickaxe, berry, berry_compote, berry_seed, bone_arrow, bone_chestplate, bone_dagger, bone_helmet, bone_leggings, bucket, campfire, chest, cooked_fish, cooked_meat, crystal_axe, crystal_chestplate, crystal_flask, crystal_helmet, crystal_leggings, crystal_pendant, crystal_pickaxe, crystal_shard, dodo_egg, fishing_rod, forest_omelet, garden_hoe, hide_bed, hunter_charm, lantern, leather_chestplate, leather_helmet, leather_leggings, log, moonscale, mushroom, mushroom_potion, mushroom_spore, net, plank, plant_fiber, prism_crystal, raptor_fang, reed_bow, reed_perch, river_totem, shardfin, shard_sword, stego_saddle, stone, tent, thatch_roof, torch, trex_meat, trex_scale, trike_saddle, water_bucket, water_flask, wood_door, wood_floor, wood_wall, workbench
+PASS Fishing controller integrated in forest session
+PASS Full-bag world right-click fills flask in the exact selected slot
+PASS Flask filling preserves all other inventory and source water
+PASS Dry-ground flask right-click leaves vessel unchanged
+PASS Distant-water flask right-click cannot bypass range
+PASS Wall blocks selected-flask right-click to water
+PASS Satchel SlotUI right-click drinks tonic at full hunger and returns flask to same slot
+PASS Full-bag inventory tonic use conserves every other stack and vessel
+PASS Inventory tonic starts vitality recovery without changing full hunger
+PASS Seeded forest has multiple shoreline fishing holes
+PASS Fishing rod has a workbench crafting recipe
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Seeded river offers all three fishing difficulties
+PASS Cannot fish arbitrary dry ground
+PASS Cannot fish random water outside marked holes
+PASS Rejected casts consume no items
+PASS Fishing rod obeys casting range
+PASS Selected rod right-click starts fishing at visible hole
+PASS Fishing locks survivor movement
+PASS Fishing consumes companion E without opening another modal
+PASS Fishing consumes held Q without opening companion commands
+PASS Number hotkey cannot swap active fishing rod behind modal
+PASS Escape reels in without opening pause behind fishing
+PASS Cancellation preserves rod and complete inventory
+PASS Selected rod right-click starts fishing at visible hole
+PASS Tab cancels fishing without opening satchel behind it
+PASS Selected rod right-click starts fishing at visible hole
+PASS External selected-item change safely reels in fishing line
+PASS Selected rod right-click starts fishing at visible hole
+PASS Ignored invulnerable hit does not cancel fishing
+PASS Accepted damage interrupts fishing immediately
+PASS Selected rod right-click starts fishing at visible hole
+PASS Opening pause cancels active fishing
+PASS Selected rod right-click starts fishing at visible hole
+PASS Death cancels cast and removes minigame
+PASS Death during fishing grants no catch and loses no item
+PASS Selected rod right-click starts fishing at visible hole
+PASS Unbalanced held Space loses fish with no reward
+PASS Escaped fish gives hole a short recovery
+PASS Resting hole rejects immediate recast
+PASS Selected rod right-click starts fishing at visible hole
+PASS Real Space balance completes within time limit
+PASS Successful balance awards one reed_perch
+PASS Landed catch rests fishing hole for ninety seconds
+PASS Duplicate finish cannot grant a second catch
+PASS Selected rod right-click starts fishing at visible hole
+PASS Real Space balance completes within time limit
+PASS Successful balance awards one shardfin
+PASS Landed catch rests fishing hole for ninety seconds
+PASS Duplicate finish cannot grant a second catch
+PASS Selected rod right-click starts fishing at visible hole
+PASS Real Space balance completes within time limit
+PASS Successful balance awards one moonscale
+PASS Landed catch rests fishing hole for ninety seconds
+PASS Duplicate finish cannot grant a second catch
+PASS Catch tests genuinely alternate held and released Space
+PASS Selected rod right-click starts fishing at visible hole
+PASS Full satchel places won catch safely on bank
+PASS Making room picks up preserved fish exactly once
+PASS Fishing hole generation is deterministic after restore
+PASS Save restore preserves catch count and remaining cooldown
+PASS Fishing cooldown stops while game is paused
+PASS Fishing test preserves real settings file
+FISHING TEST: 80 checks, 0 failures

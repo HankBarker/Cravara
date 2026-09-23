@@ -1,7 +1,8 @@
-[gd_scene load_steps=11 format=3 uid="uid://dhsl7a8i1sc12"]
+[gd_scene load_steps=13 format=3 uid="uid://dhsl7a8i1sc12"]
 
 [ext_resource type="PackedScene" uid="uid://eafflyry56j3" path="res://Player/player.tscn" id="1_rupst"]
 [ext_resource type="PackedScene" uid="uid://dsm7g22v86nxj" path="res://Sprites/T-Rex/Trex.tscn" id="4_is3ju"]
+[ext_resource type="PackedScene" path="res://Sprites/Raptor.tscn" id="15_raptor"]
 [ext_resource type="PackedScene" uid="uid://c2dbun1u4n5r2" path="res://GrasslandBiome.tscn" id="4_pi42a"]
 [ext_resource type="Script" uid="uid://bp2afv4sgm437" path="res://UI/InventoryUI.gd" id="7_ynsuh"]
 [ext_resource type="Script" uid="uid://fns0w2dxvn8d" path="res://Scripts/ResourceSpawner.gd" id="8_pi42a"]
@@ -10,8 +11,13 @@
 [ext_resource type="PackedScene" uid="uid://tldbj6irktu8" path="res://WorldObjects/LargeRock.tscn" id="10_pio1y"]
 [ext_resource type="PackedScene" uid="uid://rhyyy24tlpsi" path="res://WorldObjects/Tree.tscn" id="11_te8jg"]
 [ext_resource type="Script" path="res://Scripts/DecorativeSpawner.gd" id="12_deco"]
+[ext_resource type="Script" path="res://Scripts/DayNightLight.gd" id="13_daynight"]
+[ext_resource type="Script" path="res://Scripts/NightSpawner.gd" id="14_night_spawn"]
 
 [node name="Playground" type="Node2D"]
+
+[node name="DayNightLight" type="CanvasModulate" parent="."]
+script = ExtResource("13_daynight")
 
 [node name="Player" parent="." instance=ExtResource("1_rupst")]
 motion_mode = 1
@@ -30,6 +36,27 @@ z_index = 1
 z_index = 1
 position = Vector2(269, 181)
 start_position = Vector2(150, 150)
+
+[node name="Trex2" parent="Enemies" instance=ExtResource("4_is3ju")]
+z_index = 1
+position = Vector2(-380, 220)
+start_position = Vector2(-380, 220)
+
+[node name="Raptor1" parent="Enemies" instance=ExtResource("15_raptor")]
+z_index = 1
+position = Vector2(120, -90)
+
+[node name="Raptor2" parent="Enemies" instance=ExtResource("15_raptor")]
+z_index = 1
+position = Vector2(-160, 60)
+
+[node name="Raptor3" parent="Enemies" instance=ExtResource("15_raptor")]
+z_index = 1
+position = Vector2(420, -120)
+
+[node name="Raptor4" parent="Enemies" instance=ExtResource("15_raptor")]
+z_index = 1
+position = Vector2(-260, -180)
 
 [node name="Resources" type="Node2D" parent="."]
 
@@ -79,3 +106,6 @@ avoid_edges = false
 
 [node name="DecorativeSpawner" type="Node2D" parent="."]
 script = ExtResource("12_deco")
+
+[node name="NightSpawner" type="Node2D" parent="."]
+script = ExtResource("14_night_spawn")

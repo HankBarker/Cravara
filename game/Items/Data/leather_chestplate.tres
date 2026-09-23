@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Item" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "leather_chestplate"
+name = "Leather Chestplate"
+description = "A sturdy chestplate from T-Rex hide. +5 Defense."
+icon_generator = "armor_chest"
+max_stack = 1
+rarity = "common"
+armor_slot = "chest"
+defense = 5

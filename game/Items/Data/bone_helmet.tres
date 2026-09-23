@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/equipment/art/wardrobe/icons/bone_helmet.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = "bone_helmet"
+name = "Fangbound Helmet"
+description = "Carved fang plates over woven hide. Head protection; +3 defense. Mix freely with other armor."
+icon = ExtResource("2")
+max_stack = 1
+rarity = "rare"
+armor_slot = "head"
+defense = 3

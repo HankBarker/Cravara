@@ -1,0 +1,39 @@
+Godot Engine v4.6.1.stable.official.14d19694e - https://godotengine.org
+
+📦 ItemDB loaded 33 items: basic_axe, basic_pickaxe, berry, bone_dagger, bucket, campfire, chest, cooked_meat, crystal_pendant, crystal_shard, hunter_charm, lantern, leather_chestplate, leather_helmet, leather_leggings, log, net, plank, plant_fiber, raptor_fang, river_totem, stego_saddle, stone, thatch_roof, torch, trex_meat, trex_scale, trike_saddle, water_bucket, wood_door, wood_floor, wood_wall, workbench
+PASS Held drag creates UI preview
+PASS Release clears drag state
+PASS Partial merge conserves overflow
+PASS Held drag creates UI preview
+PASS Release clears drag state
+PASS Drag to empty moves full stack
+PASS Held drag creates UI preview
+PASS Release clears drag state
+PASS Different stacks swap
+PASS Held drag creates UI preview
+PASS Release clears drag state
+PASS Armor drag never quick-equips
+PASS Armor click-release equips once
+PASS Outside release safely cancels
+PASS Held drag creates UI preview
+PASS Release clears drag state
+PASS Player-to-chest merge conserves items
+PASS Held drag creates UI preview
+PASS Release clears drag state
+PASS Chest-to-player drag works
+PASS CapsLock advances to page 8
+PASS CapsLock advances to page 16
+PASS CapsLock advances to page 24
+PASS CapsLock advances to page 32
+PASS Final pouch exposes only 3 real slots
+PASS Numeric3 selects absolute slot34
+PASS Unavailable numeric8 cannot escape final pouch
+PASS CapsLock advances to page 0
+PASS Pouch cycling never rotates inventory
+PASS Settings shadow toggle previews live
+PASS Cancel restores setting without saving
+PASS Settings test preserves user's settings file
+PASS Saddle button equips from inventory
+PASS Ride button mounts saddled companion
+PASS Dismount returns rider
+UI_V3_TEST failures=0

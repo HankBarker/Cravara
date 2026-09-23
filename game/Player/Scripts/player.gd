@@ -24,6 +24,22 @@ var equipped_armor: Dictionary = {
 	"legs": null
 }
 
+# Hunger
+var max_hunger := 100
+var current_hunger := 100
+const HUNGER_DECAY_PER_SEC := 100.0 / 600.0   # full -> empty in 10 min
+const STARVATION_HP_PER_SEC := 0.5            # 1 hp every 2 sec at 0 hunger
+var _starve_accum := 0.0
+var _hunger_accum := 0.0
+
+# Stamina
+var max_stamina := 100.0
+var current_stamina := 100.0
+const STAMINA_REGEN_PER_SEC := 20.0
+const STAMINA_SPRINT_DRAIN := 18.0   # per second while sprinting
+const STAMINA_ATTACK_COST := 12.0    # per swing
+var _stamina_attack_lock := 0.0       # short pause on regen after attacking
+
 # State system
 var state := "idle"
 var previous_state := "idle"
@@ -38,8 +54,11 @@ var states = {
 }
 
 func _ready():
+	add_to_group("player")
 	switch_state("idle")
 	SignalBus.player_health_changed.emit(current_health, max_health)
+	SignalBus.player_hunger_changed.emit(current_hunger, max_hunger)
+	SignalBus.player_stamina_changed.emit(current_stamina, max_stamina)
 	_recalculate_defense()
 
 func switch_state(state_name: String):
@@ -64,6 +83,64 @@ func _physics_process(delta):
 	if current_state and current_state.has_method("update_state"):
 		current_state.update_state(delta)
 
+	_tick_hunger(delta)
+	_tick_stamina(delta)
+
+func _tick_hunger(delta: float):
+	if state == "dead":
+		return
+	_hunger_accum += HUNGER_DECAY_PER_SEC * delta
+	if _hunger_accum >= 1.0:
+		var dropped: int = int(_hunger_accum)
+		_hunger_accum -= float(dropped)
+		current_hunger = maxi(0, current_hunger - dropped)
+		SignalBus.player_hunger_changed.emit(current_hunger, max_hunger)
+
+	# Starvation: drain HP slowly while at zero hunger
+	if current_hunger <= 0:
+		_starve_accum += STARVATION_HP_PER_SEC * delta
+		if _starve_accum >= 1.0:
+			var hp: int = int(_starve_accum)
+			_starve_accum -= float(hp)
+			current_health = maxi(0, current_health - hp)
+			SignalBus.player_health_changed.emit(current_health, max_health)
+			if current_health <= 0 and state != "dead":
+				SignalBus.player_died.emit()
+				die()
+
+func _tick_stamina(delta: float):
+	if state == "dead":
+		return
+	var sprinting: bool = state == "run" and direction.length() > 0.1
+	var drain: float = 0.0
+	if sprinting:
+		drain += STAMINA_SPRINT_DRAIN * delta
+	if _stamina_attack_lock > 0.0:
+		_stamina_attack_lock -= delta
+	var regen: float = 0.0
+	if not sprinting and _stamina_attack_lock <= 0.0:
+		regen = STAMINA_REGEN_PER_SEC * delta
+	var new_stam: float = clampf(current_stamina - drain + regen, 0.0, max_stamina)
+	if not is_equal_approx(new_stam, current_stamina):
+		current_stamina = new_stam
+		SignalBus.player_stamina_changed.emit(current_stamina, max_stamina)
+
+func has_stamina(amount: float) -> bool:
+	return current_stamina >= amount
+
+func consume_stamina(amount: float):
+	current_stamina = clampf(current_stamina - amount, 0.0, max_stamina)
+	_stamina_attack_lock = 0.5
+	SignalBus.player_stamina_changed.emit(current_stamina, max_stamina)
+
+func eat(item: Item) -> bool:
+	if not item or not item.consumable:
+		return false
+	current_hunger = mini(max_hunger, current_hunger + item.hunger_value)
+	SignalBus.player_hunger_changed.emit(current_hunger, max_hunger)
+	AudioManager.play_sfx("ui_click")
+	return true
+
 func get_movement_input() -> Vector2:
 	var input = Vector2.ZERO
 	if Input.is_action_pressed("Right"):
@@ -84,7 +161,15 @@ func _on_SwordHitbox_area_entered(area):
 	if area.name == "Hurtbox":
 		var enemy = area.get_parent()
 		if enemy.has_method("take_damage"):
-			enemy.take_damage(1)
+			enemy.take_damage(get_active_weapon_damage())
+
+func get_active_weapon_damage() -> int:
+	var item: Item = InventoryManager.get_selected_item()
+	return item.damage if item else 1
+
+func get_active_tool_type() -> String:
+	var item: Item = InventoryManager.get_selected_item()
+	return item.tool_type if item else "none"
 
 func _on_PlayerHurtbox_area_entered(area: Area2D) -> void:
 	if area.name == "AttackArea":
@@ -98,8 +183,8 @@ func take_damage(amount: int, attacker = null):
 	if state == "dead" or is_invulnerable:
 		return
 
-	# Apply defense reduction (minimum 1 damage)
-	var actual_damage = maxi(amount - defense, 1)
+	# Apply defense reduction via percentage mitigation (see CombatMath).
+	var actual_damage = CombatMath.mitigate(amount, defense)
 	current_health -= actual_damage
 	SignalBus.player_health_changed.emit(current_health, max_health)
 
@@ -171,3 +256,12 @@ func _recalculate_defense():
 
 func get_defense() -> int:
 	return defense
+
+func _exit_tree():
+	# FSM states are manually allocated Nodes, not children of the player.
+	# Release them explicitly when changing scenes or ending a playtest.
+	for state_node in states.values():
+		if is_instance_valid(state_node):
+			state_node.free()
+	states.clear()
+	current_state = null

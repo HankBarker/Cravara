@@ -1,0 +1,221 @@
+extends RefCounted
+## Equipment is part of every source frame, so no separate layer can lag behind.
+var anchors: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://Forest/equipment/art/pose_anchors.json"))
+var cache: Dictionary = {}
+const Appearance = preload("res://Forest/equipment/Appearance.gd")
+var action_anchors: Dictionary = {}
+var wardrobe = preload("res://Forest/equipment/WardrobeArt.gd").new()
+const C := {"d":Color("3a2a1e"),"s":Color("6e5a3e"),"h":Color("a88862"),"l":Color("d9c39a"),"b":Color("f7efc8"),"q":Color("4fa3b8"),"g":Color("8fd4d6"),"o":Color("e88a2e"),"f":Color("f2c84b")}
+
+func pose(animation: String, index: int) -> Dictionary:
+	if action_anchors.is_empty() and FileAccess.file_exists("res://Forest/equipment/art/action_anchors.json"):
+		action_anchors = JSON.parse_string(FileAccess.get_file_as_string("res://Forest/equipment/art/action_anchors.json"))
+	if action_anchors.has(animation):
+		var action: Array = action_anchors[animation]
+		return action[clampi(index,0,action.size()-1)]
+	var bits := animation.split("_")
+	var key := "attack_"+bits[-1] if bits[0] in ["axe","pickaxe","weapon","swing"] else animation
+	var frames: Array = anchors.get(key, [])
+	# The original scene plays cel6 onward of the left idle sheet; the
+	# first five cels are a different glance sequence and are not in that clip.
+	if animation=="idle_left": index += 5
+	if frames.is_empty(): return {}
+	var result: Dictionary = frames[mini(index,frames.size()-1)]
+	for row in result.get("head_rows",[]):
+		if int(row[1])-int(row[0]) > 18:
+			# One legacy run cel included the next sprite-sheet cell in its mask.
+			# Keep the recorded head translation but repair only that invalid mask.
+			result = result.duplicate(true)
+			var direction := str(result.get("head_facing",str(animation).split("_")[-1]))
+			var idle: Dictionary = anchors["idle_"+direction][5 if direction == "left" else 0]
+			result.head_rows = idle.head_rows
+			result.head_center = idle.head_center
+			break
+	return result
+
+func build(source: SpriteFrames, armor: Dictionary, light: Item, appearance: Dictionary = {}) -> SpriteFrames:
+	appearance = Appearance.normalize(appearance)
+	var key := ""
+	for slot in ["head","chest","legs"]: key += ":"+str(armor[slot].id) if armor.get(slot) else ":none"
+	key += light.id if light else ""
+	key = str(source.get_instance_id())+":"+key+":"+Appearance.key(appearance)
+	if cache.has(key): return cache[key]
+	var result: SpriteFrames = source.duplicate()
+	for animation in source.get_animation_names():
+		var facing: String = str(animation).split("_")[-1]
+		for i in source.get_frame_count(animation):
+			var img: Image = source.get_frame_texture(animation,i).get_image().duplicate()
+			img.convert(Image.FORMAT_RGBA8)
+			var h: Array = pose(animation,i).get("head",[0,0])
+			var head := Vector2i(int(h[0]),int(h[1]))
+			var metadata := pose(animation,i)
+			paint_identity(img,metadata,facing,appearance)
+			var identity: Image = img.duplicate()
+			var legacy_armor := armor.duplicate()
+			for slot in ["chest","legs"]:
+				if armor.get(slot) and wardrobe.image_for(str(armor[slot].id),slot,facing): legacy_armor.erase(slot)
+			paint_outfit(img,metadata,facing,legacy_armor,appearance,str(animation).begins_with("death"))
+			wardrobe.paint_cloth(img,metadata,facing,appearance,str(animation).begins_with("death"))
+			if armor.get("legs"):
+				var leg_art: Image = wardrobe.image_for(str(armor.legs.id),"legs",facing)
+				if leg_art: wardrobe.paint_legs(img,leg_art,identity,metadata)
+			if armor.get("chest"):
+				var chest_art: Image = wardrobe.image_for(str(armor.chest.id),"chest",facing)
+				if chest_art: wardrobe.paint_body(img,chest_art,metadata,str(animation).begins_with("death"))
+			for grip in ["hand","offhand"]:
+				if not metadata.has(grip): continue
+				var point: Array = metadata[grip]
+				for dy in 2:
+					var at := Vector2i(int(point[0]),int(point[1])+dy)
+					if Rect2i(Vector2i.ZERO,img.get_size()).has_point(at) and identity.get_pixelv(at).a > .95: img.set_pixelv(at,identity.get_pixelv(at))
+			# The collar sits behind the jaw during leaning/crouching poses.
+			var head_at: Array = metadata.get("head_origin",[25,22])
+			var head_rows: Array = metadata.get("head_rows",[])
+			for row in head_rows.size():
+				for col in range(int(head_rows[row][0]),int(head_rows[row][1])+1):
+					var point := Vector2i(int(head_at[0])+col,int(head_at[1])+row)
+					if Rect2i(Vector2i.ZERO,img.get_size()).has_point(point): img.set_pixelv(point,identity.get_pixelv(point))
+			var head_facing := str(metadata.get("head_facing",facing))
+			if armor.get("head"):
+				var head_art: Image = wardrobe.image_for(str(armor.head.id),"head",head_facing)
+				if head_art:
+					wardrobe.cover_hair(img,head_art,metadata,head_facing)
+					wardrobe.paint_head(img,head_art,metadata,head_facing)
+				else: paint_helmet(img,metadata,facing,head)
+			else:
+				wardrobe.paint_hair(img,metadata,head_facing,appearance)
+			if light:
+				var pos := Vector2i(39 if facing=="left" else 23,35)+head
+				pattern(img,["..sd..",".s..d.",".shhs.","shffhs","shfbhs",".shhs.","..ss.."] if light.id=="lantern" else ["..f..",".of..",".fbf.",".sls.","..h..","..s.."],pos)
+			result.set_frame(animation,i,ImageTexture.create_from_image(img),source.get_frame_duration(animation,i))
+	cache[key] = result
+	if cache.size() > 12: cache.erase(cache.keys()[0])
+	return result
+
+func paint_identity(img: Image, metadata: Dictionary, facing: String, appearance: Dictionary):
+	if appearance.skin == "warm" and appearance.hair == "flax" and appearance.hair_style == "short": return
+	facing = str(metadata.get("head_facing",facing))
+	var origin: Array = metadata.get("head_origin",[25,22])
+	var at := Vector2i(int(origin[0]),int(origin[1]))
+	var skin := Appearance.color_for("skin",appearance.skin)
+	var hair := Appearance.color_for("hair",appearance.hair)
+	var used := img.get_used_rect()
+	for y in range(used.position.y,used.end.y):
+		for x in range(used.position.x,used.end.x):
+			var color := img.get_pixel(x,y)
+			if color.a < .95: continue
+			var head_rows: Array = metadata.get("head_rows",[])
+			var row := y-at.y
+			var on_scalp := row >= 0 and row < head_rows.size() and x >= at.x+int(head_rows[row][0]) and x <= at.x+int(head_rows[row][1])
+			var is_hair := on_scalp and row < (12 if facing == "up" else 6)
+			# Source eyes are cool blue; warm flesh and hair occupy separate masks.
+			if is_hair and color.r > color.b:
+				if appearance.hair != "flax" or appearance.hair_style in ["cropped","braid","curly","ponytail"]:
+					var shade := clampf(color.get_luminance()/0.61,0.3,1.45)
+					if appearance.hair_style == "cropped": shade *= .78 if (x+y)%3 == 0 else .9
+					img.set_pixel(x,y,Color(hair.r*shade,hair.g*shade,hair.b*shade,color.a))
+			elif appearance.skin != "warm" and color.r > color.b*1.25 and color.r > color.g*1.1:
+				var shade := clampf(color.get_luminance()/0.56,0.3,1.35)
+				img.set_pixel(x,y,Color(skin.r*shade,skin.g*shade,skin.b*shade,color.a))
+	if appearance.hair_style == "tied":
+		var tail := at+Vector2i(11 if facing == "left" else (-1 if facing == "right" else 9),6)
+		stamp(img,["hh","sh","sb","ss"],tail,{"h":hair,"s":hair.darkened(.35),"b":Color("74613a")})
+
+func paint_outfit(img: Image, metadata: Dictionary, facing: String, armor: Dictionary, appearance: Dictionary, fallen := false):
+	var delta: Array = metadata.get("body",[0,0])
+	var offset := Vector2i(int(delta[0]),int(delta[1]))
+	var cloth := Appearance.color_for("cloth",appearance.cloth)
+	var trousers := Appearance.color_for("trousers",appearance.trousers)
+	var colors := {"m":cloth,"h":cloth.lightened(.23),"s":cloth.darkened(.32),"c":Color("e1d2a3"),"b":Color("58402e"),"q":Color("bd9b56"),"d":Color("342b24"),"l":Color("ac875c"),"v":Color("79573c"),"t":Color("4fa3b8")}
+	# Follow the actual split legs. Boots wrap the lowest two opaque pixels of
+	# each foot column, preserving strides, kneels and the seated silhouette.
+	for x in range(maxi(18,25+offset.x),mini(46,40+offset.x)):
+		var bottom := -1
+		for y in range(maxi(40+offset.y,0),mini(49+offset.y,img.get_height())):
+			if img.get_pixel(x,y).a > .95: bottom = y
+		if bottom < 0: continue
+		for y in range(maxi(40+offset.y,0),bottom+1):
+			var pixel := img.get_pixel(x,y)
+			if pixel.a < .95: continue
+			var shade := clampf(pixel.get_luminance()/0.48,.5,1.3)
+			var color := trousers*shade
+			color.a = 1
+			if y >= bottom-1: color = Color("503a2c") if y == bottom else Color("a08151")
+			if armor.get("legs"):
+				if y == bottom-3: color = Color("ddc691")
+				elif y == bottom-2: color = Color("9c7950") if x%3 else Color("4b3428")
+				elif y == bottom-1: color = Color("71503a")
+			img.set_pixel(x,y,color)
+	if fallen: return
+	var side := facing in ["left","right"]
+	var origin := Vector2i(27 if side else 26,35)+offset
+	var rows: Array
+	if side:
+		rows = ["..cchms..",".chhcms..",".mhmcms..","..mmcms..","..hmsms..","..bbqb...","..hm.ss.."]
+	else:
+		rows = ["..ccmmcc....",".chhmcmmms..",".smhmcmmms..","..mhcmmms...","..mcmmmms...","..bbbqbbb...","..hm...ms..."]
+	if armor.get("chest"):
+		if side: rows = [".dvllvd..",".vlvclvd.",".vvllvvd.","..vclvvd.","..clvvvd.","..bbqb...","..vl.vd.."]
+		else: rows = [".dvllcllvd..","dvvlctllvvd.",".vvllclvvv..","..vvlclvv...","..vlclvvv...","..bbbqbbb...","..lv...vd..."]
+	if facing == "up":
+		rows = ["..ccmmcc....",".chhmmmms...",".smhmmmms...","..mhsmhms...","..mmshmms...","..bbbbbbb...","..hm...ms..."] if not armor.get("chest") else [".dvllcllvd..","dvvlclllvvd.",".vvllclvvv..","..vvlclvv...","..vvclvvv...","..bbbbbbb...","..lv...vd..."]
+	stamp(img,rows,origin,colors,facing == "left")
+	if armor.get("chest"):
+		# Layered leather shoulder caps extend the silhouette, with pale stitched
+		# edges. They follow torso anchors; the arm endpoints stay uncovered.
+		if side:
+			stamp(img,[".cl.","lvvd",".vdd"],Vector2i(27 if facing == "right" else 32,35)+offset,colors,facing == "left")
+		else:
+			stamp(img,[".cl.","lvvd",".vdd"],Vector2i(24,35)+offset,colors)
+			stamp(img,[".lc.","dvvl","ddv."],Vector2i(36,35)+offset,colors)
+		if facing != "up": stamp(img,["ct",".q"],Vector2i(32 if facing == "right" else 29,36)+offset,colors)
+		# Wrist wraps are keyed to each authored forearm. No fixed overlay can
+		# cover a reaching hand or remain behind after the pose changes.
+		for entry in ["hand","offhand"]:
+			if not metadata.has(entry): continue
+			var point: Array = metadata[entry]
+			var hand := Vector2(float(point[0]),float(point[1]))
+			var shoulder := Vector2(35 if entry == "hand" else 29,36)+Vector2(offset)
+			var wrist := Vector2i((hand+hand.direction_to(shoulder)*3.0).round())
+			stamp(img,["lb","vd"],wrist,colors)
+
+func stamp(img: Image, rows: Array, origin: Vector2i, colors: Dictionary, mirror := false):
+	for y in rows.size():
+		for x in str(rows[y]).length():
+			var token: String = str(rows[y]).substr(x,1)
+			var at := origin+Vector2i(str(rows[y]).length()-1-x if mirror else x,y)
+			if colors.has(token) and Rect2i(Vector2i.ZERO,img.get_size()).has_point(at): img.set_pixelv(at,colors[token])
+
+func paint_helmet(img: Image, metadata: Dictionary, facing: String, head: Vector2i):
+	facing = str(metadata.get("head_facing",facing))
+	var origin: Array = metadata.get("head_origin",[26+head.x,22+head.y])
+	var at := Vector2i(int(origin[0]),int(origin[1]))
+	var rows: Array = metadata.get("head_rows",[])
+	var center := int(metadata.get("head_center",6))
+	# Fit leather to this exact head cel, including idle glances and shrinking
+	# silhouettes, instead of translating one hat over different head drawings.
+	for y in mini(11,rows.size()):
+		var low := int(rows[y][0])
+		var high := int(rows[y][1])
+		for x in range(low,high+1):
+			var p := at+Vector2i(x,y)
+			if not Rect2i(Vector2i.ZERO,img.get_size()).has_point(p): continue
+			var color := img.get_pixelv(p)
+			if color.a < 0.9: continue
+			var ear := (x>=high-2 if facing=="left" else (x<=low+2 if facing=="right" else x<=low+1 or x>=high-1))
+			if y<=5 or facing=="up" or (y<=10 and ear):
+				var lightness := color.get_luminance()
+				img.set_pixelv(p,C.d if x==low or x==high else (Color("493329") if lightness<0.33 else (Color("70503a") if lightness<0.61 else Color("967049"))))
+				if y==5: img.set_pixelv(p,Color("50382a") if (x+center)%2 else Color("af8654"))
+	# A stitched crown and small shard fastener rotate with the source cel's
+	# highlight center, while the face opening leaves eyes and nose readable.
+	var shard_x := center if facing in ["up","down"] else (center+3 if facing=="left" else center-3)
+	pattern(img,["q","g"],at+Vector2i(shard_x,3))
+
+func pattern(img: Image, rows: Array, origin: Vector2i, mirror := false):
+	for y in rows.size():
+		for x in rows[y].length():
+			var color: String = rows[y].substr(x,1)
+			var p := origin + Vector2i(rows[y].length()-1-x if mirror else x,y)
+			if C.has(color) and Rect2i(Vector2i.ZERO,img.get_size()).has_point(p): img.set_pixelv(p,C[color])
+

@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="Item" load_steps=2 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "water_flask"
+name = "Springwater Flask"
+description = "Fresh water in a reusable crystal vessel. Brew a mushroom tonic at a campfire."
+icon_generator = "forest"
+max_stack = 1

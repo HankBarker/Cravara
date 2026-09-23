@@ -1,0 +1,48 @@
+﻿Godot Engine v4.6.1.stable.official.14d19694e - https://godotengine.org
+OpenGL API 3.3.0 Core Profile Context 24.10.36.04.250109 - Compatibility - Using Device: ATI Technologies Inc. - AMD Radeon RX 7700S
+
+📦 ItemDB loaded 62 items: basic_axe, basic_pickaxe, berry, berry_compote, berry_seed, bone_arrow, bone_chestplate, bone_dagger, bone_helmet, bone_leggings, bucket, campfire, chest, cooked_fish, cooked_meat, crystal_axe, crystal_chestplate, crystal_flask, crystal_helmet, crystal_leggings, crystal_pendant, crystal_pickaxe, crystal_shard, dodo_egg, fishing_rod, forest_omelet, garden_hoe, hide_bed, hunter_charm, lantern, leather_chestplate, leather_helmet, leather_leggings, log, moonscale, mushroom, mushroom_potion, mushroom_spore, net, plank, plant_fiber, prism_crystal, raptor_fang, reed_bow, reed_perch, river_totem, shardfin, shard_sword, stego_saddle, stone, tent, thatch_roof, torch, trex_meat, trex_scale, trike_saddle, water_bucket, water_flask, wood_door, wood_floor, wood_wall, workbench
+PASS captured in-game-action-axe.png
+PASS captured in-game-action-axe.png
+PASS axe actual running player advances through five or more distinct animation frames
+TIMELINE axe frames=[0, 1, 2, 3, 4, 5]
+PASS captured in-game-action-pickaxe.png
+PASS captured in-game-action-pickaxe.png
+PASS pickaxe actual running player advances through five or more distinct animation frames
+TIMELINE pickaxe frames=[0, 1, 2, 3, 4, 5, 7]
+PASS weapon actual running player advances through five or more distinct animation frames
+TIMELINE weapon frames=[0, 1, 2, 3, 4, 5, 6, 7]
+PASS sword actual running player advances through five or more distinct animation frames
+TIMELINE sword frames=[0, 1, 2, 3, 4, 5, 6, 7]
+PASS captured in-game-action-bow_draw.png
+PASS captured in-game-action-bow_draw.png
+PASS bow_draw actual running player advances through five or more distinct animation frames
+TIMELINE bow_draw frames=[0, 1, 2, 3, 4, 6]
+PASS bow_release actual running player advances through five or more distinct animation frames
+TIMELINE bow_release frames=[0, 1, 2, 3, 4, 5, 6, 7]
+PASS fishing_cast actual running player advances through five or more distinct animation frames
+TIMELINE fishing_cast frames=[0, 1, 2, 3, 4, 5, 6, 7]
+PASS fishing_reel actual running player advances through five or more distinct animation frames
+TIMELINE fishing_reel frames=[0, 1, 2, 3, 4, 5, 6, 7]
+PASS captured in-game-action-hoe.png
+PASS captured in-game-action-hoe.png
+PASS hoe actual running player advances through five or more distinct animation frames
+TIMELINE hoe frames=[0, 1, 2, 3, 4, 5, 6, 7]
+PASS net actual running player advances through five or more distinct animation frames
+TIMELINE net frames=[0, 1, 2, 3, 4, 5, 6, 7]
+PASS bucket actual running player advances through five or more distinct animation frames
+TIMELINE bucket frames=[0, 1, 2, 3, 4, 5, 6, 7]
+PASS pet actual running player advances through five or more distinct animation frames
+TIMELINE pet frames=[0, 1, 2, 3, 4, 5, 6, 7]
+PASS pickup actual running player advances through five or more distinct animation frames
+TIMELINE pickup frames=[0, 1, 2, 3, 4, 5, 6, 7]
+PASS custom hero mounts real saddled stego
+PASS real mounted bow draw starts
+PASS draw stays at full tension during charge
+PASS mount does not override aiming action
+PASS captured in-game-mounted-custom-bow.png
+PASS real mounted arrow release
+PASS release recoil remains attached to mount
+PASS captured in-game-mounted-bow-release.png
+PASS custom hero safely dismounts after firing
+CHARACTER_PASS6_RENDER assertions=30 failures=0

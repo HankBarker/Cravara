@@ -1,0 +1,39 @@
+﻿Godot Engine v4.6.1.stable.official.14d19694e - https://godotengine.org
+
+📦 ItemDB loaded 62 items: basic_axe, basic_pickaxe, berry, berry_compote, berry_seed, bone_arrow, bone_chestplate, bone_dagger, bone_helmet, bone_leggings, bucket, campfire, chest, cooked_fish, cooked_meat, crystal_axe, crystal_chestplate, crystal_flask, crystal_helmet, crystal_leggings, crystal_pendant, crystal_pickaxe, crystal_shard, dodo_egg, fishing_rod, forest_omelet, garden_hoe, hide_bed, hunter_charm, lantern, leather_chestplate, leather_helmet, leather_leggings, log, moonscale, mushroom, mushroom_potion, mushroom_spore, net, plank, plant_fiber, prism_crystal, raptor_fang, reed_bow, reed_perch, river_totem, shardfin, shard_sword, stego_saddle, stone, tent, thatch_roof, torch, trex_meat, trex_scale, trike_saddle, water_bucket, water_flask, wood_door, wood_floor, wood_wall, workbench
+PASS HUD exposes only vitality and hunger
+PASS legacy zero energy cannot block actions
+PASS legacy energy field stays inert for compatibility
+PASS one minute idle has appropriate gentle hunger cost
+PASS one minute walk has appropriate gentle hunger cost
+PASS one minute run has appropriate gentle hunger cost
+PASS roasted meat fills hunger from nearly empty
+PASS roast provides three walking minutes of fullness
+PASS roast holds full hunger throughout walking buffer
+PASS gentle hunger resumes after fullness expires
+PASS sprinting spends meal fullness twice as fast
+PASS berries remain a distinct small snack
+PASS brief bite recovery prevents accidental duplicate consumption
+PASS same food refreshes healing instead of stacking unlimited effects
+PASS tonic can be consumed in a completely full satchel
+PASS drinking returns exactly one flask to same slot
+PASS tonic restores forty vitality even while starving, without filling hunger
+PASS healthy player cannot waste a tonic
+PASS tonic requires campfire and failed brew loses nothing
+PASS mushrooms berries and filled flask brew a tonic
+PASS brewing consumes exact ingredients and preserves vessel in dose
+PASS fishing_rod has discoverable item and recipe
+PASS tent has discoverable item and recipe
+PASS crystal_flask has discoverable item and recipe
+PASS mushroom_potion has discoverable item and recipe
+PASS cooked_fish has discoverable item and recipe
+PASS former energy pendant now improves fed vitality recovery
+PASS new survival data saves to isolated file
+PASS meal fullness survives save and restore
+PASS tonic identity and hunger-independent recovery persist
+PASS old journey without new fields loads without energy restrictions
+PASS banked fish save before pickup
+PASS uncollected catch survives save/load exactly once
+PASS repeated restore replaces drops instead of duplicating them
+PASS saving during countdown uses the same food reset as normal respawn
+FOREST_ROOT_PASS5 assertions=35 failures=0

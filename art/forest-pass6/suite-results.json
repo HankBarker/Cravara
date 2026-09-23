@@ -1,0 +1,157 @@
+[
+  {
+    "suite": "world",
+    "passed": true,
+    "log": "art\\forest-playtest\\suite-world.log"
+  },
+  {
+    "suite": "inventory",
+    "passed": true,
+    "log": "art\\forest-playtest\\suite-inventory.log"
+  },
+  {
+    "suite": "creatures",
+    "passed": true,
+    "log": "art\\forest-playtest\\suite-creatures.log"
+  },
+  {
+    "suite": "integration",
+    "passed": true,
+    "log": "art\\forest-playtest\\suite-integration.log"
+  },
+  {
+    "suite": "gui-input",
+    "passed": true,
+    "log": "art\\forest-playtest\\suite-gui-input.log"
+  },
+  {
+    "suite": "menu-flow",
+    "passed": true,
+    "log": "art\\forest-playtest\\suite-menu-flow.log"
+  },
+  {
+    "suite": "ai-pass2",
+    "passed": true,
+    "log": "art\\forest-playtest\\suite-ai-pass2.log"
+  },
+  {
+    "suite": "equipment-pass2",
+    "passed": true,
+    "log": "art\\forest-playtest\\suite-equipment-pass2.log"
+  },
+  {
+    "suite": "ui-pass2",
+    "passed": true,
+    "log": "art\\forest-playtest\\suite-ui-pass2.log"
+  },
+  {
+    "suite": "world-pass3",
+    "passed": true,
+    "log": "art\\forest-playtest\\suite-world-pass3.log"
+  },
+  {
+    "suite": "mount-pass3",
+    "passed": true,
+    "log": "art\\forest-playtest\\suite-mount-pass3.log"
+  },
+  {
+    "suite": "ui-pass3",
+    "passed": true,
+    "log": "art\\forest-playtest\\suite-ui-pass3.log"
+  },
+  {
+    "suite": "root-pass3",
+    "passed": true,
+    "log": "art\\forest-playtest\\suite-root-pass3.log"
+  },
+  {
+    "suite": "world-pass4",
+    "passed": true,
+    "log": "art\\forest-playtest\\suite-world-pass4.log"
+  },
+  {
+    "suite": "mount-pass4",
+    "passed": true,
+    "log": "art\\forest-playtest\\suite-mount-pass4.log"
+  },
+  {
+    "suite": "ui-pass4",
+    "passed": true,
+    "log": "art\\forest-playtest\\suite-ui-pass4.log"
+  },
+  {
+    "suite": "root-pass4",
+    "passed": true,
+    "log": "art\\forest-playtest\\suite-root-pass4.log"
+  },
+  {
+    "suite": "interaction-pass4",
+    "passed": true,
+    "log": "art\\forest-playtest\\suite-interaction-pass4.log"
+  },
+  {
+    "suite": "mount-render-pass4",
+    "passed": true,
+    "log": "art\\forest-playtest\\suite-mount-render-pass4.log"
+  },
+  {
+    "suite": "world-pass5",
+    "passed": true,
+    "log": "art\\forest-playtest\\suite-world-pass5.log"
+  },
+  {
+    "suite": "rider-pass5",
+    "passed": true,
+    "log": "art\\forest-playtest\\suite-rider-pass5.log"
+  },
+  {
+    "suite": "root-pass5",
+    "passed": true,
+    "log": "art\\forest-playtest\\suite-root-pass5.log"
+  },
+  {
+    "suite": "fishing-pass5",
+    "passed": true,
+    "log": "art\\forest-playtest\\suite-fishing-pass5.log"
+  },
+  {
+    "suite": "rider-render-pass5",
+    "passed": true,
+    "log": "art\\forest-playtest\\suite-rider-render-pass5.log"
+  },
+  {
+    "suite": "root-pass6",
+    "passed": true,
+    "log": "art\\forest-playtest\\suite-root-pass6.log"
+  },
+  {
+    "suite": "workers-pass6",
+    "passed": true,
+    "log": "art\\forest-playtest\\suite-workers-pass6.log"
+  },
+  {
+    "suite": "character-pass6",
+    "passed": true,
+    "log": "art\\forest-playtest\\suite-character-pass6.log"
+  },
+  {
+    "suite": "character-render-pass6",
+    "passed": true,
+    "log": "art\\forest-playtest\\suite-character-render-pass6.log"
+  },
+  {
+    "suite": "ui-pass6",
+    "passed": true,
+    "log": "art\\forest-playtest\\suite-ui-pass6.log"
+  },
+  {
+    "suite": "actions-pass6",
+    "passed": true,
+    "log": "art\\forest-playtest\\suite-actions-pass6.log"
+  },
+  {
+    "suite": "save-compat-pass6",
+    "passed": true,
+    "log": "art\\forest-playtest\\suite-save-compat-pass6.log"
+  }
+]

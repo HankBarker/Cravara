@@ -1,32 +1,23 @@
 extends Camera2D
-
-## Smooth camera follow with pixel-perfect snapping
-@export var smoothing_speed: float = 8.0
-@export var look_ahead_distance: float = 20.0
-@export var look_ahead_speed: float = 3.0
-
-var target_offset := Vector2.ZERO
-
+## Tight follow has no look-ahead or rounded lerp competing with movement.
 func _ready():
-	position_smoothing_enabled = false
+	position = Vector2.ZERO
+	offset = Vector2.ZERO
 	drag_horizontal_enabled = false
 	drag_vertical_enabled = false
+	process_callback = Camera2D.CAMERA2D_PROCESS_PHYSICS
+	process_physics_priority = 100
+	GameSettings.settings_changed.connect(_apply_settings)
+	_apply_settings()
 
-func _physics_process(delta: float):
-	var player = get_parent()
-	if not player:
-		return
+func _apply_settings():
+	position_smoothing_enabled = GameSettings.camera_follow_mode == "smooth"
+	position_smoothing_speed = 10.0
+	offset = Vector2.ZERO
+	reset_smoothing()
 
-	# Subtle look-ahead in movement direction
-	var desired_offset := Vector2.ZERO
-	if player.has_method("get_movement_input"):
-		var input = player.get_movement_input()
-		if input.length() > 0.1:
-			desired_offset = input * look_ahead_distance
-
-	target_offset = target_offset.lerp(desired_offset, look_ahead_speed * delta)
-
-	# Smooth follow with pixel snapping
-	var target_pos = target_offset
-	offset = offset.lerp(target_pos, smoothing_speed * delta)
-	offset = offset.round()
+func _physics_process(_delta):
+	var rider := get_parent()
+	var mount = rider.get("mounted_creature")
+	# Follow the mount's travel, not the one-pixel saddle bob in its animation.
+	position = Vector2(0,-12)-mount._mount_controller.riding_offset() if is_instance_valid(mount) else Vector2.ZERO

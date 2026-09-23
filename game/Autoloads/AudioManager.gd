@@ -1,5 +1,4 @@
-# AudioManager.gd - Placeholder sound effect system
-# Plays procedurally generated beeps/tones as placeholder SFX
+# Sample-based harvesting; compact synthesized cues for other interactions.
 extends Node
 
 var master_volume := 1.0
@@ -9,6 +8,53 @@ var music_volume := 0.5
 # Audio bus indices
 var _sfx_bus_idx := -1
 var _music_bus_idx := -1
+var _music_player: AudioStreamPlayer
+var _music_path := ""
+var _tone_cache: Dictionary = {}
+var _last_foley: Dictionary = {}
+const LEATHER_CUES := {"equip_gear":"equip-gear","unequip_gear":"unequip-gear","satchel_open":"satchel-open","satchel_close":"satchel-close"}
+
+func get_leather_cue_path(sfx_name: String) -> String:
+	return "res://Forest/audio/leather/%s.ogg" % LEATHER_CUES[sfx_name] if LEATHER_CUES.has(sfx_name) else ""
+
+func get_foley_path(sfx_name: String, variant: int) -> String:
+	var family := ""
+	match sfx_name:
+		"chop_wood": family = "impactWood_heavy"
+		"mine_rock": family = "impactMining"
+		"place_object", "break_wood": family = "impactPlank_medium"
+	if family == "": return ""
+	return "res://Forest/audio/foley/%s_%03d.ogg" % [family, clampi(variant, 0, 4)]
+
+func _exit_tree():
+	stop_music()
+	_tone_cache.clear()
+
+func stop_music():
+	if is_instance_valid(_music_player):
+		_music_player.stop()
+		_music_player.stream = null
+	_music_path = ""
+
+func play_music(path: String):
+	if DisplayServer.get_name() == "headless":
+		return
+	if path == _music_path and is_instance_valid(_music_player) and _music_player.playing:
+		return
+	if not ResourceLoader.exists(path):
+		return
+	if not is_instance_valid(_music_player):
+		_music_player = AudioStreamPlayer.new()
+		_music_player.bus = "Music"
+		_music_player.process_mode = Node.PROCESS_MODE_ALWAYS
+		add_child(_music_player)
+	_music_path = path
+	var stream = load(path)
+	if stream is AudioStreamMP3:
+		stream.loop = true
+	_music_player.stream = stream
+	_music_player.volume_db = -8
+	_music_player.play()
 
 func _ready():
 	# Create audio buses if they don't exist
@@ -46,14 +92,33 @@ func _apply_volumes():
 		AudioServer.set_bus_volume_db(_music_bus_idx, linear_to_db(music_volume))
 
 func play_sfx(sfx_name: String):
-	if sfx_volume <= 0.01:
+	if sfx_volume <= 0.01 or DisplayServer.get_name()=="headless":
+		return
+	var leather_path := get_leather_cue_path(sfx_name)
+	if leather_path != "":
+		_play_sample(leather_path,-7)
+		return
+	var natural := {"harvest_plant":"foley/impactSoft_medium_000.ogg","eat":"foley/impactSoft_medium_000.ogg"}
+	if natural.has(sfx_name):
+		_play_sample("res://Forest/audio/"+natural[sfx_name],-9)
 		return
 
 	var player = AudioStreamPlayer.new()
 	player.bus = "SFX"
 
-	# Generate a simple procedural tone based on the sfx name
-	var stream = _generate_placeholder_tone(sfx_name)
+	var variant := randi_range(0, 4)
+	if variant == _last_foley.get(sfx_name, -1): variant = (variant + 1) % 5
+	_last_foley[sfx_name] = variant
+	var path := get_foley_path(sfx_name, variant)
+	var stream: AudioStream
+	if path != "" and ResourceLoader.exists(path):
+		stream = load(path)
+		player.pitch_scale = randf_range(0.94, 1.06)
+		player.volume_db = -7
+	else:
+		if not _tone_cache.has(sfx_name):
+			_tone_cache[sfx_name] = _generate_placeholder_tone(sfx_name)
+		stream = _tone_cache[sfx_name]
 	if stream:
 		player.stream = stream
 		add_child(player)
@@ -100,6 +165,9 @@ func _generate_placeholder_tone(sfx_name: String) -> AudioStream:
 		"ui_click":
 			frequency = 700.0
 			duration = 0.05
+		"companion_ping":
+			frequency = 740.0
+			duration = 0.20
 		_:
 			frequency = 440.0
 			duration = 0.1
@@ -125,3 +193,14 @@ func _generate_placeholder_tone(sfx_name: String) -> AudioStream:
 
 	audio.data = data
 	return audio
+
+func _play_sample(path: String, volume: float):
+	if not ResourceLoader.exists(path): return
+	var voice := AudioStreamPlayer.new()
+	voice.bus="SFX"
+	voice.stream=load(path)
+	voice.volume_db=volume
+	voice.pitch_scale=randf_range(0.92,1.04)
+	add_child(voice)
+	voice.finished.connect(voice.queue_free)
+	voice.play()

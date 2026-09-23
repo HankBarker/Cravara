@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Items/Icons/workbench_icon.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = "workbench"
+name = "Workbench"
+description = "A sturdy table for crafting advanced items. Place with left-click."
+icon = ExtResource("2")
+max_stack = 5
+rarity = "common"
+placeable = true
+place_scene = "res://WorldObjects/Workbench.tscn"

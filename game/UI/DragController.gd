@@ -1,74 +1,75 @@
 extends Node
+## Global release resolves mouse capture correctly; preview stays on the UI canvas.
+var dragged_slot: Control
+var dragged_icon: TextureRect
+var is_dragging := false
+var _press_position := Vector2.ZERO
+var _preview_layer: CanvasLayer
+var _texture: Texture2D
+var _quantity := 1
+const THRESHOLD := 4.0
 
-var dragged_slot: Control = null
-var dragged_icon: TextureRect = null
-var _quantity_label: Label = null
-var _quantity_shadow: Label = null
-
-func _process(_delta):
-	if dragged_icon:
-		update_drag_position()
-
-func _unhandled_input(event):
-	if dragged_slot == null:
-		return
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
-		# Mouse released outside any slot — cancel the drag
-		end_drag()
+func _input(event: InputEvent) -> void:
+	if not is_instance_valid(dragged_slot): return
+	if event is InputEventMouseMotion:
+		if not is_dragging and event.position.distance_to(_press_position) >= THRESHOLD:
+			is_dragging = true
+			_make_preview()
+		if is_dragging: update_drag_position(event.position)
+	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
+		_finish_drop(event.position)
 		get_viewport().set_input_as_handled()
 
-func start_drag(slot: Control, icon_texture: Texture, quantity: int = 1):
-	if dragged_icon:
-		dragged_icon.queue_free()
-
+func start_drag(slot: Control, icon_texture: Texture2D, quantity: int = 1, press_position: Vector2 = Vector2.INF) -> void:
+	end_drag()
 	dragged_slot = slot
+	_texture = icon_texture
+	_quantity = quantity
+	_press_position = slot.get_global_mouse_position() if press_position == Vector2.INF else press_position
 
+func _make_preview() -> void:
+	_preview_layer = CanvasLayer.new()
+	_preview_layer.layer = 100
+	get_tree().root.add_child(_preview_layer)
 	dragged_icon = TextureRect.new()
-	dragged_icon.texture = icon_texture
+	dragged_icon.texture = _texture
 	dragged_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	dragged_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	dragged_icon.size = Vector2(28, 28)
-	dragged_icon.modulate = Color(1, 1, 1, 0.85)
+	dragged_icon.size = Vector2(28,28)
+	dragged_icon.modulate.a = 0.85
 	dragged_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	dragged_icon.pivot_offset = Vector2(14, 14)
-	dragged_icon.scale = Vector2(1.1, 1.1)
+	_preview_layer.add_child(dragged_icon)
+	if _quantity > 1:
+		var label := Label.new()
+		label.text = str(_quantity)
+		label.position = Vector2(2,18)
+		label.add_theme_font_size_override("font_size",8)
+		label.add_theme_color_override("font_shadow_color",Color.BLACK)
+		label.add_theme_constant_override("shadow_offset_y",1)
+		label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		dragged_icon.add_child(label)
 
-	get_tree().get_root().add_child(dragged_icon)
-	dragged_icon.z_index = 1000
-	dragged_icon.position = get_viewport().get_mouse_position() - Vector2(14, 14)
+func update_drag_position(pos: Vector2 = Vector2.INF) -> void:
+	if is_instance_valid(dragged_icon):
+		dragged_icon.position = ((get_viewport().get_mouse_position() if pos == Vector2.INF else pos)-Vector2(14,14)).round()
 
-	# Quantity label on dragged icon
-	if quantity > 1:
-		_quantity_shadow = Label.new()
-		_quantity_shadow.text = str(quantity)
-		_quantity_shadow.add_theme_font_size_override("font_size", 7)
-		_quantity_shadow.add_theme_color_override("font_color", Color(0, 0, 0, 0.8))
-		_quantity_shadow.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-		_quantity_shadow.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
-		_quantity_shadow.set_anchors_preset(Control.PRESET_FULL_RECT)
-		_quantity_shadow.offset_right = 1
-		_quantity_shadow.offset_bottom = 1
-		_quantity_shadow.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		dragged_icon.add_child(_quantity_shadow)
+func _finish_drop(pos: Vector2) -> void:
+	var origin := dragged_slot
+	var destination: Control
+	for candidate in get_tree().get_nodes_in_group("inventory_slots"):
+		if candidate.is_visible_in_tree() and candidate.mouse_filter != Control.MOUSE_FILTER_IGNORE and candidate.get_global_rect().has_point(pos): destination = candidate
+	var moved := is_dragging or pos.distance_to(_press_position) >= THRESHOLD
+	end_drag()
+	if not is_instance_valid(origin): return
+	if moved:
+		if is_instance_valid(destination) and destination != origin and origin.parent_ui:
+			origin.parent_ui.cross_swap(origin,destination)
+	elif origin.get_global_rect().has_point(pos): origin._try_quick_equip()
 
-		_quantity_label = Label.new()
-		_quantity_label.text = str(quantity)
-		_quantity_label.add_theme_font_size_override("font_size", 7)
-		_quantity_label.add_theme_color_override("font_color", Color.WHITE)
-		_quantity_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-		_quantity_label.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
-		_quantity_label.set_anchors_preset(Control.PRESET_FULL_RECT)
-		_quantity_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		dragged_icon.add_child(_quantity_label)
-
-func update_drag_position():
-	if dragged_icon:
-		dragged_icon.position = get_viewport().get_mouse_position() - Vector2(14, 14)
-
-func end_drag():
-	if dragged_icon:
-		dragged_icon.queue_free()
+func end_drag() -> void:
+	if is_instance_valid(_preview_layer): _preview_layer.queue_free()
+	_preview_layer = null
 	dragged_icon = null
 	dragged_slot = null
-	_quantity_label = null
-	_quantity_shadow = null
+	is_dragging = false
+	_texture = null

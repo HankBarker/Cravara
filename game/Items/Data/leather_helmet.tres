@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Item" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "leather_helmet"
+name = "Leather Helmet"
+description = "A basic helmet made from T-Rex hide. +2 Defense."
+icon_generator = "armor_head"
+max_stack = 1
+rarity = "common"
+armor_slot = "head"
+defense = 2

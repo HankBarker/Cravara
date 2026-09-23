@@ -1,0 +1,56 @@
+﻿Godot Engine v4.6.1.stable.official.14d19694e - https://godotengine.org
+
+📦 ItemDB loaded 62 items: basic_axe, basic_pickaxe, berry, berry_compote, berry_seed, bone_arrow, bone_chestplate, bone_dagger, bone_helmet, bone_leggings, bucket, campfire, chest, cooked_fish, cooked_meat, crystal_axe, crystal_chestplate, crystal_flask, crystal_helmet, crystal_leggings, crystal_pendant, crystal_pickaxe, crystal_shard, dodo_egg, fishing_rod, forest_omelet, garden_hoe, hide_bed, hunter_charm, lantern, leather_chestplate, leather_helmet, leather_leggings, log, moonscale, mushroom, mushroom_potion, mushroom_spore, net, plank, plant_fiber, prism_crystal, raptor_fang, reed_bow, reed_perch, river_totem, shardfin, shard_sword, stego_saddle, stone, tent, thatch_roof, torch, trex_meat, trex_scale, trike_saddle, water_bucket, water_flask, wood_door, wood_floor, wood_wall, workbench
+PASS nearby workbench opens with E without cursor targeting
+PASS helmet crown follows idle_down frame 0
+PASS helmet covers ear in idle_down frame 0
+PASS helmet crown follows idle_down frame 1
+PASS helmet covers ear in idle_down frame 1
+PASS helmet crown follows idle_down frame 2
+PASS helmet covers ear in idle_down frame 2
+PASS helmet crown follows idle_down frame 3
+PASS helmet covers ear in idle_down frame 3
+PASS helmet crown follows idle_down frame 4
+PASS helmet covers ear in idle_down frame 4
+PASS helmet crown follows idle_up frame 0
+PASS helmet covers ear in idle_up frame 0
+PASS helmet crown follows idle_left frame 0
+PASS helmet covers ear in idle_left frame 0
+PASS helmet crown follows idle_left frame 1
+PASS helmet covers ear in idle_left frame 1
+PASS helmet crown follows idle_left frame 2
+PASS helmet covers ear in idle_left frame 2
+PASS helmet crown follows idle_left frame 3
+PASS helmet covers ear in idle_left frame 3
+PASS helmet crown follows idle_left frame 4
+PASS helmet covers ear in idle_left frame 4
+PASS helmet crown follows idle_left frame 5
+PASS helmet covers ear in idle_left frame 5
+PASS helmet crown follows idle_right frame 0
+PASS helmet covers ear in idle_right frame 0
+PASS helmet crown follows idle_right frame 1
+PASS helmet covers ear in idle_right frame 1
+PASS helmet crown follows idle_right frame 2
+PASS helmet covers ear in idle_right frame 2
+PASS helmet crown follows idle_right frame 3
+PASS helmet covers ear in idle_right frame 3
+PASS helmet crown follows idle_right frame 4
+PASS helmet covers ear in idle_right frame 4
+PASS helmet crown follows idle_right frame 5
+PASS helmet covers ear in idle_right frame 5
+PASS helmet crown follows idle_right frame 6
+PASS helmet covers ear in idle_right frame 6
+PASS idle comparison exercises actual head silhouette and position changes
+PASS bed binds nearby player spawn
+PASS bed returns a nearby clear respawn point
+PASS journey saves bed binding
+PASS bed binding restores without disturbing journey
+PASS death enters countdown with movement stopped
+PASS death screen begins a five-second countdown
+PASS death blocks satchel and pause shortcuts
+PASS countdown advances in real game time
+PASS respawn reenables physics and idle state without reload
+PASS respawn restores vitality at bound bed
+PASS player actually walks after respawning
+PASS destroyed spawn bed falls back to camp
+FOREST_ROOT_PASS4 assertions=52 failures=0

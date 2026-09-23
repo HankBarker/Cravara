@@ -1,0 +1,71 @@
+{
+  "trex": {
+    "display_name": "T-Rex",
+    "creature_type": "boss",
+    "rarity": "epic",
+    "biome": "grassland",
+    "tier": 4,
+    "abilities": ["bite"],
+    "stats": {
+      "health": 30,
+      "damage": 20,
+      "move_speed": 20,
+      "chase_speed": 40,
+      "xp_value": 50
+    },
+    "behavior": {
+      "default_stance": "hostile",
+      "night_speed_boost": 1.4,
+      "night_aggro_boost": 1.5
+    },
+    "taming": { "tameable": false },
+    "loot": [
+      { "item": "trex_scale", "min": 1, "max": 3, "chance": 100 },
+      { "item": "trex_meat", "min": 1, "max": 2, "chance": 60 }
+    ],
+    "scene_path": "res://Sprites/T-Rex/Trex.tscn",
+    "script_path": "res://Sprites/trex.gd"
+  },
+  "raptor": {
+    "display_name": "Raptor",
+    "creature_type": "predator",
+    "rarity": "common",
+    "biome": "grassland",
+    "tier": 1,
+    "abilities": ["bite"],
+    "stats": {
+      "health": 10,
+      "damage": 6,
+      "move_speed": 34,
+      "chase_speed": 72,
+      "xp_value": 12
+    },
+    "behavior": {
+      "default_stance": "neutral",
+      "hostile_when": ["provoked", "night"],
+      "night_speed_boost": 1.3
+    },
+    "taming": {
+      "tameable": true,
+      "method": "feed",
+      "preferred_food_id": "trex_meat",
+      "required_feed": 100.0,
+      "points_per_feed": 34.0,
+      "tamed_behavior": "follow"
+    },
+    "breeding": {
+      "breedable": true,
+      "mate_cooldown_sec": 300,
+      "inheritable_stats": ["health", "damage", "move_speed"],
+      "stat_inherit_chance": 0.55,
+      "mutation_chance": 0.0731,
+      "mutation_magnitude": 0.2
+    },
+    "loot": [
+      { "item": "raptor_fang", "min": 1, "max": 2, "chance": 100 },
+      { "item": "trex_meat", "min": 1, "max": 1, "chance": 50 }
+    ],
+    "scene_path": "res://Sprites/Raptor.tscn",
+    "script_path": "res://Sprites/raptor.gd"
+  }
+}

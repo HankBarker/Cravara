@@ -16,6 +16,8 @@ signal object_placed(object: Node, position: Vector2)
 
 # Player
 signal player_health_changed(current: int, max_health: int)
+signal player_hunger_changed(current: int, max_hunger: int)
+signal player_stamina_changed(current: float, max_stamina: float)
 signal player_died
 
 # Creatures

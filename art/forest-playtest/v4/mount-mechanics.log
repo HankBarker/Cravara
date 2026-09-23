@@ -1,0 +1,52 @@
+Godot Engine v4.6.1.stable.official.14d19694e - https://godotengine.org
+
+📦 ItemDB loaded 34 items: basic_axe, basic_pickaxe, berry, bone_dagger, bucket, campfire, chest, cooked_meat, crystal_pendant, crystal_shard, hide_bed, hunter_charm, lantern, leather_chestplate, leather_helmet, leather_leggings, log, net, plank, plant_fiber, raptor_fang, river_totem, stego_saddle, stone, thatch_roof, torch, trex_meat, trex_scale, trike_saddle, water_bucket, wood_door, wood_floor, wood_wall, workbench
+PASS stego wall blocks mounting before rider or rendering state mutates
+PASS stego mounts
+PASS stego hero is drawn only inside mounted composite
+PASS stego compound frame contains full creature and seated rider
+PASS stego equipped armor and light change the baked rider
+PASS stego mounted strike begins
+PASS stego windup does not damage early
+PASS stego tail or horns turn toward aim
+PASS stego repeated click blocked by cooldown
+PASS stego strike contact damages actual creature once
+PASS stego aim excludes rear target and friendly creature
+PASS stego animation remainder cannot cause repeated damage
+PASS stego cooldown permits next strike
+PASS stego physical wall blocks attack damage
+PASS stego exhausted rider cannot start attack
+PASS stego panels block attack and quick feed
+PASS stego meat does not feed herbivore
+PASS stego berry heals18
+PASS stego feed consumes exactly one correct food
+PASS stego feed cooldown prevents spam consumption
+PASS stego healing caps at maximum vitality
+PASS stego healthy mount does not waste food
+PASS stego dismount restores original hero rendering
+PASS stego unmounted calls fail safely
+PASS trike wall blocks mounting before rider or rendering state mutates
+PASS trike mounts
+PASS trike hero is drawn only inside mounted composite
+PASS trike compound frame contains full creature and seated rider
+PASS trike equipped armor and light change the baked rider
+PASS trike mounted strike begins
+PASS trike windup does not damage early
+PASS trike tail or horns turn toward aim
+PASS trike repeated click blocked by cooldown
+PASS trike strike contact damages actual creature once
+PASS trike aim excludes rear target and friendly creature
+PASS trike animation remainder cannot cause repeated damage
+PASS trike cooldown permits next strike
+PASS trike physical wall blocks attack damage
+PASS trike exhausted rider cannot start attack
+PASS trike panels block attack and quick feed
+PASS trike meat does not feed herbivore
+PASS trike berry heals18
+PASS trike feed consumes exactly one correct food
+PASS trike feed cooldown prevents spam consumption
+PASS trike healing caps at maximum vitality
+PASS trike healthy mount does not waste food
+PASS trike dismount restores original hero rendering
+PASS trike unmounted calls fail safely
+FOREST_MOUNT_PASS4 assertions=48 failures=0

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Item" load_steps=2 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "mushroom_potion"
+name = "Mushroom Tonic"
+description = "A warming mushroom infusion. Restores 40 vitality over 8 seconds, even when hungry. Leaves an empty flask."
+icon_generator = "forest"
+max_stack = 1
+consumable = true
+hunger_value = 0
+healing_total = 40.0
+healing_duration = 8.0
+consumed_container_id = "crystal_flask"

@@ -1,0 +1,110 @@
+[
+  {
+    "file": "dodo-ambient.ogg",
+    "source": "chicken.mp3",
+    "pitch": 1.08,
+    "duration": 0.833333
+  },
+  {
+    "file": "dodo-attack.ogg",
+    "source": "chicken.mp3",
+    "pitch": 1.08,
+    "duration": 0.833333
+  },
+  {
+    "file": "dodo-hurt.ogg",
+    "source": "chicken.mp3",
+    "pitch": 1.08,
+    "duration": 0.833333
+  },
+  {
+    "file": "raptor-ambient.ogg",
+    "source": "chicken.mp3",
+    "pitch": 0.72,
+    "duration": 1.250023
+  },
+  {
+    "file": "raptor-attack.ogg",
+    "source": "chicken.mp3",
+    "pitch": 0.72,
+    "duration": 1.250023
+  },
+  {
+    "file": "raptor-hurt.ogg",
+    "source": "chicken.mp3",
+    "pitch": 0.72,
+    "duration": 1.250023
+  },
+  {
+    "file": "rex-ambient.ogg",
+    "source": "monster-1.wav",
+    "pitch": 0.48,
+    "duration": 2.196327
+  },
+  {
+    "file": "rex-attack.ogg",
+    "source": "monster-4.wav",
+    "pitch": 0.48,
+    "duration": 1.328254
+  },
+  {
+    "file": "rex-hurt.ogg",
+    "source": "monster-9.wav",
+    "pitch": 0.48,
+    "duration": 1.192653
+  },
+  {
+    "file": "stego-ambient.ogg",
+    "source": "monster-2.wav",
+    "pitch": 0.76,
+    "duration": 0.548254
+  },
+  {
+    "file": "stego-attack.ogg",
+    "source": "monster-5.wav",
+    "pitch": 0.76,
+    "duration": 0.548254
+  },
+  {
+    "file": "stego-hurt.ogg",
+    "source": "monster-8.wav",
+    "pitch": 0.76,
+    "duration": 0.419456
+  },
+  {
+    "file": "trike-ambient.ogg",
+    "source": "monster-11.wav",
+    "pitch": 0.94,
+    "duration": 0.544082
+  },
+  {
+    "file": "trike-attack.ogg",
+    "source": "monster-12.wav",
+    "pitch": 0.94,
+    "duration": 0.526939
+  },
+  {
+    "file": "trike-hurt.ogg",
+    "source": "monster-14.wav",
+    "pitch": 0.94,
+    "duration": 0.626667
+  },
+  {
+    "file": "longneck-ambient.ogg",
+    "source": "monster-13.wav",
+    "pitch": 0.57,
+    "duration": 1.038005
+  },
+  {
+    "file": "longneck-attack.ogg",
+    "source": "monster-15.wav",
+    "pitch": 0.57,
+    "duration": 0.9722
+  },
+  {
+    "file": "longneck-hurt.ogg",
+    "source": "monster-16.wav",
+    "pitch": 0.57,
+    "duration": 1.045351
+  }
+]

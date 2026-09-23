@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/art/v3/door_item.png" id="2"]
+[resource]
+script = ExtResource("1")
+id = "wood_door"
+name = "Skywood Door"
+description = "A rope-hinged tribal door. Press E to open or close. Strike it to reclaim."
+icon = ExtResource("2")
+max_stack = 99
+placeable = true

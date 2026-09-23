@@ -1,0 +1,194 @@
+Godot Engine v4.6.1.stable.official.14d19694e - https://godotengine.org
+
+📦 ItemDB loaded 62 items: basic_axe, basic_pickaxe, berry, berry_compote, berry_seed, bone_arrow, bone_chestplate, bone_dagger, bone_helmet, bone_leggings, bucket, campfire, chest, cooked_fish, cooked_meat, crystal_axe, crystal_chestplate, crystal_flask, crystal_helmet, crystal_leggings, crystal_pendant, crystal_pickaxe, crystal_shard, dodo_egg, fishing_rod, forest_omelet, garden_hoe, hide_bed, hunter_charm, lantern, leather_chestplate, leather_helmet, leather_leggings, log, moonscale, mushroom, mushroom_potion, mushroom_spore, net, plank, plant_fiber, prism_crystal, raptor_fang, reed_bow, reed_perch, river_totem, shardfin, shard_sword, stego_saddle, stone, tent, thatch_roof, torch, trex_meat, trex_scale, trike_saddle, water_bucket, water_flask, wood_door, wood_floor, wood_wall, workbench
+PASS leather_helmet registered
+PASS leather_helmet has correct independent equipment slot
+PASS leather_helmet has inventory artwork
+PASS leather_helmet instances are independent resources
+PASS leather_helmet has a workbench recipe
+PASS leather_helmet recipe uses obtainable registered ingredients
+PASS leather_helmet changes actual character pixels
+PASS leather_helmet has distinct artwork and cache identity
+PASS leather_helmet reuses only matching cached frames
+PASS leather_chestplate registered
+PASS leather_chestplate has correct independent equipment slot
+PASS leather_chestplate has inventory artwork
+PASS leather_chestplate instances are independent resources
+PASS leather_chestplate has a workbench recipe
+PASS leather_chestplate recipe uses obtainable registered ingredients
+PASS leather_chestplate changes actual character pixels
+PASS leather_chestplate has distinct artwork and cache identity
+PASS leather_chestplate reuses only matching cached frames
+PASS leather_leggings registered
+PASS leather_leggings has correct independent equipment slot
+PASS leather_leggings has inventory artwork
+PASS leather_leggings instances are independent resources
+PASS leather_leggings has a workbench recipe
+PASS leather_leggings recipe uses obtainable registered ingredients
+PASS leather_leggings changes actual character pixels
+PASS leather_leggings has distinct artwork and cache identity
+PASS leather_leggings reuses only matching cached frames
+PASS leather complete set is visible
+PASS leather preserves axe_down animation timing
+PASS leather preserves axe_left animation timing
+PASS leather preserves axe_right animation timing
+PASS leather preserves axe_up animation timing
+PASS leather preserves bow_draw_down animation timing
+PASS leather preserves bow_draw_left animation timing
+PASS leather preserves bow_draw_right animation timing
+PASS leather preserves bow_draw_up animation timing
+PASS leather preserves fishing_cast_down animation timing
+PASS leather preserves fishing_cast_left animation timing
+PASS leather preserves fishing_cast_right animation timing
+PASS leather preserves fishing_cast_up animation timing
+PASS leather preserves idle_down animation timing
+PASS leather preserves idle_left animation timing
+PASS leather preserves idle_right animation timing
+PASS leather preserves idle_up animation timing
+PASS bone_helmet registered
+PASS bone_helmet has correct independent equipment slot
+PASS bone_helmet has inventory artwork
+PASS bone_helmet instances are independent resources
+PASS bone_helmet has a workbench recipe
+PASS bone_helmet recipe uses obtainable registered ingredients
+PASS bone_helmet changes actual character pixels
+PASS bone_helmet has distinct artwork and cache identity
+PASS bone_helmet reuses only matching cached frames
+PASS bone_chestplate registered
+PASS bone_chestplate has correct independent equipment slot
+PASS bone_chestplate has inventory artwork
+PASS bone_chestplate instances are independent resources
+PASS bone_chestplate has a workbench recipe
+PASS bone_chestplate recipe uses obtainable registered ingredients
+PASS bone_chestplate changes actual character pixels
+PASS bone_chestplate has distinct artwork and cache identity
+PASS bone_chestplate reuses only matching cached frames
+PASS bone_leggings registered
+PASS bone_leggings has correct independent equipment slot
+PASS bone_leggings has inventory artwork
+PASS bone_leggings instances are independent resources
+PASS bone_leggings has a workbench recipe
+PASS bone_leggings recipe uses obtainable registered ingredients
+PASS bone_leggings changes actual character pixels
+PASS bone_leggings has distinct artwork and cache identity
+PASS bone_leggings reuses only matching cached frames
+PASS bone complete set is visible
+PASS bone preserves axe_down animation timing
+PASS bone preserves axe_left animation timing
+PASS bone preserves axe_right animation timing
+PASS bone preserves axe_up animation timing
+PASS bone preserves bow_draw_down animation timing
+PASS bone preserves bow_draw_left animation timing
+PASS bone preserves bow_draw_right animation timing
+PASS bone preserves bow_draw_up animation timing
+PASS bone preserves fishing_cast_down animation timing
+PASS bone preserves fishing_cast_left animation timing
+PASS bone preserves fishing_cast_right animation timing
+PASS bone preserves fishing_cast_up animation timing
+PASS bone preserves idle_down animation timing
+PASS bone preserves idle_left animation timing
+PASS bone preserves idle_right animation timing
+PASS bone preserves idle_up animation timing
+PASS crystal_helmet registered
+PASS crystal_helmet has correct independent equipment slot
+PASS crystal_helmet has inventory artwork
+PASS crystal_helmet instances are independent resources
+PASS crystal_helmet has a workbench recipe
+PASS crystal_helmet recipe uses obtainable registered ingredients
+PASS crystal_helmet changes actual character pixels
+PASS crystal_helmet has distinct artwork and cache identity
+PASS crystal_helmet reuses only matching cached frames
+PASS crystal_chestplate registered
+PASS crystal_chestplate has correct independent equipment slot
+PASS crystal_chestplate has inventory artwork
+PASS crystal_chestplate instances are independent resources
+PASS crystal_chestplate has a workbench recipe
+PASS crystal_chestplate recipe uses obtainable registered ingredients
+PASS crystal_chestplate changes actual character pixels
+PASS crystal_chestplate has distinct artwork and cache identity
+PASS crystal_chestplate reuses only matching cached frames
+PASS crystal_leggings registered
+PASS crystal_leggings has correct independent equipment slot
+PASS crystal_leggings has inventory artwork
+PASS crystal_leggings instances are independent resources
+PASS crystal_leggings has a workbench recipe
+PASS crystal_leggings recipe uses obtainable registered ingredients
+PASS crystal_leggings changes actual character pixels
+PASS crystal_leggings has distinct artwork and cache identity
+PASS crystal_leggings reuses only matching cached frames
+PASS crystal complete set is visible
+PASS crystal preserves axe_down animation timing
+PASS crystal preserves axe_left animation timing
+PASS crystal preserves axe_right animation timing
+PASS crystal preserves axe_up animation timing
+PASS crystal preserves bow_draw_down animation timing
+PASS crystal preserves bow_draw_left animation timing
+PASS crystal preserves bow_draw_right animation timing
+PASS crystal preserves bow_draw_up animation timing
+PASS crystal preserves fishing_cast_down animation timing
+PASS crystal preserves fishing_cast_left animation timing
+PASS crystal preserves fishing_cast_right animation timing
+PASS crystal preserves fishing_cast_up animation timing
+PASS crystal preserves idle_down animation timing
+PASS crystal preserves idle_left animation timing
+PASS crystal preserves idle_right animation timing
+PASS crystal preserves idle_up animation timing
+PASS mixed set leather/leather/leather remains distinct
+PASS mixed set leather/leather/bone remains distinct
+PASS mixed set leather/leather/crystal remains distinct
+PASS mixed set leather/bone/leather remains distinct
+PASS mixed set leather/bone/bone remains distinct
+PASS mixed set leather/bone/crystal remains distinct
+PASS mixed set leather/crystal/leather remains distinct
+PASS mixed set leather/crystal/bone remains distinct
+PASS mixed set leather/crystal/crystal remains distinct
+PASS mixed set bone/leather/leather remains distinct
+PASS mixed set bone/leather/bone remains distinct
+PASS mixed set bone/leather/crystal remains distinct
+PASS mixed set bone/bone/leather remains distinct
+PASS mixed set bone/bone/bone remains distinct
+PASS mixed set bone/bone/crystal remains distinct
+PASS mixed set bone/crystal/leather remains distinct
+PASS mixed set bone/crystal/bone remains distinct
+PASS mixed set bone/crystal/crystal remains distinct
+PASS mixed set crystal/leather/leather remains distinct
+PASS mixed set crystal/leather/bone remains distinct
+PASS mixed set crystal/leather/crystal remains distinct
+PASS mixed set crystal/bone/leather remains distinct
+PASS mixed set crystal/bone/bone remains distinct
+PASS mixed set crystal/bone/crystal remains distinct
+PASS mixed set crystal/crystal/leather remains distinct
+PASS mixed set crystal/crystal/bone remains distinct
+PASS mixed set crystal/crystal/crystal remains distinct
+PASS all wardrobe builds leave source sprite textures immutable
+PASS hair style short survives saved appearance JSON
+PASS hair style cropped survives saved appearance JSON
+PASS hair style tied survives saved appearance JSON
+PASS hair style braid survives saved appearance JSON
+PASS hair style curly survives saved appearance JSON
+PASS hair style ponytail survives saved appearance JSON
+PASS new armor swaps successfully with a full satchel
+PASS full-bag swap returns previous armor to the exact source slot
+PASS head armor cannot enter the leg slot
+PASS full-bag unequip preserves equipped armor
+PASS unequip succeeds when an empty slot is available
+PASS bone_helmet cannot bypass required workbench
+PASS bone_helmet crafts exactly one equippable item
+PASS bone_helmet consumes exact material costs
+PASS bone_chestplate cannot bypass required workbench
+PASS bone_chestplate crafts exactly one equippable item
+PASS bone_chestplate consumes exact material costs
+PASS bone_leggings cannot bypass required workbench
+PASS bone_leggings crafts exactly one equippable item
+PASS bone_leggings consumes exact material costs
+PASS crystal_helmet cannot bypass required workbench
+PASS crystal_helmet crafts exactly one equippable item
+PASS crystal_helmet consumes exact material costs
+PASS crystal_chestplate cannot bypass required workbench
+PASS crystal_chestplate crafts exactly one equippable item
+PASS crystal_chestplate consumes exact material costs
+PASS crystal_leggings cannot bypass required workbench
+PASS crystal_leggings crafts exactly one equippable item
+PASS crystal_leggings consumes exact material costs
+PASS wardrobe test never changes the real journey
+WARDROBE_PASS7 assertions=190 failures=0

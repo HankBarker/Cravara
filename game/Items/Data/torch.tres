@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Items/Icons/torch_icon.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = "torch"
+name = "Torch"
+description = "A basic light source. Right-click to place."
+icon = ExtResource("2")
+max_stack = 99
+rarity = "common"
+placeable = true
+place_scene = "res://WorldObjects/Torch.tscn"

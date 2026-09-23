@@ -1,0 +1,178 @@
+{
+ "parts": {
+  "head_down": {
+   "origin": [
+    22,
+    13
+   ]
+  },
+  "torso_down": {
+   "origin": [
+    25,
+    29
+   ]
+  },
+  "boot_m_down": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "boot_o_down": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "pauldron_m_down": {
+   "origin": [
+    36,
+    29
+   ],
+   "shoulder": [
+    36.8,
+    30.6
+   ]
+  },
+  "pauldron_o_down": {
+   "origin": [
+    22,
+    29
+   ],
+   "shoulder": [
+    27.2,
+    30.6
+   ]
+  },
+  "head_up": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "torso_up": {
+   "origin": [
+    26,
+    28
+   ]
+  },
+  "boot_m_up": {
+   "pivot": [
+    1.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "boot_o_up": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "pauldron_m_up": {
+   "origin": [
+    37,
+    28
+   ],
+   "shoulder": [
+    37.0,
+    30.4
+   ]
+  },
+  "pauldron_o_up": {
+   "origin": [
+    23,
+    28
+   ],
+   "shoulder": [
+    27.0,
+    30.4
+   ]
+  },
+  "head_side": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "torso_side": {
+   "origin": [
+    25,
+    29
+   ]
+  },
+  "boot_m_side": {
+   "pivot": [
+    3.1999999999999993,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "pauldron_m_side": {
+   "origin": [
+    27,
+    30
+   ],
+   "shoulder": [
+    30.2,
+    30.8
+   ]
+  }
+ },
+ "materials": {
+  "arm_upper": [
+   "bbf3be",
+   "bbf3be",
+   "bbf3be",
+   "bbf3be",
+   "bbf3be"
+  ],
+  "arm_lower": [
+   "0e3c36",
+   "2b7468",
+   "5e796d",
+   "4d9a7d",
+   "83dfae"
+  ],
+  "hand": [
+   "888478",
+   "899d92",
+   "b7baad",
+   "b7baad",
+   "f3c282"
+  ],
+  "leg_upper": [
+   "1d5c53",
+   "4d9a7d",
+   "888478",
+   "59b492",
+   "bbf3be"
+  ],
+  "leg_lower": [
+   "1d5c53",
+   "4d9a7d",
+   "888478",
+   "59b492",
+   "bbf3be"
+  ]
+ },
+ "name": "Moonscale Tidecaller"
+}

@@ -12,3 +12,10 @@ desktop.ini
 *.swp
 *.swo
 *~
+
+# Local tool configs (may hold API tokens) and Python bytecode
+.codex/
+__pycache__/
+*.pyc
+# Raw third-party downloads / saved web pages kept only as local provenance
+art/**/audio-source/

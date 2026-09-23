@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="Item" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "bone_dagger"
+name = "Bone Dagger"
+description = "A crude blade of bone and fang. Far better than bare fists in a fight."
+icon_generator = "forest"
+max_stack = 1
+rarity = "common"
+tool_type = "weapon"
+damage = 6
+
