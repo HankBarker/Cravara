@@ -56,13 +56,18 @@ var personal_recipes: Array = [
 	{"name":"Campfire", "item_id":"campfire", "ingredients":{"log":3,"stone":4}, "category":"Building", "description":"Place a fire; stand nearby to roast meat."},
 	{"name":"Timber Wall", "item_id":"wood_wall", "quantity":4, "ingredients":{"plank":2}, "category":"Building", "description":"Build a protective palisade on the tile grid."},
 	{"name":"Timber Floor", "item_id":"wood_floor", "quantity":4, "ingredients":{"plank":2}, "category":"Building", "description":"Lay a warm timber foundation."},
+	{"name":"Stone Wall", "item_id":"stone_wall", "quantity":4, "ingredients":{"stone":6}, "station":"workbench", "category":"Building", "description":"Cut stone in the first builders' way: far sturdier than timber."},
+	{"name":"Stone Floor", "item_id":"stone_floor", "quantity":4, "ingredients":{"stone":4}, "station":"workbench", "category":"Building", "description":"Flagstones like the old ruins' paving."},
+	{"name":"Stone Door", "item_id":"stone_door", "ingredients":{"stone":4,"plank":2}, "station":"workbench", "category":"Building", "description":"An iron-banded door in a stone frame. Aim and press E to open or close."},
+	{"name":"Slate Roof", "item_id":"slate_roof", "quantity":4, "ingredients":{"stone":3,"plank":1}, "station":"workbench", "category":"Building", "description":"Overlapping slates: a roof that keeps the weather out. Fades while you are beneath it."},
 	{"name":"Chest", "item_id":"chest", "ingredients":{"plank":4}, "station":"workbench", "category":"Building", "description":"Store supplies at your camp."},
 	{"name":"Basic Axe", "item_id":"basic_axe", "ingredients":{"plank":3,"stone":2}, "category":"Tools", "description":"Fell trees and clear your camp."},
 	{"name":"Basic Pickaxe", "item_id":"basic_pickaxe", "ingredients":{"plank":3,"stone":2}, "category":"Tools", "description":"Mine stone and crystal walls."},
 	{"name":"Wooden Bucket", "item_id":"bucket", "ingredients":{"plank":3,"plant_fiber":2}, "station":"workbench", "category":"Tools", "description":"Scoop and place shallow water."},
 	{"name":"Woven Net", "item_id":"net", "ingredients":{"plant_fiber":5,"plank":1}, "category":"Tools", "description":"Restrain a predator, then offer meat."},
 	{"name":"Bone Dagger", "item_id":"bone_dagger", "ingredients":{"raptor_fang":2,"plank":1,"crystal_shard":2}, "station":"workbench", "category":"Tools", "description":"A shard-edged fang blade."},
-	{"name":"Roasted Meat", "item_id":"cooked_meat", "ingredients":{"trex_meat":1}, "station":"campfire", "category":"Food", "description":"Fill hunger completely; stay full for 3 minutes of walking."}
+	{"name":"Roasted Meat", "item_id":"cooked_meat", "ingredients":{"trex_meat":1}, "station":"campfire", "category":"Food", "description":"Fill hunger completely; stay full for 3 minutes of walking."},
+	{"name":"Baked Tuber", "item_id":"baked_tuber", "ingredients":{"wild_tuber":2}, "station":"campfire", "category":"Food", "description":"Two wild tubers baked soft: 45 hunger, full for a minute."}
 ]
 
 func set_nearby_stations(stations: Array[String]) -> void:

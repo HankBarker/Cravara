@@ -24,8 +24,11 @@ func _label(text: String, at: Vector2, extent: Vector2, size: int, heading := fa
 	label.position = at
 	label.size = extent
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	label.add_theme_font_override("font",preload("res://Forest/fonts/IMFellEnglish.ttf") if heading else preload("res://Forest/fonts/AlegreyaSans.ttf"))
-	label.add_theme_font_size_override("font_size",size)
+	label.add_theme_font_override("font",preload("res://Forest/fonts/IMFellEnglish.ttf") if heading else preload("res://Forest/fonts/Tiny5-Regular.ttf"))
+	label.add_theme_font_size_override("font_size",size if heading else 8)
+	label.add_theme_color_override("font_shadow_color",Color(0.02,0.06,0.06,0.92))
+	label.add_theme_constant_override("shadow_offset_x",1)
+	label.add_theme_constant_override("shadow_offset_y",1)
 	label.add_theme_color_override("font_color",Color("ead7ae") if heading else Color("aad4bf"))
 	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(label)

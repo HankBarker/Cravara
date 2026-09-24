@@ -362,14 +362,15 @@
   "status": "done",
   "cost": 2.0,
   "prompt": "Walks in place on four legs: the legs step one after another, the body bobs gently and the tail sways. It stays in place, facing away from the viewer.",
-  "frames": 9,
+  "frames": 8,
   "submitted": 1790219437.357647,
   "finished": 1790219591.0747154,
   "score": {
    "bright": 1,
    "area": 1.03,
    "wide": 1.35
-  }
+  },
+  "method": "walk_back.py (walk gait from the back drawing)"
  },
  "hurt_side": {
   "job": "934cb7f1-ee20-4189-b0cd-7269258b8b28",

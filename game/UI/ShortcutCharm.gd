@@ -5,7 +5,8 @@ var key_hint := "Tab"
 var _font: Font
 
 func _ready() -> void:
-	_font = load("res://Forest/fonts/AlegreyaSans.ttf")
+	# The interface kit's crisp pixel text (Tiny5 at its 8px size).
+	_font = load("res://Forest/fonts/Tiny5-Regular.ttf")
 	for state in ["normal","hover","pressed","focus","disabled"]:
 		add_theme_stylebox_override(state,StyleBoxEmpty.new())
 	mouse_entered.connect(queue_redraw)
@@ -34,5 +35,9 @@ func _draw() -> void:
 	draw_line(center+Vector2(-7,0),center+Vector2(0,-6),Color("b9e3c2"))
 	draw_line(center+Vector2(0,6),center+Vector2(7,0),Color("153c3d"))
 	var key_size := _font.get_string_size(key_hint,HORIZONTAL_ALIGNMENT_LEFT,-1,8)
-	draw_string(_font,center+Vector2(-key_size.x/2,3),key_hint,HORIZONTAL_ALIGNMENT_LEFT,-1,8,Color("e6edc6"))
-	draw_string(_font,Vector2(26,h/2+4+shift),caption,HORIZONTAL_ALIGNMENT_LEFT,w-29,10,Color("f0dfb7"))
+	var key_at := Vector2(roundf(center.x-key_size.x/2),floorf(center.y)+3)
+	draw_string(_font,key_at+Vector2(1,1),key_hint,HORIZONTAL_ALIGNMENT_LEFT,-1,8,Color("0b2324"))
+	draw_string(_font,key_at,key_hint,HORIZONTAL_ALIGNMENT_LEFT,-1,8,Color("f4ffe9"))
+	var caption_at := Vector2(26,floorf(h/2)+3+shift)
+	draw_string(_font,caption_at+Vector2(1,1),caption,HORIZONTAL_ALIGNMENT_LEFT,w-29,8,Color("0b1c1d"))
+	draw_string(_font,caption_at,caption,HORIZONTAL_ALIGNMENT_LEFT,w-29,8,Color("f6ffea") if hover else Color("f0dfb7"))

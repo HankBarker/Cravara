@@ -6,6 +6,7 @@ var inventory_panel: Panel
 var recipes_panel: Panel
 var toast: Label
 var context_label: Label
+var bleed_label: Label
 var station_label: Label
 var detail: Label
 var recipe_list: VBoxContainer
@@ -42,13 +43,31 @@ var sort_button: Button
 var quick_stack_button: Button
 const FRAME = preload("res://UI/CrystalFrame.gd")
 const METER = preload("res://UI/CrystalMeter.gd")
+## The interface kit: fonts, palette, plaques, sockets and icons.
+const UI = preload("res://UI/SkyfangUI.gd")
 var _heading_font: Font
-const INK := Color("172f31")
-const DARK := Color("102224")
-const EDGE := Color("658579")
-const GOLD := Color("dcc085")
-const PAPER := Color("eee3c7")
-const MINT := Color("9fddbb")
+const INK := UI.INK
+const DARK := UI.DARK
+const EDGE := UI.EDGE
+const GOLD := UI.GOLD
+const PAPER := UI.PAPER
+const MINT := UI.MINT
+## Status plate: icon and number beside each meter; low meters pulse.
+var status_icons: Dictionary = {}
+var status_values: Dictionary = {}
+var _pulse := 0.0
+## Pouch pips beside the hotbar (Caps cycles the five pouches).
+var _pouch_pips: Array[TextureRect] = []
+## The context line as key caps and actions (context_label keeps the text).
+var _hint: PanelContainer
+var _hint_row: HBoxContainer
+var _hint_text := ""
+var _toast_box: PanelContainer
+var _bleed_box: PanelContainer
+## News that matters (someone arrived, someone moved in): a plate with a
+## portrait slides down from the top, one at a time.
+var _banners: Array = []
+var _banner: Control
 
 func _ready() -> void:
 	layer = 20
@@ -57,31 +76,9 @@ func _ready() -> void:
 	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(root)
-	var theme := Theme.new()
-	theme.default_font_size = 9
-	theme.default_font = load("res://Forest/fonts/AlegreyaSans.ttf")
-	# Godot's bundled Noto Sans has softer, more articulate letterforms at this scale.
-	# Body text stays readable; ornament supplies the ancient identity.
-	theme.set_color("font_color", "Label", PAPER)
-	theme.set_color("font_color", "Button", PAPER)
-	for kind in ["normal","hover","pressed","focus","disabled"]:
-		theme.set_stylebox(kind,"Button",_style(INK if kind != "hover" else Color("35594c"), GOLD if kind == "focus" else EDGE))
-		theme.set_stylebox(kind,"OptionButton",_style(INK if kind != "hover" else Color("35594c"), GOLD if kind == "focus" else EDGE))
-	theme.set_stylebox("panel","PopupMenu",_style(DARK,GOLD))
-	theme.set_stylebox("hover","PopupMenu",_style(Color("35594c"),EDGE))
-	theme.set_font_size("font_size","PopupMenu",9)
-	theme.set_stylebox("panel","TooltipPanel",_style(DARK,GOLD))
-	theme.set_font_size("font_size","TooltipLabel",8)
-	theme.set_color("font_color","TooltipLabel",PAPER)
-	theme.set_color("font_disabled_color","Button",Color("85998b"))
-	for kind in ["grabber","grabber_highlight","grabber_pressed"]:
-		var grip := _style(Color("6a947a"),Color("b7ad77"))
-		grip.content_margin_left = 2
-		grip.content_margin_right = 2
-		theme.set_stylebox(kind,"VScrollBar",grip)
-	root.theme = theme
-	if ResourceLoader.exists("res://Forest/fonts/IMFellEnglish.ttf"):
-		_heading_font = load("res://Forest/fonts/IMFellEnglish.ttf")
+	# One kit for every panel: carved slate, bronze, crystal, crisp pixel text.
+	root.theme = UI.theme()
+	_heading_font = UI.TITLE
 	_shade = ColorRect.new()
 	_shade.color = Color(0.02,0.09,0.08,0.48)
 	_shade.size = Vector2(480,270)
@@ -105,20 +102,6 @@ func _ready() -> void:
 	close_panels()
 	_interface_ready = true
 
-func _style(bg: Color = INK, border: Color = EDGE) -> StyleBoxFlat:
-	var s := StyleBoxFlat.new()
-	s.bg_color = bg
-	s.border_color = border
-	s.set_border_width_all(1)
-	s.set_corner_radius_all(2)
-	s.corner_detail = 1
-	s.content_margin_left = 3
-	s.content_margin_right = 3
-	s.shadow_color = Color(0,0,0,0.35)
-	s.shadow_size = 1
-	s.shadow_offset = Vector2(0,1)
-	return s
-
 func _panel(parent: Node, pos: Vector2, dimensions: Vector2) -> Panel:
 	var p := Panel.new()
 	p.position = pos
@@ -131,20 +114,37 @@ func _panel(parent: Node, pos: Vector2, dimensions: Vector2) -> Panel:
 	p.add_child(frame)
 	return p
 
+## Titles (size 10 and up) in the old hand; everything else in crisp Tiny5
+## at its one true size (the theme's 8).
 func _label(parent: Node, text: String, pos: Vector2, font_size: int = 8, tint: Color = PAPER) -> Label:
 	var l := Label.new()
 	l.text = text
 	l.position = pos
-	l.add_theme_font_size_override("font_size",maxi(8,font_size))
-	if font_size >= 10 and _heading_font:
-		l.add_theme_font_override("font",_heading_font)
-	l.add_theme_color_override("font_shadow_color", Color(0.04,0.08,0.07,0.85))
-	l.add_theme_constant_override("shadow_offset_x",1)
-	l.add_theme_constant_override("shadow_offset_y",1)
-	l.add_theme_color_override("font_color",tint)
+	if font_size >= 10:
+		UI.style_title(l,font_size,tint)
+	else:
+		l.add_theme_color_override("font_color",tint)
 	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	parent.add_child(l)
 	return l
+
+## A soft dark backing that hugs its content (words over bright ground).
+func _backing(parent: Node, content: Vector4) -> PanelContainer:
+	var plate := PanelContainer.new()
+	plate.add_theme_stylebox_override("panel",UI.box("shade",content))
+	plate.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	parent.add_child(plate)
+	return plate
+
+## A small icon from the kit (heart, meat, drop, shield, crystal).
+func _icon(parent: Node, name: String, pos: Vector2) -> TextureRect:
+	var icon := TextureRect.new()
+	icon.texture = UI.icon(name)
+	icon.position = pos
+	icon.size = icon.texture.get_size()
+	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	parent.add_child(icon)
+	return icon
 
 func _button(parent: Node, text: String, pos: Vector2, dimensions: Vector2, callback: Callable) -> Button:
 	var b := Button.new()
@@ -154,34 +154,58 @@ func _button(parent: Node, text: String, pos: Vector2, dimensions: Vector2, call
 	# Mouse-driven HUD: a clicked button must not keep keyboard focus, or Space
 	# (dodge) / Enter would press it again through ui_accept.
 	b.focus_mode = Control.FOCUS_NONE
-	b.add_theme_font_size_override("font_size",9)
-	b.add_theme_color_override("font_hover_color",Color("dcffe6"))
 	b.pressed.connect(callback)
 	b.pressed.connect(func(): AudioManager.play_sfx("equip_gear"))
 	parent.add_child(b)
 	b.size = dimensions
 	return b
 
+## The status plate: a heart and a haunch, each with its crystal meter and the
+## number itself. Region name top right; bleeding, toasts and the context line
+## sit on soft dark backings so they read over the brightest meadow.
 func _build_status() -> void:
-	var frame := _panel(root,Vector2(8,7),Vector2(146,40))
+	var frame := _panel(root,Vector2(6,5),Vector2(158,42))
 	frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_label(frame,"SKYFANG WILDS",Vector2(13,5),9,GOLD)
 	for i in 2:
 		var name: String = ["VITALITY","HUNGER"][i]
-		_label(frame,name,Vector2(9,17+i*9),7,PAPER)
+		var y := 5+i*16
+		status_icons[name] = _icon(frame,["heart","meat"][i],Vector2(9,y))
 		var bar := METER.new()
-		bar.position = Vector2(51,20+i*9)
-		bar.size = Vector2(86,7)
-		bar.tint = [Color("d77877"),Color("d4b76b")][i]
+		bar.position = Vector2(28,y+4)
+		bar.size = Vector2(100,9)
+		bar.tint = [UI.VITALITY,UI.HUNGER][i]
 		frame.add_child(bar)
 		bars[name] = bar
-	_label(root,"THE SKYFANG WILDS",Vector2(346,8),8,GOLD)
+		var amount := _label(frame,"",Vector2(131,y+4),8,PAPER)
+		amount.size = Vector2(17,9)
+		status_values[name] = amount
+	var region_plate := _backing(root,Vector4(7,1,7,2))
+	_label(region_plate,"The Skyfang Wilds",Vector2.ZERO,11,GOLD)
+	region_plate.reset_size()
+	region_plate.position = Vector2(475-region_plate.size.x,3)
+	# A bleeding cut (a stego's tail): a drop and the seconds left, under the plate.
+	_bleed_box = _backing(root,Vector4(3,1,6,1))
+	_bleed_box.position = Vector2(8,48)
+	var bleed_row := HBoxContainer.new()
+	bleed_row.add_theme_constant_override("separation",2)
+	bleed_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_bleed_box.add_child(bleed_row)
+	_icon(bleed_row,"drop",Vector2.ZERO)
+	bleed_label = _label(bleed_row,"",Vector2.ZERO,8,UI.EMBER)
+	bleed_label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	_bleed_box.visible = false
 	context_label = _label(root,"",Vector2(10,218),8)
 	context_label.size = Vector2(460,12)
 	context_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	toast = _label(root,"",Vector2(170,32),8,MINT)
-	toast.size = Vector2(295,24)
-	toast.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	context_label.visible = false
+	_hint = _backing(root,Vector4(5,2,5,2))
+	_hint.visible = false
+	_hint_row = HBoxContainer.new()
+	_hint_row.add_theme_constant_override("separation",3)
+	_hint_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_hint.add_child(_hint_row)
+	_toast_box = _backing(root,Vector4(5,2,5,2))
+	toast = _label(_toast_box,"",Vector2.ZERO,8,MINT)
 	toast.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 
 func _build_hotbar() -> void:
@@ -190,8 +214,27 @@ func _build_hotbar() -> void:
 	for i in 8:
 		var slot := _slot(frame,i,Vector2(4+i*31,3),28)
 		hotbar.append(slot)
-		_label(slot,str(i+1),Vector2(2,0),6,GOLD)
-	_hotbar_page = _label(root,"Caps  Pouch 1/5",Vector2(10,234),7,GOLD)
+		_label(slot,str(i+1),Vector2(4,2),8,GOLD)
+	# Caps cycles five pouches of eight: a key cap and five crystal pips.
+	var pouch := _backing(root,Vector4(3,2,4,2))
+	pouch.position = Vector2(7,229)
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation",2)
+	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	pouch.add_child(row)
+	_hotbar_page = _label(row,"CAPS",Vector2.ZERO,8,Color("f4e4b9"))
+	_hotbar_page.add_theme_stylebox_override("normal",UI.box("chip",Vector4(3,1,3,2)))
+	var gap := Control.new()
+	gap.custom_minimum_size.x = 2
+	gap.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_child(gap)
+	for i in 5:
+		var pip := TextureRect.new()
+		pip.stretch_mode = TextureRect.STRETCH_KEEP_CENTERED
+		pip.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		pip.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		row.add_child(pip)
+		_pouch_pips.append(pip)
 	_shortcut("Satchel","Tab",Vector2(8,246),Vector2(96,21),func():
 		if is_open(): close_panels()
 		else: open_panels())
@@ -206,7 +249,7 @@ func _slot(parent: Node, index: int, pos: Vector2, pixels: int, source = null) -
 	slot.source = source
 	slot.position = pos
 	slot.size = Vector2(pixels,pixels)
-	slot.add_theme_stylebox_override("panel",_style(DARK,EDGE))
+	slot.add_theme_stylebox_override("panel",UI.box("slot"))
 	parent.add_child(slot)
 	var icon := TextureRect.new()
 	icon.name = "Icon"
@@ -217,14 +260,17 @@ func _slot(parent: Node, index: int, pos: Vector2, pixels: int, source = null) -
 	icon.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	slot.add_child(icon)
-	var qty := _label(slot,"",Vector2(3,pixels-10),7)
+	var qty := _label(slot,"",Vector2(2,pixels-11),8)
 	qty.name = "Quantity"
 	qty.size.x = pixels-5
 	qty.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	qty.add_theme_color_override("font_shadow_color",DARK)
-	qty.add_theme_constant_override("shadow_offset_x",1)
-	qty.add_theme_constant_override("shadow_offset_y",1)
 	return slot
+
+## The socket a slot shows: lit crystal when it is the hotbar's choice, a
+## brighter rim under the pointer.
+func slot_style(slot: Control, hovered := false) -> StyleBox:
+	if slot in hotbar and slot.slot_index == InventoryManager.selected_slot_index: return UI.box("slot_selected")
+	return UI.box("slot_hover" if hovered else "slot")
 
 func _build_inventory() -> void:
 	inventory_panel = _panel(root,Vector2(8,58),Vector2(211,176))
@@ -250,10 +296,7 @@ func _build_inventory() -> void:
 	search.position = Vector2(7,30)
 	search.size = Vector2(151,17)
 	search.placeholder_text = "Find a recipe..."
-	search.add_theme_font_size_override("font_size",8)
 	search.text_changed.connect(func(value): query=value; _refresh_recipes())
-	search.add_theme_stylebox_override("normal",_style(DARK,EDGE))
-	search.add_theme_stylebox_override("focus",_style(DARK,GOLD))
 	recipes_panel.add_child(search)
 	search.size = Vector2(151,17)
 	var filter := _button(recipes_panel,"Ready only",Vector2(163,30),Vector2(77,17),func(): craftable_only=not craftable_only; _refresh_recipes())
@@ -262,7 +305,6 @@ func _build_inventory() -> void:
 	selector.focus_mode = Control.FOCUS_NONE
 	selector.position = Vector2(7,50)
 	selector.size = Vector2(233,16)
-	selector.add_theme_font_size_override("font_size",8)
 	for category in CraftingManager.categories: selector.add_item(category)
 	selector.item_selected.connect(func(index): selected_category=CraftingManager.categories[index]; _refresh_recipes())
 	recipes_panel.add_child(selector)
@@ -282,11 +324,24 @@ func _process(delta: float) -> void:
 	if is_instance_valid(player):
 		bars.VITALITY.value = 100.0 * player.current_health / maxi(1,player.max_health)
 		bars.HUNGER.value = 100.0 * player.current_hunger / maxi(1,player.max_hunger)
+		status_values.VITALITY.text = str(ceili(player.current_health))
+		status_values.HUNGER.text = str(ceili(player.current_hunger))
+		# A low meter's icon beats: faster as it empties.
+		_pulse += delta
+		for name in ["VITALITY","HUNGER"]:
+			var low: bool = bars[name].value < (30.0 if name == "VITALITY" else 20.0)
+			var beat := 0.5 + 0.5 * sin(_pulse * (9.0 if name == "VITALITY" else 5.0))
+			status_icons[name].modulate = Color(1.0 + 0.5 * beat, 1.0 + 0.2 * beat, 1.0 + 0.2 * beat) if low else Color.WHITE
+			status_values[name].add_theme_color_override("font_color",UI.EMBER if low else PAPER)
+		var bleeding: bool = player.get("bleed") != null and player.bleed.active()
+		_bleed_box.visible = bleeding
+		if bleeding: bleed_label.text = "BLEEDING  %ds" % ceili(player.bleed.time_left)
 	if _last_selected != InventoryManager.selected_slot_index:
 		_last_selected = InventoryManager.selected_slot_index
 		update_inventory_display()
 	_toast_time = maxf(0,_toast_time-delta)
-	toast.modulate.a = minf(1,_toast_time)
+	_toast_box.modulate.a = minf(1,_toast_time)
+	_toast_box.visible = _toast_time > 0 and toast.text != ""
 	_roster_tick -= delta
 	if roster_panel.visible and _roster_tick <= 0 and not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 		_roster_tick = 1.0
@@ -371,19 +426,107 @@ func close_panels() -> void:
 	_command_target = null
 	DragController.end_drag()
 
+func show_banner(title: String, text: String, icon: Texture2D = null) -> void:
+	_banners.append([title, text, icon])
+	if not is_instance_valid(_banner): _next_banner()
+
+func _next_banner() -> void:
+	if _banners.is_empty(): return
+	var entry: Array = _banners.pop_front()
+	# Below the vitals plate, dropping a few pixels into place as it fades in.
+	var plate := _panel(root,Vector2(100,42),Vector2(280,44))
+	plate.modulate.a = 0.0
+	plate.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	plate.z_index = 10
+	_banner = plate
+	if entry[2] is Texture2D:
+		var face := TextureRect.new()
+		face.texture = entry[2]
+		face.position = Vector2(8,6)
+		face.size = Vector2(32,32)
+		face.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		face.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		plate.add_child(face)
+	var title := _label(plate,str(entry[0]),Vector2(44,4),11,GOLD)
+	title.size.x = 228
+	var words := _label(plate,str(entry[1]),Vector2(45,21),8,PAPER)
+	words.size = Vector2(228,20)
+	words.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	AudioManager.play_sfx("satchel_open")
+	var tween := plate.create_tween()
+	tween.tween_property(plate,"position:y",52.0,0.35).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tween.parallel().tween_property(plate,"modulate:a",1.0,0.25)
+	tween.tween_interval(5.0)
+	tween.tween_property(plate,"modulate:a",0.0,0.6)
+	tween.tween_callback(func():
+		plate.queue_free()
+		_banner = null
+		_next_banner())
+
 func show_toast(text: String) -> void:
-	if toast: toast.text = text
+	if toast:
+		toast.text = text
+		# Hug the words, right-aligned under the region name; long news wraps.
+		toast.autowrap_mode = TextServer.AUTOWRAP_OFF
+		toast.custom_minimum_size = Vector2.ZERO
+		_toast_box.reset_size()
+		if _toast_box.size.x > 300:
+			toast.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			toast.custom_minimum_size.x = 290
+			_toast_box.reset_size()
+		_toast_box.position = Vector2(474-_toast_box.size.x,22)
 	_toast_time = 3.0
 
 func set_context(text: String) -> void:
 	if context_label: context_label.text = text
+	if text == _hint_text or _hint_row == null: return
+	_hint_text = text
+	_clear_children(_hint_row)
+	for part in hint_parts(text):
+		if _hint_row.get_child_count() > 0:
+			var gap := Control.new()
+			gap.custom_minimum_size.x = 5
+			gap.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			_hint_row.add_child(gap)
+		if part[0] != "":
+			var cap := Label.new()
+			cap.text = part[0]
+			cap.add_theme_stylebox_override("normal",UI.box("chip",Vector4(3,1,3,2)))
+			cap.add_theme_color_override("font_color",Color("f4e4b9"))
+			_hint_row.add_child(cap)
+		var action := Label.new()
+		action.text = part[1]
+		_hint_row.add_child(action)
+	_hint.visible = text != ""
+	_hint.reset_size()
+	_hint.position = Vector2(roundi(240-_hint.size.x/2.0),216)
+
+## Split a context line into [key, action] pairs: "E  Ride   Hold E  Commands"
+## (two spaces inside a pair, three between pairs, or " · ") and world hints
+## "AXE · Skywood tree" (a key in capitals first). Plain sentences stay whole.
+static func hint_parts(text: String) -> Array:
+	if text == "": return []
+	if text.contains(" · ") and not text.contains("  "):
+		var pieces := text.split(" · ",false,1)
+		if pieces.size() == 2 and pieces[0] == pieces[0].to_upper(): return [[pieces[0],pieces[1]]]
+		return [["",text]]
+	var parts: Array = []
+	for segment in text.split("   ",false):
+		for piece in segment.split(" · ",false):
+			var pair := piece.strip_edges().split("  ",false,1)
+			if pair.size() == 2: parts.append([pair[0].strip_edges(),pair[1].strip_edges()])
+			elif pair.size() == 1: parts.append(["",pair[0].strip_edges()])
+	return parts
 
 func update_inventory_display() -> void:
 	var indices := InventoryManager.get_hotbar_indices()
 	for i in hotbar.size():
 		hotbar[i].slot_index = indices[i] if i < indices.size() else -1
 		hotbar[i].visible = i < indices.size()
-	if _hotbar_page: _hotbar_page.text = "Caps  Pouch %d/5" % (InventoryManager.hotbar_start/8+1)
+	var pouch: int = InventoryManager.hotbar_start/8
+	for i in _pouch_pips.size():
+		_pouch_pips[i].texture = load(UI.ART + ("pip_lit.png" if i == pouch else "pip.png"))
+	if _hotbar_page: _hotbar_page.tooltip_text = "Caps Lock: next pouch of eight (pouch %d of 5)" % (pouch+1)
 	for slot in slots + hotbar + chest_slots:
 		var source = slot._get_source()
 		if not is_instance_valid(source) or slot.slot_index < 0 or slot.slot_index >= source.inventory.size(): continue
@@ -391,8 +534,7 @@ func update_inventory_display() -> void:
 		slot.tooltip_text=preload("res://UI/ItemDetails.gd").text(data.item) if data.item else ""
 		slot.get_node("Icon").texture = data.item.icon if data.item else null
 		slot.get_node("Quantity").text = str(data.quantity) if data.quantity > 1 else ""
-		var selected: bool = slot in hotbar and slot.slot_index == InventoryManager.selected_slot_index
-		slot.add_theme_stylebox_override("panel",_style(Color("365448") if selected else DARK,GOLD if selected else EDGE))
+		slot.add_theme_stylebox_override("panel",slot_style(slot))
 	if recipe_list and is_open(): _refresh_recipes()
 	if equipment_panel and equipment_panel.visible: _refresh_equipment()
 
@@ -410,29 +552,39 @@ func _refresh_recipes() -> void:
 		if craftable_only and not available: continue
 		var row := Panel.new()
 		row.custom_minimum_size = Vector2(221,46)
-		row.add_theme_stylebox_override("panel",_style(DARK,Color("4d7563") if available else Color("334a42")))
+		row.add_theme_stylebox_override("panel",UI.box("card" if available else "card_dim"))
 		recipe_list.add_child(row)
+		var socket := Panel.new()
+		socket.position = Vector2(4,5)
+		socket.size = Vector2(26,26)
+		socket.add_theme_stylebox_override("panel",UI.box("slot"))
+		socket.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		row.add_child(socket)
 		var icon := TextureRect.new()
-		icon.position = Vector2(4,6)
+		icon.position = Vector2(5,5)
 		icon.size = Vector2(24,24)
 		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		icon.texture = CraftingManager.get_item_icon(recipe.item_id)
 		icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		row.add_child(icon)
+		icon.position = Vector2(1,1)
+		socket.add_child(icon)
 		var quantity: int = recipe.get("quantity",1)
-		var recipe_name := _label(row,recipe.name + (" x%d" % quantity if quantity > 1 else ""),Vector2(32,3),8,PAPER if available else EDGE)
-		recipe_name.size.x = 185
+		var recipe_name := _label(row,recipe.name + (" x%d" % quantity if quantity > 1 else ""),Vector2(35,5),8,PAPER if available else UI.DIM)
+		recipe_name.size.x = 130
 		recipe_name.clip_text = true
 		var ingredients: Array[String] = []
 		for id in recipe.ingredients:
 			ingredients.append("%s %d/%d" % [CraftingManager.get_ingredient_name(id).replace("Wood ","").replace("Plant ",""),InventoryManager.get_item_count(id),recipe.ingredients[id]])
-		var need := _label(row,", ".join(ingredients),Vector2(32,16),6,MINT if available else Color("c69a82"))
-		need.size.x = 176
+		var need := _label(row,", ".join(ingredients),Vector2(35,16),8,MINT if available else UI.EMBER)
+		need.size = Vector2(132,24)
+		need.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		need.clip_text = true
 		var station: String = recipe.get("station","")
-		_label(row,"BY HAND" if station == "" else station.to_upper(),Vector2(32,31),7,GOLD)
-		var craft := _button(row,"Craft",Vector2(175,28),Vector2(40,16),func():
+		var where := _label(row,"BY HAND" if station == "" else station.to_upper(),Vector2(166,5),8,GOLD)
+		where.size.x = 50
+		where.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		var craft := _button(row,"Craft",Vector2(172,26),Vector2(44,16),func():
 			if CraftingManager.try_craft(recipe.item_id): show_toast("Crafted %s x%d" % [recipe.name,quantity])
 			else: show_toast(CraftingManager.last_failure))
 		craft.disabled = not available
@@ -616,7 +768,8 @@ func _refresh_equipment() -> void:
 		b.icon = item.icon if item else null
 		b.text = b.get_meta("caption")
 		b.tooltip_text = preload("res://UI/ItemDetails.gd").text(item) if item else "Empty " + str(b.get_meta("caption"))
-		b.add_theme_stylebox_override("normal",_style(Color("345749") if target == _equipment_target else DARK,GOLD if target == _equipment_target else EDGE))
+		if target == _equipment_target: b.add_theme_stylebox_override("normal",UI.box("button_on",Vector4(4,3,4,2)))
+		else: b.remove_theme_stylebox_override("normal")
 	equipment_summary.text = player.get_equipment_summary().replace(" | ","\n") if player.has_method("get_equipment_summary") else "Armor protects you\nin the wilds."
 	equipment_hint.text = "Choose " + str(armor_buttons[_equipment_target].get_meta("caption")).to_lower()
 	_clear_children(equipment_list)
@@ -632,7 +785,6 @@ func _refresh_equipment() -> void:
 		b.icon = item.icon
 		b.expand_icon = true
 		b.add_theme_constant_override("icon_max_width",19)
-		b.add_theme_font_size_override("font_size",8)
 		b.custom_minimum_size = Vector2(239,24)
 		b.tooltip_text = preload("res://UI/ItemDetails.gd").text(item)
 		b.pressed.connect(func():
@@ -645,7 +797,6 @@ func _refresh_equipment() -> void:
 	if count == 0:
 		var empty := Label.new()
 		empty.text = "No matching gear in your satchel.\nCraft equipment at a workbench."
-		empty.add_theme_font_size_override("font_size",8)
 		empty.add_theme_color_override("font_color",MINT)
 		equipment_list.add_child(empty)
 
@@ -690,13 +841,12 @@ func _refresh_roster() -> void:
 	if companions.is_empty():
 		var label := Label.new()
 		label.text = "No bonds yet.\nOffer berries to herbivores.\nRestrain predators before offering meat."
-		label.add_theme_font_size_override("font_size",9)
 		roster_list.add_child(label)
 		return
 	for creature in companions:
 		var row := Panel.new()
 		row.custom_minimum_size = Vector2(335,47)
-		row.add_theme_stylebox_override("panel",_style(DARK,EDGE))
+		row.add_theme_stylebox_override("panel",UI.box("card"))
 		roster_list.add_child(row)
 		var image := TextureRect.new()
 		image.position = Vector2(3,3)
@@ -707,21 +857,21 @@ func _refresh_roster() -> void:
 		if creature._sprite and creature._sprite.sprite_frames:
 			image.texture = creature._sprite.sprite_frames.get_frame_texture("idle_side",0)
 		row.add_child(image)
-		_label(row,creature.stats.name,Vector2(50,3),9,GOLD)
+		_label(row,creature.stats.name,Vector2(50,4),8,GOLD)
 		var stance: String = creature.get("stance") if creature.get("stance") != null else "neutral"
 		var distance := int(creature.global_position.distance_to(player.global_position)/16.0) if player else 0
 		var status_text: String=creature.get_status_summary() if creature.has_method("get_status_summary") else "%s / %s / %d tiles away" % [creature.order.capitalize(),stance.capitalize(),distance]
-		var status_label:=_label(row,status_text,Vector2(50,17),7,MINT)
+		var status_label:=_label(row,status_text,Vector2(50,16),8,MINT)
 		status_label.size.x=270
 		status_label.clip_text=true
 		row.tooltip_text=status_text
 		var meter := METER.new()
-		meter.position = Vector2(50,33)
-		meter.size = Vector2(110,7)
+		meter.position = Vector2(50,31)
+		meter.size = Vector2(110,9)
 		meter.tint = Color("76c4a5")
 		meter.value = 100.0*creature.health/maxi(1,creature.stats.hp)
 		row.add_child(meter)
-		_label(row,"%d / %d" % [creature.health,creature.stats.hp],Vector2(166,29),7)
+		_label(row,"%d / %d" % [creature.health,creature.stats.hp],Vector2(165,31),8)
 		var target: Node = creature
 		_button(row,"Locate",Vector2(222,25),Vector2(48,18),func():_locate_companion(target))
 		_button(row,"Orders",Vector2(274,25),Vector2(52,18),func():
@@ -755,13 +905,13 @@ func show_companion_commands(creature: Node = null) -> void:
 		var order_name: String = orders[i]
 		var b := _button(command_panel,order_name.capitalize(),Vector2(13+(i%columns)*(button_width+5),48+(i/columns)*26),Vector2(button_width,23),func():_apply_companion_command("order",order_name))
 		b.tooltip_text = tips[i]
-		if creature != null and creature.order == order_name: b.add_theme_stylebox_override("normal",_style(Color("36594c"),GOLD))
+		if creature != null and creature.order == order_name: b.add_theme_stylebox_override("normal",UI.box("button_on",Vector4(5,3,5,2)))
 	_label(command_panel,"Temperament",Vector2(13,104),9,MINT)
 	for i in 3:
 		var stance_name: String = ["passive","neutral","aggressive"][i]
 		var b := _button(command_panel,stance_name.capitalize(),Vector2(13+i*86,122),Vector2(81,22),func():_apply_companion_command("stance",stance_name))
 		b.tooltip_text = ["Never attack. Use this to withdraw safely.","Defend yourself and your keeper when attacked.","Seek nearby hostile wildlife."][i]
-		if creature != null and creature.get("stance") == stance_name: b.add_theme_stylebox_override("normal",_style(Color("36594c"),GOLD))
+		if creature != null and creature.get("stance") == stance_name: b.add_theme_stylebox_override("normal",UI.box("button_on",Vector4(5,3,5,2)))
 	if creature:
 		var row_y := 149
 		if worker:

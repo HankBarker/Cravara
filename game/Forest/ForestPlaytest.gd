@@ -3,6 +3,13 @@ extends Node2D
 const SAVE_FILE := "user://skyfang_forest_v1.json"
 const PLAYER = preload("res://Player/player.tscn")
 const FOREST_PLAYER = preload("res://Forest/ForestPlayer.gd")
+const Lore = preload("res://Forest/world/Lore.gd")
+## The interface kit (fonts, plaques, palette) every overlay is drawn with.
+const UI = preload("res://UI/SkyfangUI.gd")
+## The folk: the guide, the trader, the warden; their houses and their words.
+const FOLK = preload("res://Forest/folk/FolkManager.gd")
+const TALK = preload("res://UI/FolkDialogue.gd")
+const HOUSES = preload("res://UI/FolkHousesPanel.gd")
 var world: Node2D
 var player: CharacterBody2D
 var hud: CanvasLayer
@@ -29,6 +36,8 @@ var _has_spawn_bed := false
 var fishing: Node2D
 var gardening: Node2D
 var bow: Node2D
+var folk: Node
+var talk: CanvasLayer
 var _dodge_guard := 0.0
 
 func _enter_tree():
@@ -80,6 +89,13 @@ func _ready():
 	add_child(bow)
 	bow.setup(self,player)
 	bow.notice.connect(_toast)
+	folk = FOLK.new()
+	add_child(folk)
+	folk.setup(self)
+	talk = TALK.new()
+	add_child(talk)
+	talk.closed.connect(func():
+		for person in get_tree().get_nodes_in_group("folk"): person.talking = false)
 	_overlay = CanvasLayer.new()
 	_overlay.layer = 30
 	add_child(_overlay)
@@ -101,8 +117,11 @@ func _ready():
 		else:
 			_spawn_wildlife()
 			_toast("A new beginning. Press J for your field journal.")
+		folk.begin_journey()
+		if _folk_playtest(): _set_up_folk_playtest()
 	_ready_to_save = true
 	AudioManager.play_music("res://Forest/audio/forest-plains.mp3")
+	world.cache_opened.connect(_on_cache_opened)
 	SignalBus.item_crafted.connect(_on_crafted)
 	SignalBus.creature_tamed.connect(_on_tamed)
 	SignalBus.player_died.connect(_on_player_died)
@@ -164,6 +183,33 @@ func _dino_playtest() -> bool:
 	var args := OS.get_cmdline_user_args()
 	return "--dino-playtest" in args and "--no-save-playtest" in args
 
+## --folk-playtest (no-save runs only): the folk's arrivals within reach. An
+## ancient cache beside the camp (open it and the trader comes), two more
+## dodos close by (tame two and the warden comes), and the makings of two
+## stone houses, with coins and finds to trade.
+func _folk_playtest() -> bool:
+	var args := OS.get_cmdline_user_args()
+	return "--folk-playtest" in args and "--no-save-playtest" in args
+
+func _set_up_folk_playtest():
+	var home: Vector2i = world.to_cell(player.global_position)
+	var spots: Array = []
+	for r in range(3, 7):
+		for y in range(-r, r + 1):
+			for x in range(-r, r + 1):
+				var c: Vector2i = home + Vector2i(x, y)
+				if maxi(absi(x), absi(y)) == r and not world.water.has(c): spots.append(c)
+	var cache_at: Vector2i = world._find_spot("cache", spots)
+	if cache_at != Vector2i(9999, 9999): world._spawn_prop(cache_at, "cache")
+	for offset in [Vector2(-40, -44), Vector2(-70, -30)]:
+		_spawn_creature("dodo", world.get_spawnable_position(player.global_position + offset))
+	for entry in [["stone_wall", 40], ["stone_door", 2], ["stone_floor", 24], ["slate_roof", 24], ["hide_bed", 2], ["ancient_coin", 20], ["fossil_bone", 2], ["raptor_fang", 3], ["berry", 8]]:
+		var kit_item = ItemDB.make(entry[0])
+		if kit_item: InventoryManager.add_item(kit_item, entry[1])
+	InventoryManager.inventory_changed.emit()
+	_toast("Folk playtest: open the cache by camp and the trader comes; tame two dodos and the warden comes. H: your houses.")
+	print("FOLK_PLAYTEST: cache at %s, %d dodos near" % [cache_at, get_tree().get_nodes_in_group("forest_creatures").filter(func(c): return c.species == "dodo" and c.global_position.distance_to(player.global_position) < 160).size()])
+
 func _spawn_dino_park():
 	var home: Vector2 = player.global_position
 	for entry in [["stego", Vector2(-44, 26)], ["trike", Vector2(44, 26)]]:
@@ -204,7 +250,7 @@ func _spawn_creature(species: String, pos: Vector2, saved: Dictionary = {}):
 func _process(delta):
 	if not is_instance_valid(player):
 		return
-	var menu_open: bool = get_tree().paused or hud.is_open() or _overlay_kind != "" or is_instance_valid(DragController.dragged_slot)
+	var menu_open: bool = get_tree().paused or hud.is_open() or _overlay_kind != "" or talk.is_open() or is_instance_valid(DragController.dragged_slot)
 	if fishing.is_active() and (menu_open or player.respawning): fishing.cancel()
 	player.controls_locked = player.respawning or menu_open or fishing.is_active()
 	# Space reels the line: a press landing as the catch resolves is not a dodge.
@@ -258,7 +304,12 @@ func _update_context():
 		hud.set_context("Aim at silver water ripples   Right-click  Cast")
 		return
 	if is_instance_valid(player.mounted_creature):
-		hud.set_context("E  Dismount   Hold E  Commands   Click  Attack   F  Feed")
+		hud.set_context("E  Dismount   Hold E  Commands   Click  Attack   F  Feed" if player.mounted_creature.species != "trike" else "E  Dismount   Click  Gore   Hold click  Charge a ram   F  Feed")
+		return
+	var person = _nearest_folk()
+	if person and _folk_first(person):
+		var who: String = str(folk.Folk.info(person.id).get("name", ""))
+		hud.set_context(("E  Free " if person.caged else "E  Talk to ") + who)
 		return
 	var creature = _nearest_creature()
 	var prop = _interaction_prop()
@@ -320,10 +371,22 @@ func _unhandled_input(event):
 					_close_overlay()
 				elif _overlay_kind == "":
 					_show_map()
+			KEY_H:
+				if _overlay_kind == "houses":
+					_close_overlay()
+				elif _overlay_kind == "" and not talk.is_open():
+					HOUSES.open(self)
 			KEY_F5:
 				_toast("Journey saved." if save_journey() else "Could not save the journey.")
 			KEY_E:
-				if not player.controls_locked:
+				if _overlay_kind == "lore":
+					_close_overlay()
+					get_viewport().set_input_as_handled()
+					return
+				var person = _nearest_folk() if not player.controls_locked and not is_instance_valid(player.mounted_creature) else null
+				if person and _folk_first(person):
+					_talk_to(person)
+				elif not player.controls_locked:
 					var companion = player.mounted_creature if is_instance_valid(player.mounted_creature) else _nearest_creature()
 					if companion and companion.tamed:
 						_command_target = companion
@@ -339,14 +402,53 @@ func _unhandled_input(event):
 			KEY_F:
 				if not player.controls_locked and is_instance_valid(player.mounted_creature):
 					_toast("A berry restores your companion's strength." if player.mounted_creature.feed_mount() else "Feed needs berries, missing health, and a short recovery between bites.")
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		if not player.controls_locked and is_instance_valid(player.mounted_creature) and not bow.selected():
-			player.mounted_creature.mount_attack(get_global_mouse_position())
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+		# Mounted strikes: a click, or for the trike a hold that charges a ram.
+		if is_instance_valid(player.mounted_creature) and not bow.selected():
+			if not event.pressed:
+				player.mounted_creature.mount_release(get_global_mouse_position())
+			elif not player.controls_locked:
+				player.mounted_creature.mount_press(get_global_mouse_position())
 			get_viewport().set_input_as_handled()
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_RIGHT:
 		if not player.controls_locked and not hud.is_open():
 			_use_selected()
 			get_viewport().set_input_as_handled()
+
+## The folk member within reach of the keeper (people come before beasts).
+func _nearest_folk():
+	var nearest = null
+	var distance := 40.0
+	for person in get_tree().get_nodes_in_group("folk"):
+		if not is_instance_valid(person) or person.is_queued_for_deletion(): continue
+		var d: float = person.global_position.distance_to(player.global_position + Vector2(0, 8))
+		if d < distance:
+			nearest = person
+			distance = d
+	return nearest
+
+## E goes to whichever is nearest: a person, a companion or a camp object;
+## a camp object the keeper deliberately aims at comes first (as it does over
+## wildlife).
+func _folk_first(person) -> bool:
+	var feet: Vector2 = player.global_position + Vector2(0, 8)
+	var d: float = person.global_position.distance_to(feet)
+	var target := get_global_mouse_position()
+	if target.distance_to(player.global_position) <= 56:
+		var aimed = world.props.get(world._target_cell(target))
+		if is_instance_valid(aimed) and (aimed.kind in _INTERACTIVE or aimed.kind in world.Prop.LANDMARKS) and _can_reach_prop(aimed): return false
+	var creature = _nearest_creature()
+	if creature and creature.global_position.distance_to(feet) < d: return false
+	var prop = _interaction_prop()
+	if prop and _prop_distance(prop) < d: return false
+	return true
+
+func _talk_to(person) -> void:
+	if not is_instance_valid(person): return
+	person.face_toward(player.global_position)
+	person.talking = true
+	player.play_gesture("interact", person.global_position)
+	talk.open(person.id, folk)
 
 func _nearest_creature():
 	var nearest = null
@@ -409,11 +511,14 @@ func _prop_distance(prop: Node2D) -> float:
 	var nearest: Vector2 = feet.clamp(prop.global_position + rect.position, prop.global_position + rect.end)
 	return feet.distance_to(nearest)
 
+## Props that answer E from nearby (landmarks too: E reads their carving).
+const _INTERACTIVE := ["workbench","campfire","chest","wood_door","stone_door","hide_bed","shrine","tent","cache","relic","roots"]
+
 func _interaction_prop():
 	var nearest = null
 	var distance := 42.0
 	for prop in world.props.values():
-		if not is_instance_valid(prop) or prop.kind not in ["workbench","campfire","chest","wood_door","hide_bed","shrine","tent"]: continue
+		if not is_instance_valid(prop) or prop.kind not in _INTERACTIVE and prop.kind not in world.Prop.LANDMARKS: continue
 		var d := _prop_distance(prop)
 		if d >= distance: continue
 		if not _can_reach_prop(prop): continue
@@ -483,7 +588,7 @@ func _use_selected():
 		_toast("Move closer. Build and use tools within three tiles.")
 		return
 	var ray := PhysicsRayQueryParameters2D.create(player.global_position, target, 16)
-	if item.id == "wood_floor":
+	if item.id in world.Prop.FLOORS:
 		var target_prop = world.props.get(world.to_cell(target))
 		if is_instance_valid(target_prop):
 			var excluded: Array[RID] = []
@@ -493,7 +598,7 @@ func _use_selected():
 			ray.exclude = excluded
 	# Roofing is an overhead decorative layer. Ground-level walls must not
 	# reject its own tile or a nearby roof tile on the far side of a wall.
-	if item.id != "thatch_roof" and not get_world_2d().direct_space_state.intersect_ray(ray).is_empty():
+	if item.id not in world.Prop.ROOFS and not get_world_2d().direct_space_state.intersect_ray(ray).is_empty():
 		_toast("A wall or obstacle blocks the way.")
 		return
 	world.last_feedback = ""
@@ -526,7 +631,7 @@ func _use_selected():
 
 func _garden_placement_cells(target: Vector2, item_id: String) -> Array[Vector2i]:
 	var result: Array[Vector2i]=[]
-	if item_id=="thatch_roof": return result
+	if item_id in world.Prop.ROOFS: return result
 	var template=preload("res://Forest/ForestProp.gd").new()
 	template.kind=item_id
 	var rect: Rect2=template.get_collision_rect()
@@ -593,6 +698,7 @@ func _make_overlay(title: String, kind: String) -> VBoxContainer:
 	style.set_border_width_all(1)
 	style.set_content_margin_all(10)
 	_panel.add_theme_stylebox_override("panel", style)
+	_panel.theme = UI.theme()
 	_overlay.add_child(_panel)
 	var crystal_frame = load("res://UI/CrystalFrame.gd").new()
 	crystal_frame.position = _panel.position
@@ -611,20 +717,21 @@ func _make_overlay(title: String, kind: String) -> VBoxContainer:
 	column.add_child(heading)
 	return column
 
-func _overlay_text(column: VBoxContainer, text: String, font_size := 10):
+## Body text: the kit's crisp Tiny5 at its one size (font_size is kept for
+## callers; every size draws at 8).
+func _overlay_text(column: VBoxContainer, text: String, _font_size := 10):
 	var label := Label.new()
 	label.text = text
-	label.add_theme_font_size_override("font_size", font_size)
 	label.add_theme_color_override("font_color", Color("c7d8c9"))
 	column.add_child(label)
 
-func _overlay_button(column: VBoxContainer, text: String, callback: Callable):
+func _overlay_button(column: Container, text: String, callback: Callable) -> Button:
 	var button := Button.new()
 	button.text = text
-	button.custom_minimum_size.y = 23
-	button.add_theme_font_size_override("font_size", 10)
+	button.custom_minimum_size.y = 19
 	button.pressed.connect(callback)
 	column.add_child(button)
+	return button
 
 func _close_overlay():
 	if is_instance_valid(_overlay):
@@ -639,6 +746,7 @@ func _show_pause():
 	_overlay_button(column, "RETURN TO THE WILDS", _close_overlay)
 	_overlay_button(column, "SAVE JOURNEY", func(): _toast("Journey saved." if save_journey() else "Save failed."))
 	_overlay_button(column, "FIELD JOURNAL", _show_journal)
+	_overlay_button(column, "FOLK & HOUSES", func(): HOUSES.open(self))
 	_overlay_button(column, "SETTINGS", _show_settings)
 	_overlay_text(column, "Music volume", 9)
 	var slider := HSlider.new()
@@ -662,8 +770,67 @@ func _show_journal():
 	for entry in [["gather_log", "Gather timber from a tree"], ["gather_stone", "Mine stone with your pickaxe"], ["craft", "Craft something in your satchel"], ["build", "Place your first camp structure"], ["water", "Carry water in a bucket"], ["tame", "Earn a dinosaur's trust"]]:
 		_overlay_text(column, ("[+] " if _milestones.get(entry[0], false) else "[  ] ") + entry[1], 8)
 	_overlay_text(column, "E: offer berries to herbivores. Net predators, then feed meat.\nWorkbenches unlock tools. Campfires unlock cooking.", 8)
-	_overlay_button(column, "GARDENS, BOWS & COMPANION WORK", _show_field_skills)
+	# The journal's other pages side by side, so it fits the 270px screen.
+	var pages := HBoxContainer.new()
+	pages.add_theme_constant_override("separation", 4)
+	column.add_child(pages)
+	_overlay_button(pages, "GARDENS & COMPANIONS", _show_field_skills)
+	_overlay_button(pages, "LORE OF THE WILDS  %d/%d" % [_lore_found().size(), Lore.ENTRIES.size()], _show_lore_list)
+	for page in pages.get_children():
+		page.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_overlay_button(column, "CLOSE JOURNAL  [J / ESC]", _close_overlay)
+
+## A carving of the old peoples, read with E. The first read goes into the
+## field journal (milestone "lore_<id>").
+func show_lore(id: String, from_journal := false) -> void:
+	var first: bool = not _milestones.get("lore_" + id, false)
+	_milestones["lore_" + id] = true
+	var column := _make_overlay(Lore.title(id).to_upper(), "lore")
+	var text := Label.new()
+	text.text = Lore.text(id)
+	text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	text.custom_minimum_size = Vector2(300, 0)
+	text.add_theme_color_override("font_color", Color("c7d8c9"))
+	column.add_child(text)
+	if from_journal:
+		_overlay_button(column, "BACK TO THE LORE", _show_lore_list)
+	_overlay_button(column, "CLOSE  [E / ESC]", _close_overlay)
+	if first and not from_journal:
+		_toast("Recorded in your field journal.")
+
+func _lore_found() -> Array:
+	var found: Array = []
+	for id in Lore.ENTRIES:
+		if _milestones.get("lore_" + id, false): found.append(id)
+	return found
+
+func _show_lore_list():
+	var column := _make_overlay("LORE OF THE WILDS", "journal")
+	column.add_theme_constant_override("separation", 2)
+	var found := _lore_found()
+	if found.size() == Lore.ENTRIES.size():
+		_overlay_text(column, "All %d carvings read. The old peoples' story is yours." % found.size(), 8)
+	else:
+		_overlay_text(column, "%d of %d carvings read. Ruins and idols hold the rest." % [found.size(), Lore.ENTRIES.size()], 8)
+	# Two to a row, so all eight carvings fit the 270px screen.
+	var grid := GridContainer.new()
+	grid.columns = 2
+	grid.add_theme_constant_override("h_separation", 4)
+	grid.add_theme_constant_override("v_separation", 2)
+	column.add_child(grid)
+	for id in found:
+		var entry := _overlay_button(grid, Lore.title(id), func(): show_lore(id, true))
+		entry.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_overlay_button(column, "BACK TO FIRST CAMP", _show_journal)
+
+## An ancient cache opened: note it, and whether something a trader would
+## want turned up (the merchant looks for that).
+func _on_cache_opened(_cell: Vector2i, loot: Dictionary) -> void:
+	_milestones["cache"] = true
+	if loot.has("ancient_coin") or loot.has("sky_idol"):
+		if not _milestones.get("valuable", false):
+			_toast("Ancient coins. A trader would want these.")
+		_milestones["valuable"] = true
 
 func _show_field_skills():
 	var column:=_make_overlay("LIVING WITH THE FOREST","journal")
@@ -679,7 +846,7 @@ func _show_map():
 	_map.player = player
 	_map.custom_minimum_size = Vector2(288, 138)
 	column.add_child(_map)
-	_overlay_text(column, "Gold: you   Cyan: water   Pale: wildlife\nNorth-east: raptors   Far south-east: the shard-crowned Rex", 8)
+	_overlay_text(column, "Yellow: you   Gold: ruins   Violet: folk   Cyan: water\nNorth-east: raptors   Far south-east: the shard-crowned Rex", 8)
 	_overlay_button(column, "RETURN  [M / ESC]", _close_overlay)
 
 func save_journey(path: String = SAVE_FILE) -> bool:
@@ -711,7 +878,8 @@ func save_journey(path: String = SAVE_FILE) -> bool:
 		"gardening": gardening.serialize(),
 		"spawn_bed": [_spawn_bed_cell.x,_spawn_bed_cell.y] if _has_spawn_bed else [],
 		"equipment": {},
-		"time": TimeCycle.time_of_day, "milestones": _milestones, "seconds": _session_seconds
+		"time": TimeCycle.time_of_day, "milestones": _milestones, "seconds": _session_seconds,
+		"folk": folk.serialize()
 	}
 	for slot in player.equipped_armor:
 		var item = player.equipped_armor[slot]
@@ -781,6 +949,7 @@ func _load_journey(path: String = SAVE_FILE) -> bool:
 	player.current_stamina = player.max_stamina # Legacy saves may contain exhausted energy.
 	TimeCycle.time_of_day = float(parsed.get("time", 0.43))
 	_milestones = parsed.get("milestones", {})
+	folk.restore(parsed.get("folk", null))
 	_session_seconds = float(parsed.get("seconds", 0))
 	for creature in get_tree().get_nodes_in_group("forest_creatures"):
 		creature.remove_from_group("forest_creatures")

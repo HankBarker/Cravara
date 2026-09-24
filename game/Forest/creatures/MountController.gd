@@ -22,6 +22,12 @@ var _strike_cooldown := 0.0
 var _strike_aim := Vector2.RIGHT
 var _strike_hit := false
 var _heal_cooldown := 0.0
+## The strike button: -1 when up, else seconds it has been held. A trike held
+## past HOLD_TO_CHARGE winds up a ram instead of goring.
+var _press_time := -1.0
+var _press_aim := Vector2.ZERO
+const HOLD_TO_CHARGE := 0.2
+const RAM_COOLDOWN := 1.6
 
 func _ready():
 	creature = get_parent()
@@ -97,6 +103,7 @@ func update_mounted(delta: float):
 		return
 	_strike_cooldown = maxf(0,_strike_cooldown-delta)
 	_heal_cooldown = maxf(0,_heal_cooldown-delta)
+	_tick_press(delta)
 	var move_velocity: Vector2 = creature.moves.tick(delta)
 	creature._attack_time = creature.moves.remaining()
 	_strike_time = creature._attack_time if creature.moves.mounted else 0.0
@@ -168,6 +175,7 @@ func dismount(force := false) -> bool:
 		destination = creature.global_position - Vector2(0,8)
 	var previous = rider
 	rider = null
+	_press_time = -1.0
 	previous.set("mounted_creature",null)
 	previous.animated_sprite.visible = _saved_sprite_visible
 	_strike_time = 0
@@ -225,6 +233,46 @@ func mount_attack(aim_world: Vector2) -> bool:
 	creature._update_animation()
 	AudioManager.play_sfx("swing")
 	return true
+
+## The strike button went down. The stego sweeps at once; the trike waits to
+## see whether this is a click (gore on release) or a hold (charge a ram).
+func mount_press(aim_world: Vector2) -> bool:
+	if not is_mounted() or creature.is_dead or rider.controls_locked: return false
+	if creature.moves.find("ram").is_empty(): return mount_attack(aim_world)
+	if _strike_cooldown > 0 or creature.moves.busy(): return false
+	_press_time = 0.0
+	_press_aim = aim_world
+	return true
+
+## The strike button came up: a click gores, a held charge is let go.
+func mount_release(aim_world: Vector2) -> bool:
+	if _press_time < 0.0: return false
+	_press_time = -1.0
+	if not creature.moves.holding: return mount_attack(aim_world)
+	if not creature.moves.release_hold(creature.global_position.direction_to(aim_world)): return false
+	_strike_cooldown = RAM_COOLDOWN
+	creature._attack_time = creature.moves.remaining()
+	_strike_time = creature._attack_time
+	AudioManager.play_sfx("swing")
+	return true
+
+func _tick_press(delta: float) -> void:
+	if _press_time < 0.0: return
+	_press_time += delta
+	var live := DisplayServer.get_name() != "headless"
+	if creature.moves.holding:
+		if live: creature.moves.steer_hold(creature.global_position.direction_to(creature.get_global_mouse_position()))
+	elif _press_time >= HOLD_TO_CHARGE and not creature.moves.busy():
+		var m: Dictionary = creature.moves.find("ram")
+		var aim: Vector2 = creature.global_position.direction_to(_press_aim)
+		if aim == Vector2.ZERO: aim = creature.facing_vector()
+		creature._attack_target = null
+		creature.stop()
+		creature.moves.start(m, null, aim, true)
+		creature._update_animation()
+	# A release that never reached the game (the button came up over a panel).
+	if live and not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+		mount_release(creature.get_global_mouse_position())
 
 func feed_mount() -> bool:
 	if not is_mounted() or creature.is_dead or rider.controls_locked or _heal_cooldown > 0 or creature.health >= int(creature.stats.hp): return false

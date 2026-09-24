@@ -5,8 +5,52 @@ pixel-perfect presentation at 480x270 → 1080p. All APIs are **Godot 4.6**; 3.x
 flagged with `[3.x ONLY]`.
 
 Cravera context: render res 480x270, `canvas_items` stretch, pixel-perfect. UI built **in code**
-(no .tscn-driven layout) inside `InventoryUI.gd` (a `CanvasLayer`), with `SlotUI.gd` slot widgets,
-a custom `DragController` autoload, `TooltipUI.gd`, and a `CraftingManager`-driven recipe list.
+(no .tscn-driven layout). The forest game's interface is `UI/ForestHUD.gd` (a `CanvasLayer`: status
+plate, hotbar, satchel + crafting, camp storage, gear, companions and their orders) with `SlotUI.gd`
+slot widgets, a custom `DragController` autoload and a `CraftingManager`-driven recipe list; the
+session's overlays (journal, pause, lore, map, settings) are built in `Forest/ForestPlaytest.gd`.
+`UI/InventoryUI.gd` + `TooltipUI.gd` are the old playground's UI (only `playground.tscn` uses them).
+
+---
+
+## 0. The Sky-Fang UI kit (what every forest screen uses, 2026-09)
+
+Hank asked for the inventory, health etc. to be "more unique and stylistically closer to what we
+have elsewhere". The answer is one kit, `UI/SkyfangUI.gd` (preload it as `UI`):
+
+- **Type.** `UI.PIXEL` = Tiny5 (OFL, `Forest/fonts/`) for everything read at a glance, `UI.TITLE`
+  = IM Fell English for titles (as on the title screen and the journal). Tiny5 is drawn on an 8px
+  grid, so it is crisp **only at 8 (or 16, 24)**: never give it 6/7/9/10. Its `.import` has
+  `antialiasing=0`, `hinting=0`, `subpixel_positioning=0` (re-import with
+  `godot --headless --path game --import` after touching it). Line height is 9 (+1 theme spacing);
+  it runs ~5px per glyph, wider than the old Alegreya Sans, so check tight buttons.
+- **Theme.** `UI.theme()` (cached) styles Label (paper text, 1px dark shadow), Button/OptionButton/
+  CheckButton (carved-slate plaques: normal, hover with a crystal glint, pressed, `button_on` for
+  held toggles and chosen orders, disabled), LineEdit (recessed field), PopupMenu/TooltipPanel
+  (bronze-banded `tip`), VScrollBar (bronze grip) and HSlider (crystal fill, pip grabber). Set it on
+  a root: `root.theme = UI.theme()` (ForestHUD root, the overlay `_panel`, Fishing/Settings/
+  CharacterCreator roots).
+- **Pieces.** `UI.box(name, content_margins)` gives a StyleBoxTexture nine-patch: `slot`,
+  `slot_hover`, `slot_selected` (crystal ring), `card`/`card_dim` (recipe and companion rows),
+  `field`, `chip` (key cap), `tip`, `shade` (soft dark backing for words over bright ground).
+  `UI.icon("heart"|"meat"|"drop"|"shield"|"crystal")` are 16px Raven icons (same sheet as the
+  items). The art is drawn by `tools/ui/make_ui_art.py` into `UI/art/` (+ `nine.json` margins); edit
+  the script, never the PNGs. Panels stay `UI/CrystalFrame.gd`; meters are `UI/CrystalMeter.gd`
+  (notched crystal in bronze, a tinted "just lost" band that drains, shimmer below 25%).
+- **HUD conventions** (`ForestHUD.gd`): `_label(parent, text, pos, size, tint)` makes titles for
+  size >= 10 (IM Fell) and Tiny5 otherwise; `_backing()` wraps words in `shade`; slots ask
+  `hud.slot_style(slot, hovered)` for their socket (SlotUI's hover calls it). The status plate is
+  icon + meter + number per stat (`bars`, `status_icons`, `status_values`; low meters pulse). The
+  context line is parsed by `ForestHUD.hint_parts()` into key caps: `"E  Ride   Hold E  Commands"`
+  (2 spaces inside a pair, 3 between) or `"AXE · Skywood tree"` (a key in capitals); plain
+  sentences stay whole. `context_label.text` still holds the raw line. Tooltips: `SlotUI`
+  `_make_custom_tooltip` puts the item name (first line) in gold.
+- **Fit.** Everything must fit 480x270: journal, pause, lore list and title guide have
+  `<= 270` checks (integration + ui-pass2 + world-poi suites). Two buttons side by side (an
+  `HBoxContainer`) or a two-column `GridContainer` beat a tall column.
+- **Review.** `res://Tests/UILookCapture.tscn` (rendered) writes every screen to `art/ui-v2/ui-*.png`
+  (HUD, low-health HUD, satchel, tooltip, chest, gear, companions, orders, journal, pause,
+  settings, atelier, fishing, death) and `ui-sheet.png`.
 
 ---
 
@@ -256,7 +300,8 @@ exact integer multiples**; non-integer window sizes (e.g. 1366x768) blur text. M
 - Use a **bitmap/pixel font** (e.g. a `.ttf` pixel font imported with **hinting off** and
   **antialiasing off**, or a true `BitmapFont`/`FontFile` with `subpixel_positioning = Disabled`).
   Set `multichannel_signed_distance_field = false`. This keeps glyphs on the pixel grid.
-- Keep font sizes to values that map to clean multiples (Cravera uses 5/6/7/8 — fine).
+- Keep font sizes to values that map to clean multiples. Cravera's pixel font (Tiny5) is used at
+  8 only (see section 0); vector fonts (IM Fell English titles) take any size.
 
 **NinePatchRect for window/button frames.** Today Cravera draws panels with `StyleBoxFlat` (solid
 fill + 1px border + rounded corners). For pixel-art window chrome, a `NinePatchRect` with a tiny

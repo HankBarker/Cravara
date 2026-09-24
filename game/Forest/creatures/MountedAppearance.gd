@@ -10,7 +10,7 @@ extends RefCounted
 const DinoArt = preload("res://Forest/creatures/DinoArt.gd")
 const Appearance = preload("res://Forest/equipment/Appearance.gd")
 ## Clips a ridden mount plays (idle/walk/run plus its rider-triggered strike).
-const MOUNT_CLIPS := {"stego": ["idle", "walk", "tail_swing", "tail_swing_far", "hurt"], "trike": ["idle", "walk", "run", "gore", "hurt"]}
+const MOUNT_CLIPS := {"stego": ["idle", "walk", "tail_swing", "tail_swing_far", "hurt"], "trike": ["idle", "walk", "run", "windup", "gore", "hurt"]}
 ## Rows added above the creature canvas for the rider's head.
 const TOP := 20
 var _cache: Dictionary = {}

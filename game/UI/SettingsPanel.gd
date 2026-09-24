@@ -24,19 +24,7 @@ func _ready() -> void:
 	var frame := preload("res://UI/CrystalFrame.gd").new()
 	frame.size = panel.size
 	panel.add_child(frame)
-	var theme := Theme.new()
-	theme.default_font = load("res://Forest/fonts/AlegreyaSans.ttf")
-	theme.default_font_size = 10
-	theme.set_color("font_color","Label",Color("e8dfbf"))
-	for state in ["normal","hover","pressed","focus"]:
-		var style := StyleBoxFlat.new()
-		style.bg_color = Color("284c41") if state == "hover" else Color("172f2d")
-		style.border_color = Color("ad986c")
-		style.set_border_width_all(1)
-		style.set_content_margin_all(3)
-		theme.set_stylebox(state,"Button",style)
-		theme.set_stylebox(state,"OptionButton",style)
-	_root.theme = theme
+	_root.theme = preload("res://UI/SkyfangUI.gd").theme()
 	var title := _label("The Keeper's Settings",Vector2(13,5),16)
 	title.add_theme_font_override("font",load("res://Forest/fonts/IMFellEnglish.ttf"))
 	_slider("master","Master volume",34,AudioManager.master_volume,AudioManager.set_master_volume)
@@ -64,7 +52,8 @@ func _label(text: String,pos: Vector2,size: int = 10) -> Label:
 	var label := Label.new()
 	label.text = text
 	label.position = pos
-	label.add_theme_font_size_override("font_size",size)
+	# Titles in the old hand; the rest in the kit's crisp Tiny5 (theme).
+	if size >= 12: preload("res://UI/SkyfangUI.gd").style_title(label,size,Color("eee3c7"))
 	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	panel.add_child(label)
 	return label

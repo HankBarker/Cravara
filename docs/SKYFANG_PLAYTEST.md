@@ -1,5 +1,41 @@
 # Cravera: The Skyfang Wilds
 
+## Ninth pass: the folk, their houses and stone building
+
+The wilds now have people in them, found one at a time, Terraria-style. There is no village.
+
+1. **Orrin, the Wayfinder** stands beside you when a journey begins. Press **E** near him to
+   talk. He tells you what to do next, what your satchel's things can make ("What can I
+   make?"), and the old stories.
+2. **Tamsin, the Trader** comes to the wilds once you open your first ancient cache.
+   **Kaya, the Beast-Warden** comes once two dinosaurs trust you. A banner says where to look,
+   and the map (**M**) marks them in violet. Each world picks where each is found:
+   - in her own hut
+   - stranded at a lean-to camp
+   - caught in an old beast-trap ("Break the trap open")
+   Talk to her there and she's ready to move in.
+3. **Houses.** Someone ready moves into the nearest free house by themselves. A house is walls
+   all round with a door, a roof over every tile, a torch or campfire, a hide bed, and 6–60
+   floor tiles.
+4. **H** opens **Folk & houses** (also in the pause menu). It shows where everyone is and every
+   house you've built, with what an unfinished one still needs. You can move someone into a
+   free house or swap two people's houses. A house that stops being a house (a wall knocked
+   out) is lost, and its owner camps by the fire until it's mended.
+5. **Trade and care.** Tamsin buys fossils, idols, crystal, scales and fangs for ancient coins
+   and sells seeds, nets, arrows, torches and two rare pieces a day. Kaya sells saddles,
+   explains every beast, and tends hurt companions for a coin.
+6. **Stone building** at the workbench: stone walls, stone floors, stone doors and slate roofs.
+   They're sturdier than timber, and a roof opens up only over the house you're standing in.
+7. **E** goes to whatever is nearest: a person, a companion or a camp object. An object you aim
+   at comes first.
+
+To try it quickly, run `tools/playtest_forest.ps1 -FolkPreview` (no save). It puts an ancient cache
+beside the camp and two extra dodos close by, and puts the makings of two stone houses (plus
+coins and finds to trade) in your satchel.
+
+Code: `game/Forest/folk/`, `game/UI/FolkDialogue.gd`, `game/UI/FolkHousesPanel.gd`.
+Look-book: `art/folk/look-*.png`. Design notes: `.claude/skills/cravera-gamedev/references/folk-and-housing.md`.
+
 ## Eighth pass: Keeper v2 hero, six armour sets and game feel
 
 The keeper was rebuilt as **Keeper v2**, a taller (~30 px) PixelLab-drawn hero rendered by a
@@ -111,7 +147,7 @@ Other controls: WASD move, Shift sprint, 1–8 or mouse wheel select tools. Left
 
 ## Scope and honest limits
 
-This is a reviewable vertical slice, not a finished survival game. Creature animations have distinct directional artwork and restrained source-based motion; they still need the detailed limb articulation and animation polish of the older dedicated raptor workflow. Stego and trike riding are available in pass three. Breeding, multiplayer, quest NPCs, farming/hoe systems and additional biomes remain future work.
+This is a reviewable vertical slice, not a finished survival game. Creature animations have distinct directional artwork and restrained source-based motion; they still need the detailed limb articulation and animation polish of the older dedicated raptor workflow. Stego and trike riding are available in pass three. Breeding, multiplayer, quests and additional biomes remain future work.
 
 Water is editable cell-based water with animated ripples and wading, not a pressure/flow simulation. The map is an overview rather than fog-of-war exploration. Creatures use local obstacle steering rather than full long-distance pathfinding. The Rex is a stronger predator rather than a multi-phase boss. Respawn intentionally keeps inventory, and the starting kit is generous to make systems easy to review. Tool actions use weapon-free versions of the original directional body poses, with distinct pickaxe overhead strikes, axe sweeps and dagger thrusts. Contact and recovery timings differ; these remain refinements of the original body animation rather than fully hand-animated new skeletal poses.
 
@@ -123,9 +159,9 @@ Forest save: `user://skyfang_forest_v1.json` under Godot's Cravara user-data fol
 
 - Entry/menu: `game/Forest/MainMenu.tscn` and `MainMenu.gd`
 - Integration: `game/Forest/ForestPlaytest.gd`, `ForestPlayer.gd`
-- World: `game/Forest/ForestWorld.gd`, `ForestProp.gd`, `ForestWater.gd`
+- World: `game/Forest/ForestWorld.gd`, `ForestProp.gd`; ground, water and grass `game/Forest/ground/`; points of interest `game/Forest/world/` (`Loot.gd`, `Lore.gd`)
 - Creatures: `game/Forest/creatures/ForestCreature.gd`, `art/forest-creatures/README.md`
-- Interface: `game/UI/ForestHUD.gd`
+- Interface: `game/UI/ForestHUD.gd`, built from the kit `game/UI/SkyfangUI.gd` (art: `tools/ui/make_ui_art.py`)
 - Inventory and recipes: `game/Player/Scripts/InventoryManager.gd`, `game/Scripts/CraftingManager.gd`
 - Art review and verification logs: `art/forest-playtest/`
 

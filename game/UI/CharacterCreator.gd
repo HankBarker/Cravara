@@ -56,21 +56,7 @@ func _ready():
 	root=Control.new()
 	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(root)
-	var theme:=Theme.new()
-	theme.default_font=preload("res://Forest/fonts/AlegreyaSans.ttf")
-	theme.default_font_size=10
-	theme.set_color("font_color","Label",Color("eee3c7"))
-	theme.set_color("font_color","Button",Color("eee3c7"))
-	for state in ["normal","hover","pressed","focus","disabled"]:
-		var style:=StyleBoxFlat.new()
-		style.bg_color=Color("1c3832") if state=="normal" else Color("42614a")
-		style.border_color=Color("718c6b") if state=="normal" else Color("d9c085")
-		style.set_border_width_all(1)
-		style.set_corner_radius_all(3)
-		style.corner_detail=1
-		style.set_content_margin_all(2)
-		theme.set_stylebox(state,"Button",style)
-	root.theme=theme
+	root.theme=preload("res://UI/SkyfangUI.gd").theme()
 	var shade:=ColorRect.new()
 	shade.color=Color(0.02,0.06,0.055,0.9)
 	shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -178,7 +164,8 @@ func _label(text: String,pos: Vector2,font_size: int) -> Label:
 	var label:=Label.new()
 	label.text=text
 	label.position=pos
-	label.add_theme_font_size_override("font_size",font_size)
+	# Headings in the old hand; the rest in the kit's crisp Tiny5 (theme).
+	if font_size>=12: preload("res://UI/SkyfangUI.gd").style_title(label,font_size,Color("eee3c7"))
 	label.mouse_filter=Control.MOUSE_FILTER_IGNORE
 	root.add_child(label)
 	return label
@@ -187,7 +174,6 @@ func _button(text: String,pos: Vector2,dimensions: Vector2,callback: Callable) -
 	var button:=Button.new()
 	button.text=text
 	button.position=pos
-	button.add_theme_font_size_override("font_size",9)
 	button.pressed.connect(callback)
 	root.add_child(button)
 	button.size=dimensions

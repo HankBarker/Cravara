@@ -39,11 +39,7 @@ func _ready():
 	frame.position=origin
 	frame.size=Vector2(216,222)
 	root.add_child(frame)
-	var theme:=Theme.new()
-	theme.default_font=preload("res://Forest/fonts/AlegreyaSans.ttf")
-	theme.default_font_size=10
-	theme.set_color("font_color","Label",Color("eee3c7"))
-	root.theme=theme
+	root.theme=preload("res://UI/SkyfangUI.gd").theme()
 	title=_label(root,"RIVER FISHING",origin+Vector2(14,8),13)
 	title.add_theme_font_override("font",preload("res://Forest/fonts/IMFellEnglish.ttf"))
 	title.add_theme_color_override("font_color",Color("dcc085"))
@@ -62,7 +58,6 @@ func _ready():
 	close.text="X"
 	close.position=origin+Vector2(184,8)
 	close.size=Vector2(18,17)
-	close.add_theme_font_size_override("font_size",9)
 	for state in ["normal","hover","pressed","focus"]:
 		var style:=_rim()
 		style.set_content_margin_all(0)
@@ -79,7 +74,8 @@ func _label(parent: Control, text: String, pos: Vector2, font_size: int) -> Labe
 	var label:=Label.new()
 	label.text=text
 	label.position=pos
-	label.add_theme_font_size_override("font_size",font_size)
+	# Names in the old hand; instructions in the kit's crisp Tiny5.
+	if font_size>=12: preload("res://UI/SkyfangUI.gd").style_title(label,font_size,Color("eee3c7"))
 	label.mouse_filter=Control.MOUSE_FILTER_IGNORE
 	parent.add_child(label)
 	return label

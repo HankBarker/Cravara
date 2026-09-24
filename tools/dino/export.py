@@ -28,6 +28,12 @@ DST = os.path.join(ROOT, "game", "Forest", "creatures", "art", "v2")
 SPEC = json.load(open(os.path.join(HERE, "clips.json"), encoding="utf-8"))
 VIEWS = ("side", "down", "up")
 GROUND = 6
+# Rows each key's back-view (up) frames drop in the game strips. From behind the
+# tail hangs toward the viewer below the hind feet, and prepare.py stood the
+# lowest pixel (the tail tip) on the ground line, so the feet floated above
+# the creature's shadow. Measured by eye on first/KEY_up.png (feet row vs the
+# ground row), capped so the tail tip stays on the canvas.
+VIEW_DROP = {"up": {"rex": 6, "raptor": 4, "stego": 6, "stego_saddle": 6, "trike": 4, "trike_saddle": 4, "longneck": 4}}
 ATTACKS = {"bite", "chomp", "slash", "pounce", "tail_swing", "tail_swing_far", "stomp", "gore", "peck"}
 
 
@@ -120,6 +126,10 @@ def main():
         os.makedirs(out_dir, exist_ok=True)
         meta = {"key": key, "species": info["species"], "canvas": [w, h], "ground": h - GROUND - 1,
                 "origin": {v: frame_origin(key, v) for v in VIEWS}, "clips": {}}
+        drops = {v: VIEW_DROP.get(v, {}).get(key, 0) for v in VIEWS}
+        for v in VIEWS:
+            # The rider's seat is measured from the origin: it drops with the art.
+            meta["origin"][v][1] += drops[v]
         saddled = key.endswith("_saddle")
         templates = {v: saddle_template(key, v) for v in VIEWS} if saddled else {}
         for clip in info["clips"]:
@@ -143,8 +153,9 @@ def main():
             n = min(counts)
             for view, fr in per_view.items():
                 strip = Image.new("RGBA", (w * n, h), (0, 0, 0, 0))
+                drop = drops[view]
                 for i, f in enumerate(fr[:n]):
-                    strip.alpha_composite(f, (i * w, 0))
+                    strip.alpha_composite(f.crop((0, 0, w, h - drop)), (i * w, drop))
                 strip.save(os.path.join(out_dir, "%s_%s.png" % (clip, view)))
             entry["frames"] = n
             if placeholder:

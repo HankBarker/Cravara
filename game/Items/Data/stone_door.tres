@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/art/items/stone_door.png" id="2"]
+[resource]
+script = ExtResource("1")
+id = "stone_door"
+name = "Stone Door"
+description = "An iron-banded door in a stone frame. Aim and press E to open or close."
+icon = ExtResource("2")
+max_stack = 99
+placeable = true

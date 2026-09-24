@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/art/items/baked_tuber.png" id="2"]
+[resource]
+script = ExtResource("1")
+id = "baked_tuber"
+name = "Baked Tuber"
+description = "Soft and sweet from the campfire. 45 hunger, full for a minute; 14 vitality over 16 seconds."
+icon = ExtResource("2")
+max_stack = 30
+rarity = "common"
+consumable = true
+hunger_value = 45
+healing_total = 14.0
+healing_duration = 16.0
+food_satiation_seconds = 60.0

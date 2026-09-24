@@ -99,6 +99,7 @@ func run() -> void:
 	await moves_land_on_contact()
 	await tail_sweeps_one_side()
 	await side_sweeps_follow_the_target()
+	await tail_cuts_bleed()
 	await stomp_ring()
 	await charges()
 	await pounce_lands_on_prey()
@@ -224,6 +225,9 @@ func tail_sweeps_one_side() -> void:
 		c.moves.start(m, ahead)
 		check(absf(c.facing_vector().y) > 0.9, sp + " pivots side-on for a target straight ahead")
 		check(c.moves._in_shape("tail", ahead), sp + " side-on sweep reaches the target that was ahead")
+		# The sweep is an attack, not a turn: once the tail is back it faces its old way.
+		advance_move(c, DinoArt.duration(c.art_key, c.moves.strike_clip) + 0.2)
+		check(not c.moves.busy() and c.facing_vector().dot(Vector2.RIGHT) > 0.9 and not c._sprite.flip_h, sp + " faces its old way again once the tail is back")
 		await clear()
 
 
@@ -253,6 +257,30 @@ func side_sweeps_follow_the_target() -> void:
 				advance_move(c, DinoArt.hit_time(c.art_key, want, "side") + 0.05)
 				check(player.current_health < hp, label + ": the sweep lands")
 				await clear()
+
+
+## The stego's spiked tail leaves a bleeding cut (a share of the blow per
+## second, for a few seconds); the longneck's blunt tail does not.
+func tail_cuts_bleed() -> void:
+	for sp in ["stego", "longneck"]:
+		var c = spawn(sp, Vector2(300, 300))
+		c._face(Vector2.RIGHT, true)
+		var m: Dictionary = c.moves.find("tail")
+		var prey = spawn("rex", c.global_position + Vector2(-1, 0.8).normalized() * (float(c.stats.radius) + 16.0), true)
+		c.moves.start(m, prey)
+		var before: int = prey.health
+		advance_move(c, DinoArt.hit_time(c.art_key, c.moves.strike_clip, "side") + 0.05)
+		var blow: int = before - prey.health
+		if sp == "stego":
+			check(blow > 0 and prey.bleed.active() and absf(prey.bleed.rate - float(blow) * 0.25) < 0.01, "stego tail cuts: the companion bleeds %.1f/s" % prey.bleed.rate)
+			var cut: int = prey.health
+			advance(prey, 2.0)
+			check(prey.health < cut and prey._knock == Vector2.ZERO, "the cut keeps bleeding without a shove (%d lost)" % (cut - prey.health))
+			prey.apply_bleed(prey.bleed.rate * 0.5, 1.0, c)
+			check(prey.bleed.rate > 2.0 and prey.bleed.time_left > 1.5, "a second cut refreshes the bleed instead of stacking")
+		else:
+			check(blow > 0 and not prey.bleed.active(), "longneck's blunt tail does not cut")
+		await clear()
 
 
 func stomp_ring() -> void:

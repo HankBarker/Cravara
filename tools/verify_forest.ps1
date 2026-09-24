@@ -15,7 +15,9 @@ $suites = @(
     @{Name='menu-flow'; Args=@('--script','res://Tests/forest_menu_flow.gd')},
     @{Name='ai-pass2'; Args=@('res://Tests/ForestAIPass2.tscn')},
     @{Name='equipment-pass2'; Args=@('res://Tests/ForestEquipmentPass2.tscn')},
-    @{Name='ui-pass2'; Args=@('res://Tests/ForestUIV2Test.tscn')},
+    # Suites written before the folk run without them (--no-folk): Orrin stands
+    # beside the keeper and would rightly take the E they aim at companions.
+    @{Name='ui-pass2'; Args=@('res://Tests/ForestUIV2Test.tscn'); UserArgs=@('--no-folk')},
     @{Name='world-pass3'; Args=@('res://Tests/ForestWorldPass3.tscn')},
     @{Name='mount-pass3'; Args=@('res://Tests/ForestMountPass3.tscn')},
     @{Name='ui-pass3'; Args=@('res://Tests/ForestUIV3Test.tscn')},
@@ -24,7 +26,7 @@ $suites = @(
     @{Name='mount-pass4'; Args=@('res://Tests/ForestMountPass4.tscn')},
     @{Name='ui-pass4'; Args=@('res://Tests/ForestUIV4Test.tscn')},
     @{Name='root-pass4'; Args=@('res://Tests/ForestRootPass4.tscn')},
-    @{Name='interaction-pass4'; Args=@('res://Tests/ForestInteractionPass4.tscn')},
+    @{Name='interaction-pass4'; Args=@('res://Tests/ForestInteractionPass4.tscn'); UserArgs=@('--no-folk')},
     @{Name='mount-render-pass4'; Args=@('res://Tests/MountPass4RenderQA.tscn')},
     @{Name='world-pass5'; Args=@('res://Tests/ForestWorldPass5.tscn')},
     @{Name='rider-pass5'; Args=@('res://Tests/ForestRiderPass5.tscn')},
@@ -51,7 +53,14 @@ $suites = @(
     # behaviours and riders (headless), then every species in the real forest.
     @{Name='dino-v2'; Args=@('res://Tests/DinoV2Suite.tscn')},
     @{Name='dino-capture'; Args=@('res://Tests/DinoCapture.tscn')},
-    @{Name='dino-behaviour'; Args=@('res://Tests/DinoBehaviourCapture.tscn')}
+    @{Name='dino-behaviour'; Args=@('res://Tests/DinoBehaviourCapture.tscn')},
+    # Points of interest: ruins, idols, caches, relic mounds and wild roots are
+    # placed the same every time, never touch an old journey's edits, open or
+    # dig once (surviving saves) and file their carvings in the journal.
+    @{Name='world-poi'; Args=@('res://Tests/WorldPOISuite.tscn')},
+    # The folk: stone building, the housing rules, who arrives when (and from
+    # where), moving in and out, trade and tending, talking, saves.
+    @{Name='folk'; Args=@('res://Tests/FolkSuite.tscn')}
 )
 if ($FromSuite -ne '' -and $FromSuite -notin $suites.Name) { throw ('Unknown suite: ' + $FromSuite) }
 $started = $FromSuite -eq ''

@@ -87,14 +87,15 @@
   "status": "done",
   "cost": 1.0,
   "prompt": "Walks in place on four legs: the legs step one after another, the body bobs gently and the tail sways. It stays in place with its back to the viewer the whole time.",
-  "frames": 9,
+  "frames": 8,
   "submitted": 1790219896.003642,
   "finished": 1790220054.644134,
   "score": {
    "bright": 2,
    "area": 1.01,
    "wide": 1.29
-  }
+  },
+  "method": "walk_back.py (walk gait from the back drawing)"
  },
  "run_side": {
   "job": "f0747969-0e74-4723-b0cc-85b38c780117",
@@ -519,14 +520,15 @@
   "status": "done",
   "cost": 1.0,
   "prompt": "Gallops in place with its head lowered and its horns pointing forward, legs moving fast. It stays in place with its back to the viewer the whole time.",
-  "frames": 9,
+  "frames": 8,
   "submitted": 1790220231.1727762,
   "finished": 1790220388.3479736,
   "score": {
    "bright": 4,
    "area": 1.03,
    "wide": 1.0
-  }
+  },
+  "method": "walk_back.py (run gait from the back drawing)"
  },
  "eat_down": {
   "job": "8ec95558-ede8-4c26-a117-3daf276eae1e",

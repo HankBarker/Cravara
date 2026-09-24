@@ -67,6 +67,7 @@ func run():
 		var ally = spawn("stego",Vector2(32,3),true)
 		ally.set_physics_process(false)
 		var health: int = target.health
+		var facing_before: Vector2 = mount.facing_vector()
 		check(mount.mount_attack(Vector2(100,0)),kind+" mounted strike begins")
 		check(target.health == health,kind+" windup does not damage early")
 		if kind == "stego":
@@ -79,8 +80,12 @@ func run():
 		var damage := 18 if kind == "stego" else 22
 		check(target.health == health-damage,kind+" strike contact damages actual creature once")
 		check(behind.health == 110 and ally.health == 65,kind+" aim excludes rear target and friendly creature")
+		if kind == "stego":
+			check(target.bleed.active() and not behind.bleed.active(),kind+" tail sweep leaves its target bleeding")
 		await pause(0.90)
 		check(target.health == health-damage,kind+" animation remainder cannot cause repeated damage")
+		if kind == "stego":
+			check(mount.facing_vector() == facing_before,kind+" faces its old way again after the sweep")
 		var wall := StaticBody2D.new()
 		wall.position = Vector2(19,0)
 		wall.collision_layer = 16
@@ -115,6 +120,33 @@ func run():
 		check(mount.feed_mount() and mount.health == int(mount.stats.hp),kind+" healing caps at maximum vitality")
 		await pause(2.55)
 		check(not mount.feed_mount() and InventoryManager.get_item_count("berry")==1,kind+" healthy mount does not waste food")
+		# Loot on the ground goes into the satchel as the mount walks over it.
+		var loot = preload("res://Items/DroppedItem.tscn").instantiate()
+		loot.setup_item(ItemDB.make("stone"),3)
+		loot.position = mount.global_position + Vector2(6,2)
+		add_child(loot)
+		var stones_before := InventoryManager.get_item_count("stone")
+		await pause(0.6)
+		check(InventoryManager.get_item_count("stone") == stones_before+3 and not is_instance_valid(loot),kind+" rider picks up loot under the mount")
+		if kind == "trike":
+			# Holding the strike button winds up a ram; letting go stomps and rushes.
+			var dummy = spawn("rex",mount.global_position + Vector2(80,0))
+			dummy.set_physics_process(false)
+			mount._face(Vector2.RIGHT, true)
+			var ahead: Vector2 = mount.global_position + Vector2(120,0)
+			check(mount.mount_press(ahead),kind+" strike button down")
+			await pause(0.35)
+			check(mount.moves.holding and mount.moves.move.get("id","") == "ram" and str(mount._sprite.animation).begins_with("windup"),kind+" holding the button winds up a ram")
+			await pause(1.0)
+			check(mount.moves.charge >= 1.0,kind+" the charge builds to full")
+			var dummy_hp: int = dummy.health
+			check(mount.mount_release(ahead) and mount.moves.phase == "dash",kind+" letting go rushes forward")
+			await pause(1.2)
+			check(dummy_hp - dummy.health >= 38,kind+" a full ram hits far harder than a gore (%d)" % (dummy_hp - dummy.health))
+			await pause(1.0)
+			check(mount.mount_press(ahead) and mount.mount_release(ahead) and mount.moves.move.get("id","") == "gore",kind+" a click still gores")
+			await pause(1.2)
+			dummy.queue_free()
 		if kind == "stego":
 			# Side-on with the aim up the screen the tail sweeps away, behind the
 			# body: that clip is side-on only and baked with the rider too.
@@ -128,5 +160,10 @@ func run():
 		for creature in [mount,target,behind,ally]: creature.queue_free()
 		for slot in ["head","chest","legs","light"]: player._set_equipment(slot,null)
 		await pause(0.1)
+	# A bleeding cut drains the keeper over time, then stops.
+	player.current_health = 80
+	player.apply_bleed(5.0, 1.0)
+	for i in 5: player._tick_recovery(0.25)
+	check(player.current_health == 75 and not player.bleed.active(),"a bleeding cut drains the keeper, then stops")
 	print("FOREST_MOUNT_PASS4 assertions=%d failures=%d" % [count,failures.size()])
 	get_tree().quit(0 if failures.is_empty() else 1)

@@ -13,6 +13,7 @@ const DinoArt = preload("res://Forest/creatures/DinoArt.gd")
 const DinoMoves = preload("res://Forest/creatures/DinoMoves.gd")
 const Puff = preload("res://Forest/fx/Puff.gd")
 const Surface = preload("res://Forest/fx/Surface.gd")
+const Bleed = preload("res://Forest/combat/Bleed.gd")
 
 const SPECIES := {
 	"raptor": {"name":"Shardback Raptor", "hp":24, "speed":53.0, "damage":7, "radius":7.0, "feeds":3, "predator":true, "food":"trex_meat", "width":42, "height":32},
@@ -62,6 +63,8 @@ var _attack_time := 0.0
 var _attack_target: Node2D
 var _attack_hit := false
 var _hurt_time := 0.0
+var bleed = Bleed.new()
+var _bleed_flash := 0.0
 var _clock := 0.0
 var _facing := "side"
 var _face_hold := 0.0
@@ -194,6 +197,12 @@ func _physics_process(delta: float) -> void:
 	feed_cooldown = maxf(0.0, feed_cooldown - delta)
 	provoked_time = maxf(0.0, provoked_time - delta)
 	_hurt_time = maxf(0.0, _hurt_time - delta)
+	_bleed_flash = maxf(0.0, _bleed_flash - delta)
+	var bled: int = bleed.tick(delta)
+	if bled > 0:
+		_bleed_hurt(bled)
+		if is_dead: return
+	bleed.drip(delta, _world if is_instance_valid(_world) else get_parent(), global_position, float(stats.height) * 0.45)
 	_flinch = maxf(0.0, _flinch - delta)
 	_warned = maxf(0.0, _warned - delta)
 	_flinch_ready = maxf(0.0, _flinch_ready - delta)
@@ -202,7 +211,7 @@ func _physics_process(delta: float) -> void:
 	if _action_time > 0.0:
 		_action_time = maxf(0.0, _action_time - delta)
 		if _action_time <= 0.0: _action = ""
-	_sprite.modulate = Color(1.8, 1.6, 1.3) if _hurt_time > 0 else Color.WHITE
+	_sprite.modulate = Color(1.8, 1.6, 1.3) if _hurt_time > 0 else (Color(1.3, 0.74, 0.74) if _bleed_flash > 0 else Color.WHITE)
 	if not is_instance_valid(_player):
 		_player = get_tree().get_first_node_in_group("player")
 	if is_mounted():
@@ -759,6 +768,13 @@ func dismount() -> bool:
 func mount_attack(aim_world: Vector2) -> bool:
 	return _mount_controller.mount_attack(aim_world) if is_instance_valid(_mount_controller) else false
 
+## The rider's strike button down / up (a held trike charges a ram).
+func mount_press(aim_world: Vector2) -> bool:
+	return _mount_controller.mount_press(aim_world) if is_instance_valid(_mount_controller) else false
+
+func mount_release(aim_world: Vector2) -> bool:
+	return _mount_controller.mount_release(aim_world) if is_instance_valid(_mount_controller) else false
+
 func feed_mount() -> bool:
 	return _mount_controller.feed_mount() if is_instance_valid(_mount_controller) else false
 
@@ -893,6 +909,19 @@ func take_damage(amount: int, source: Variant = null, knockback := -1.0) -> void
 	if health <= 0: _die()
 	queue_redraw()
 
+## A cut that keeps bleeding (the stego's spiked tail): DinoMoves applies it.
+func apply_bleed(damage_per_second: float, seconds: float, source: Node = null) -> void:
+	if is_dead or damage_per_second <= 0.0: return
+	bleed.apply(damage_per_second, seconds, source)
+	queue_redraw()
+
+## A bleed tick drains health without a shove, a flinch or a new target.
+func _bleed_hurt(amount: int) -> void:
+	health = maxi(0, health - amount)
+	_bleed_flash = 0.1
+	if health <= 0: _die()
+	queue_redraw()
+
 ## Wild kin react together: a hurt raptor calls its pack onto the attacker, a
 ## hurt herbivore brings its herd round to defend it, a startled dodo
 ## scatters the flock.
@@ -913,6 +942,7 @@ func get_attack_damage() -> int:
 func _die() -> void:
 	if is_mounted(): _mount_controller.dismount(true)
 	is_dead = true
+	bleed.clear()
 	moves.cancel()
 	_attack_time = 0.0
 	stop()
@@ -991,6 +1021,16 @@ func _draw() -> void:
 		draw_rect(Rect2(-12,y+1,24.0*float(health)/float(stats.hp),2),Color("8bd3a2") if tamed else Color("ed9a72"))
 		if trust > 0 and not tamed: draw_rect(Rect2(-12,y-3,24.0*float(trust)/float(stats.feeds),2),Color("62e1d7"))
 		if tamed: draw_circle(Vector2(0,y-4),2,Color("76ead7"))
+		if bleed.active():
+			# A blood drop beside the bar while the cut is bleeding.
+			draw_rect(Rect2(15,y,2,3),Color("b8323f"))
+			draw_rect(Rect2(15.5,y-1,1,1),Color("d4545c"))
+	if moves.holding:
+		# The ram's charge, over the rider's head: gold while building, bright when full.
+		var cy := -66.0 if is_mounted() else -float(stats.height) - 9
+		var full := moves.charge >= 1.0
+		draw_rect(Rect2(-13,cy,26,4),Color("10282b"))
+		draw_rect(Rect2(-12,cy+1,24.0*moves.charge,2),Color("fff1b8") if full and int(_clock*10.0)%2==0 else Color("e8b84a"))
 
 ## Faint ground warnings for the big telegraphed moves: the charge lane and
 ## the stomp ring grow brighter as the blow approaches.

@@ -27,18 +27,90 @@ const ART = {
 	"ore": preload("res://Forest/art/v2/ore.png"),
 	"wood_wall": preload("res://Forest/art/v2/wood_wall.png"),
 	"wood_floor": preload("res://Forest/art/v2/wood_floor.png"),
+	# Stone building (art/v6, tools/world/make_stone_art.py).
+	"stone_wall": preload("res://Forest/art/v6/stone_wall.png"),
+	"stone_floor": preload("res://Forest/art/v6/stone_floor.png"),
 	"workbench": preload("res://Forest/art/v5/workbench.png"),
 	"rock": preload("res://Forest/art/v2/rock.png"),
 	"tent": preload("res://Forest/art/v2/tent.png"),
 	"shrine": preload("res://Forest/art/v2/shrine.png"),
 	"chest": preload("res://Forest/art/v5/chest_0.png"),
 	"torch": preload("res://Forest/art/v2/torch.png"),
+	# Points of interest (art/poi, tools/world/make_poi_art.py).
+	"ruin_temple": preload("res://Forest/art/poi/ruin_temple.png"),
+	"ruin_statue": preload("res://Forest/art/poi/ruin_statue.png"),
+	"ruin_tower": preload("res://Forest/art/poi/ruin_tower.png"),
+	"ruin_stairs": preload("res://Forest/art/poi/ruin_stairs.png"),
+	"ruin_pillar": preload("res://Forest/art/poi/ruin_pillar.png"),
+	"ruin_hall": preload("res://Forest/art/poi/ruin_hall.png"),
+	"ruin_arch": preload("res://Forest/art/poi/ruin_arch.png"),
+	"ruin_column": preload("res://Forest/art/poi/ruin_column.png"),
+	"ruin_stones": preload("res://Forest/art/poi/ruin_stones.png"),
+	"ruin_boulders": preload("res://Forest/art/poi/ruin_boulders.png"),
+	"idol_deer": preload("res://Forest/art/poi/idol_deer.png"),
+	"idol_wolf": preload("res://Forest/art/poi/idol_wolf.png"),
+	"idol_human": preload("res://Forest/art/poi/idol_human.png"),
+	"grove_shrine": preload("res://Forest/art/poi/grove_shrine.png"),
+	"cache": preload("res://Forest/art/poi/cache_closed.png"),
+	# Where the folk are found (folk/art, tools/folk/make_folk_art.py).
+	"folk_hut": preload("res://Forest/folk/art/folk_hut.png"),
+	"folk_camp": preload("res://Forest/folk/art/folk_camp.png"),
+	"folk_cage": preload("res://Forest/folk/art/folk_cage.png"),
+	"folk_cage_open": preload("res://Forest/folk/art/folk_cage_open.png"),
+	"relic": preload("res://Forest/art/poi/relic_mound.png"),
+	"roots": preload("res://Forest/art/poi/wild_roots.png"),
 }
+## Points of interest (ForestWorld._place_points_of_interest). Ruins of the
+## first builders and the old tribe's idols are landmarks, never dismantled. A
+## cache opens once; relic mounds and wild roots are dug up with a hoe.
+const LANDMARKS := ["ruin_temple","ruin_statue","ruin_tower","ruin_stairs","ruin_pillar","ruin_hall","ruin_arch","ruin_column","ruin_stones","ruin_boulders","idol_deer","idol_wolf","idol_human","grove_shrine"]
+const DIG_SPOTS := ["relic","roots"]
+## Landmarks are drawn in parts (art/poi/pieces.json, tools/world/poi_pieces.py):
+## every stone of a ring, every column and every heap of rubble is its own
+## sprite, y-sorted by its own foot, solid in a band along that foot and casting
+## its own sun shadow. So the keeper walks among the Moot Circle's stones and
+## under the arch, and can never walk through a stone.
+const PARTS_FILE := "res://Forest/art/poi/pieces.json"
+const PARTS_DIR := "res://Forest/art/poi/pieces/"
+const POI_SOLID := {"cache": Rect2(-8,-4,16,11), "folk_hut": Rect2(-22,-10,44,17), "folk_camp": Rect2(-15,-9,36,11), "folk_cage": Rect2(-14,-7,28,14)}
+## Small finds sit on the ground and still cast a small shadow.
+const POI_SHADOW := {"relic": Rect2(-7,3,14,4), "roots": Rect2(-4,4,8,3), "folk_cage_open": Rect2(-14,-4,28,11)}
+const POI_HEIGHT := {"cache":12.0,"relic":6.0,"roots":7.0,"folk_hut":72.0,"folk_camp":34.0,"folk_cage":30.0,"folk_cage_open":14.0}
+## The folk's own places: someone's hut, a cold camp, an old beast-trap.
+const FOLK_SITES := ["folk_hut","folk_camp","folk_cage","folk_cage_open"]
+static var _parts := {}
+static var _part_rects := {}
+
+## The parts of a landmark kind ([] for anything drawn whole).
+static func parts_of(prop_kind: String) -> Array:
+	if _parts.is_empty():
+		var data = JSON.parse_string(FileAccess.get_file_as_string(PARTS_FILE))
+		_parts = data if data is Dictionary else {}
+		_parts["_loaded"] = {}
+	return _parts.get(prop_kind, {}).get("pieces", [])
+
+## Top-left of a kind's whole drawing, relative to the prop (bottom-middle at +7).
+static func drawing_origin(prop_kind: String) -> Vector2:
+	var art: Texture2D = ART[prop_kind]
+	return Vector2(-(art.get_width() / 2), 7 - art.get_height())
+
+func has_parts() -> bool:
+	return not parts_of(kind).is_empty()
+const CACHE_OPEN = preload("res://Forest/art/poi/cache_open.png")
 const FIRE = preload("res://Forest/art/v5/campfire.png")
 const CHEST_FRAMES = [preload("res://Forest/art/v5/chest_0.png"),preload("res://Forest/art/v5/chest_1.png"),preload("res://Forest/art/v5/chest_2.png")]
 const DOOR = preload("res://Forest/art/v3/door.png")
 const DOOR_OPEN = preload("res://Forest/art/v3/door_open.png")
 const ROOF = preload("res://Forest/art/v3/roof.png")
+const STONE_DOOR = preload("res://Forest/art/v6/stone_door.png")
+const STONE_DOOR_OPEN = preload("res://Forest/art/v6/stone_door_open.png")
+const SLATE = preload("res://Forest/art/v6/slate_roof.png")
+## Building kinds, timber and stone: every wall, door, floor and roof behaves
+## alike (housing counts them all).
+const WALLS := ["wood_wall","stone_wall"]
+const DOORS := ["wood_door","stone_door"]
+const FLOORS := ["wood_floor","stone_floor"]
+const ROOFS := ["thatch_roof","slate_roof"]
 var _flicker := 0.0
 
 func _process(delta: float) -> void:
@@ -57,24 +129,23 @@ func _process(delta: float) -> void:
 	_hit_flash = maxf(0.0, _hit_flash-delta)
 	var previous_alpha := modulate.a
 	modulate = Color(1.5,1.5,1.5) if _hit_flash > 0 else Color.WHITE
-	if kind=="thatch_roof": modulate.a=previous_alpha
+	if kind in ROOFS: modulate.a=previous_alpha
 	if kind == "campfire":
 		_flicker += delta
 		if _flicker > 0.14:
 			_flicker = 0.0
 			variant = (variant+1)%4
-	if kind == "thatch_roof":
+	if kind in ROOFS:
 		_roof_tick -= delta
 		if _roof_tick <= 0:
 			_roof_tick = 0.12
-			var player := get_tree().get_first_node_in_group("player")
-			var under: bool = is_instance_valid(player) and get_parent().has_method("is_sheltered_at") and get_parent().is_sheltered_at(player.global_position)
-			_roof_alpha = 0.18 if under and player.global_position.distance_to(global_position) < 110 else 1.0
+			var open: bool = get_parent().has_method("is_roof_open") and get_parent().is_roof_open(cell)
+			_roof_alpha = 0.18 if open else 1.0
 		modulate.a = move_toward(modulate.a,_roof_alpha,delta*5)
 	if has_node("PlacedObject/Sprite2D"):
 		get_node("PlacedObject/Sprite2D").position.x = _shake_offset()
 	queue_redraw()
-	if kind not in ["campfire","thatch_roof","chest"] and _hit_timer <= 0: set_process(false)
+	if kind not in ["campfire","thatch_roof","slate_roof","chest"] and _hit_timer <= 0: set_process(false)
 
 func receive_hit(amount := 1) -> void:
 	hp = maxi(0,hp-amount)
@@ -86,10 +157,28 @@ func receive_hit(amount := 1) -> void:
 func _shake_offset() -> float:
 	return roundf(sin(_hit_flash*130)*2.0) if _hit_flash>0 else 0.0
 
+## Foliage that moves in the wind (sway.gdshader): the height it leans over
+## and how many pixels its top travels. One shared material per kind.
+const SWAY := {"tree": [80.0, 1.0], "bush": [34.0, 1.4], "fern": [32.0, 1.8], "cattail": [32.0, 2.0], "flowers": [12.0, 1.4]}
+static var _sway_materials := {}
+
+static func _sway_material(sway_kind: String) -> ShaderMaterial:
+	if not _sway_materials.has(sway_kind):
+		var m := ShaderMaterial.new()
+		m.shader = preload("res://Forest/ground/sway.gdshader")
+		m.set_shader_parameter("height", float(SWAY[sway_kind][0]))
+		m.set_shader_parameter("amount", float(SWAY[sway_kind][1]))
+		_sway_materials[sway_kind] = m
+	return _sway_materials[sway_kind]
+
 func _ready() -> void:
-	set_process(kind in ["campfire","thatch_roof","chest"])
+	if SWAY.has(kind): material = _sway_material(kind)
+	set_process(kind in ["campfire","thatch_roof","slate_roof","chest"])
 	collision_layer = 16
 	collision_mask = 0
+	if has_parts():
+		_build_parts()
+		return
 	if kind in ["chest","torch"]:
 		var scene: PackedScene=load("res://WorldObjects/"+("Chest" if kind=="chest" else "Torch")+".tscn")
 		var object=scene.instantiate()
@@ -118,6 +207,66 @@ func _ready() -> void:
 	add_child(shape)
 	queue_redraw()
 
+## A landmark's parts: a sprite for each, standing on its own foot (so it
+## y-sorts by itself), and a solid box for each band of its footing.
+func _build_parts() -> void:
+	y_sort_enabled = true
+	var origin := drawing_origin(kind)
+	var parts := parts_of(kind)
+	for i in parts.size():
+		var part: Dictionary = parts[i]
+		var sprite := Sprite2D.new()
+		sprite.name = "Part%d" % i
+		sprite.texture = load(PARTS_DIR + str(part.file))
+		sprite.centered = false
+		var top_left: Vector2 = origin + Vector2(part.pos[0], part.pos[1])
+		var foot := Vector2(top_left.x + floorf(float(part.size[0]) / 2.0), origin.y + float(part.base) + 1.0)
+		sprite.position = foot
+		sprite.offset = top_left - foot
+		add_child(sprite)
+	for i in get_collision_rects().size():
+		var rect: Rect2 = get_collision_rects()[i]
+		var shape := CollisionShape2D.new()
+		shape.name = "Footing%d" % i
+		var box := RectangleShape2D.new()
+		box.size = rect.size
+		shape.shape = box
+		shape.position = rect.get_center()
+		add_child(shape)
+
+## Every solid box of this prop in its own coordinates: a landmark has one per
+## band of footing, anything else its one footprint (none if it has none).
+func get_collision_rects() -> Array:
+	if not has_parts():
+		var one := get_collision_rect()
+		return [one] if one.has_area() else []
+	if not _part_rects.has(kind):
+		var origin := drawing_origin(kind)
+		var rects: Array = []
+		for part in parts_of(kind):
+			for r in part.solid: rects.append(Rect2(origin + Vector2(r[0], r[1]), Vector2(r[2], r[3])))
+		_part_rects[kind] = rects
+	return _part_rects[kind]
+
+## For lighting: each part's texture, where it is drawn, how tall it stands and
+## the ground it covers (its footing, or a sliver under a pebble).
+func get_shadow_parts() -> Array:
+	if not has_parts(): return []
+	var origin := drawing_origin(kind)
+	var out: Array = []
+	var parts := parts_of(kind)
+	for i in parts.size():
+		var part: Dictionary = parts[i]
+		var top_left: Vector2 = origin + Vector2(part.pos[0], part.pos[1])
+		var contact := Rect2()
+		for r in part.solid:
+			var rect := Rect2(origin + Vector2(r[0], r[1]), Vector2(r[2], r[3]))
+			contact = rect if not contact.has_area() else contact.merge(rect)
+		if not contact.has_area():
+			contact = Rect2(top_left.x + 1, origin.y + float(part.base) - 1, maxf(1, float(part.size[0]) - 2), 2)
+		out.append({"key": "%s:%d" % [kind, i], "texture": load(PARTS_DIR + str(part.file)), "origin": top_left, "height": float(part.base) - float(part.pos[1]) + 1.0, "contact": contact})
+	return out
+
 func _draw() -> void:
 	draw_set_transform(Vector2(_shake_offset(),0))
 	_draw_visual()
@@ -134,20 +283,28 @@ func _draw() -> void:
 			draw_rect(Rect2(-9,y+1,18*float(hp)/max_hp,1),Color("8fd4d6"))
 
 func _draw_visual() -> void:
-	if kind == "wood_door":
-		var texture: Texture2D = DOOR_OPEN if opened else DOOR
+	if kind in DOORS:
+		var texture: Texture2D = (STONE_DOOR_OPEN if opened else STONE_DOOR) if kind == "stone_door" else (DOOR_OPEN if opened else DOOR)
 		draw_texture(texture,Vector2(-8,-20))
 		return
 	if kind == "thatch_roof":
 		# A roof occupies the exact cell the player aims at, unlike a tall wall.
 		draw_texture_rect(ROOF,Rect2(-8,-8,16,16),false)
 		return
+	if kind == "slate_roof":
+		draw_texture(SLATE,Vector2(-8,-8))
+		return
+	if kind == "cache" and opened:
+		draw_texture(CACHE_OPEN, Vector2(-CACHE_OPEN.get_width()/2, 7-CACHE_OPEN.get_height()))
+		return
 	if ART.has(kind):
 		# Child chest/torch scenes retain their interaction, storage and light logic.
 		if kind in ["chest", "torch"]: return
+		# Landmarks draw as their part sprites.
+		if has_parts(): return
 		var key := "wall_alt" if kind == "wall" and variant % 3 == 1 else kind
 		var texture: Texture2D = ART[key]
-		var bottom := 8 if kind in ["wall", "ore", "wood_wall", "wood_floor"] else 7
+		var bottom := 8 if kind in ["wall", "ore", "wood_wall", "wood_floor", "stone_wall", "stone_floor"] else 7
 		draw_texture(texture, Vector2(-texture.get_width()/2, bottom-texture.get_height()), Color("b99be8") if rich_vein else Color.WHITE)
 		return
 	if kind == "campfire":
@@ -176,9 +333,15 @@ func _draw_visual() -> void:
 				draw_rect(Rect2(p+Vector2(0,1),Vector2.ONE),Color("e88a2e"))
 
 func get_collision_rect() -> Rect2:
+	if POI_SOLID.has(kind): return POI_SOLID[kind]
+	if has_parts():
+		# The whole footing's bounds (for code that wants one box).
+		var bounds := Rect2()
+		for rect in get_collision_rects(): bounds = rect if not bounds.has_area() else bounds.merge(rect)
+		return bounds
 	match kind:
-		"wall","ore","wood_wall": return Rect2(-8,-8,16,16)
-		"wood_door": return Rect2() if opened else Rect2(-8,-8,16,16)
+		"wall","ore","wood_wall","stone_wall": return Rect2(-8,-8,16,16)
+		"wood_door","stone_door": return Rect2() if opened else Rect2(-8,-8,16,16)
 		"tree": return Rect2(-6,-1,12,8)
 		"rock": return Rect2(-15,-10,30,17)
 		"tent": return Rect2(-23,-23,46,30)
@@ -191,10 +354,15 @@ func get_collision_rect() -> Rect2:
 	return Rect2()
 
 func get_shadow_footprint() -> Rect2:
-	if kind in ["wood_floor","thatch_roof","flowers","mushroom","fern","bush","cattail"]: return Rect2()
+	if POI_SHADOW.has(kind): return POI_SHADOW[kind]
+	if kind in ["wood_floor","stone_floor","thatch_roof","slate_roof","flowers","mushroom","fern","bush","cattail"]: return Rect2()
 	return get_collision_rect()
 
 func get_target_rect() -> Rect2:
+	if kind in LANDMARKS or kind in DIG_SPOTS or kind == "cache" or kind in FOLK_SITES:
+		# The whole drawing, bottom-anchored like _draw_visual draws it.
+		var art: Texture2D = ART[kind]
+		return Rect2(-art.get_width()/2.0, 7.0-art.get_height(), art.get_width(), art.get_height()).grow(2)
 	match kind:
 		"tree": return Rect2(-30,-65,60,72)
 		"rock": return Rect2(-20,-37,40,44)
@@ -202,20 +370,21 @@ func get_target_rect() -> Rect2:
 		"shrine": return Rect2(-25,-53,50,60)
 		"workbench": return Rect2(-16,-17,32,24)
 		"hide_bed": return Rect2(-15,-33,30,40)
-		"thatch_roof","wood_floor": return Rect2(-8,-8,16,16)
+		"thatch_roof","wood_floor","slate_roof","stone_floor": return Rect2(-8,-8,16,16)
 		"campfire": return Rect2(-14,-17,28,24)
 		"chest": return Rect2(-8,-13,16,20)
 		"torch": return Rect2(-7,-25,14,32)
-		"wood_wall","wood_door": return Rect2(-8,-20,16,28)
+		"wood_wall","wood_door","stone_wall","stone_door": return Rect2(-8,-20,16,28)
 		"mushroom","bush","fern","cattail","flowers": return Rect2(-16,-20,32,28)
 	return Rect2(-8,-16,16,24)
 
 func get_shadow_height() -> float:
-	return {"tree":65.0,"rock":31.0,"tent":43.0,"shrine":55.0,"workbench":12.0,"wood_wall":23.0,"wood_door":23.0,"torch":22.0,"chest":13.0,"campfire":12.0,"thatch_roof":18.0}.get(kind,18.0)
+	if POI_HEIGHT.has(kind): return POI_HEIGHT[kind]
+	return {"tree":65.0,"rock":31.0,"tent":43.0,"shrine":55.0,"workbench":12.0,"wood_wall":23.0,"wood_door":23.0,"stone_wall":23.0,"stone_door":23.0,"torch":22.0,"chest":13.0,"campfire":12.0,"thatch_roof":18.0,"slate_roof":18.0}.get(kind,18.0)
 
 func set_open(value: bool) -> void:
 	opened=value
-	if kind=="wood_door": collision_layer=0 if opened else 16
+	if kind in DOORS: collision_layer=0 if opened else 16
 	queue_redraw()
 
 func _atlas(region: Rect2, pos: Vector2) -> void:

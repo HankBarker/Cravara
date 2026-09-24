@@ -21,7 +21,7 @@ func _ready() -> void:
 	$CollisionShape2D.position = Vector2.ZERO
 	$CollisionShape2D.scale = Vector2.ONE
 	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	label.add_theme_font_override("font",load("res://Forest/fonts/AlegreyaSans.ttf"))
+	label.add_theme_font_override("font",load("res://Forest/fonts/Tiny5-Regular.ttf"))
 	label.add_theme_font_size_override("font_size",8)
 	label.add_theme_color_override("font_color",Color("f6e5bc"))
 	label.add_theme_color_override("font_shadow_color",Color("102324"))
@@ -61,7 +61,14 @@ func _physics_process(delta: float) -> void:
 	if _retry<=0 and not _picked_up:
 		_retry = 0.3
 		for body in get_overlapping_bodies():
-			if _try_pickup(body): break
+			if _try_pickup(body): return
+		# A rider is off every physics layer (MountController.mount) and sits up on
+		# the saddle, so the mount's own feet collect what it walks over.
+		for rider in get_tree().get_nodes_in_group("player"):
+			var mount = rider.get("mounted_creature")
+			if not is_instance_valid(mount): continue
+			_retry = 0.1
+			if mount.global_position.distance_to(global_position) <= float(mount.stats.radius)+10.0 and _try_pickup(rider): return
 
 func _draw() -> void:
 	if not GameSettings.shadows_enabled: return

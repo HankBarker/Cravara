@@ -20,6 +20,8 @@ var _skin = preload("res://Forest/equipment/EquipmentSkin.gd").new()
 var _regen_accum := 0.0
 var _food_healing: Array[Dictionary] = []
 var _hazard_clock := 0.0
+## A bleeding cut (a stego's spiked tail): damage over time that armour does not stop.
+var bleed = preload("res://Forest/combat/Bleed.gd").new()
 var food_satiation_left := 0.0
 var _meal_cooldown := 0.0
 const Appearance = preload("res://Forest/equipment/Appearance.gd")
@@ -302,6 +304,7 @@ func die():
 	if respawning:
 		return
 	respawning = true
+	bleed.clear()
 	if is_instance_valid(mounted_creature): mounted_creature._mount_controller.dismount(true)
 	controls_locked = true
 	current_health = 0
@@ -316,6 +319,10 @@ func die():
 	else:
 		await get_tree().create_timer(5.0, false).timeout
 		complete_respawn(forest_world.get_spawn_position() if forest_world else Vector2.ZERO)
+
+func apply_bleed(damage_per_second: float, seconds: float, source: Node = null) -> void:
+	if respawning or state=="dead" or damage_per_second<=0.0: return
+	bleed.apply(damage_per_second,seconds,source)
 
 func complete_respawn(spawn_position: Vector2):
 	global_position = spawn_position
@@ -552,6 +559,16 @@ func consume_slot(source: Node, index: int) -> bool:
 
 func _tick_recovery(delta: float):
 	if state=="dead" or respawning: return
+	var bled: int = bleed.tick(delta)
+	if bled>0:
+		current_health = maxi(0,current_health-bled)
+		SignalBus.player_health_changed.emit(current_health,max_health)
+		if current_health<=0:
+			die()
+			return
+	# From a rider, the blood runs down onto the mount's footing.
+	var feet: Vector2 = mounted_creature.global_position if is_instance_valid(mounted_creature) else global_position+Vector2(0,SORT_Y)
+	bleed.drip(delta,get_parent(),feet,maxf(6.0,feet.y-global_position.y+2.0))
 	for effect in _food_healing:
 		if current_hunger>0 or effect.get("potion",false): _regen_accum += minf(delta,float(effect.left))*float(effect.rate)
 		effect.left -= delta

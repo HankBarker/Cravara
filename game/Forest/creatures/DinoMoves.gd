@@ -13,6 +13,8 @@ extends RefCounted
 ##         (landing circle)
 ## range:  [min, max] gap between the two bodies' edges, px.
 ## dmg:    multiplier of stats.damage.  knock: shove, px/s.
+## bleed:  a cut that keeps bleeding: this share of the blow per second, for
+##         bleed_time seconds (the stego's spiked tail).
 
 const DinoArt = preload("res://Forest/creatures/DinoArt.gd")
 const Puff = preload("res://Forest/fx/Puff.gd")
@@ -29,7 +31,7 @@ const MOVES := {
 		{"id": "slash", "kind": "strike", "clip": "slash", "range": [0, 12], "cooldown": 1.5, "dmg": 1.0, "knock": 110, "shape": "jaws", "reach": 16, "arc": 100, "lunge": 6},
 	],
 	"stego": [
-		{"id": "tail", "kind": "strike", "clip": "tail_swing", "range": [0, 22], "cooldown": 1.8, "dmg": 1.0, "knock": 280, "shape": "tail", "reach": 30, "heavy": true},
+		{"id": "tail", "kind": "strike", "clip": "tail_swing", "range": [0, 22], "cooldown": 1.8, "dmg": 1.0, "knock": 280, "shape": "tail", "reach": 30, "heavy": true, "bleed": 0.25, "bleed_time": 4.0},
 	],
 	"trike": [
 		{"id": "ram", "kind": "charge", "windup": "windup", "windup_speed": 1.0, "clip": "run", "range": [44, 150], "cooldown": 6.0, "dmg": 1.6, "knock": 400, "shape": "body", "dash_speed": 160.0, "distance": 170.0, "heavy": true},
@@ -46,6 +48,10 @@ const MOVES := {
 ## The move a rider's click triggers, and its damage (the pass-5 balance).
 const MOUNT_MOVE := {"stego": "tail", "trike": "gore"}
 const MOUNT_DAMAGE := {"stego": 18, "trike": 22}
+## A rider's held charge (the trike's ram): seconds to build fully, and the
+## damage a full charge deals (a short one deals down to 55% of it).
+const CHARGE_TIME := 1.0
+const MOUNT_RAM_DAMAGE := {"trike": 40}
 ## How far a shove moves each species (heavy bodies barely budge).
 const MASS := {"dodo": 1.0, "raptor": 0.8, "trike": 0.35, "stego": 0.35, "rex": 0.25, "longneck": 0.15}
 
@@ -70,6 +76,12 @@ var _dust_t := 0.0
 var _rate := 1.0          # clip playback rate for this move (rider strikes run faster)
 var _view := "side"       # the facing the strike clip plays in (contact frames differ per facing)
 var strike_clip := ""     # the clip this move plays (a far-side tail sweep has its own)
+var _face_before := Vector2.ZERO  # a tail sweep hands the body back the facing it began in
+var holding := false      # a rider is holding a charge: the wind-up lasts until release
+var charge := 0.0         # how far a held charge has built, 0..1
+var _power := 1.0         # a released charge's strength (damage share)
+var _stomp_t := 0.0
+var _loop_at := 0.0       # when the held wind-up clip last restarted
 var _rng := RandomNumberGenerator.new()
 ## A rider's strike lands this long after the click.
 const MOUNT_HIT_TIME := 0.3
@@ -163,7 +175,7 @@ func close_reach() -> float:
 
 
 # ------------------------------------------------------------------ control
-func start(m: Dictionary, to: Node2D, rider_aim := Vector2.ZERO) -> bool:
+func start(m: Dictionary, to: Node2D, rider_aim := Vector2.ZERO, hold := false) -> bool:
 	if m.is_empty() or c.is_dead:
 		return false
 	move = m
@@ -180,8 +192,14 @@ func start(m: Dictionary, to: Node2D, rider_aim := Vector2.ZERO) -> bool:
 		aim = c.global_position.direction_to(to.global_position)
 	if aim == Vector2.ZERO:
 		aim = c.facing_vector()
+	_face_before = c.facing_vector() if m.shape == "tail" else Vector2.ZERO
 	face = _tail_face(aim) if m.shape == "tail" else aim
 	phase = "windup" if m.kind == "charge" else "strike"
+	holding = hold and m.kind == "charge"
+	charge = 0.0
+	_power = 1.0
+	_stomp_t = 0.3
+	_loop_at = 0.0
 	_took_off = false
 	_land_from = c.global_position
 	_land_at = c.global_position
@@ -200,6 +218,8 @@ func start(m: Dictionary, to: Node2D, rider_aim := Vector2.ZERO) -> bool:
 
 
 func cancel() -> void:
+	_end_tail_turn()
+	holding = false
 	move = {}
 	phase = ""
 	target = null
@@ -215,7 +235,7 @@ func tick(delta: float) -> Vector2:
 	t += delta * (_rate if phase == "strike" else 1.0)
 	match phase:
 		"windup":
-			return _tick_windup()
+			return _tick_hold(delta) if holding else _tick_windup()
 		"dash":
 			return _tick_dash(delta)
 		"recover":
@@ -242,6 +262,62 @@ func _tick_windup() -> Vector2:
 		if is_instance_valid(c.voice):
 			c.voice.play_cue("attack")
 	return Vector2.ZERO
+
+
+## A rider holding the charge: the head goes down and the trike paws the
+## ground, thumping harder as the charge builds, until the rider lets go.
+func _tick_hold(delta: float) -> Vector2:
+	var was_full := charge >= 1.0
+	charge = clampf(t / CHARGE_TIME, 0.0, 1.0)
+	# Keep pawing: past the end of the wind-up clip, replay its pawing half.
+	var clip := str(move.windup)
+	var fps := float(DinoArt.clip(_art_key(), clip).get("fps", 10))
+	if t - _loop_at >= DinoArt.duration(_art_key(), clip):
+		var from := int(DinoArt.clip(_art_key(), clip).get("frames", 2)) / 2
+		c._play_clip(clip, true)
+		c._sprite.frame = from
+		_loop_at = t - float(from) / fps
+	_stomp_t -= delta
+	if _stomp_t <= 0.0:
+		_stomp_t = lerpf(0.34, 0.2, charge)
+		_fx_dust(c.global_position + face * float(c.stats.radius) * 0.5, -face, 1 + int(charge * 2.0), 2 + int(charge * 3.0), 0.8 + charge)
+	if charge >= 1.0 and not was_full:
+		# Ready: one heavy thud the rider can feel.
+		c._play_fx("thud", -7.0, 0.8)
+		c._shake_near(0.12, 999.0)
+	return Vector2.ZERO
+
+
+## Turn a held charge toward the rider's aim.
+func steer_hold(to_aim: Vector2) -> void:
+	if not holding or to_aim == Vector2.ZERO:
+		return
+	aim = to_aim.normalized()
+	face = aim
+	_view = _view_of(face)
+	c._face(face, true)
+
+
+## The rider lets go: a stomp, then the rush along the aim, farther and
+## harder the longer the charge was held.
+func release_hold(to_aim: Vector2) -> bool:
+	if not holding or phase != "windup":
+		return false
+	steer_hold(to_aim)
+	holding = false
+	_power = lerpf(0.55, 1.0, charge)
+	_stomp_fx(charge)
+	phase = "dash"
+	t = 0.0
+	_dash_left = float(move.distance) * _charge_reach()
+	c._play_clip(strike_clip, true, 1.45)
+	if is_instance_valid(c.voice):
+		c.voice.play_cue("attack")
+	return true
+
+
+func _charge_reach() -> float:
+	return lerpf(0.6, 1.25, charge)
 
 
 func _tick_dash(delta: float) -> Vector2:
@@ -306,6 +382,7 @@ func _tick_strike() -> Vector2:
 		phase = "recover"
 		t = 0.0
 		_recover = 0.12
+		_end_tail_turn()
 	return vel
 
 
@@ -370,13 +447,24 @@ func facing_vector() -> Vector2:
 ## aim's side (the clip's own side is in the catalogue: "swing"). null = no
 ## override.
 func flip_override():
-	if move.is_empty() or move.shape != "tail" or absf(face.y) < 0.5:
+	if move.is_empty() or move.shape != "tail" or phase != "strike" or absf(face.y) < 0.5:
 		return null
 	var view := "up" if face.y < 0.0 else "down"
 	var swings: Dictionary = DinoArt.clip(_art_key(), strike_clip).get("swing", {})
 	var baked := str(swings.get(view, "left"))
 	var wanted := "left" if aim.x < 0.0 else "right"
 	return baked != wanted
+
+
+## A tail sweep is an attack, not a turn: once the tail is back the body faces
+## the way it did before the swing (it pivots side-on only to reach a target
+## straight ahead).
+func _end_tail_turn() -> void:
+	if _face_before == Vector2.ZERO:
+		return
+	face = _face_before
+	_face_before = Vector2.ZERO
+	c._face(face, true)
 
 
 ## The clip a move plays. A side-on tail sweep at a target on the far side (up
@@ -485,12 +573,18 @@ func _shape_centre() -> Vector2:
 
 func _hit(victim: Node2D, dir: Vector2, heavy: bool) -> void:
 	var amount := int(round(float(c.stats.damage) * float(move.dmg)))
+	var knock := float(move.knock)
 	if mounted:
 		amount = int(MOUNT_DAMAGE.get(c.species, amount))
-	var knock := float(move.knock)
+		if move.kind == "charge":
+			amount = int(round(float(MOUNT_RAM_DAMAGE.get(c.species, amount)) * _power))
+			knock *= lerpf(0.75, 1.2, charge)
 	if victim.is_in_group("forest_creatures"):
 		knock *= float(MASS.get(victim.species, 0.5))
 	victim.take_damage(amount, c, knock)
+	# A spiked tail leaves a cut that keeps bleeding: a share of the blow per second.
+	if move.has("bleed") and victim.has_method("apply_bleed"):
+		victim.apply_bleed(float(amount) * float(move.bleed), float(move.get("bleed_time", 4.0)), c)
 	# The spark sits on the struck body, not at its feet (creature origins
 	# are at the feet; the keeper's is at the body centre).
 	var body_at: Vector2 = victim.global_position
@@ -514,6 +608,20 @@ func _dust_palette(at: Vector2) -> Dictionary:
 		return Surface.dust("grass")
 	var session: Node = c.get_tree().get_first_node_in_group("forest_session")
 	return Surface.dust(Surface.at(c._world, session, at))
+
+
+## The trike's stomp as a held charge is let go: a ground ring, dust, a thud.
+func _stomp_fx(strength: float) -> void:
+	var at: Vector2 = c.global_position + face * float(c.stats.radius) * 0.6
+	var parent := _fx_parent()
+	if parent:
+		var puff := Puff.new()
+		var r := 16.0 + 18.0 * strength
+		puff.ring(Vector2.ZERO, Vector2(4, 2), Vector2(r, r * 0.45), Color(1, 0.94, 0.8, 0.85), 0.26)
+		puff.dust(Vector2.ZERO, Vector2.ZERO, _dust_palette(at), 4 + int(strength * 4.0), 5 + int(strength * 5.0), 1.4 + strength)
+		puff.spawn(parent, at, 2.0)
+	c._shake_near(0.15 + 0.25 * strength, 999.0)
+	c._play_fx("thud", -10.0 + 5.0 * strength, 0.72)
 
 
 func _fx_dust(at: Vector2, heading: Vector2, blobs: int, bits: int, strength: float) -> void:
@@ -567,8 +675,11 @@ func _strike_fx(shape: String, landed: bool) -> void:
 
 ## Faint ground warning for the big telegraphed moves: {shape, progress, ...}.
 func telegraph() -> Dictionary:
-	if move.is_empty() or mounted:
+	if move.is_empty() or (mounted and not holding):
 		return {}
+	if phase == "windup" and holding:
+		# The rider's own aim guide: how far the rush will carry right now.
+		return {"shape": "lane", "aim": aim, "length": float(move.distance) * _charge_reach(), "progress": charge, "width": float(c.stats.radius) * 2.0}
 	if phase == "windup":
 		return {"shape": "lane", "aim": aim, "length": float(move.distance), "progress": clampf(t / maxf(0.01, _windup_length()), 0.0, 1.0), "width": float(c.stats.radius) * 2.0}
 	if phase == "strike" and move.shape == "ring" and not hit_done:

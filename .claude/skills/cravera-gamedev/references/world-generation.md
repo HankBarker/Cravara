@@ -432,6 +432,58 @@ func rng_for_chunk(world_seed: int, c: Vector2i) -> RandomNumberGenerator:
 
 ---
 
+## 8. The forest as it ships (2026-09)
+
+The forest is a finite, seeded 112x112-cell map (`Forest/ForestWorld.gd`, `EXTENT = 56`, 16px cells,
+seed 726151). `_generate()` draws terrain from one FastNoiseLite plus a seeded RNG (river, lake,
+paths, moss, outcrops, a jittered 4-cell grid of trees/rocks/bushes/ferns, the authored camp), and
+saves are **diffs against the seed** (`mined`, `placed`, `water_edits`, `floors`, `roofs`, `doors`,
+`chests`, `damage`, `caches`). `restore()` regenerates, then replays the diffs.
+
+**The ground picture** (`Forest/ground/`, a look only; `terrain` stays the gameplay truth):
+- `ForestGround.gd` writes one texel per cell (`r` kind: 0 grass, 1 dirt, 2 water, 3 moss, 4 sand,
+  5 tilled soil, 6 flagstones; `g` water depth; `b` flags river/wet) and bakes two SubViewports
+  once per edit: `ground_bake.gdshader` (organic region edges from bilinear cell weights + per-kind
+  noise wobble, grass lips and shadows over paths, earth banks above water, dithered moss seams,
+  furrowed soil, running-bond flagstones, detail stamps from `art/stamps.png`) and
+  `water_field.gdshader` (shore distance + depth) that the live `water.gdshader` animates (depth
+  bands, caustics, drifting glints, foam, stepped at 10fps). After any terrain/water/soil edit call
+  `surface.rebuild()`; `ForestWorld` does for its own edits.
+- Visual-only layers on the world: `ground_style` (cell -> `"sand"` along noisy stretches of shore,
+  `"stone"` flagstones in an oval under paved ruins) and `tilled` (Gardening's `_sync_soil` ->
+  `set_soil`).
+- `ForestFlora.gd`: one MultiMesh of swaying tufts/blossoms (`flora.gdshader`, ~8k instances,
+  scattered by hash so it needs no saving), hidden on water, floors, tilled beds and any prop's
+  cell; the keeper and nearby creatures bend it. Props sway via `sway.gdshader` (`ForestProp.SWAY`).
+- Art: `tools/world/make_ground_art.py` cuts stamps and flora from the craftpix packs in
+  `assets_raw`. Shader gotcha: a `const` may not shadow a built-in (`LIGHT`), hence `W_*` names.
+
+**Points of interest** (`ForestWorld.SITES`, placed by `_place_points_of_interest()` at the end of
+`_generate()`): seven sites (Star Temple, Old Watchtower, Hall of the First Builders, Moot Circle,
+Grove Shrine, Wolf Idol, Fallen Stones), each a main ruin/idol (`ForestProp.LANDMARKS`, solid at the
+base, never dismantled), companion pieces (`_find_beside`: framing offsets, then rings out to 9
+cells), an ancient `cache` (opens once with E; loot `world/Loot.gd`, always 2-5 `ancient_coin`),
+relic mounds and meadow `roots` (dig with the garden hoe: `is_dig_spot`/`dig_at`, remembered in
+`mined`). Carvings: `lore_at[cell]` -> `world/Lore.gd` id; E opens the session's `show_lore`, the
+journal lists them (milestones `lore_<id>`; `cache` and `valuable` when coins turn up, the
+merchant's cue). Rules that keep old saves safe, enforced by `Tests/world_poi_suite.gd`:
+- Placement is deterministic and draws no RNG before the seeded props (hashes and noise only).
+- No POI prop sits on a cell that held a seeded prop, so no saved `mined`/`damage` can hit one;
+  only brush in a ruin's footprint is cleared. Sites keep >= 18 cells from spawn, >= 8 from the
+  shrine/tribe camp, >= 14 from each other, and every find stays <= `EXTENT - 5` from the centre.
+- The suite loads both recorded old journeys (`art/forest-pass4`, `art/forest-pass6`) and, read
+  only, the player's own pre-POI save, and checks none of their edits lands on a POI.
+- New items: `tools/world/make_items.py` (Raven icons) writes `ancient_coin`, `sky_idol`,
+  `fossil_bone`, `wild_tuber`, `baked_tuber` (.tres; campfire recipe in `CraftingManager`). POI art:
+  `tools/world/make_poi_art.py` -> `Forest/art/poi/`.
+
+**Review tools.** `res://Tests/WorldLookCapture.tscn` (rendered) shoots the camp, trail, ford, river,
+lake, shore, moss, tribe camp, every POI and every carved companion piece to
+`art/world-v2/look-*.png`, then benchmarks a busy meadow **with vsync off** (otherwise it only
+measures the monitor's refresh: this machine has 59Hz and 165Hz displays).
+
+---
+
 ## How this maps to Cravera
 
 Prioritized, concrete upgrades.

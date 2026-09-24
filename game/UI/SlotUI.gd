@@ -22,14 +22,25 @@ func _ready():
 	connect("mouse_entered", _on_mouse_entered)
 	connect("mouse_exited", _on_mouse_exited)
 
+## The item's name in gold over its details, in the kit's crisp pixel text
+## (the tooltip plate itself comes from the theme).
 func _make_custom_tooltip(for_text: String) -> Object:
-	var label:=Label.new()
-	label.text=for_text
-	label.custom_minimum_size=Vector2(188,0)
-	label.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
-	label.add_theme_font_override("font",preload("res://Forest/fonts/AlegreyaSans.ttf"))
-	label.add_theme_font_size_override("font_size",9)
-	return label
+	var column:=VBoxContainer.new()
+	column.add_theme_constant_override("separation",3)
+	var lines:=for_text.split("\n",true,1)
+	for i in lines.size():
+		var label:=Label.new()
+		label.text=lines[i]
+		label.custom_minimum_size=Vector2(188,0)
+		label.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+		label.add_theme_font_override("font",preload("res://Forest/fonts/Tiny5-Regular.ttf"))
+		label.add_theme_font_size_override("font_size",8)
+		label.add_theme_color_override("font_shadow_color",Color(0.02,0.06,0.06,0.92))
+		label.add_theme_constant_override("shadow_offset_x",1)
+		label.add_theme_constant_override("shadow_offset_y",1)
+		if i==0 and lines.size()>1: label.add_theme_color_override("font_color",Color("dcc085"))
+		column.add_child(label)
+	return column
 
 func _get_source():
 	return source if source != null else InventoryManager
@@ -105,9 +116,13 @@ func _try_quick_equip():
 
 func _on_mouse_entered():
 	_is_hovered = true
-	var style = get_theme_stylebox("panel").duplicate() as StyleBoxFlat
-	style.border_color = style.border_color.lightened(0.3)
-	add_theme_stylebox_override("panel", style)
+	if parent_ui and parent_ui.has_method("slot_style"):
+		add_theme_stylebox_override("panel", parent_ui.slot_style(self, true))
+	else:
+		var style = get_theme_stylebox("panel").duplicate()
+		if style is StyleBoxFlat:
+			style.border_color = style.border_color.lightened(0.3)
+			add_theme_stylebox_override("panel", style)
 
 	if parent_ui and slot_index >= 0 and parent_ui.has_method("show_slot_tooltip_for"):
 		parent_ui.show_slot_tooltip_for(self)

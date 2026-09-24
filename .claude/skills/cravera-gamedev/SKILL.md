@@ -65,6 +65,7 @@ substantive work in that area. **Keep it updated** — see "Continuous improveme
 | **Generating new sprites/creature art/tilesets with PixelLab AI** | `references/pixellab-sprites.md` |
 | **The player character (Keeper v2 rig): armour sets, animations, held items, rider** | `references/keeper-rig.md` |
 | **Dinosaur animation, attacks, behaviour, mounts (v2): PixelLab clip pipeline, DinoArt/DinoMoves** | `references/dinosaurs.md` |
+| **Townsfolk (guide, trader, warden), Terraria-style housing, stone building, talking** | `references/folk-and-housing.md` |
 | The `godot_mcp` toolchain + build/test/debug loop | `references/mcp-workflow.md` |
 
 ## Cross-cutting principles (from the research)
@@ -95,11 +96,23 @@ DONE (implemented & verified booting in Godot 4.6.1 headless, 2026-06-28):
    extended with taming/breeding schema.
 4. ✅ **Visual cohesion:** `scale_mode="integer"` set; master palette at `art/palettes/cravera_master.{hex,gpl}` +
    quantize gate `tools/quantize_to_palette.py`. *(visual-pixel-art.md → "Cravera canonical pipeline")*
+5. ✅ **Forest world v2 (2026-09):** the forest is seeded (`world_seed`), drawn by shaders (organic ground,
+   Core Keeper-style water, swaying flora) and dotted with ruins, idols, caches, relic mounds and wild
+   tubers that never disturb old saves. *(world-generation.md → section 8)*
+6. ✅ **One UI kit (2026-09):** `UI/SkyfangUI.gd`: a shared Theme with crisp Tiny5 pixel text, IM Fell
+   titles, carved-slate/bronze/crystal plaques and sockets, the heart/meat status plate, key-cap hints.
+   Craftable-only ("Ready only") and station-gated crafting are in. *(ui-ux.md → section 0)*
+7. ✅ **Folk, housing, stone building (2026-09):** Orrin the guide starts beside the keeper. Tamsin the
+   trader (after the first cache) and Kaya the beast-warden (after two tames) are found in the wilds: in a
+   hut, stranded, or in a trap. They move into Terraria-style houses: walls, a door, a roof over every
+   tile, a light and a bed. You can talk with each of them (help, recipes, lore, trade, advice, tending,
+   homes). Stone walls, floors, doors and slate roofs are built at the workbench.
+   *(folk-and-housing.md)*
 
 STILL OPEN:
-- **World determinism:** add `world_seed`, swap rejection-sampling for Poisson-disk, wire biome JSON into a real
-  TileMapLayer. *(world-generation.md)* — also enables baking a NavigationRegion2D so creature pathfinding turns on.
-- **UI polish:** fix drag merge/drop semantics, centralize a Theme + pixel font, add "craftable-only" + station-gated crafting. *(ui-ux.md)*
+- **World scale:** biome JSON is still not wired into generation, and there is one forest region. A second region
+  (and a NavigationRegion2D bake for real pathfinding) is the next world step. *(world-generation.md)*
+- **UI polish:** drag merge/drop semantics. *(ui-ux.md)*
 - **Hero art:** replace the Raptor's placeholder (tinted/scaled T-Rex sprites) with dedicated raptor pixel art via the hybrid pipeline.
 
 ## Continuous improvement (this skill is a living document)
