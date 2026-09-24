@@ -35,7 +35,7 @@ substantive work in that area. **Keep it updated** — see "Continuous improveme
 - **Crafting:** recipe dicts `{name,item_id,ingredients{id:qty},category,description}` in
   `CraftingManager.personal_recipes`; categories All/Tools/Building/Materials/Armor.
 - **Player:** node-based FSM (Idle/walk/run/Attack/Hurt/Dead/Roll; each has `enter_state/update_state/exit_state`; `player.switch_state()`). Rendered by the **Keeper v2 skeletal pixel rig** (`game/Forest/keeper/`): armour is part of every cel - never paint over finished frames. See `references/keeper-rig.md`.
-- **Creatures:** `CharacterBody2D` + `AnimatedSprite2D` + `Hurtbox`/`AttackArea`/`AggroRange` (Area2D);
+- **Creatures (forest):** `ForestCreature.gd` with DinoArt clips and DinoMoves attacks (see `references/dinosaurs.md`). Legacy creatures: `CharacterBody2D` + `AnimatedSprite2D` + `Hurtbox`/`AttackArea`/`AggroRange` (Area2D);
   FSM in `_physics_process`; loot via `DroppedItem.tscn`; emit `SignalBus.creature_defeated`. Stats in `Data/creatures.json`.
 - **World:** spawners (`ResourceSpawner` etc.) scatter PackedScenes; biomes described by `Data/Biomes/*.json`.
 - **Physics layers:** 1=Player, 5=Walls, 6=Ground, 7=Interaction.
@@ -64,6 +64,7 @@ substantive work in that area. **Keep it updated** — see "Continuous improveme
 | Core loop, tech-tree pacing, survival stats, damage formula, loot, base-building, progression roadmap | `references/game-design-progression.md` |
 | **Generating new sprites/creature art/tilesets with PixelLab AI** | `references/pixellab-sprites.md` |
 | **The player character (Keeper v2 rig): armour sets, animations, held items, rider** | `references/keeper-rig.md` |
+| **Dinosaur animation, attacks, behaviour, mounts (v2): PixelLab clip pipeline, DinoArt/DinoMoves** | `references/dinosaurs.md` |
 | The `godot_mcp` toolchain + build/test/debug loop | `references/mcp-workflow.md` |
 
 ## Cross-cutting principles (from the research)

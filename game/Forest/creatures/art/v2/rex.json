@@ -1,0 +1,77 @@
+{
+ "key": "rex",
+ "species": "rex",
+ "canvas": [
+  128,
+  96
+ ],
+ "ground": 89,
+ "origin": {
+  "side": [
+   26,
+   36
+  ],
+  "down": [
+   26,
+   36
+  ],
+  "up": [
+   26,
+   36
+  ]
+ },
+ "clips": {
+  "idle": {
+   "fps": 6,
+   "loop": true,
+   "frames": 8
+  },
+  "walk": {
+   "fps": 9,
+   "loop": true,
+   "frames": 8
+  },
+  "run": {
+   "fps": 13,
+   "loop": true,
+   "frames": 8
+  },
+  "bite": {
+   "fps": 14,
+   "loop": false,
+   "frames": 9,
+   "hit": 5,
+   "hit_view": {
+    "side": 5,
+    "down": 5,
+    "up": 4
+   }
+  },
+  "chomp": {
+   "fps": 12,
+   "loop": false,
+   "frames": 13,
+   "hit": 5,
+   "hit_view": {
+    "side": 5,
+    "down": 4,
+    "up": 5
+   }
+  },
+  "roar": {
+   "fps": 10,
+   "loop": false,
+   "frames": 13
+  },
+  "hurt": {
+   "fps": 12,
+   "loop": false,
+   "frames": 5
+  },
+  "death": {
+   "fps": 10,
+   "loop": false,
+   "frames": 13
+  }
+ }
+}

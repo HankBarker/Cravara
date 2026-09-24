@@ -110,14 +110,16 @@ func run():
 		await get_tree().create_timer(0.12).timeout
 		check(mount.mount_attack(mount.position+Vector2(100,0)),kind+" rendered mounted attack begins")
 		await get_tree().create_timer(0.34).timeout
-		check(str(mount._sprite.animation).begins_with("attack_"),kind+" real strike animation visible")
+		var strike: String = "tail_swing" if kind == "stego" else "gore"
+		check(str(mount._sprite.animation).begins_with(strike+"_"),kind+" real strike animation visible")
 		await capture("mounted-"+kind+"-attack.png")
-		var board := Image.create(96*8,80*3,false,Image.FORMAT_RGBA8)
+		var cell := Vector2i(mount._sprite.sprite_frames.get_frame_texture("idle_side",0).get_size())
+		var board := Image.create(cell.x*13,cell.y*3,false,Image.FORMAT_RGBA8)
 		for row in 3:
-			var clip: String = ["walk_side","walk_down","attack_side"][row]
-			for frame in mount._sprite.sprite_frames.get_frame_count(clip):
+			var clip: String = ["walk_side","walk_down",strike+"_side"][row]
+			for frame in mini(13,mount._sprite.sprite_frames.get_frame_count(clip)):
 				var im: Image = mount._sprite.sprite_frames.get_frame_texture(clip,frame).get_image()
-				board.blend_rect(im,Rect2i(Vector2i.ZERO,im.get_size()),Vector2i(frame*96,row*80))
+				board.blend_rect(im,Rect2i(Vector2i.ZERO,im.get_size()),Vector2i(frame*cell.x,row*cell.y))
 		check(board.save_png(OUTPUT+kind+"-composite-native.png")==OK,kind+" native animation contact sheet saved")
 		mount.health -= 9
 		var food_before := InventoryManager.get_item_count("berry")

@@ -291,6 +291,19 @@ def hurt(rng):
     return finish(low(x, 7000), 50, -10.0)
 
 
+def thud(rng):
+    """A heavy footfall or stomp: a deep falling boom, a dirt crunch and a
+    short rumble tail (dinosaurs: stomps, heavy steps, charge impacts)."""
+    n = n_of(0.46)
+    boom = sweep_sine(n, rng.uniform(88, 102), rng.uniform(36, 42)) * env(n, 0.002, 0.16) * 1.0
+    knock = sweep_sine(n, rng.uniform(170, 200), 80) * env(n, 0.001, 0.035) * 0.45
+    crunch = band(rng.standard_normal(n), 220, 1400) * env(n, 0.0015, 0.045) * 0.55
+    grit = band(rng.standard_normal(n), 1400, 3600) * env(n, 0.001, 0.02) * 0.18
+    rumble = low(rng.standard_normal(n), 90) * env(n, 0.01, 0.2) * 0.9
+    x = soft_clip(boom + knock + crunch + grit + rumble, 1.6)
+    return finish(low(x, 5000), 60, -12.0)
+
+
 def main():
     plan = [
         ("step_grass", 5, lambda r, i: step_grass(r)),
@@ -303,6 +316,7 @@ def main():
         ("rustle", 4, lambda r, i: rustle(r, creak=i % 2 == 1)),
         ("hit", 4, lambda r, i: hit(r)),
         ("hurt", 3, lambda r, i: hurt(r)),
+        ("thud", 4, lambda r, i: thud(r)),
     ]
     for family_index, (family, count, make) in enumerate(plan):
         for i in range(count):

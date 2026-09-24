@@ -1,0 +1,476 @@
+{
+ "idle_side": {
+  "job": "f8c7a0ac-50d0-47a7-a259-d30723a489f9",
+  "tool": "animate_image",
+  "seed": 6052633,
+  "status": "done",
+  "cost": 2.0,
+  "prompt": "A stegosaurus with amber crystal plates and a spiked tail, breathing slowly while standing: the body rises and falls gently, the tail sways a little and the head shifts slightly as it looks around. It keeps facing right, seen from the side, and stays in the same spot. Keep the exact same creature design, colours, markings and size. No visual effects of any kind: no motion blur, smears, speed lines, dust, particles or impact flashes; only the animal itself moves.",
+  "frames": 9,
+  "submitted": 1790217317.6812434,
+  "finished": 1790217597.1989334
+ },
+ "walk_side": {
+  "job": "26f4ae75-600d-43ed-8a1c-dad834c31ff2",
+  "tool": "animate_image",
+  "seed": 2310648,
+  "status": "done",
+  "cost": 2.0,
+  "prompt": "A stegosaurus with amber crystal plates and a spiked tail, walking in place with a natural four-legged gait: the legs step one after another, each foot lifting and planting, the body bobs and rolls with each step and the tail sways. It keeps facing right, seen from the side, and stays in the same spot. Keep the exact same creature design, colours, markings and size. No visual effects of any kind: no motion blur, smears, speed lines, dust, particles or impact flashes; only the animal itself moves.",
+  "frames": 9,
+  "submitted": 1790217377.510873,
+  "finished": 1790217625.3466537
+ },
+ "eat_side": {
+  "job": "df1fa186-ad45-4fd9-966d-88f57626d2ad",
+  "tool": "animate_image_pixminimax",
+  "seed": 5628736,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "A green stegosaurus with orange back plates and a spiked tail, grazing: lowers its head all the way down to the ground, tears and chews the plants, then raises its head back up. It keeps facing right, seen from the side, and stays in the same spot. Keep the exact same creature design, colours, markings and size. Only the animal itself moves: nothing else appears in the frame - no bubbles, sparkles, glows, flashes, particles, shards, debris, dust, motion blur, smears or speed lines.",
+  "frames": 13,
+  "submitted": 1790218052.677715,
+  "finished": 1790218203.7487128
+ },
+ "eat_down": {
+  "job": "c964c6cb-f57a-4f1c-b477-200aea738426",
+  "tool": "animate_image_pixminimax",
+  "seed": 3077853,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "A green stegosaurus with orange back plates and a spiked tail, grazing: lowers its head all the way down to the ground, tears and chews the plants, then raises its head back up. It keeps facing toward the viewer and stays in the same spot. Keep the exact same creature design, colours, markings and size. Only the animal itself moves: nothing else appears in the frame - no bubbles, sparkles, glows, flashes, particles, shards, debris, dust, motion blur, smears or speed lines.",
+  "frames": 13,
+  "submitted": 1790218053.9846673,
+  "finished": 1790218586.8452415,
+  "score": {
+   "bright": 7,
+   "area": 1.26,
+   "wide": 1.61
+  }
+ },
+ "eat_up": {
+  "job": "dea9db7b-5593-473e-ad8b-bcb8d5d7be55",
+  "tool": "animate_image_pixminimax",
+  "seed": 14442705,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "A green stegosaurus with orange back plates and a spiked tail, grazing: lowers its head all the way down to the ground, tears and chews the plants, then raises its head back up. It keeps facing away from the viewer, seen from behind, and stays in the same spot. Keep the exact same creature design, colours, markings and size. Only the animal itself moves: nothing else appears in the frame - no bubbles, sparkles, glows, flashes, particles, shards, debris, dust, motion blur, smears or speed lines.",
+  "frames": 13,
+  "submitted": 1790218055.0516214,
+  "finished": 1790218141.264856
+ },
+ "tail_swing_side": {
+  "job": "0f06c7b3-32f4-4227-b7d5-81c2d76aae4d",
+  "tool": "animate_image_pixminimax",
+  "seed": 11230999,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "A green stegosaurus with orange back plates and a spiked tail, a tail strike: braces its legs and sweeps its spiked tail sideways, low along the ground, out to the side in a wide fast arc, then swings it back behind it. It keeps facing right, seen from the side, and stays in the same spot. Keep the exact same creature design, colours, markings and size. Only the animal itself moves: nothing else appears in the frame - no bubbles, sparkles, glows, flashes, particles, shards, debris, dust, motion blur, smears or speed lines.",
+  "frames": 13,
+  "submitted": 1790218057.590048,
+  "finished": 1790218157.600816,
+  "method": "tail_side.py (still body + bent tail, near)"
+ },
+ "death_side": {
+  "job": "5eba40ed-b308-4044-b5cd-6d9391e3649b",
+  "tool": "animate_image_pixminimax",
+  "seed": 314818,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "A green stegosaurus with orange back plates and a spiked tail, staggers, its legs give way and it collapses heavily onto its side on the ground, then lies still. It keeps facing right, seen from the side, and stays in the same spot. Keep the exact same creature design, colours, markings and size. Only the animal itself moves: nothing else appears in the frame - no bubbles, sparkles, glows, flashes, particles, shards, debris, dust, motion blur, smears or speed lines.",
+  "frames": 13,
+  "submitted": 1790218232.3397532,
+  "finished": 1790218615.3206244,
+  "score": {
+   "bright": 10,
+   "area": 1.0,
+   "wide": 1.2
+  }
+ },
+ "death_down": {
+  "job": "6b5aaf45-1dca-4c42-b872-bc78106bb0c1",
+  "tool": "animate_image_pixminimax",
+  "seed": 16138000,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "A green stegosaurus with orange back plates and a spiked tail, staggers, its legs give way and it collapses heavily onto its side on the ground, then lies still. It keeps facing toward the viewer and stays in the same spot. Keep the exact same creature design, colours, markings and size. Only the animal itself moves: nothing else appears in the frame - no bubbles, sparkles, glows, flashes, particles, shards, debris, dust, motion blur, smears or speed lines.",
+  "frames": 13,
+  "submitted": 1790218233.9456053,
+  "finished": 1790218630.2610312,
+  "score": {
+   "bright": 16,
+   "area": 1.41,
+   "wide": 3.04
+  }
+ },
+ "death_up": {
+  "job": "77e7a9c7-e7a5-4ee2-bc55-740e1a98adf5",
+  "tool": "animate_image_pixminimax",
+  "seed": 10707129,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "A green stegosaurus with orange back plates and a spiked tail, staggers, its legs give way and it collapses heavily onto its side on the ground, then lies still. It keeps facing away from the viewer, seen from behind, and stays in the same spot. Keep the exact same creature design, colours, markings and size. Only the animal itself moves: nothing else appears in the frame - no bubbles, sparkles, glows, flashes, particles, shards, debris, dust, motion blur, smears or speed lines.",
+  "frames": 13,
+  "submitted": 1790218234.6892583,
+  "finished": 1790218654.873609,
+  "score": {
+   "bright": 13,
+   "area": 1.49,
+   "wide": 3.3
+  }
+ },
+ "_history": {
+  "idle_down": [
+   {
+    "job": "871e2e52-395c-4b57-bcf7-29ce0360ce51",
+    "tool": "animate_image",
+    "seed": 14126187,
+    "status": "done",
+    "cost": 2.0,
+    "prompt": "A stegosaurus with amber crystal plates and a spiked tail, breathing slowly while standing: the body rises and falls gently, the tail sways a little and the head shifts slightly as it looks around. It keeps facing toward the viewer and stays in the same spot. Keep the exact same creature design, colours, markings and size. No visual effects of any kind: no motion blur, smears, speed lines, dust, particles or impact flashes; only the animal itself moves.",
+    "frames": 9,
+    "submitted": 1790217318.424643,
+    "finished": 1790217604.434303
+   }
+  ],
+  "idle_up": [
+   {
+    "job": "13ff1099-3bf0-4a07-bd10-177ba7cb6099",
+    "tool": "animate_image",
+    "seed": 5702894,
+    "status": "done",
+    "cost": 2.0,
+    "prompt": "A stegosaurus with amber crystal plates and a spiked tail, breathing slowly while standing: the body rises and falls gently, the tail sways a little and the head shifts slightly as it looks around. It keeps facing away from the viewer, seen from behind, and stays in the same spot. Keep the exact same creature design, colours, markings and size. No visual effects of any kind: no motion blur, smears, speed lines, dust, particles or impact flashes; only the animal itself moves.",
+    "frames": 9,
+    "submitted": 1790217374.782986,
+    "finished": 1790217611.8941884
+   }
+  ],
+  "walk_down": [
+   {
+    "job": "568d0730-92b4-462a-8990-3491f8fd9c88",
+    "tool": "animate_image",
+    "seed": 7425873,
+    "status": "done",
+    "cost": 2.0,
+    "prompt": "A green stegosaurus with orange back plates and a spiked tail, walking in place with a natural four-legged gait: the legs step one after another, each foot lifting and planting, the body bobs and rolls with each step and the tail sways. It keeps facing toward the viewer and stays in the same spot. Keep the exact same creature design, colours, markings and size. Only the animal itself moves: nothing else appears in the frame - no bubbles, sparkles, glows, flashes, particles, shards, debris, dust, motion blur, smears or speed lines.",
+    "frames": 9,
+    "submitted": 1790217973.2468264,
+    "finished": 1790218123.352834
+   },
+   {
+    "job": "c4685861-4d89-4147-aa1c-8d33317249f4",
+    "tool": "animate_image",
+    "seed": 7426873,
+    "status": "done",
+    "cost": 2.0,
+    "prompt": "Walks in place on four legs: the legs step one after another, the body bobs gently and the tail sways. It stays in place, facing the viewer.",
+    "frames": 9,
+    "submitted": 1790219351.4231756,
+    "finished": 1790219578.3317306,
+    "score": {
+     "bright": 32,
+     "area": 1.0,
+     "wide": 1.09
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\stego\\walk_down@1"
+   }
+  ],
+  "walk_up": [
+   {
+    "job": "9e492347-5545-4aa6-b23c-717f86a64068",
+    "tool": "animate_image",
+    "seed": 1764252,
+    "status": "done",
+    "cost": 2.0,
+    "prompt": "A green stegosaurus with orange back plates and a spiked tail, walking in place with a natural four-legged gait: the legs step one after another, each foot lifting and planting, the body bobs and rolls with each step and the tail sways. It keeps facing away from the viewer, seen from behind, and stays in the same spot. Keep the exact same creature design, colours, markings and size. Only the animal itself moves: nothing else appears in the frame - no bubbles, sparkles, glows, flashes, particles, shards, debris, dust, motion blur, smears or speed lines.",
+    "frames": 9,
+    "submitted": 1790218007.5770059,
+    "finished": 1790218189.0816188
+   }
+  ],
+  "tail_swing_down": [
+   {
+    "job": "80fdb06a-44ba-4f0e-826a-e4be35f68fdf",
+    "tool": "animate_image_pixminimax",
+    "seed": 11673469,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "A green stegosaurus with orange back plates and a spiked tail, a tail strike: braces its legs and sweeps its spiked tail sideways, low along the ground, out to the side in a wide fast arc, then swings it back behind it. It keeps facing toward the viewer and stays in the same spot. Keep the exact same creature design, colours, markings and size. Only the animal itself moves: nothing else appears in the frame - no bubbles, sparkles, glows, flashes, particles, shards, debris, dust, motion blur, smears or speed lines.",
+    "frames": 13,
+    "submitted": 1790218094.6490586,
+    "finished": 1790218224.0216808
+   },
+   {
+    "job": "47f635ef-6852-4d3b-ac61-8404a15e5748",
+    "tool": "animate_image_pixminimax",
+    "seed": 11674469,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Swings its spiked tail out to the side in a wide fast sweep, then brings it back behind it. Its body and feet stay still. It stays in place, facing the viewer.",
+    "frames": 13,
+    "submitted": 1790219438.1131718,
+    "finished": 1790219606.5671005,
+    "score": {
+     "bright": 87,
+     "area": 2.52,
+     "wide": 3.48
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\stego\\tail_swing_down@1"
+   },
+   {
+    "job": "c47c38ef-844e-49d4-8198-03cacd2ce3f1",
+    "tool": "animate_image_pixminimax",
+    "seed": 11675469,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Keeps its body and head facing the viewer and swings its tail out from behind its body to one side in a wide fast sweep, then back behind it. Only the tail moves. It stays in place, facing the viewer the whole time.",
+    "frames": 13,
+    "submitted": 1790219792.6841712,
+    "finished": 1790219977.8178675,
+    "score": {
+     "bright": 346,
+     "area": 3.27,
+     "wide": 3.04
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\stego\\tail_swing_down@2"
+   }
+  ],
+  "hurt_down": [
+   {
+    "job": "e32fb3b2-e3e7-44eb-bf86-8bd2b721376d",
+    "tool": "animate_image",
+    "seed": 3949761,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "A green stegosaurus with orange back plates and a spiked tail, flinches sharply as if struck: the whole body recoils and the head jerks back, then it recovers to its standing pose. It keeps facing toward the viewer and stays in the same spot. Keep the exact same creature design, colours, markings and size. Only the animal itself moves: nothing else appears in the frame - no bubbles, sparkles, glows, flashes, particles, shards, debris, dust, motion blur, smears or speed lines.",
+    "frames": 5,
+    "submitted": 1790218161.828475,
+    "finished": 1790218230.464002
+   }
+  ],
+  "tail_swing_up": [
+   {
+    "job": "4ccd9b1a-3df3-4326-9979-90093c77aacb",
+    "tool": "animate_image_pixminimax",
+    "seed": 3813258,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "A green stegosaurus with orange back plates and a spiked tail, a tail strike: braces its legs and sweeps its spiked tail sideways, low along the ground, out to the side in a wide fast arc, then swings it back behind it. It keeps facing away from the viewer, seen from behind, and stays in the same spot. Keep the exact same creature design, colours, markings and size. Only the animal itself moves: nothing else appears in the frame - no bubbles, sparkles, glows, flashes, particles, shards, debris, dust, motion blur, smears or speed lines.",
+    "frames": 13,
+    "submitted": 1790218160.1222858,
+    "finished": 1790218596.5962358,
+    "score": {
+     "bright": 266,
+     "area": 1.7,
+     "wide": 3.9
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\stego\\tail_swing_up@0"
+   },
+   {
+    "job": "d55ddbe3-d502-4c90-ba57-8d02456a4f1f",
+    "tool": "animate_image_pixminimax",
+    "seed": 3814258,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Swings its spiked tail out to the side in a wide fast sweep, then brings it back behind it. Its body and feet stay still. It stays in place, facing away from the viewer.",
+    "frames": 13,
+    "submitted": 1790219439.0042946,
+    "finished": 1790219615.9013538,
+    "score": {
+     "bright": 19,
+     "area": 1.38,
+     "wide": 4.1
+    }
+   }
+  ],
+  "hurt_side": [
+   {
+    "job": "3b604bf4-1524-40b6-b701-ffcc46eed6b7",
+    "tool": "animate_image",
+    "seed": 551625,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "A green stegosaurus with orange back plates and a spiked tail, flinches sharply as if struck: the whole body recoils and the head jerks back, then it recovers to its standing pose. It keeps facing right, seen from the side, and stays in the same spot. Keep the exact same creature design, colours, markings and size. Only the animal itself moves: nothing else appears in the frame - no bubbles, sparkles, glows, flashes, particles, shards, debris, dust, motion blur, smears or speed lines.",
+    "frames": 5,
+    "submitted": 1790218160.9485366,
+    "finished": 1790218601.6202095,
+    "score": {
+     "bright": 339,
+     "area": 1.34,
+     "wide": 1.04
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\stego\\hurt_side@0"
+   }
+  ],
+  "hurt_up": [
+   {
+    "job": "255df73b-ad8a-4e9a-846c-3b7a96209248",
+    "tool": "animate_image",
+    "seed": 1118639,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "A green stegosaurus with orange back plates and a spiked tail, flinches sharply as if struck: the whole body recoils and the head jerks back, then it recovers to its standing pose. It keeps facing away from the viewer, seen from behind, and stays in the same spot. Keep the exact same creature design, colours, markings and size. Only the animal itself moves: nothing else appears in the frame - no bubbles, sparkles, glows, flashes, particles, shards, debris, dust, motion blur, smears or speed lines.",
+    "frames": 5,
+    "submitted": 1790218231.356351,
+    "finished": 1790218605.607429,
+    "score": {
+     "bright": 215,
+     "area": 1.86,
+     "wide": 1.8
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\stego\\hurt_up@0"
+   }
+  ]
+ },
+ "idle_down": {
+  "job": "31e51aeb-cbc5-4b7b-adda-77e3041ef324",
+  "tool": "animate_image_pixminimax",
+  "seed": 14127187,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stands still in a relaxed pose; its body rises and falls very slightly and its tail sways a little. It stays in place, facing the viewer.",
+  "frames": 9,
+  "submitted": 1790219187.9189174,
+  "finished": 1790219301.9922507,
+  "score": {
+   "bright": 5,
+   "area": 1.0,
+   "wide": 1.0
+  }
+ },
+ "idle_up": {
+  "job": "907d29a3-b469-4605-b716-983c6f0cadc9",
+  "tool": "animate_image_pixminimax",
+  "seed": 5703894,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stands still in a relaxed pose; its body rises and falls very slightly and its tail sways a little. It stays in place, facing away from the viewer.",
+  "frames": 9,
+  "submitted": 1790219188.8764307,
+  "finished": 1790219309.9932966,
+  "score": {
+   "bright": 8,
+   "area": 1.03,
+   "wide": 1.0
+  }
+ },
+ "walk_up": {
+  "job": "b4cdf763-71b8-4d0b-91f1-e1dd52dc6505",
+  "tool": "animate_image",
+  "seed": 1765252,
+  "status": "done",
+  "cost": 2.0,
+  "prompt": "Walks in place on four legs: the legs step one after another, the body bobs gently and the tail sways. It stays in place, facing away from the viewer.",
+  "frames": 9,
+  "submitted": 1790219437.357647,
+  "finished": 1790219591.0747154,
+  "score": {
+   "bright": 1,
+   "area": 1.03,
+   "wide": 1.35
+  }
+ },
+ "hurt_side": {
+  "job": "934cb7f1-ee20-4189-b0cd-7269258b8b28",
+  "tool": "animate_image_pixminimax",
+  "seed": 552625,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Flinches: jerks its head and body back, then returns to its stance. It stays in place, facing right.",
+  "frames": 5,
+  "submitted": 1790219478.3901935,
+  "finished": 1790219620.4444702,
+  "score": {
+   "bright": 0,
+   "area": 1.01,
+   "wide": 1.0
+  }
+ },
+ "hurt_down": {
+  "job": "e30a01cc-6c91-4f98-9170-c6afd5894254",
+  "tool": "animate_image_pixminimax",
+  "seed": 3950761,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Flinches: jerks its head and body back, then returns to its stance. It stays in place, facing the viewer.",
+  "frames": 5,
+  "submitted": 1790219622.1514823,
+  "finished": 1790219721.9460893,
+  "score": {
+   "bright": 3,
+   "area": 1.04,
+   "wide": 1.09
+  }
+ },
+ "hurt_up": {
+  "job": "9978874a-8d95-4d0c-8299-bbc7c707aec2",
+  "tool": "animate_image_pixminimax",
+  "seed": 1119639,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Flinches: jerks its head and body back, then returns to its stance. It stays in place, facing away from the viewer.",
+  "frames": 5,
+  "submitted": 1790219623.0598488,
+  "finished": 1790219727.9708533,
+  "score": {
+   "bright": 2,
+   "area": 1.03,
+   "wide": 1.4
+  }
+ },
+ "walk_down": {
+  "job": "209563e9-cb93-4835-b361-cbbb3fb955f0",
+  "tool": "animate_image",
+  "seed": 7427873,
+  "status": "done",
+  "cost": 2.0,
+  "prompt": "Walks in place on four legs: the legs step one after another, the body bobs gently and the tail sways. It stays in place, facing the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790219791.925036,
+  "finished": 1790219959.1384344,
+  "score": {
+   "bright": 3,
+   "area": 1.07,
+   "wide": 1.22
+  }
+ },
+ "tail_swing_up": {
+  "job": "eb620d24-b551-4372-ba62-1e635c131976",
+  "tool": "animate_image_pixminimax",
+  "seed": 3815258,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Keeps its back to the viewer and swings its tail out to one side in a wide fast sweep, then back to the middle. Only the tail moves. It stays in place with its back to the viewer the whole time.",
+  "frames": 13,
+  "submitted": 1790219826.6654687,
+  "finished": 1790219999.9135718,
+  "score": {
+   "bright": 6,
+   "area": 1.12,
+   "wide": 2.1
+  }
+ },
+ "tail_swing_down": {
+  "job": "3ab34c7f-95ca-4632-b777-af6dab6033cf",
+  "tool": "animate_image_pixminimax",
+  "seed": 11676469,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Keeps its body and head facing the viewer and swings its tail out from behind its body to one side in a wide fast sweep, then back behind it. Only the tail moves. It stays in place, facing the viewer the whole time.",
+  "frames": 13,
+  "submitted": 1790220079.7100062,
+  "finished": 1790220226.8503027,
+  "score": {
+   "bright": 41,
+   "area": 1.93,
+   "wide": 2.57
+  },
+  "method": "tail_front.py (front body + side tail tip)"
+ },
+ "tail_swing_far_side": {
+  "status": "done",
+  "method": "tail_side.py (still body + bent tail, far)",
+  "frames": 13
+ }
+}

@@ -124,7 +124,7 @@ func _tick_hunger(delta: float):
 				die()
 	else: _starve_accum = 0
 
-func take_damage(amount: int, attacker = null):
+func take_damage(amount: int, attacker = null, knockback := 200.0):
 	if state == "dead" or respawning or is_invulnerable or roll_invulnerable: return
 	stop_action()
 	var session := get_tree().get_first_node_in_group("forest_session")
@@ -133,7 +133,7 @@ func take_damage(amount: int, attacker = null):
 	var controller = mounted_creature._mount_controller if is_instance_valid(mounted_creature) else null
 	var actual_damage := CombatMath.mitigate(amount, defense)
 	var health_before := current_health
-	super.take_damage(amount, attacker)
+	super.take_damage(amount, attacker, knockback)
 	_feel_hurt(health_before - current_health, attacker)
 	if is_instance_valid(controller) and is_instance_valid(mounted_creature):
 		controller.on_rider_damaged(actual_damage, attacker)

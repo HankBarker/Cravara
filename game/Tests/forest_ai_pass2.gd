@@ -71,11 +71,17 @@ func verify():
 	stego = creature("stego",Vector2(180,0),true)
 	stego.set_order("guard")
 	var rex = creature("rex",Vector2(250,0))
-	await step_frames(30)
+	# Attacks are telegraphed (a roar, wind-ups, the contact frame), so give the
+	# exchange a few seconds rather than half of one.
+	for i in 240:
+		await get_tree().physics_frame
+		if stego.health < int(stego.stats.hp) and rex.health < int(rex.stats.hp): break
 	check(stego.health < int(stego.stats.hp), "wild rex actually damages attacking tame stego")
 	check(rex.health < int(rex.stats.hp), "tame stego actually damages rex")
 	check(rex._threat == stego, "rex identifies stego attacker instead of chasing distant player")
-	await step_frames(90)
+	for i in 1200:
+		await get_tree().physics_frame
+		if not is_instance_valid(stego) or stego.is_dead: break
 	check(not is_instance_valid(stego) or stego.is_dead, "rex wins sustained unassisted fight against a single stego")
 	check(is_instance_valid(rex) and not rex.is_dead, "heavy predator survives fair contact duel")
 	await clear_actors()

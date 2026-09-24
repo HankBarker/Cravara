@@ -1,0 +1,390 @@
+{
+ "gore_side": {
+  "status": "done",
+  "method": "procedural (pending build)"
+ },
+ "gore_down": {
+  "status": "done",
+  "method": "procedural (pending build)"
+ },
+ "gore_up": {
+  "status": "done",
+  "method": "procedural (pending build)"
+ },
+ "idle_side": {
+  "job": "e1384b29-ff40-4f8e-ad15-f933fa621a22",
+  "tool": "animate_image_pixminimax",
+  "seed": 8875123,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stands still in a relaxed pose; its body rises and falls very slightly and its tail sways a little. It stays in place, facing right.",
+  "frames": 9,
+  "submitted": 1790222940.9347236,
+  "finished": 1790223014.8285146,
+  "score": {
+   "bright": 0,
+   "area": 1.05,
+   "wide": 1.04
+  }
+ },
+ "idle_down": {
+  "job": "14099adf-5081-438a-a7b7-b2e9f4c1965f",
+  "tool": "animate_image_pixminimax",
+  "seed": 3518918,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stands still in a relaxed pose; its body rises and falls very slightly and its tail sways a little. It stays in place, facing the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790222941.7122316,
+  "finished": 1790223123.053421,
+  "score": {
+   "bright": 4,
+   "area": 1.04,
+   "wide": 1.0
+  }
+ },
+ "idle_up": {
+  "job": "5bbe4047-4770-4e6d-8adf-48d6cddae6f4",
+  "tool": "animate_image_pixminimax",
+  "seed": 1290994,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stands still in a relaxed pose; its body rises and falls very slightly and its tail sways a little. It stays in place with its back to the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790223125.7852252,
+  "finished": 1790223250.8678901,
+  "score": {
+   "bright": 3,
+   "area": 1.03,
+   "wide": 1.0
+  }
+ },
+ "walk_side": {
+  "job": "cf780b6a-400e-45da-acad-cc7b0678a61e",
+  "tool": "animate_image",
+  "seed": 16414140,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Walks in place on four legs: the legs step one after another, the body bobs gently and the tail sways. It stays in place, facing right.",
+  "frames": 9,
+  "submitted": 1790223127.089074,
+  "finished": 1790223259.8324866,
+  "score": {
+   "bright": 4,
+   "area": 1.02,
+   "wide": 1.02
+  }
+ },
+ "walk_up": {
+  "job": "94110a5b-89c0-421a-a3f6-93804384771b",
+  "tool": "animate_image",
+  "seed": 3134949,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Walks in place on four legs: the legs step one after another, the body bobs gently and the tail sways. It stays in place with its back to the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790223128.8189676,
+  "finished": 1790223286.1119418,
+  "score": {
+   "bright": 1,
+   "area": 1.08,
+   "wide": 1.0
+  }
+ },
+ "run_side": {
+  "job": "5ae33dc4-08ba-4e25-998a-ae73defa43b1",
+  "tool": "animate_image_pixminimax",
+  "seed": 3353167,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Gallops in place with its head lowered and its horns pointing forward, legs moving fast. It stays in place, facing right.",
+  "frames": 9,
+  "submitted": 1790223129.659906,
+  "finished": 1790223293.445475,
+  "score": {
+   "bright": 10,
+   "area": 1.01,
+   "wide": 1.04
+  }
+ },
+ "run_down": {
+  "job": "b4aef08c-45f6-419f-98aa-ab0f40ebf8f8",
+  "tool": "animate_image_pixminimax",
+  "seed": 5954326,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Gallops in place with its head lowered and its horns pointing forward, legs moving fast. It stays in place, facing the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790223180.300783,
+  "finished": 1790223327.6084943,
+  "score": {
+   "bright": 1,
+   "area": 1.05,
+   "wide": 1.0
+  },
+  "method": "AI clip + cap_clamp.py (tol 1)"
+ },
+ "_history": {
+  "walk_down": [
+   {
+    "job": "bb1979a2-da1f-410b-8683-2a10b9865732",
+    "tool": "animate_image",
+    "seed": 12201604,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Walks in place on four legs: the legs step one after another, the body bobs gently and the tail sways. It stays in place, facing the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790223127.99831,
+    "finished": 1790223279.3213854,
+    "score": {
+     "bright": 14,
+     "area": 1.21,
+     "wide": 1.04
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\trike_saddle\\walk_down@0"
+   },
+   {
+    "job": "9b52d4db-86d6-4b1a-aa0c-540328c0fd2f",
+    "tool": "animate_image",
+    "seed": 12202604,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Walks in place on four legs: the legs step one after another, the body bobs gently and the tail sways. It stays in place, facing the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790223336.4130273,
+    "finished": 1790223539.4184518,
+    "score": {
+     "bright": 4,
+     "area": 1.28,
+     "wide": 1.04
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\trike_saddle\\walk_down@1"
+   }
+  ]
+ },
+ "run_up": {
+  "job": "a4f90991-5daf-4d83-8068-43ce551b8e8d",
+  "tool": "animate_image_pixminimax",
+  "seed": 15982140,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Gallops in place with its head lowered and its horns pointing forward, legs moving fast. It stays in place with its back to the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790223295.7767644,
+  "finished": 1790223476.1317916,
+  "score": {
+   "bright": 1,
+   "area": 1.03,
+   "wide": 1.0
+  }
+ },
+ "windup_side": {
+  "job": "7bc91c4d-dd2d-40d5-8372-f118d34cd571",
+  "tool": "animate_image_pixminimax",
+  "seed": 8246789,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Lowers its head so its horns point forward and scrapes the ground with one front foot, getting ready to charge. It stays in place, facing right.",
+  "frames": 9,
+  "submitted": 1790223296.518031,
+  "finished": 1790223367.2567759,
+  "score": {
+   "bright": 5,
+   "area": 1.03,
+   "wide": 1.16
+  }
+ },
+ "windup_down": {
+  "job": "5be43616-bb1a-4e4c-b88e-20ccec276d47",
+  "tool": "animate_image_pixminimax",
+  "seed": 7705520,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Keeps facing the viewer: lowers its head so its horns point at the viewer and paws the ground twice with one front foot. It stays in place, facing the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790223298.0674179,
+  "finished": 1790223387.079909,
+  "score": {
+   "bright": 7,
+   "area": 1.0,
+   "wide": 1.0
+  }
+ },
+ "windup_up": {
+  "job": "dfc51a6d-85fd-47ea-8996-6c53dc1ec393",
+  "tool": "animate_image_pixminimax",
+  "seed": 294515,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Keeps its back to the viewer: lowers its head and paws the ground twice with one front foot. It stays in place with its back to the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790223298.7426894,
+  "finished": 1790223397.7621179,
+  "score": {
+   "bright": 0,
+   "area": 1.01,
+   "wide": 1.0
+  }
+ },
+ "eat_side": {
+  "job": "85c1427d-3515-4011-ac69-7ae14433d9a1",
+  "tool": "animate_image_pixminimax",
+  "seed": 6398922,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Lowers its head to the ground, eats the grass with a few bites, then lifts its head back up. It stays in place, facing right.",
+  "frames": 13,
+  "submitted": 1790223299.6726403,
+  "finished": 1790223419.765323,
+  "score": {
+   "bright": 1,
+   "area": 1.01,
+   "wide": 1.06
+  }
+ },
+ "eat_down": {
+  "job": "baac2eee-4710-4e70-9963-1e9518dc560d",
+  "tool": "animate_image_pixminimax",
+  "seed": 13259999,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Lowers its head to the ground, eats the grass with a few bites, then lifts its head back up. It stays in place, facing the viewer the whole time.",
+  "frames": 13,
+  "submitted": 1790223420.7006867,
+  "finished": 1790223553.289045,
+  "score": {
+   "bright": 8,
+   "area": 1.06,
+   "wide": 1.0
+  }
+ },
+ "eat_up": {
+  "job": "80faa573-d75b-4076-bc62-b79884ec9d75",
+  "tool": "animate_image_pixminimax",
+  "seed": 2506881,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Keeps its back to the viewer: lowers its head to the ground and eats the grass, then lifts its head again. It stays in place with its back to the viewer the whole time.",
+  "frames": 13,
+  "submitted": 1790223421.4507384,
+  "finished": 1790223577.7936404,
+  "score": {
+   "bright": 7,
+   "area": 1.17,
+   "wide": 1.23
+  }
+ },
+ "hurt_side": {
+  "job": "dd53471c-579e-498f-a233-b54ad4e7b560",
+  "tool": "animate_image_pixminimax",
+  "seed": 12594443,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Flinches: jerks its head and body back, then returns to its stance. It stays in place, facing right.",
+  "frames": 5,
+  "submitted": 1790223422.3509042,
+  "finished": 1790223485.861679,
+  "score": {
+   "bright": 6,
+   "area": 1.06,
+   "wide": 1.02
+  }
+ },
+ "hurt_down": {
+  "job": "c59a5c57-3e57-40ff-9b3a-3da331e0ca2d",
+  "tool": "animate_image_pixminimax",
+  "seed": 3533028,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Flinches: jerks its head and body back, then returns to its stance. It stays in place, facing the viewer the whole time.",
+  "frames": 5,
+  "submitted": 1790223423.2381363,
+  "finished": 1790223492.878902,
+  "score": {
+   "bright": 10,
+   "area": 1.36,
+   "wide": 1.14
+  }
+ },
+ "hurt_up": {
+  "job": "b6c721d6-9ec5-4337-9f5d-ad17de0682da",
+  "tool": "animate_image_pixminimax",
+  "seed": 16718259,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Flinches: jerks its head and body back, then returns to its stance. It stays in place with its back to the viewer the whole time.",
+  "frames": 5,
+  "submitted": 1790223495.1144164,
+  "finished": 1790223584.9579701,
+  "score": {
+   "bright": 0,
+   "area": 1.09,
+   "wide": 1.38
+  }
+ },
+ "death_side": {
+  "job": "662bce3e-e503-4928-8b63-b75b1fbdb58c",
+  "tool": "animate_image_pixminimax",
+  "seed": 2588397,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stumbles, its legs give way and it falls over onto its side, then lies still. It stays in place, facing right.",
+  "frames": 13,
+  "submitted": 1790223496.950508,
+  "finished": 1790223647.499926,
+  "score": {
+   "bright": 6,
+   "area": 1.02,
+   "wide": 1.12
+  }
+ },
+ "death_down": {
+  "job": "6d69551f-b26c-43c4-b5be-2508f99df02c",
+  "tool": "animate_image_pixminimax",
+  "seed": 3344179,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stumbles, its legs give way and it falls over onto its side, then lies still. It stays in place, facing the viewer the whole time.",
+  "frames": 13,
+  "submitted": 1790223499.4356713,
+  "finished": 1790223670.2751882,
+  "score": {
+   "bright": 5,
+   "area": 1.08,
+   "wide": 1.96
+  }
+ },
+ "death_up": {
+  "job": "cd5e47ba-29d4-486b-a8fa-72b159df940b",
+  "tool": "animate_image_pixminimax",
+  "seed": 6054653,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stumbles, its legs give way and it falls over onto its side, then lies still. It stays in place with its back to the viewer the whole time.",
+  "frames": 13,
+  "submitted": 1790223501.3669407,
+  "finished": 1790223609.3193202,
+  "score": {
+   "bright": 5,
+   "area": 1.26,
+   "wide": 2.38
+  }
+ },
+ "walk_down": {
+  "job": "2e8f3763-d65e-45a9-8d57-9c294dbca60d",
+  "tool": "animate_image",
+  "seed": 12203604,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Walks in place on four legs: the legs step one after another, the body bobs gently and the tail sways. It stays in place, facing the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790223675.8697538,
+  "finished": 1790223811.913844,
+  "score": {
+   "bright": 1,
+   "area": 1.12,
+   "wide": 1.04
+  },
+  "method": "AI clip + cap_clamp.py (cap 6)"
+ }
+}

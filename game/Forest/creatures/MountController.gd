@@ -1,5 +1,9 @@
 extends Node2D
-## Riding uses one baked creature/saddle/seated-hero animation. Original art stays untouched.
+## Riding uses one baked creature/saddle/seated-hero animation (MountedAppearance):
+## the saddled v2 clips with the rider on each frame's tracked seat. Rider
+## strikes run through the creature's DinoMoves (the stego's tail sweep, the
+## trike's gore) with the rider's aim, striking wild creatures only.
+const DinoMoves = preload("res://Forest/creatures/DinoMoves.gd")
 var creature
 var rider: Node2D
 var _saved_layer := 0
@@ -56,7 +60,7 @@ func mount(subject: Node2D) -> bool:
 		# Rider keeps a live, separate hurtbox while mount body handles movement.
 	creature._attack_time = 0
 	creature._attack_target = null
-	creature.velocity = Vector2.ZERO
+	creature.stop()
 	refresh_appearance()
 	sync_rider()
 	return true
@@ -65,16 +69,17 @@ func riding_offset() -> Vector2:
 	return _seat_offset
 
 func _calculate_riding_offset() -> Vector2:
-	var native: Vector2i = _appearance.seat(creature.species,creature._facing)
-	var x: float = native.x - float(creature.stats.width)/2.0
-	if creature._sprite.flip_h: x = -x
-	var bob := 1.0 if creature.velocity.length() > 3 and creature._sprite.frame%4 in [1,2] else 0.0
-	return Vector2(x,float(native.y)-float(creature.stats.height)-6.0+bob)
+	# The seat moves with the saddle in every frame of the current clip.
+	var clip: String = creature._clip if creature._clip != "" else "idle"
+	return _appearance.rider_offset(creature.species, creature._facing, creature._sprite.flip_h, clip, creature._sprite.frame)
 
 func refresh_appearance():
 	if not is_instance_valid(creature) or not creature._sprite: return
-	var desired: SpriteFrames = _original_frames
-	if creature.saddle: desired = _appearance.build(creature.species,rider if is_mounted() else null,creature._sprite.flip_h)
+	if not is_mounted():
+		# Bare or saddled clips, back at the creature's own sprite offset.
+		creature._apply_art()
+		return
+	var desired: SpriteFrames = _appearance.build(creature.species,rider,creature._sprite.flip_h)
 	if creature._sprite.sprite_frames != desired:
 		var animation: StringName = creature._sprite.animation
 		var frame: int = creature._sprite.frame
@@ -83,7 +88,7 @@ func refresh_appearance():
 		if desired.has_animation(animation):
 			creature._sprite.play(animation)
 			creature._sprite.set_frame_and_progress(mini(frame,desired.get_frame_count(animation)-1),progress)
-	creature._sprite.position = Vector2(0,-37.0) if is_mounted() else _original_position
+	creature._sprite.position = _appearance.sprite_position(creature.species)
 
 func update_mounted(delta: float):
 	if not is_mounted(): return
@@ -92,14 +97,11 @@ func update_mounted(delta: float):
 		return
 	_strike_cooldown = maxf(0,_strike_cooldown-delta)
 	_heal_cooldown = maxf(0,_heal_cooldown-delta)
-	if _strike_time > 0:
-		_strike_time = maxf(0,_strike_time-delta)
-		creature._attack_time = _strike_time
-		if _strike_time <= 0.42 and not _strike_hit:
-			_strike_hit = true
-			_resolve_strike()
+	var move_velocity: Vector2 = creature.moves.tick(delta)
+	creature._attack_time = creature.moves.remaining()
+	_strike_time = creature._attack_time if creature.moves.mounted else 0.0
 	var direction := Vector2.ZERO
-	if not rider.controls_locked and _strike_time <= 0: direction = rider.get_movement_input()
+	if not rider.controls_locked and not creature.moves.busy(): direction = rider.get_movement_input()
 	var sprinting: bool = direction.length() > 0 and Input.is_action_pressed("Sprint")
 	var speed: float = 48.0 if creature.species == "stego" else 60.0
 	if sprinting:
@@ -108,6 +110,7 @@ func update_mounted(delta: float):
 	if creature.in_water: speed *= creature.WATER_SPEED_MULTIPLIER
 	creature.velocity = creature.velocity.move_toward(direction * speed, 240.0 * delta)
 	if direction == Vector2.ZERO: creature.velocity = Vector2.ZERO
+	if creature.moves.busy(): creature.velocity = move_velocity
 	creature.move_and_slide()
 	creature.state = "ridden"
 	creature._update_animation()
@@ -168,6 +171,7 @@ func dismount(force := false) -> bool:
 	previous.set("mounted_creature",null)
 	previous.animated_sprite.visible = _saved_sprite_visible
 	_strike_time = 0
+	creature.moves.cancel()
 	creature._attack_time = 0
 	previous.global_position = destination
 	previous.velocity = Vector2.ZERO
@@ -179,7 +183,7 @@ func dismount(force := false) -> bool:
 		hurt.collision_layer = _saved_hurt_layer
 		hurt.collision_mask = _saved_hurt_mask
 	if previous.get("respawning") != true: previous.switch_state("idle")
-	creature.velocity = Vector2.ZERO
+	creature.stop()
 	creature.set_order("stay")
 	refresh_appearance()
 	return true
@@ -204,36 +208,23 @@ func _exit_tree():
 
 
 func mount_attack(aim_world: Vector2) -> bool:
-	if not is_mounted() or creature.is_dead or rider.controls_locked or _strike_cooldown > 0: return false
+	if not is_mounted() or creature.is_dead or rider.controls_locked or _strike_cooldown > 0 or creature.moves.busy(): return false
+	var m: Dictionary = creature.moves.find(str(DinoMoves.MOUNT_MOVE.get(creature.species, "")))
+	if m.is_empty(): return false
 	_strike_aim = creature.global_position.direction_to(aim_world)
-	if _strike_aim == Vector2.ZERO: _strike_aim = Vector2.LEFT if creature._sprite.flip_h else Vector2.RIGHT
-	_strike_time = 0.70
+	if _strike_aim == Vector2.ZERO: _strike_aim = creature.facing_vector()
 	_strike_cooldown = 0.95 if creature.species == "trike" else 1.15
 	_strike_hit = false
 	creature._attack_target = null
-	creature._attack_time = _strike_time
-	creature.velocity = Vector2.ZERO
-	# Stego turns its tail toward the cursor; trike drives its horns toward it.
-	var facing: Vector2 = -_strike_aim if creature.species == "stego" else _strike_aim
-	creature._facing = ("up" if facing.y < 0 else "down") if absf(facing.y)>absf(facing.x) else "side"
-	creature._sprite.flip_h = creature._facing == "side" and facing.x < 0
-	creature._sprite.play("attack_"+creature._facing)
-	creature._sprite.set_frame_and_progress(0,0)
+	creature.stop()
+	# The stego sweeps its tail out to the side of its stance; the trike
+	# drives its horns at the cursor.
+	creature.moves.start(m, null, _strike_aim)
+	creature._attack_time = creature.moves.remaining()
+	_strike_time = creature._attack_time
+	creature._update_animation()
 	AudioManager.play_sfx("swing")
-	if is_instance_valid(creature.voice): creature.voice.play_cue("attack")
 	return true
-
-func _resolve_strike():
-	if not is_mounted() or creature.is_dead: return
-	var reach := 43.0 if creature.species == "stego" else 37.0
-	var cone := 0.10 if creature.species == "stego" else 0.62
-	for target in get_tree().get_nodes_in_group("forest_creatures"):
-		if target == creature or target.is_dead or target.tamed: continue
-		var offset: Vector2 = target.global_position-creature.global_position
-		if offset.length() > reach+float(target.stats.radius) or offset.normalized().dot(_strike_aim) < cone: continue
-		if not creature._has_line_of_sight(target.global_position): continue
-		target.take_damage(18 if creature.species == "stego" else 22,creature)
-		AudioManager.play_sfx("hit")
 
 func feed_mount() -> bool:
 	if not is_mounted() or creature.is_dead or rider.controls_locked or _heal_cooldown > 0 or creature.health >= int(creature.stats.hp): return false

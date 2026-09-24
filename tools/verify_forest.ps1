@@ -46,7 +46,12 @@ $suites = @(
     @{Name='armor-capture-pass8'; Args=@('res://Tests/ArmorWardrobeCapture.tscn')},
     @{Name='keeper-feel-pass8'; Args=@('res://Tests/KeeperFeelCapture.tscn')},
     # The Keeper Y-sorts by his feet: in front of a trunk his feet stand before.
-    @{Name='keeper-sort-pass8'; Args=@('res://Tests/KeeperSortCapture.tscn')}
+    @{Name='keeper-sort-pass8'; Args=@('res://Tests/KeeperSortCapture.tscn')},
+    # Dinosaur v2: clip catalogue, every move's telegraph/contact/shape/shove,
+    # behaviours and riders (headless), then every species in the real forest.
+    @{Name='dino-v2'; Args=@('res://Tests/DinoV2Suite.tscn')},
+    @{Name='dino-capture'; Args=@('res://Tests/DinoCapture.tscn')},
+    @{Name='dino-behaviour'; Args=@('res://Tests/DinoBehaviourCapture.tscn')}
 )
 if ($FromSuite -ne '' -and $FromSuite -notin $suites.Name) { throw ('Unknown suite: ' + $FromSuite) }
 $started = $FromSuite -eq ''
@@ -54,7 +59,7 @@ foreach ($suite in $suites) {
     if ($suite.Name -eq $FromSuite) { $started = $true }
     if (-not $started) { continue }
     $logFile = Join-Path $logDirectory ('suite-' + $suite.Name + '.log')
-    [string[]]$mode = @(if ($suite.Name -in @('gui-input','menu-flow','ui-pass2','ui-pass3','ui-pass4','interaction-pass4','mount-render-pass4','fishing-pass5','rider-render-pass5','ui-pass6','actions-pass6','character-render-pass6','wardrobe-editor-pass7','keeper-feel-pass8','keeper-sort-pass8')) { '--rendering-method'; 'gl_compatibility'; '--resolution'; '960x540' } else { '--headless' })
+    [string[]]$mode = @(if ($suite.Name -in @('gui-input','menu-flow','ui-pass2','ui-pass3','ui-pass4','interaction-pass4','mount-render-pass4','fishing-pass5','rider-render-pass5','ui-pass6','actions-pass6','character-render-pass6','wardrobe-editor-pass7','keeper-feel-pass8','keeper-sort-pass8','dino-capture','dino-behaviour')) { '--rendering-method'; 'gl_compatibility'; '--resolution'; '960x540' } else { '--headless' })
     # Bound power use and give timer-based UI/death tests enough real time even
     # after rendering optimizations greatly increase the available frame rate.
     # The Dummy audio driver still mixes in real time, so rendered suites no

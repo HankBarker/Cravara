@@ -1,0 +1,92 @@
+{
+ "_doc": "Contact (hit) and take-off frames per key/clip, per facing where they differ; read off peek.py --numbers strips.",
+ "raptor": {
+  "pounce": {
+   "side": {
+    "hit": 8,
+    "takeoff": 3
+   },
+   "down": {
+    "hit": 9,
+    "takeoff": 2
+   },
+   "up": {
+    "hit": 9,
+    "takeoff": 1
+   }
+  },
+  "slash": {
+   "side": 5,
+   "down": 5,
+   "up": 4
+  }
+ },
+ "rex": {
+  "bite": {
+   "side": 5,
+   "down": 5,
+   "up": 4
+  },
+  "chomp": {
+   "side": 5,
+   "down": 4,
+   "up": 5
+  }
+ },
+ "stego": {
+  "tail_swing": {
+   "down": 5,
+   "side": 6,
+   "up": 4
+  },
+  "tail_swing_far": {
+   "side": 6
+  }
+ },
+ "longneck": {
+  "stomp": {
+   "side": 10,
+   "down": 10,
+   "up": 10
+  },
+  "tail_swing": {
+   "side": 7,
+   "down": 5,
+   "up": 3
+  },
+  "tail_swing_far": {
+   "side": 6
+  }
+ },
+ "dodo": {
+  "peck": {
+   "down": 5,
+   "up": 3,
+   "side": 5
+  }
+ },
+ "trike": {
+  "gore": {
+   "side": 5,
+   "down": 5,
+   "up": 5
+  }
+ },
+ "stego_saddle": {
+  "tail_swing": {
+   "down": 5,
+   "side": 6,
+   "up": 4
+  },
+  "tail_swing_far": {
+   "side": 6
+  }
+ },
+ "trike_saddle": {
+  "gore": {
+   "side": 5,
+   "down": 5,
+   "up": 5
+  }
+ }
+}

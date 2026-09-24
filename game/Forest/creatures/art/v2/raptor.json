@@ -1,0 +1,83 @@
+{
+ "key": "raptor",
+ "species": "raptor",
+ "canvas": [
+  96,
+  72
+ ],
+ "ground": 65,
+ "origin": {
+  "side": [
+   27,
+   36
+  ],
+  "down": [
+   27,
+   36
+  ],
+  "up": [
+   27,
+   36
+  ]
+ },
+ "clips": {
+  "idle": {
+   "fps": 6,
+   "loop": true,
+   "frames": 8
+  },
+  "walk": {
+   "fps": 9,
+   "loop": true,
+   "frames": 8
+  },
+  "run": {
+   "fps": 13,
+   "loop": true,
+   "frames": 8
+  },
+  "slash": {
+   "fps": 14,
+   "loop": false,
+   "frames": 9,
+   "hit": 5,
+   "hit_view": {
+    "side": 5,
+    "down": 5,
+    "up": 4
+   }
+  },
+  "pounce": {
+   "fps": 14,
+   "loop": false,
+   "frames": 13,
+   "hit": 8,
+   "hit_view": {
+    "side": 8,
+    "down": 9,
+    "up": 9
+   },
+   "takeoff": 3,
+   "takeoff_view": {
+    "side": 3,
+    "down": 2,
+    "up": 1
+   }
+  },
+  "sniff": {
+   "fps": 8,
+   "loop": false,
+   "frames": 13
+  },
+  "hurt": {
+   "fps": 12,
+   "loop": false,
+   "frames": 5
+  },
+  "death": {
+   "fps": 10,
+   "loop": false,
+   "frames": 13
+  }
+ }
+}

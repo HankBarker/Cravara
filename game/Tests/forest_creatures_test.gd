@@ -28,9 +28,17 @@ func make_creature(kind: String):
 func verify():
 	for kind in CREATURE.SPECIES:
 		var c = make_creature(kind)
-		check(c._sprite.sprite_frames.get_animation_names().size()==9, kind+" has 9 actual directional clips")
+		# Dinosaur v2: every body clip and every species attack in all three facings.
+		var needed: Array = ["idle","walk","hurt","death"]
+		for m in c.moves.moves():
+			needed.append(m.clip)
+			if m.has("windup"): needed.append(m.windup)
+		for clip in needed:
+			for direction in ["side","down","up"]:
+				check(c._sprite.sprite_frames.has_animation(clip+"_"+direction), kind+" has "+clip+"_"+direction)
 		for direction in ["side","down","up"]:
-			check(c._sprite.sprite_frames.get_frame_count("walk_"+direction)==8, kind+" walk frames "+direction)
+			check(c._sprite.sprite_frames.get_frame_count("walk_"+direction)==8 and c._sprite.sprite_frames.get_animation_loop("walk_"+direction), kind+" walk loops 8 frames "+direction)
+			check(not c._sprite.sprite_frames.get_animation_loop("death_"+direction), kind+" death is one-shot "+direction)
 		check(not c.interact("wood").consume, kind+" rejects wrong food without consuming")
 		if not c.stats.predator:
 			check(c.interact("berry").consume, kind+" accepts hand feeding")

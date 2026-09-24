@@ -19,3 +19,9 @@ __pycache__/
 *.pyc
 # Raw third-party downloads / saved web pages kept only as local provenance
 art/**/audio-source/
+# Dinosaur art pipeline scratch: raw PixelLab downloads, prompt trials, review
+# strips and run logs (the cleaned clips, ledgers and palettes are tracked)
+art/dino-v2/raw/
+art/dino-v2/trials*/
+art/dino-v2/peek-*.png
+art/dino-v2/run*.log

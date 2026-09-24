@@ -244,7 +244,9 @@ func _on_PlayerHurtbox_area_entered(area: Area2D) -> void:
 			damage = attacker.get_attack_damage()
 		take_damage(damage, attacker)
 
-func take_damage(amount: int, attacker = null):
+## knockback: shove speed in px/s away from the attacker (a trike's ram or a
+## tail sweep throws much harder than a peck).
+func take_damage(amount: int, attacker = null, knockback := 200.0):
 	if state == "dead" or is_invulnerable:
 		return
 
@@ -257,7 +259,7 @@ func take_damage(amount: int, attacker = null):
 	hurt_from = Vector2.INF
 	if attacker and is_instance_valid(attacker):
 		var knockback_dir = (global_position - attacker.global_position).normalized()
-		knockback_velocity = knockback_dir * 200.0
+		knockback_velocity = knockback_dir * (200.0 if knockback < 0.0 else knockback)
 		hurt_from = attacker.global_position
 
 	# Play hit sound

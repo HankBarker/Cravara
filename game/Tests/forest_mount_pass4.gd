@@ -51,7 +51,8 @@ func run():
 		await pause(0.04)
 		check(mount.mount(player),kind+" mounts")
 		check(not player.animated_sprite.visible,kind+" hero is drawn only inside mounted composite")
-		check(mount._sprite.sprite_frames.get_frame_texture("idle_side",0).get_size()==Vector2(96,80),kind+" compound frame contains full creature and seated rider")
+		var composite_size: Vector2 = Vector2(preload("res://Forest/creatures/MountedAppearance.gd").new().composite_size(kind))
+		check(mount._sprite.sprite_frames.get_frame_texture("idle_side",0).get_size()==composite_size,kind+" compound frame contains full creature and seated rider")
 		var bare: PackedByteArray = mount._sprite.sprite_frames.get_frame_texture("idle_side",0).get_image().get_data()
 		player._set_equipment("head",ItemDB.make("leather_helmet"))
 		player._set_equipment("chest",ItemDB.make("leather_chestplate"))
@@ -68,7 +69,11 @@ func run():
 		var health: int = target.health
 		check(mount.mount_attack(Vector2(100,0)),kind+" mounted strike begins")
 		check(target.health == health,kind+" windup does not damage early")
-		check(mount._sprite.flip_h == (kind=="stego"),kind+" tail or horns turn toward aim")
+		if kind == "stego":
+			# The tail sweeps out to the aimed side; the creature behind is outside the arc.
+			check(mount.moves.move.shape == "tail" and mount.moves._in_shape("tail",target) and not mount.moves._in_shape("tail",behind),kind+" tail sweep covers the aim, not the rear target")
+		else:
+			check(mount.facing_vector().dot(Vector2.RIGHT) > 0.9,kind+" horns turn toward aim")
 		check(not mount.mount_attack(Vector2(-100,0)),kind+" repeated click blocked by cooldown")
 		await pause(0.36)
 		var damage := 18 if kind == "stego" else 22
@@ -110,6 +115,14 @@ func run():
 		check(mount.feed_mount() and mount.health == int(mount.stats.hp),kind+" healing caps at maximum vitality")
 		await pause(2.55)
 		check(not mount.feed_mount() and InventoryManager.get_item_count("berry")==1,kind+" healthy mount does not waste food")
+		if kind == "stego":
+			# Side-on with the aim up the screen the tail sweeps away, behind the
+			# body: that clip is side-on only and baked with the rider too.
+			mount._face(Vector2.RIGHT, true)
+			check(mount.mount_attack(mount.global_position + Vector2(-60,-70)),kind+" far-side strike begins")
+			check(mount.moves.strike_clip == "tail_swing_far" and str(mount._sprite.animation) == "tail_swing_far_side",kind+" aim up the screen plays the far-side sweep")
+			check(mount._sprite.sprite_frames.get_frame_texture("tail_swing_far_side",0).get_size()==composite_size and not mount._sprite.sprite_frames.has_animation("tail_swing_far_down"),kind+" far-side sweep is baked with the rider, side-on only")
+			await pause(1.3)
 		check(mount.dismount() and player.animated_sprite.visible,kind+" dismount restores original hero rendering")
 		check(not mount.mount_attack(Vector2(100,0)) and not mount.feed_mount(),kind+" unmounted calls fail safely")
 		for creature in [mount,target,behind,ally]: creature.queue_free()

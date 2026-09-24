@@ -1,0 +1,461 @@
+{
+  "_doc": [
+    "Dinosaur v2 animation spec: what tools/dino/gen.py asks PixelLab for.",
+    "Each clip is generated per facing (side = facing right, down = toward the viewer, up = away) from art/dino-v2/first/<key>_<facing>.png.",
+    "model: 'ai' = animate_image (steady; used for loops, last frame pinned to the first so the cycle closes), 'pmm' = animate_image_pixminimax (bigger, livelier motion; used for actions).",
+    "frames = frames generated after the input frame. loop clips drop the pinned last frame; action clips keep the input frame as frame 0 so they start from the resting pose.",
+    "clean: ground = keep the lowest opaque row on the ground line; anchor = remove sideways drift of the body; both only for planted clips.",
+    "{motion} is the clip's motion text; the facing and style clauses are appended by gen.py.",
+    "Prompts are short and motion-only: the model sees the drawing, and naming the body, effects to avoid, or words like breathing/struck/snorts/slams makes it paint steam, sparkles, flashes and dust.",
+    "clean.clamp_top: locomotion loops may not rise more than N px above the resting drawing's top (the model likes to grow crests and quills into pillars).",
+    "overrides: {\"KEY/CLIP_VIEW\": {model?, motion?}} replaces the clip's defaults for that one facing (gen.py uses them on every submit).",
+    "clean.clamp_sides: front/back idle and walk frames may not reach more than N px beyond the resting drawing's sides (ghost tails, bulging crests).",
+    "views: a clip drawn in only some facings (tail_swing_far is side-on only). procedural: the clip is built by the named tool, never generated (gen.py plans no jobs for it)."
+  ],
+  "facing": {
+    "side": {
+      "direction": "east",
+      "clause": "It stays in place, facing right."
+    },
+    "down": {
+      "direction": "south",
+      "clause": "It stays in place, facing the viewer the whole time."
+    },
+    "up": {
+      "direction": "north",
+      "clause": "It stays in place with its back to the viewer the whole time."
+    }
+  },
+  "style": "",
+  "keys": {
+    "rex": {
+      "species": "rex",
+      "body": "a heavy green tyrannosaurus with a row of spikes along its back",
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "bite",
+        "chomp",
+        "roar",
+        "hurt",
+        "death"
+      ]
+    },
+    "raptor": {
+      "species": "raptor",
+      "body": "a slim blue velociraptor with a crest of spiky quills",
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "slash",
+        "pounce",
+        "sniff",
+        "hurt",
+        "death"
+      ]
+    },
+    "stego": {
+      "species": "stego",
+      "body": "a green stegosaurus with orange back plates and a spiked tail",
+      "clips": [
+        "idle",
+        "walk",
+        "eat",
+        "tail_swing",
+        "tail_swing_far",
+        "hurt",
+        "death"
+      ]
+    },
+    "trike": {
+      "species": "trike",
+      "body": "an orange triceratops with a spiked green frill and three horns",
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "windup",
+        "gore",
+        "eat",
+        "hurt",
+        "death"
+      ]
+    },
+    "longneck": {
+      "species": "longneck",
+      "body": "a blue long-necked sauropod with pale ridges along its back",
+      "clips": [
+        "idle",
+        "walk",
+        "eat",
+        "tail_swing",
+        "tail_swing_far",
+        "stomp",
+        "hurt",
+        "death"
+      ]
+    },
+    "dodo": {
+      "species": "dodo",
+      "body": "a round orange dodo bird with blue feathers",
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "peck",
+        "eat",
+        "hurt",
+        "death"
+      ]
+    },
+    "stego_saddle": {
+      "species": "stego",
+      "body": "a saddled green stegosaurus with orange back plates and a spiked tail",
+      "clips": [
+        "idle",
+        "walk",
+        "eat",
+        "tail_swing",
+        "tail_swing_far",
+        "hurt",
+        "death"
+      ]
+    },
+    "trike_saddle": {
+      "species": "trike",
+      "body": "a saddled orange triceratops with a spiked green frill and three horns",
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "windup",
+        "gore",
+        "eat",
+        "hurt",
+        "death"
+      ]
+    }
+  },
+  "clips": {
+    "idle": {
+      "model": "pmm",
+      "frames": 8,
+      "loop": true,
+      "fps": 6,
+      "clean": {
+        "ground": true,
+        "anchor": true,
+        "clamp_top": 4,
+        "clamp_sides": 3
+      },
+      "motion": "Stands still in a relaxed pose; its body rises and falls very slightly and its tail sways a little."
+    },
+    "walk": {
+      "model": "ai",
+      "frames": 8,
+      "loop": true,
+      "fps": 9,
+      "clean": {
+        "ground": true,
+        "anchor": true,
+        "clamp_top": 4,
+        "clamp_sides": 3
+      },
+      "motion": {
+        "biped": "Walks in place: its legs step one after the other, its body bobs gently with each step and its tail sways.",
+        "quadruped": "Walks in place on four legs: the legs step one after another, the body bobs gently and the tail sways."
+      }
+    },
+    "run": {
+      "model": "pmm",
+      "frames": 8,
+      "loop": true,
+      "fps": 13,
+      "clean": {
+        "ground": false,
+        "anchor": true,
+        "clamp_top": 8
+      },
+      "motion": {
+        "biped": "Runs in place with long fast strides, its body leaning forward and its tail held straight out behind.",
+        "trike": "Gallops in place with its head lowered and its horns pointing forward, legs moving fast.",
+        "dodo": "Runs in place on its short legs, flapping its little wings."
+      }
+    },
+    "eat": {
+      "model": "pmm",
+      "frames": 12,
+      "loop": false,
+      "fps": 8,
+      "clean": {
+        "ground": true,
+        "anchor": true
+      },
+      "motion": {
+        "default": "Lowers its head to the ground, eats the grass with a few bites, then lifts its head back up.",
+        "longneck": "Lowers its long neck down to the ground, eats the grass, then raises its neck back up.",
+        "dodo": "Pecks at the ground twice to eat seeds, then straightens up."
+      }
+    },
+    "sniff": {
+      "model": "pmm",
+      "frames": 12,
+      "loop": false,
+      "fps": 8,
+      "clean": {
+        "ground": true,
+        "anchor": true
+      },
+      "motion": "Lowers its head to sniff the ground, then raises it and looks around."
+    },
+    "hurt": {
+      "model": "pmm",
+      "frames": 4,
+      "loop": false,
+      "fps": 12,
+      "clean": {
+        "ground": true,
+        "anchor": true
+      },
+      "motion": "Flinches: jerks its head and body back, then returns to its stance."
+    },
+    "death": {
+      "model": "pmm",
+      "frames": 12,
+      "loop": false,
+      "fps": 10,
+      "clean": {
+        "ground": false,
+        "anchor": false
+      },
+      "motion": "Stumbles, its legs give way and it falls over onto its side, then lies still."
+    },
+    "bite": {
+      "model": "pmm",
+      "frames": 8,
+      "loop": false,
+      "fps": 14,
+      "clean": {
+        "ground": true,
+        "anchor": false
+      },
+      "motion": "Pulls its head back with its jaws open, then snaps its head forward and bites, then returns to its stance."
+    },
+    "chomp": {
+      "model": "pmm",
+      "frames": 12,
+      "loop": false,
+      "fps": 12,
+      "clean": {
+        "ground": true,
+        "anchor": false
+      },
+      "motion": "Rears its head back, lunges forward and bites down hard, shakes its head from side to side, then lets go and returns to its stance."
+    },
+    "roar": {
+      "model": "pmm",
+      "frames": 12,
+      "loop": false,
+      "fps": 10,
+      "clean": {
+        "ground": true,
+        "anchor": true
+      },
+      "motion": "Crouches and tenses, throws its head back and opens its jaws wide in a roar, then lowers its head, ready to charge."
+    },
+    "slash": {
+      "model": "pmm",
+      "frames": 8,
+      "loop": false,
+      "fps": 14,
+      "clean": {
+        "ground": true,
+        "anchor": false
+      },
+      "motion": "Darts forward, snaps its jaws and swipes with its clawed hands, then springs back into its stance."
+    },
+    "pounce": {
+      "model": "pmm",
+      "frames": 12,
+      "loop": false,
+      "fps": 14,
+      "clean": {
+        "ground": false,
+        "anchor": true
+      },
+      "motion": "Crouches low, jumps forward into the air with its foot claws raised, lands and recovers."
+    },
+    "tail_swing": {
+      "model": "pmm",
+      "frames": 12,
+      "loop": false,
+      "fps": 14,
+      "clean": {
+        "ground": true,
+        "anchor": true
+      },
+      "motion": {
+        "stego": "Swings its spiked tail out to the side in a wide fast sweep, then brings it back behind it. Its body and feet stay still.",
+        "longneck": "Swings its long tail out to the side in a wide sweep, then brings it back behind it. Its body and feet stay still."
+      }
+    },
+    "tail_swing_far": {
+      "frames": 12,
+      "fps": 14,
+      "loop": false,
+      "views": [
+        "side"
+      ],
+      "procedural": "tail_side.py KEY --far"
+    },
+    "stomp": {
+      "model": "pmm",
+      "frames": 12,
+      "loop": false,
+      "fps": 12,
+      "clean": {
+        "ground": true,
+        "anchor": true
+      },
+      "motion": "Rears up on its hind legs, lifting its front legs high, then brings its front feet down hard onto the ground and settles."
+    },
+    "windup": {
+      "model": "pmm",
+      "frames": 8,
+      "loop": false,
+      "fps": 10,
+      "clean": {
+        "ground": true,
+        "anchor": true
+      },
+      "motion": "Lowers its head so its horns point forward and scrapes the ground with one front foot, getting ready to charge."
+    },
+    "gore": {
+      "model": "pmm",
+      "frames": 8,
+      "loop": false,
+      "fps": 14,
+      "clean": {
+        "ground": true,
+        "anchor": false
+      },
+      "motion": "Keeps all four feet on the ground: dips its head, then swings its horned head sideways in a powerful hooking swipe, then returns to its stance."
+    },
+    "peck": {
+      "model": "pmm",
+      "frames": 8,
+      "loop": false,
+      "fps": 14,
+      "clean": {
+        "ground": true,
+        "anchor": true
+      },
+      "motion": "Lunges its head forward and pecks hard twice with its beak, then straightens up."
+    }
+  },
+  "bipeds": [
+    "rex",
+    "raptor",
+    "dodo"
+  ],
+  "overrides": {
+    "rex/walk_down": {
+      "model": "pmm",
+      "motion": "Walks in place toward the viewer, hunched with its head held low: its legs step one after the other and its shoulders sway from side to side."
+    },
+    "rex/run_down": {
+      "model": "pmm",
+      "motion": "Runs in place toward the viewer, hunched with its head held low: its legs pump fast and its shoulders sway."
+    },
+    "stego/tail_swing_down": {
+      "model": "pmm",
+      "motion": "Keeps its body and head facing the viewer and swings its tail out from behind its body to one side in a wide fast sweep, then back behind it. Only the tail moves."
+    },
+    "stego/tail_swing_up": {
+      "model": "pmm",
+      "motion": "Keeps its back to the viewer and swings its tail out to one side in a wide fast sweep, then back to the middle. Only the tail moves."
+    },
+    "stego_saddle/tail_swing_down": {
+      "model": "pmm",
+      "motion": "Keeps its body and head facing the viewer and swings its tail out from behind its body to one side in a wide fast sweep, then back behind it. Only the tail moves."
+    },
+    "stego_saddle/tail_swing_up": {
+      "model": "pmm",
+      "motion": "Keeps its back to the viewer and swings its tail out to one side in a wide fast sweep, then back to the middle. Only the tail moves."
+    },
+    "longneck/tail_swing_down": {
+      "model": "pmm",
+      "motion": "Keeps its body and head facing the viewer and swings its tail out from behind its body to one side in a wide fast sweep, then back behind it. Only the tail moves."
+    },
+    "longneck/tail_swing_up": {
+      "model": "pmm",
+      "motion": "Keeps its back to the viewer and swings its tail out to one side in a wide fast sweep, then back to the middle. Only the tail moves."
+    },
+    "raptor/slash_up": {
+      "model": "pmm",
+      "motion": "Lunges forward away from the viewer, snapping its jaws and swiping with its clawed hands, then springs back."
+    },
+    "raptor/sniff_up": {
+      "model": "pmm",
+      "motion": "Lowers its head to sniff the ground in front of it, then raises it again and looks left and right."
+    },
+    "rex/chomp_up": {
+      "model": "pmm",
+      "motion": "Keeps its back to the viewer: lunges forward away from the viewer and bites down hard, shakes its head from side to side, then returns to its stance."
+    },
+    "trike/windup_down": {
+      "model": "pmm",
+      "motion": "Keeps facing the viewer: lowers its head so its horns point at the viewer and paws the ground twice with one front foot."
+    },
+    "trike/windup_up": {
+      "model": "pmm",
+      "motion": "Keeps its back to the viewer: lowers its head and paws the ground twice with one front foot."
+    },
+    "trike/eat_up": {
+      "model": "pmm",
+      "motion": "Keeps its back to the viewer: lowers its head to the ground and eats the grass, then lifts its head again."
+    },
+    "trike_saddle/windup_down": {
+      "model": "pmm",
+      "motion": "Keeps facing the viewer: lowers its head so its horns point at the viewer and paws the ground twice with one front foot."
+    },
+    "trike_saddle/windup_up": {
+      "model": "pmm",
+      "motion": "Keeps its back to the viewer: lowers its head and paws the ground twice with one front foot."
+    },
+    "trike_saddle/eat_up": {
+      "model": "pmm",
+      "motion": "Keeps its back to the viewer: lowers its head to the ground and eats the grass, then lifts its head again."
+    },
+    "trike/gore_side": {
+      "model": "ai",
+      "motion": "Lowers its head and swings it hard to one side, then brings it back to its stance. Its body and feet stay still."
+    },
+    "trike/gore_down": {
+      "model": "ai",
+      "motion": "Lowers its head and swings it hard to one side, then brings it back to its stance. Its body and feet stay still."
+    },
+    "trike/gore_up": {
+      "model": "ai",
+      "motion": "Lowers its head and swings it hard to one side, then brings it back to its stance. Its body and feet stay still."
+    },
+    "trike_saddle/gore_side": {
+      "model": "ai",
+      "motion": "Lowers its head and swings it hard to one side, then brings it back to its stance. Its body and feet stay still."
+    },
+    "trike_saddle/gore_down": {
+      "model": "ai",
+      "motion": "Lowers its head and swings it hard to one side, then brings it back to its stance. Its body and feet stay still."
+    },
+    "trike_saddle/gore_up": {
+      "model": "ai",
+      "motion": "Lowers its head and swings it hard to one side, then brings it back to its stance. Its body and feet stay still."
+    },
+    "stego_saddle/tail_swing_side": {
+      "model": "pmm",
+      "motion": "Swings its spiked tail out to the side, low along the ground, in a wide fast sweep toward the viewer, then brings it back behind it. The tail stays low. Its body and feet stay still."
+    }
+  }
+}

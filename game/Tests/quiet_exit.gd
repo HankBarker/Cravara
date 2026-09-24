@@ -13,6 +13,10 @@ const PLAYER_TYPES := ["AudioStreamPlayer", "AudioStreamPlayer2D", "AudioStreamP
 
 
 static func settle(tree: SceneTree) -> void:
+	# Freeze the world first: creatures keep calling, stepping and striking
+	# from _process, and a call begun during the last wait below was still
+	# registered at exit. This timer and the tree's frame signals run paused.
+	tree.paused = true
 	for attempt in 5:
 		var manager := tree.root.get_node_or_null("AudioManager")
 		if manager and manager.has_method("stop_music"):

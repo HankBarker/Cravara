@@ -95,8 +95,12 @@ func _ready():
 		_toast("Welcome back to the Skyfang Wilds.")
 	else:
 		player.apply_appearance(get_tree().get_meta("forest_appearance",{}))
-		_spawn_wildlife()
-		_toast("A new beginning. Press J for your field journal.")
+		if _dino_playtest():
+			_spawn_dino_park()
+			_toast("Dino playtest: E rides the saddled stego or trike, click to strike. Herd east, dodos north, raptors north-west, rex west.")
+		else:
+			_spawn_wildlife()
+			_toast("A new beginning. Press J for your field journal.")
 	_ready_to_save = true
 	AudioManager.play_music("res://Forest/audio/forest-plains.mp3")
 	SignalBus.item_crafted.connect(_on_crafted)
@@ -126,6 +130,12 @@ func _starter_inventory():
 					InventoryManager.add_item(armor_item, 1)
 					granted += 1
 		print("ARMOR_PLAYTEST: added %d armor pieces to inventory" % granted)
+	if _dino_playtest():
+		# Food for mounts and for mending, a proper weapon, and arrows.
+		for entry in [["shard_sword", 1], ["reed_bow", 1], ["bone_arrow", 40], ["cooked_meat", 10], ["berry", 20], ["net", 3]]:
+			var kit_item = ItemDB.make(entry[0])
+			if kit_item:
+				InventoryManager.add_item(kit_item, entry[1])
 	InventoryManager.hotbar_start = 0
 	InventoryManager.inventory_changed.emit()
 
@@ -147,6 +157,39 @@ func _spawn_wildlife():
 	]
 	for entry in spawns:
 		_spawn_creature(entry[0], world.get_spawnable_position(entry[1]))
+
+## --dino-playtest (no-save runs only): every dinosaur close to the start, with
+## a saddled stego and trike already tamed beside the keeper, ready to ride.
+func _dino_playtest() -> bool:
+	var args := OS.get_cmdline_user_args()
+	return "--dino-playtest" in args and "--no-save-playtest" in args
+
+func _spawn_dino_park():
+	var home: Vector2 = player.global_position
+	for entry in [["stego", Vector2(-44, 26)], ["trike", Vector2(44, 26)]]:
+		var mount = _spawn_creature(entry[0], world.get_spawnable_position(home + entry[1]))
+		mount.tamed = true
+		mount.trust = int(mount.stats.feeds)
+		mount.saddle = ItemDB.make(entry[0] + "_saddle")
+		mount._apply_art()
+		mount.set_order("stay")
+	var wild := [
+		# A grazing herd to the east, dodos just north.
+		["stego", Vector2(190, -30)], ["stego", Vector2(225, 20)], ["trike", Vector2(170, 70)],
+		["longneck", Vector2(300, -80)], ["longneck", Vector2(335, 10)],
+		["dodo", Vector2(40, -110)], ["dodo", Vector2(70, -125)], ["dodo", Vector2(20, -135)], ["dodo", Vector2(60, -150)],
+		# Hunters, out of sight until you walk toward them.
+		["raptor", Vector2(-300, -170)], ["raptor", Vector2(-330, -140)], ["raptor", Vector2(-280, -130)],
+		["rex", Vector2(-430, 150)]
+	]
+	for entry in wild:
+		_spawn_creature(entry[0], world.get_spawnable_position(home + entry[1]))
+	# The toughest armour, so a rex charge knocks you about without ending the test.
+	var rex_set := {"head": "rex_helmet", "chest": "rex_chestplate", "legs": "rex_leggings"}
+	for slot in rex_set:
+		player._set_equipment(slot, ItemDB.make(rex_set[slot]))
+	var ready_mounts := get_tree().get_nodes_in_group("forest_creatures").filter(func(c): return c.tamed and c.can_mount())
+	print("DINO_PLAYTEST: %d dinosaurs, %d saddled mounts ready" % [get_tree().get_nodes_in_group("forest_creatures").size(), ready_mounts.size()])
 
 func _spawn_creature(species: String, pos: Vector2, saved: Dictionary = {}):
 	var creature = load("res://Forest/creatures/ForestCreature.gd").new()

@@ -1,0 +1,71 @@
+{
+ "key": "trike",
+ "species": "trike",
+ "canvas": [
+  96,
+  72
+ ],
+ "ground": 65,
+ "origin": {
+  "side": [
+   21,
+   26
+  ],
+  "down": [
+   21,
+   26
+  ],
+  "up": [
+   21,
+   26
+  ]
+ },
+ "clips": {
+  "idle": {
+   "fps": 6,
+   "loop": true,
+   "frames": 8
+  },
+  "walk": {
+   "fps": 9,
+   "loop": true,
+   "frames": 8
+  },
+  "run": {
+   "fps": 13,
+   "loop": true,
+   "frames": 8
+  },
+  "windup": {
+   "fps": 10,
+   "loop": false,
+   "frames": 9
+  },
+  "gore": {
+   "fps": 14,
+   "loop": false,
+   "frames": 9,
+   "hit": 5,
+   "hit_view": {
+    "side": 5,
+    "down": 5,
+    "up": 5
+   }
+  },
+  "eat": {
+   "fps": 8,
+   "loop": false,
+   "frames": 13
+  },
+  "hurt": {
+   "fps": 12,
+   "loop": false,
+   "frames": 5
+  },
+  "death": {
+   "fps": 10,
+   "loop": false,
+   "frames": 13
+  }
+ }
+}
