@@ -212,6 +212,7 @@ func run():
 	await right_click(stage.world.props[Vector2i(2,1)].position)
 	check(stage.world.floors.has(Vector2i(2,1)) and InventoryManager.get_item_count("wood_floor")==1,"Right-click floors beneath door through actual selection routing")
 	check((FileAccess.get_sha256(settings_path) if FileAccess.file_exists(settings_path) else "missing")==settings_hash,"Interaction regression preserves real settings file")
+	await preload("res://Tests/quiet_exit.gd").settle(get_tree())
 	print("INTERACTION PASS 4: %d checks, %d failures" % [checks,failures])
 	get_tree().quit(1 if failures else 0)
 

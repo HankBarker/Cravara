@@ -6,7 +6,7 @@ func enter_state():
 	player.animated_sprite.play("run_" + player.last_facing)
 
 func exit_state():
-	player.velocity = Vector2.ZERO
+	pass  # momentum carries into the next state, which brakes or re-targets it
 
 func update_state(delta):
 	if Input.is_action_just_pressed("attack"):
@@ -23,6 +23,5 @@ func update_state(delta):
 		player.switch_state("walk")
 		return
 
-	player.velocity = input * player.sprint_speed
-	player.move_and_slide()
+	player.locomote(input * player.sprint_speed, delta)
 	player.animated_sprite.play("run_" + player.last_facing)

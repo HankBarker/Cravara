@@ -82,7 +82,8 @@ func _recolor(img: Image, mat: Image, swaps: Dictionary) -> Image:
 			var target: Array = swaps[id]
 			var shade := int(round(m.g * 255.0))
 			var count := maxi(1, int(round(m.b * 255.0)))
-			var t := float(shade) / maxf(1.0, float(count - 1))
+			# A lone shade (a nape under a helmet, a stray lock) takes the ramp's mid tone.
+			var t := 0.5 if count == 1 else float(shade) / float(count - 1)
 			out.set_pixel(x, y, target[clampi(int(round(t * (target.size() - 1))), 0, target.size() - 1)])
 	return out
 

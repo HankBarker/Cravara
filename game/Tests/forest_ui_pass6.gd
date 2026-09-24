@@ -187,6 +187,7 @@ func run():
 	await settle()
 	check(stage.player.appearance==new_look,"New forest initializes original player with creator appearance")
 	if FileAccess.file_exists(SAVE6): DirAccess.remove_absolute(ProjectSettings.globalize_path(SAVE6))
+	await preload("res://Tests/quiet_exit.gd").settle(get_tree())
 	print("FOREST_UI_PASS6: %d checks, %d failures" % [checks,failures])
 	get_tree().quit(1 if failures else 0)
 

@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/equipment/art/wardrobe/icons/moss_helmet.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = "moss_helmet"
+name = "Mossweave Hood"
+description = "Forest leaves layered into a soft hood and pinned with a pink glowberry blossom. Woven from what the first days provide."
+icon = ExtResource("2")
+max_stack = 1
+rarity = "common"
+armor_slot = "head"
+defense = 2

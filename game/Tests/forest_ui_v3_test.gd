@@ -167,5 +167,6 @@ func run():
 		check(stego.is_mounted(),"Ride button mounts saddled companion")
 		if stego.is_mounted(): stego.dismount()
 		check(not stego.is_mounted(),"Dismount returns rider")
+	await preload("res://Tests/quiet_exit.gd").settle(get_tree())
 	print("UI_V3_TEST failures=",failures)
 	get_tree().quit(1 if failures else 0)

@@ -208,5 +208,6 @@ func run() -> void:
 	await settle()
 	check(menu._details.get_global_rect().end.y<=270,"Title guide overflows screen")
 	await capture("11-title-guide")
+	await preload("res://Tests/quiet_exit.gd").settle(get_tree())
 	print("UI_V2_TEST failures=",failures)
 	get_tree().quit(1 if failures else 0)

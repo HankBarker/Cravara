@@ -35,13 +35,19 @@ saddle contract); cel (32,32) = player origin; soles on cel row 43 (local +11).
    same standing pose with arms held slightly away from the body, now wearing …"). The state keeps
    the body pixel-aligned with the base, so one set of region rules cuts every outfit. 20–40
    generations each. Download: `python tools/keeper/pl_fetch.py character <id> art/keeper-v2/source/<set>`.
-3. `python tools/keeper/extract_parts.py <base|setid> --name "…"` → `game/Forest/keeper/art/{base,sets/<id>}/`
-   (head/torso/boot/pauldron PNG + `.mat.png` + `set.json` with limb ramps). Per-set hand fixes live in
-   `art/keeper-v2/source/<set>/overrides.json`.
+3. `python tools/keeper/extract_parts.py <base|setid|hair [styles]|all> [--name "…"] [--debug]` →
+   `game/Forest/keeper/art/{base,sets/<id>,hair}/` (head/torso/boot/pauldron PNG + `.mat.png` + `set.json`
+   with 5-shade limb ramps; hair heads + `hair.json`; `_blink` closed-eye heads). Hand fixes are data, not
+   edits: `art/keeper-v2/source/<set>/overrides.json` (region relabels, face/eye boxes, ramps, pixel
+   patches, flags — documented at the top of the script). `--debug` writes label overlays.
 4. `python tools/keeper/build_rig.py` → `art/rig.json` (REST skeleton, METRICS, ramps, appearance ramps,
    parts, sets, hair styles).
 5. Held props: PixelLab `create_image_pixen` 16×16 (1 generation), diagonal grip-bottom-left
-   convention; `python tools/keeper/import_held.py`. Download raw-image jobs with
+   convention; `python tools/keeper/import_held.py` (auto grip/angle; a hand-written
+   `art/keeper-v2/source/held/<id>.json` wins — the reed bow is hand-drawn vertical with a `brace`
+   of 3 px, and BowController strings it tip-to-tip 3 px behind the grip). Hanging props (bucket,
+   water_bucket, lantern) were shrunk to 78 % (originals kept as `<id>_full.png`). After replacing a
+   held PNG run `godot --headless --import` or the stale import cache keeps the old texture. Download raw-image jobs with
    `pl_fetch.py image <job_id> out.png` (the `/mcp/images/<job>/download` route; Cloudflare needs a
    browser User-Agent).
 
@@ -59,10 +65,34 @@ saddle contract); cel (32,32) = player origin; soles on cel row 43 (local +11).
   → `art/keeper-v2/review/name.png` (options `--look skin,hair,style,cloth,trousers`, `--seated`, `--facings`).
 - In-world (window): `res://Tests/KeeperWorldCapture.tscn`, `res://Tests/KeeperMountCapture.tscn`
   (`--rendering-method gl_compatibility --resolution 960x540 … -- --no-save-playtest`) → `art/keeper-v2/world/`.
-- Regression: `Tests/keeper_rig_pass8.gd` (headless `--script`, ~25 s).
+- Regression: `Tests/keeper_rig_pass8.gd` (headless `--script`, ~35 s) and the whole runner
+  `powershell -File tools/verify_forest.ps1 [-FromSuite name]` (38 suites; every suite runs with
+  `--audio-driver Dummy` and rendered ones end with `Tests/quiet_exit.gd`, otherwise Godot reports
+  "resources still in use at exit"). Shared test helpers: `Tests/keeper_test_kit.gd`.
 
 ## Gotchas
 - A subclass-free constant named like a native class (`const Skin = …`) fails to parse in 4.6 — use `KeeperSkinScript`.
 - GDScript type inference fails on `var x := someArray[i]` and on `Resource.duplicate()` results — annotate (`var img: Image = src.duplicate()`).
 - PixelLab: max 8 concurrent jobs per account; failed jobs return 410 on download and are not charged.
-- Rebuild cost ≈ 0.25 s per outfit (≈770 cels). Journey load batches rebuilds via `begin_skin_batch()/end_skin_batch()`.
+- A full outfit build is ≈0.25–0.5 s (≈840 cels, idle is 24 frames). The live player builds
+  **progressively** (visible clips in ~30 ms, the rest pumped 3 ms/frame and ensured on
+  `animation_changed`); headless runs and `finish_skin()` are synchronous. Journey load batches
+  rebuilds via `begin_skin_batch()/end_skin_batch()`. `base_frames()` (~0.7 s) runs once at load.
+- **Y-sort by the feet.** The player's origin stays at the body centre (every gameplay system
+  measures from it), but `ForestPlayer` sets `y_sort_enabled` and puts the AnimatedSprite2D at
+  `(0, SORT_Y=8)` (the foot collider's centre) with `offset (0,-8)`, so the body draws where it
+  always did while sorting like creatures and props do, by their bases. Anything drawn relative to
+  the sprite must add `sprite.offset` (KeeperHeld does); KeeperFeel keeps its shadow and water-arc
+  nodes on the same line (tree order breaks the tie: shadow, body, water) and biases sole-level
+  effects to `SORT_Y - SOLE_Y ± 1`. Pinned by `Tests/KeeperSortCapture.tscn` (rendered).
+- The fist is drawn **after** its shoulder guard (`KeeperRig._arm`), so a hand raised to the mouth,
+  over the shoulder in a windup or in a cheer stays visible; `keeper_rig_pass8` checks every
+  set × clip × facing × frame.
+- `KeeperSkin.pose()` anchors (hand, offhand, head, tool angle) follow the quarter-turned cels of
+  falls and rolls (`KeeperRig.rotated_point`), then the mirror.
+- Helmets that show the nape from behind (bone, rex) mark it `"materials": {"up": [{"px": …,
+  "mat": "skin"}]}` in their overrides so skin tones reach it. A material with a single shade in a
+  part recolours to the ramp's mid tone (not the deepest).
+- Feel layer: `Forest/fx/KeeperFeel.gd` puts a ShaderMaterial (hit flash + waterline) on the
+  sprite and sets `use_parent_material` on its children (KeeperHeld), so held tools flash and
+  wade with the body.

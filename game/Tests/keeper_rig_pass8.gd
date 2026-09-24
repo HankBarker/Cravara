@@ -124,6 +124,13 @@ func _init() -> void:
 				var p: Dictionary = skin.pose(clip, i)
 				var hand := Vector2(p.hand[0], p.hand[1])
 				check(Rect2(4, 4, 56, 56).has_point(hand), "%s[%d] hand inside cel %s" % [clip, i, hand])
+	# Anchors follow quarter-turned cels (falls, rolls) and every mirror.
+	for kind in kinds:
+		for facing in FACINGS:
+			for i in motion.info(kind).frames:
+				var key := "%s_%s:%d" % [kind, facing, i]
+				var p: Dictionary = skin.pose(kind + "_" + facing, i)
+				check(_opaque_near(bare_cels[key], Vector2(p.hand[0], p.hand[1])), key + " hand anchor sits on the drawn body")
 	var impact: Dictionary = skin.pose("axe_right", 4)
 	var windup: Dictionary = skin.pose("axe_right", 2)
 	check(impact.hand[0] > windup.hand[0] + 3, "axe impact frame swings forward of the windup")
@@ -149,9 +156,47 @@ func _init() -> void:
 	check(_diff(seated, standing) > 4, "mounted actions swap in the riding legs")
 	check(_diff(skin.render_cel("ride", "down", 0, look_bare), skin.render_cel("ride", "down", 0, skin.look_for(full, {}))) > 30, "rider wears armour")
 
+	# --- fists stay in front of their own shoulder guards ------------------
+	# A hand raised to the mouth (eat_up) or over the shoulder in a windup was
+	# once hidden by the chestpiece's pauldron drawn after it.
+	for set_id in sets:
+		var dressed: Dictionary = skin.look_for({"chest": {"id": set_id + "_chestplate"}}, {})
+		var no_guards: Dictionary = dressed.duplicate(true)
+		for view in no_guards.parts:
+			no_guards.parts[view].erase("pauldron_m")
+			no_guards.parts[view].erase("pauldron_o")
+		var covered := []
+		for kind in kinds:
+			for facing in FACINGS:
+				for i in motion.info(kind).frames:
+					var p: Dictionary = skin.pose(kind + "_" + facing, i)
+					var guarded: Image = skin.render_cel(kind, facing, i, dressed)
+					var unguarded: Image = skin.render_cel(kind, facing, i, no_guards)
+					if not _same_near(guarded, unguarded, Vector2(p.hand[0], p.hand[1])):
+						covered.append("%s_%s[%d]" % [kind, facing, i])
+		check(covered.is_empty(), "%s shoulder guards never cover the main fist %s" % [set_id, covered])
+
 	print("KEEPER_RIG_PASS8 worst-cases ", worst)
 	print("KEEPER_RIG_PASS8 checks=%d failures=%d (%d ms)" % [checks, failures.size(), Time.get_ticks_msec() - t0])
 	quit(0 if failures.is_empty() else 1)
+
+
+## The fist's plus-shaped core (always inside its fill + outline) is identical.
+static func _same_near(a: Image, b: Image, at: Vector2) -> bool:
+	for d in [Vector2i.ZERO, Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]:
+		var q: Vector2i = Vector2i(at.floor()) + d
+		if Rect2i(Vector2i.ZERO, a.get_size()).has_point(q) and a.get_pixelv(q) != b.get_pixelv(q):
+			return false
+	return true
+
+
+static func _opaque_near(img: Image, at: Vector2) -> bool:
+	for dy in range(-1, 2):
+		for dx in range(-1, 2):
+			var q := Vector2i(at.floor()) + Vector2i(dx, dy)
+			if Rect2i(Vector2i.ZERO, img.get_size()).has_point(q) and img.get_pixelv(q).a > 0.5:
+				return true
+	return false
 
 
 static func _diff(a: Image, b: Image) -> int:

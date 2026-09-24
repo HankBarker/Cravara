@@ -1,8 +1,8 @@
 ﻿Godot Engine v4.6.1.stable.official.14d19694e - https://godotengine.org
 
-📦 ItemDB loaded 62 items: basic_axe, basic_pickaxe, berry, berry_compote, berry_seed, bone_arrow, bone_chestplate, bone_dagger, bone_helmet, bone_leggings, bucket, campfire, chest, cooked_fish, cooked_meat, crystal_axe, crystal_chestplate, crystal_flask, crystal_helmet, crystal_leggings, crystal_pendant, crystal_pickaxe, crystal_shard, dodo_egg, fishing_rod, forest_omelet, garden_hoe, hide_bed, hunter_charm, lantern, leather_chestplate, leather_helmet, leather_leggings, log, moonscale, mushroom, mushroom_potion, mushroom_spore, net, plank, plant_fiber, prism_crystal, raptor_fang, reed_bow, reed_perch, river_totem, shardfin, shard_sword, stego_saddle, stone, tent, thatch_roof, torch, trex_meat, trex_scale, trike_saddle, water_bucket, water_flask, wood_door, wood_floor, wood_wall, workbench
-PERF default_skin_ms=162.934
-PERF custom_skin_ms=284.066
+📦 ItemDB loaded 71 items: basic_axe, basic_pickaxe, berry, berry_compote, berry_seed, bone_arrow, bone_chestplate, bone_dagger, bone_helmet, bone_leggings, bucket, campfire, chest, cooked_fish, cooked_meat, crystal_axe, crystal_chestplate, crystal_flask, crystal_helmet, crystal_leggings, crystal_pendant, crystal_pickaxe, crystal_shard, dodo_egg, fishing_rod, forest_omelet, garden_hoe, hide_bed, hunter_charm, lantern, leather_chestplate, leather_helmet, leather_leggings, log, moonscale, moss_chestplate, moss_helmet, moss_leggings, mushroom, mushroom_potion, mushroom_spore, net, plank, plant_fiber, prism_crystal, raptor_fang, reed_bow, reed_perch, rex_chestplate, rex_helmet, rex_leggings, river_totem, shardfin, shard_sword, stego_saddle, stone, tent, thatch_roof, tide_chestplate, tide_helmet, tide_leggings, torch, trex_meat, trex_scale, trike_saddle, water_bucket, water_flask, wood_door, wood_floor, wood_wall, workbench
+PERF default_skin_ms=431.389
+PERF custom_skin_ms=455.41
 PASS invalid saved choices normalize to stable defaults
 PASS same appearance uses frame cache
 PASS customization keys isolate cached frames
@@ -15,816 +15,732 @@ PASS left custom appearance changes actual pixels
 PASS left cropped hair differs from swept hair
 PASS up custom appearance changes actual pixels
 PASS up cropped hair differs from swept hair
-PASS axe_down has eight authored frames
+PASS axe_down has its 8 authored frames (got 8)
 PASS axe_down preserves real gameplay duration
-PASS axe_down frame 0 has grip and exact head silhouette
-PASS axe_down frame 1 has grip and exact head silhouette
-PASS axe_down frame 2 has grip and exact head silhouette
-PASS axe_down frame 3 has grip and exact head silhouette
-PASS axe_down frame 4 has grip and exact head silhouette
-PASS axe_down frame 5 has grip and exact head silhouette
-PASS axe_down frame 6 has grip and exact head silhouette
-PASS axe_down frame 7 has grip and exact head silhouette
-PASS axe_down helmet follows all eight head silhouettes
-PASS axe_down equipment preserves visible authored hand endpoints
+PASS axe_down every frame has grip anchors inside the cel
+PASS axe_down helmet follows the head on every frame
+PASS axe_down grip anchor lands on the drawn bare fist on every upright frame
+PASS axe_down armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS axe_down contains actual changed anatomy poses
 PASS axe_down is distinct from every other action sheet
-PASS pickaxe_down has eight authored frames
+PASS pickaxe_down has its 8 authored frames (got 8)
 PASS pickaxe_down preserves real gameplay duration
-PASS pickaxe_down frame 0 has grip and exact head silhouette
-PASS pickaxe_down frame 1 has grip and exact head silhouette
-PASS pickaxe_down frame 2 has grip and exact head silhouette
-PASS pickaxe_down frame 3 has grip and exact head silhouette
-PASS pickaxe_down frame 4 has grip and exact head silhouette
-PASS pickaxe_down frame 5 has grip and exact head silhouette
-PASS pickaxe_down frame 6 has grip and exact head silhouette
-PASS pickaxe_down frame 7 has grip and exact head silhouette
-PASS pickaxe_down helmet follows all eight head silhouettes
-PASS pickaxe_down equipment preserves visible authored hand endpoints
+PASS pickaxe_down every frame has grip anchors inside the cel
+PASS pickaxe_down helmet follows the head on every frame
+PASS pickaxe_down grip anchor lands on the drawn bare fist on every upright frame
+PASS pickaxe_down armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS pickaxe_down contains actual changed anatomy poses
 PASS pickaxe_down is distinct from every other action sheet
-PASS weapon_down has eight authored frames
+PASS weapon_down has its 8 authored frames (got 8)
 PASS weapon_down preserves real gameplay duration
-PASS weapon_down frame 0 has grip and exact head silhouette
-PASS weapon_down frame 1 has grip and exact head silhouette
-PASS weapon_down frame 2 has grip and exact head silhouette
-PASS weapon_down frame 3 has grip and exact head silhouette
-PASS weapon_down frame 4 has grip and exact head silhouette
-PASS weapon_down frame 5 has grip and exact head silhouette
-PASS weapon_down frame 6 has grip and exact head silhouette
-PASS weapon_down frame 7 has grip and exact head silhouette
-PASS weapon_down helmet follows all eight head silhouettes
-PASS weapon_down equipment preserves visible authored hand endpoints
+PASS weapon_down every frame has grip anchors inside the cel
+PASS weapon_down helmet follows the head on every frame
+PASS weapon_down grip anchor lands on the drawn bare fist on every upright frame
+PASS weapon_down armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS weapon_down contains actual changed anatomy poses
 PASS weapon_down is distinct from every other action sheet
-PASS sword_down has eight authored frames
+PASS sword_down has its 8 authored frames (got 8)
 PASS sword_down preserves real gameplay duration
-PASS sword_down frame 0 has grip and exact head silhouette
-PASS sword_down frame 1 has grip and exact head silhouette
-PASS sword_down frame 2 has grip and exact head silhouette
-PASS sword_down frame 3 has grip and exact head silhouette
-PASS sword_down frame 4 has grip and exact head silhouette
-PASS sword_down frame 5 has grip and exact head silhouette
-PASS sword_down frame 6 has grip and exact head silhouette
-PASS sword_down frame 7 has grip and exact head silhouette
-PASS sword_down helmet follows all eight head silhouettes
-PASS sword_down equipment preserves visible authored hand endpoints
+PASS sword_down every frame has grip anchors inside the cel
+PASS sword_down helmet follows the head on every frame
+PASS sword_down grip anchor lands on the drawn bare fist on every upright frame
+PASS sword_down armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS sword_down contains actual changed anatomy poses
 PASS sword_down is distinct from every other action sheet
-PASS bow_draw_down has eight authored frames
+PASS bow_draw_down has its 8 authored frames (got 8)
 PASS bow_draw_down preserves real gameplay duration
-PASS bow_draw_down frame 0 has grip and exact head silhouette
-PASS bow_draw_down frame 1 has grip and exact head silhouette
-PASS bow_draw_down frame 2 has grip and exact head silhouette
-PASS bow_draw_down frame 3 has grip and exact head silhouette
-PASS bow_draw_down frame 4 has grip and exact head silhouette
-PASS bow_draw_down frame 5 has grip and exact head silhouette
-PASS bow_draw_down frame 6 has grip and exact head silhouette
-PASS bow_draw_down frame 7 has grip and exact head silhouette
-PASS bow_draw_down helmet follows all eight head silhouettes
-PASS bow_draw_down equipment preserves visible authored hand endpoints
+PASS bow_draw_down every frame has grip anchors inside the cel
+PASS bow_draw_down helmet follows the head on every frame
+PASS bow_draw_down grip anchor lands on the drawn bare fist on every upright frame
+PASS bow_draw_down armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS bow_draw_down contains actual changed anatomy poses
 PASS bow_draw_down is distinct from every other action sheet
-PASS bow_release_down has eight authored frames
+PASS bow_release_down has its 8 authored frames (got 8)
 PASS bow_release_down preserves real gameplay duration
-PASS bow_release_down frame 0 has grip and exact head silhouette
-PASS bow_release_down frame 1 has grip and exact head silhouette
-PASS bow_release_down frame 2 has grip and exact head silhouette
-PASS bow_release_down frame 3 has grip and exact head silhouette
-PASS bow_release_down frame 4 has grip and exact head silhouette
-PASS bow_release_down frame 5 has grip and exact head silhouette
-PASS bow_release_down frame 6 has grip and exact head silhouette
-PASS bow_release_down frame 7 has grip and exact head silhouette
-PASS bow_release_down helmet follows all eight head silhouettes
-PASS bow_release_down equipment preserves visible authored hand endpoints
+PASS bow_release_down every frame has grip anchors inside the cel
+PASS bow_release_down helmet follows the head on every frame
+PASS bow_release_down grip anchor lands on the drawn bare fist on every upright frame
+PASS bow_release_down armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS bow_release_down contains actual changed anatomy poses
 PASS bow_release_down is distinct from every other action sheet
-PASS fishing_cast_down has eight authored frames
+PASS fishing_cast_down has its 8 authored frames (got 8)
 PASS fishing_cast_down preserves real gameplay duration
-PASS fishing_cast_down frame 0 has grip and exact head silhouette
-PASS fishing_cast_down frame 1 has grip and exact head silhouette
-PASS fishing_cast_down frame 2 has grip and exact head silhouette
-PASS fishing_cast_down frame 3 has grip and exact head silhouette
-PASS fishing_cast_down frame 4 has grip and exact head silhouette
-PASS fishing_cast_down frame 5 has grip and exact head silhouette
-PASS fishing_cast_down frame 6 has grip and exact head silhouette
-PASS fishing_cast_down frame 7 has grip and exact head silhouette
-PASS fishing_cast_down helmet follows all eight head silhouettes
-PASS fishing_cast_down equipment preserves visible authored hand endpoints
+PASS fishing_cast_down every frame has grip anchors inside the cel
+PASS fishing_cast_down helmet follows the head on every frame
+PASS fishing_cast_down grip anchor lands on the drawn bare fist on every upright frame
+PASS fishing_cast_down armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS fishing_cast_down contains actual changed anatomy poses
 PASS fishing_cast_down is distinct from every other action sheet
-PASS fishing_reel_down has eight authored frames
+PASS fishing_reel_down has its 8 authored frames (got 8)
 PASS fishing_reel_down preserves real gameplay duration
-PASS fishing_reel_down frame 0 has grip and exact head silhouette
-PASS fishing_reel_down frame 1 has grip and exact head silhouette
-PASS fishing_reel_down frame 2 has grip and exact head silhouette
-PASS fishing_reel_down frame 3 has grip and exact head silhouette
-PASS fishing_reel_down frame 4 has grip and exact head silhouette
-PASS fishing_reel_down frame 5 has grip and exact head silhouette
-PASS fishing_reel_down frame 6 has grip and exact head silhouette
-PASS fishing_reel_down frame 7 has grip and exact head silhouette
-PASS fishing_reel_down helmet follows all eight head silhouettes
-PASS fishing_reel_down equipment preserves visible authored hand endpoints
+PASS fishing_reel_down every frame has grip anchors inside the cel
+PASS fishing_reel_down helmet follows the head on every frame
+PASS fishing_reel_down grip anchor lands on the drawn bare fist on every upright frame
+PASS fishing_reel_down armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS fishing_reel_down contains actual changed anatomy poses
 PASS fishing_reel_down is distinct from every other action sheet
-PASS hoe_down has eight authored frames
+PASS hoe_down has its 8 authored frames (got 8)
 PASS hoe_down preserves real gameplay duration
-PASS hoe_down frame 0 has grip and exact head silhouette
-PASS hoe_down frame 1 has grip and exact head silhouette
-PASS hoe_down frame 2 has grip and exact head silhouette
-PASS hoe_down frame 3 has grip and exact head silhouette
-PASS hoe_down frame 4 has grip and exact head silhouette
-PASS hoe_down frame 5 has grip and exact head silhouette
-PASS hoe_down frame 6 has grip and exact head silhouette
-PASS hoe_down frame 7 has grip and exact head silhouette
-PASS hoe_down helmet follows all eight head silhouettes
-PASS hoe_down equipment preserves visible authored hand endpoints
+PASS hoe_down every frame has grip anchors inside the cel
+PASS hoe_down helmet follows the head on every frame
+PASS hoe_down grip anchor lands on the drawn bare fist on every upright frame
+PASS hoe_down armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS hoe_down contains actual changed anatomy poses
 PASS hoe_down is distinct from every other action sheet
-PASS net_down has eight authored frames
+PASS net_down has its 8 authored frames (got 8)
 PASS net_down preserves real gameplay duration
-PASS net_down frame 0 has grip and exact head silhouette
-PASS net_down frame 1 has grip and exact head silhouette
-PASS net_down frame 2 has grip and exact head silhouette
-PASS net_down frame 3 has grip and exact head silhouette
-PASS net_down frame 4 has grip and exact head silhouette
-PASS net_down frame 5 has grip and exact head silhouette
-PASS net_down frame 6 has grip and exact head silhouette
-PASS net_down frame 7 has grip and exact head silhouette
-PASS net_down helmet follows all eight head silhouettes
-PASS net_down equipment preserves visible authored hand endpoints
+PASS net_down every frame has grip anchors inside the cel
+PASS net_down helmet follows the head on every frame
+PASS net_down grip anchor lands on the drawn bare fist on every upright frame
+PASS net_down armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS net_down contains actual changed anatomy poses
 PASS net_down is distinct from every other action sheet
-PASS bucket_down has eight authored frames
+PASS bucket_down has its 8 authored frames (got 8)
 PASS bucket_down preserves real gameplay duration
-PASS bucket_down frame 0 has grip and exact head silhouette
-PASS bucket_down frame 1 has grip and exact head silhouette
-PASS bucket_down frame 2 has grip and exact head silhouette
-PASS bucket_down frame 3 has grip and exact head silhouette
-PASS bucket_down frame 4 has grip and exact head silhouette
-PASS bucket_down frame 5 has grip and exact head silhouette
-PASS bucket_down frame 6 has grip and exact head silhouette
-PASS bucket_down frame 7 has grip and exact head silhouette
-PASS bucket_down helmet follows all eight head silhouettes
-PASS bucket_down equipment preserves visible authored hand endpoints
+PASS bucket_down every frame has grip anchors inside the cel
+PASS bucket_down helmet follows the head on every frame
+PASS bucket_down grip anchor lands on the drawn bare fist on every upright frame
+PASS bucket_down armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS bucket_down contains actual changed anatomy poses
 PASS bucket_down is distinct from every other action sheet
-PASS pet_down has eight authored frames
+PASS pet_down has its 8 authored frames (got 8)
 PASS pet_down preserves real gameplay duration
-PASS pet_down frame 0 has grip and exact head silhouette
-PASS pet_down frame 1 has grip and exact head silhouette
-PASS pet_down frame 2 has grip and exact head silhouette
-PASS pet_down frame 3 has grip and exact head silhouette
-PASS pet_down frame 4 has grip and exact head silhouette
-PASS pet_down frame 5 has grip and exact head silhouette
-PASS pet_down frame 6 has grip and exact head silhouette
-PASS pet_down frame 7 has grip and exact head silhouette
-PASS pet_down helmet follows all eight head silhouettes
-PASS pet_down equipment preserves visible authored hand endpoints
+PASS pet_down every frame has grip anchors inside the cel
+PASS pet_down helmet follows the head on every frame
+PASS pet_down grip anchor lands on the drawn bare fist on every upright frame
+PASS pet_down armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS pet_down contains actual changed anatomy poses
 PASS pet_down is distinct from every other action sheet
-PASS pickup_down has eight authored frames
+PASS pickup_down has its 8 authored frames (got 8)
 PASS pickup_down preserves real gameplay duration
-PASS pickup_down frame 0 has grip and exact head silhouette
-PASS pickup_down frame 1 has grip and exact head silhouette
-PASS pickup_down frame 2 has grip and exact head silhouette
-PASS pickup_down frame 3 has grip and exact head silhouette
-PASS pickup_down frame 4 has grip and exact head silhouette
-PASS pickup_down frame 5 has grip and exact head silhouette
-PASS pickup_down frame 6 has grip and exact head silhouette
-PASS pickup_down frame 7 has grip and exact head silhouette
-PASS pickup_down helmet follows all eight head silhouettes
-PASS pickup_down equipment preserves visible authored hand endpoints
+PASS pickup_down every frame has grip anchors inside the cel
+PASS pickup_down helmet follows the head on every frame
+PASS pickup_down grip anchor lands on the drawn bare fist on every upright frame
+PASS pickup_down armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS pickup_down contains actual changed anatomy poses
 PASS pickup_down is distinct from every other action sheet
-PASS axe_right has eight authored frames
+PASS eat_down has its 8 authored frames (got 8)
+PASS eat_down preserves real gameplay duration
+PASS eat_down every frame has grip anchors inside the cel
+PASS eat_down helmet follows the head on every frame
+PASS eat_down grip anchor lands on the drawn bare fist on every upright frame
+PASS eat_down armour keeps the fist visible at the grip anchor (8/8 frames)
+PASS eat_down contains actual changed anatomy poses
+PASS eat_down is distinct from every other action sheet
+PASS craft_down has its 8 authored frames (got 8)
+PASS craft_down preserves real gameplay duration
+PASS craft_down every frame has grip anchors inside the cel
+PASS craft_down helmet follows the head on every frame
+PASS craft_down grip anchor lands on the drawn bare fist on every upright frame
+PASS craft_down armour keeps the fist visible at the grip anchor (8/8 frames)
+PASS craft_down contains actual changed anatomy poses
+PASS craft_down is distinct from every other action sheet
+PASS place_down has its 6 authored frames (got 6)
+PASS place_down preserves real gameplay duration
+PASS place_down every frame has grip anchors inside the cel
+PASS place_down helmet follows the head on every frame
+PASS place_down grip anchor lands on the drawn bare fist on every upright frame
+PASS place_down armour keeps the fist visible at the grip anchor (6/6 frames)
+PASS place_down contains actual changed anatomy poses
+PASS place_down is distinct from every other action sheet
+PASS interact_down has its 6 authored frames (got 6)
+PASS interact_down preserves real gameplay duration
+PASS interact_down every frame has grip anchors inside the cel
+PASS interact_down helmet follows the head on every frame
+PASS interact_down grip anchor lands on the drawn bare fist on every upright frame
+PASS interact_down armour keeps the fist visible at the grip anchor (6/6 frames)
+PASS interact_down contains actual changed anatomy poses
+PASS interact_down is distinct from every other action sheet
+PASS cheer_down has its 8 authored frames (got 8)
+PASS cheer_down preserves real gameplay duration
+PASS cheer_down every frame has grip anchors inside the cel
+PASS cheer_down helmet follows the head on every frame
+PASS cheer_down grip anchor lands on the drawn bare fist on every upright frame
+PASS cheer_down armour keeps the fist visible at the grip anchor (8/8 frames)
+PASS cheer_down contains actual changed anatomy poses
+PASS cheer_down is distinct from every other action sheet
+PASS roll_down has its 8 authored frames (got 8)
+PASS roll_down preserves real gameplay duration
+PASS roll_down every frame has grip anchors inside the cel
+PASS roll_down helmet follows the head on every frame
+PASS roll_down grip anchor lands on the drawn bare fist on every upright frame
+PASS roll_down armour keeps the fist visible at the grip anchor (5/5 frames)
+PASS roll_down contains actual changed anatomy poses
+PASS roll_down is distinct from every other action sheet
+PASS axe_right has its 8 authored frames (got 8)
 PASS axe_right preserves real gameplay duration
-PASS axe_right frame 0 has grip and exact head silhouette
-PASS axe_right frame 1 has grip and exact head silhouette
-PASS axe_right frame 2 has grip and exact head silhouette
-PASS axe_right frame 3 has grip and exact head silhouette
-PASS axe_right frame 4 has grip and exact head silhouette
-PASS axe_right frame 5 has grip and exact head silhouette
-PASS axe_right frame 6 has grip and exact head silhouette
-PASS axe_right frame 7 has grip and exact head silhouette
-PASS axe_right helmet follows all eight head silhouettes
-PASS axe_right equipment preserves visible authored hand endpoints
+PASS axe_right every frame has grip anchors inside the cel
+PASS axe_right helmet follows the head on every frame
+PASS axe_right grip anchor lands on the drawn bare fist on every upright frame
+PASS axe_right armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS axe_right contains actual changed anatomy poses
 PASS axe_right is distinct from every other action sheet
-PASS pickaxe_right has eight authored frames
+PASS pickaxe_right has its 8 authored frames (got 8)
 PASS pickaxe_right preserves real gameplay duration
-PASS pickaxe_right frame 0 has grip and exact head silhouette
-PASS pickaxe_right frame 1 has grip and exact head silhouette
-PASS pickaxe_right frame 2 has grip and exact head silhouette
-PASS pickaxe_right frame 3 has grip and exact head silhouette
-PASS pickaxe_right frame 4 has grip and exact head silhouette
-PASS pickaxe_right frame 5 has grip and exact head silhouette
-PASS pickaxe_right frame 6 has grip and exact head silhouette
-PASS pickaxe_right frame 7 has grip and exact head silhouette
-PASS pickaxe_right helmet follows all eight head silhouettes
-PASS pickaxe_right equipment preserves visible authored hand endpoints
+PASS pickaxe_right every frame has grip anchors inside the cel
+PASS pickaxe_right helmet follows the head on every frame
+PASS pickaxe_right grip anchor lands on the drawn bare fist on every upright frame
+PASS pickaxe_right armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS pickaxe_right contains actual changed anatomy poses
 PASS pickaxe_right is distinct from every other action sheet
-PASS weapon_right has eight authored frames
+PASS weapon_right has its 8 authored frames (got 8)
 PASS weapon_right preserves real gameplay duration
-PASS weapon_right frame 0 has grip and exact head silhouette
-PASS weapon_right frame 1 has grip and exact head silhouette
-PASS weapon_right frame 2 has grip and exact head silhouette
-PASS weapon_right frame 3 has grip and exact head silhouette
-PASS weapon_right frame 4 has grip and exact head silhouette
-PASS weapon_right frame 5 has grip and exact head silhouette
-PASS weapon_right frame 6 has grip and exact head silhouette
-PASS weapon_right frame 7 has grip and exact head silhouette
-PASS weapon_right helmet follows all eight head silhouettes
-PASS weapon_right equipment preserves visible authored hand endpoints
+PASS weapon_right every frame has grip anchors inside the cel
+PASS weapon_right helmet follows the head on every frame
+PASS weapon_right grip anchor lands on the drawn bare fist on every upright frame
+PASS weapon_right armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS weapon_right contains actual changed anatomy poses
 PASS weapon_right is distinct from every other action sheet
-PASS sword_right has eight authored frames
+PASS sword_right has its 8 authored frames (got 8)
 PASS sword_right preserves real gameplay duration
-PASS sword_right frame 0 has grip and exact head silhouette
-PASS sword_right frame 1 has grip and exact head silhouette
-PASS sword_right frame 2 has grip and exact head silhouette
-PASS sword_right frame 3 has grip and exact head silhouette
-PASS sword_right frame 4 has grip and exact head silhouette
-PASS sword_right frame 5 has grip and exact head silhouette
-PASS sword_right frame 6 has grip and exact head silhouette
-PASS sword_right frame 7 has grip and exact head silhouette
-PASS sword_right helmet follows all eight head silhouettes
-PASS sword_right equipment preserves visible authored hand endpoints
+PASS sword_right every frame has grip anchors inside the cel
+PASS sword_right helmet follows the head on every frame
+PASS sword_right grip anchor lands on the drawn bare fist on every upright frame
+PASS sword_right armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS sword_right contains actual changed anatomy poses
 PASS sword_right is distinct from every other action sheet
-PASS bow_draw_right has eight authored frames
+PASS bow_draw_right has its 8 authored frames (got 8)
 PASS bow_draw_right preserves real gameplay duration
-PASS bow_draw_right frame 0 has grip and exact head silhouette
-PASS bow_draw_right frame 1 has grip and exact head silhouette
-PASS bow_draw_right frame 2 has grip and exact head silhouette
-PASS bow_draw_right frame 3 has grip and exact head silhouette
-PASS bow_draw_right frame 4 has grip and exact head silhouette
-PASS bow_draw_right frame 5 has grip and exact head silhouette
-PASS bow_draw_right frame 6 has grip and exact head silhouette
-PASS bow_draw_right frame 7 has grip and exact head silhouette
-PASS bow_draw_right helmet follows all eight head silhouettes
-PASS bow_draw_right equipment preserves visible authored hand endpoints
+PASS bow_draw_right every frame has grip anchors inside the cel
+PASS bow_draw_right helmet follows the head on every frame
+PASS bow_draw_right grip anchor lands on the drawn bare fist on every upright frame
+PASS bow_draw_right armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS bow_draw_right contains actual changed anatomy poses
 PASS bow_draw_right is distinct from every other action sheet
-PASS bow_release_right has eight authored frames
+PASS bow_release_right has its 8 authored frames (got 8)
 PASS bow_release_right preserves real gameplay duration
-PASS bow_release_right frame 0 has grip and exact head silhouette
-PASS bow_release_right frame 1 has grip and exact head silhouette
-PASS bow_release_right frame 2 has grip and exact head silhouette
-PASS bow_release_right frame 3 has grip and exact head silhouette
-PASS bow_release_right frame 4 has grip and exact head silhouette
-PASS bow_release_right frame 5 has grip and exact head silhouette
-PASS bow_release_right frame 6 has grip and exact head silhouette
-PASS bow_release_right frame 7 has grip and exact head silhouette
-PASS bow_release_right helmet follows all eight head silhouettes
-PASS bow_release_right equipment preserves visible authored hand endpoints
+PASS bow_release_right every frame has grip anchors inside the cel
+PASS bow_release_right helmet follows the head on every frame
+PASS bow_release_right grip anchor lands on the drawn bare fist on every upright frame
+PASS bow_release_right armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS bow_release_right contains actual changed anatomy poses
 PASS bow_release_right is distinct from every other action sheet
-PASS fishing_cast_right has eight authored frames
+PASS fishing_cast_right has its 8 authored frames (got 8)
 PASS fishing_cast_right preserves real gameplay duration
-PASS fishing_cast_right frame 0 has grip and exact head silhouette
-PASS fishing_cast_right frame 1 has grip and exact head silhouette
-PASS fishing_cast_right frame 2 has grip and exact head silhouette
-PASS fishing_cast_right frame 3 has grip and exact head silhouette
-PASS fishing_cast_right frame 4 has grip and exact head silhouette
-PASS fishing_cast_right frame 5 has grip and exact head silhouette
-PASS fishing_cast_right frame 6 has grip and exact head silhouette
-PASS fishing_cast_right frame 7 has grip and exact head silhouette
-PASS fishing_cast_right helmet follows all eight head silhouettes
-PASS fishing_cast_right equipment preserves visible authored hand endpoints
+PASS fishing_cast_right every frame has grip anchors inside the cel
+PASS fishing_cast_right helmet follows the head on every frame
+PASS fishing_cast_right grip anchor lands on the drawn bare fist on every upright frame
+PASS fishing_cast_right armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS fishing_cast_right contains actual changed anatomy poses
 PASS fishing_cast_right is distinct from every other action sheet
-PASS fishing_reel_right has eight authored frames
+PASS fishing_reel_right has its 8 authored frames (got 8)
 PASS fishing_reel_right preserves real gameplay duration
-PASS fishing_reel_right frame 0 has grip and exact head silhouette
-PASS fishing_reel_right frame 1 has grip and exact head silhouette
-PASS fishing_reel_right frame 2 has grip and exact head silhouette
-PASS fishing_reel_right frame 3 has grip and exact head silhouette
-PASS fishing_reel_right frame 4 has grip and exact head silhouette
-PASS fishing_reel_right frame 5 has grip and exact head silhouette
-PASS fishing_reel_right frame 6 has grip and exact head silhouette
-PASS fishing_reel_right frame 7 has grip and exact head silhouette
-PASS fishing_reel_right helmet follows all eight head silhouettes
-PASS fishing_reel_right equipment preserves visible authored hand endpoints
+PASS fishing_reel_right every frame has grip anchors inside the cel
+PASS fishing_reel_right helmet follows the head on every frame
+PASS fishing_reel_right grip anchor lands on the drawn bare fist on every upright frame
+PASS fishing_reel_right armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS fishing_reel_right contains actual changed anatomy poses
 PASS fishing_reel_right is distinct from every other action sheet
-PASS hoe_right has eight authored frames
+PASS hoe_right has its 8 authored frames (got 8)
 PASS hoe_right preserves real gameplay duration
-PASS hoe_right frame 0 has grip and exact head silhouette
-PASS hoe_right frame 1 has grip and exact head silhouette
-PASS hoe_right frame 2 has grip and exact head silhouette
-PASS hoe_right frame 3 has grip and exact head silhouette
-PASS hoe_right frame 4 has grip and exact head silhouette
-PASS hoe_right frame 5 has grip and exact head silhouette
-PASS hoe_right frame 6 has grip and exact head silhouette
-PASS hoe_right frame 7 has grip and exact head silhouette
-PASS hoe_right helmet follows all eight head silhouettes
-PASS hoe_right equipment preserves visible authored hand endpoints
+PASS hoe_right every frame has grip anchors inside the cel
+PASS hoe_right helmet follows the head on every frame
+PASS hoe_right grip anchor lands on the drawn bare fist on every upright frame
+PASS hoe_right armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS hoe_right contains actual changed anatomy poses
 PASS hoe_right is distinct from every other action sheet
-PASS net_right has eight authored frames
+PASS net_right has its 8 authored frames (got 8)
 PASS net_right preserves real gameplay duration
-PASS net_right frame 0 has grip and exact head silhouette
-PASS net_right frame 1 has grip and exact head silhouette
-PASS net_right frame 2 has grip and exact head silhouette
-PASS net_right frame 3 has grip and exact head silhouette
-PASS net_right frame 4 has grip and exact head silhouette
-PASS net_right frame 5 has grip and exact head silhouette
-PASS net_right frame 6 has grip and exact head silhouette
-PASS net_right frame 7 has grip and exact head silhouette
-PASS net_right helmet follows all eight head silhouettes
-PASS net_right equipment preserves visible authored hand endpoints
+PASS net_right every frame has grip anchors inside the cel
+PASS net_right helmet follows the head on every frame
+PASS net_right grip anchor lands on the drawn bare fist on every upright frame
+PASS net_right armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS net_right contains actual changed anatomy poses
 PASS net_right is distinct from every other action sheet
-PASS bucket_right has eight authored frames
+PASS bucket_right has its 8 authored frames (got 8)
 PASS bucket_right preserves real gameplay duration
-PASS bucket_right frame 0 has grip and exact head silhouette
-PASS bucket_right frame 1 has grip and exact head silhouette
-PASS bucket_right frame 2 has grip and exact head silhouette
-PASS bucket_right frame 3 has grip and exact head silhouette
-PASS bucket_right frame 4 has grip and exact head silhouette
-PASS bucket_right frame 5 has grip and exact head silhouette
-PASS bucket_right frame 6 has grip and exact head silhouette
-PASS bucket_right frame 7 has grip and exact head silhouette
-PASS bucket_right helmet follows all eight head silhouettes
-PASS bucket_right equipment preserves visible authored hand endpoints
+PASS bucket_right every frame has grip anchors inside the cel
+PASS bucket_right helmet follows the head on every frame
+PASS bucket_right grip anchor lands on the drawn bare fist on every upright frame
+PASS bucket_right armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS bucket_right contains actual changed anatomy poses
 PASS bucket_right is distinct from every other action sheet
-PASS pet_right has eight authored frames
+PASS pet_right has its 8 authored frames (got 8)
 PASS pet_right preserves real gameplay duration
-PASS pet_right frame 0 has grip and exact head silhouette
-PASS pet_right frame 1 has grip and exact head silhouette
-PASS pet_right frame 2 has grip and exact head silhouette
-PASS pet_right frame 3 has grip and exact head silhouette
-PASS pet_right frame 4 has grip and exact head silhouette
-PASS pet_right frame 5 has grip and exact head silhouette
-PASS pet_right frame 6 has grip and exact head silhouette
-PASS pet_right frame 7 has grip and exact head silhouette
-PASS pet_right helmet follows all eight head silhouettes
-PASS pet_right equipment preserves visible authored hand endpoints
+PASS pet_right every frame has grip anchors inside the cel
+PASS pet_right helmet follows the head on every frame
+PASS pet_right grip anchor lands on the drawn bare fist on every upright frame
+PASS pet_right armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS pet_right contains actual changed anatomy poses
 PASS pet_right is distinct from every other action sheet
-PASS pickup_right has eight authored frames
+PASS pickup_right has its 8 authored frames (got 8)
 PASS pickup_right preserves real gameplay duration
-PASS pickup_right frame 0 has grip and exact head silhouette
-PASS pickup_right frame 1 has grip and exact head silhouette
-PASS pickup_right frame 2 has grip and exact head silhouette
-PASS pickup_right frame 3 has grip and exact head silhouette
-PASS pickup_right frame 4 has grip and exact head silhouette
-PASS pickup_right frame 5 has grip and exact head silhouette
-PASS pickup_right frame 6 has grip and exact head silhouette
-PASS pickup_right frame 7 has grip and exact head silhouette
-PASS pickup_right helmet follows all eight head silhouettes
-PASS pickup_right equipment preserves visible authored hand endpoints
+PASS pickup_right every frame has grip anchors inside the cel
+PASS pickup_right helmet follows the head on every frame
+PASS pickup_right grip anchor lands on the drawn bare fist on every upright frame
+PASS pickup_right armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS pickup_right contains actual changed anatomy poses
 PASS pickup_right is distinct from every other action sheet
-PASS axe_left has eight authored frames
+PASS eat_right has its 8 authored frames (got 8)
+PASS eat_right preserves real gameplay duration
+PASS eat_right every frame has grip anchors inside the cel
+PASS eat_right helmet follows the head on every frame
+PASS eat_right grip anchor lands on the drawn bare fist on every upright frame
+PASS eat_right armour keeps the fist visible at the grip anchor (8/8 frames)
+PASS eat_right contains actual changed anatomy poses
+PASS eat_right is distinct from every other action sheet
+PASS craft_right has its 8 authored frames (got 8)
+PASS craft_right preserves real gameplay duration
+PASS craft_right every frame has grip anchors inside the cel
+PASS craft_right helmet follows the head on every frame
+PASS craft_right grip anchor lands on the drawn bare fist on every upright frame
+PASS craft_right armour keeps the fist visible at the grip anchor (8/8 frames)
+PASS craft_right contains actual changed anatomy poses
+PASS craft_right is distinct from every other action sheet
+PASS place_right has its 6 authored frames (got 6)
+PASS place_right preserves real gameplay duration
+PASS place_right every frame has grip anchors inside the cel
+PASS place_right helmet follows the head on every frame
+PASS place_right grip anchor lands on the drawn bare fist on every upright frame
+PASS place_right armour keeps the fist visible at the grip anchor (6/6 frames)
+PASS place_right contains actual changed anatomy poses
+PASS place_right is distinct from every other action sheet
+PASS interact_right has its 6 authored frames (got 6)
+PASS interact_right preserves real gameplay duration
+PASS interact_right every frame has grip anchors inside the cel
+PASS interact_right helmet follows the head on every frame
+PASS interact_right grip anchor lands on the drawn bare fist on every upright frame
+PASS interact_right armour keeps the fist visible at the grip anchor (6/6 frames)
+PASS interact_right contains actual changed anatomy poses
+PASS interact_right is distinct from every other action sheet
+PASS cheer_right has its 8 authored frames (got 8)
+PASS cheer_right preserves real gameplay duration
+PASS cheer_right every frame has grip anchors inside the cel
+PASS cheer_right helmet follows the head on every frame
+PASS cheer_right grip anchor lands on the drawn bare fist on every upright frame
+PASS cheer_right armour keeps the fist visible at the grip anchor (8/8 frames)
+PASS cheer_right contains actual changed anatomy poses
+PASS cheer_right is distinct from every other action sheet
+PASS roll_right has its 8 authored frames (got 8)
+PASS roll_right preserves real gameplay duration
+PASS roll_right every frame has grip anchors inside the cel
+PASS roll_right helmet follows the head on every frame
+PASS roll_right grip anchor lands on the drawn bare fist on every upright frame
+PASS roll_right armour keeps the fist visible at the grip anchor (5/5 frames)
+PASS roll_right contains actual changed anatomy poses
+PASS roll_right is distinct from every other action sheet
+PASS axe_left has its 8 authored frames (got 8)
 PASS axe_left preserves real gameplay duration
-PASS axe_left frame 0 has grip and exact head silhouette
-PASS axe_left frame 1 has grip and exact head silhouette
-PASS axe_left frame 2 has grip and exact head silhouette
-PASS axe_left frame 3 has grip and exact head silhouette
-PASS axe_left frame 4 has grip and exact head silhouette
-PASS axe_left frame 5 has grip and exact head silhouette
-PASS axe_left frame 6 has grip and exact head silhouette
-PASS axe_left frame 7 has grip and exact head silhouette
-PASS axe_left helmet follows all eight head silhouettes
-PASS axe_left equipment preserves visible authored hand endpoints
+PASS axe_left every frame has grip anchors inside the cel
+PASS axe_left helmet follows the head on every frame
+PASS axe_left grip anchor lands on the drawn bare fist on every upright frame
+PASS axe_left armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS axe_left contains actual changed anatomy poses
 PASS axe_left is distinct from every other action sheet
-PASS pickaxe_left has eight authored frames
+PASS pickaxe_left has its 8 authored frames (got 8)
 PASS pickaxe_left preserves real gameplay duration
-PASS pickaxe_left frame 0 has grip and exact head silhouette
-PASS pickaxe_left frame 1 has grip and exact head silhouette
-PASS pickaxe_left frame 2 has grip and exact head silhouette
-PASS pickaxe_left frame 3 has grip and exact head silhouette
-PASS pickaxe_left frame 4 has grip and exact head silhouette
-PASS pickaxe_left frame 5 has grip and exact head silhouette
-PASS pickaxe_left frame 6 has grip and exact head silhouette
-PASS pickaxe_left frame 7 has grip and exact head silhouette
-PASS pickaxe_left helmet follows all eight head silhouettes
-PASS pickaxe_left equipment preserves visible authored hand endpoints
+PASS pickaxe_left every frame has grip anchors inside the cel
+PASS pickaxe_left helmet follows the head on every frame
+PASS pickaxe_left grip anchor lands on the drawn bare fist on every upright frame
+PASS pickaxe_left armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS pickaxe_left contains actual changed anatomy poses
 PASS pickaxe_left is distinct from every other action sheet
-PASS weapon_left has eight authored frames
+PASS weapon_left has its 8 authored frames (got 8)
 PASS weapon_left preserves real gameplay duration
-PASS weapon_left frame 0 has grip and exact head silhouette
-PASS weapon_left frame 1 has grip and exact head silhouette
-PASS weapon_left frame 2 has grip and exact head silhouette
-PASS weapon_left frame 3 has grip and exact head silhouette
-PASS weapon_left frame 4 has grip and exact head silhouette
-PASS weapon_left frame 5 has grip and exact head silhouette
-PASS weapon_left frame 6 has grip and exact head silhouette
-PASS weapon_left frame 7 has grip and exact head silhouette
-PASS weapon_left helmet follows all eight head silhouettes
-PASS weapon_left equipment preserves visible authored hand endpoints
+PASS weapon_left every frame has grip anchors inside the cel
+PASS weapon_left helmet follows the head on every frame
+PASS weapon_left grip anchor lands on the drawn bare fist on every upright frame
+PASS weapon_left armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS weapon_left contains actual changed anatomy poses
 PASS weapon_left is distinct from every other action sheet
-PASS sword_left has eight authored frames
+PASS sword_left has its 8 authored frames (got 8)
 PASS sword_left preserves real gameplay duration
-PASS sword_left frame 0 has grip and exact head silhouette
-PASS sword_left frame 1 has grip and exact head silhouette
-PASS sword_left frame 2 has grip and exact head silhouette
-PASS sword_left frame 3 has grip and exact head silhouette
-PASS sword_left frame 4 has grip and exact head silhouette
-PASS sword_left frame 5 has grip and exact head silhouette
-PASS sword_left frame 6 has grip and exact head silhouette
-PASS sword_left frame 7 has grip and exact head silhouette
-PASS sword_left helmet follows all eight head silhouettes
-PASS sword_left equipment preserves visible authored hand endpoints
+PASS sword_left every frame has grip anchors inside the cel
+PASS sword_left helmet follows the head on every frame
+PASS sword_left grip anchor lands on the drawn bare fist on every upright frame
+PASS sword_left armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS sword_left contains actual changed anatomy poses
 PASS sword_left is distinct from every other action sheet
-PASS bow_draw_left has eight authored frames
+PASS bow_draw_left has its 8 authored frames (got 8)
 PASS bow_draw_left preserves real gameplay duration
-PASS bow_draw_left frame 0 has grip and exact head silhouette
-PASS bow_draw_left frame 1 has grip and exact head silhouette
-PASS bow_draw_left frame 2 has grip and exact head silhouette
-PASS bow_draw_left frame 3 has grip and exact head silhouette
-PASS bow_draw_left frame 4 has grip and exact head silhouette
-PASS bow_draw_left frame 5 has grip and exact head silhouette
-PASS bow_draw_left frame 6 has grip and exact head silhouette
-PASS bow_draw_left frame 7 has grip and exact head silhouette
-PASS bow_draw_left helmet follows all eight head silhouettes
-PASS bow_draw_left equipment preserves visible authored hand endpoints
+PASS bow_draw_left every frame has grip anchors inside the cel
+PASS bow_draw_left helmet follows the head on every frame
+PASS bow_draw_left grip anchor lands on the drawn bare fist on every upright frame
+PASS bow_draw_left armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS bow_draw_left contains actual changed anatomy poses
 PASS bow_draw_left is distinct from every other action sheet
-PASS bow_release_left has eight authored frames
+PASS bow_release_left has its 8 authored frames (got 8)
 PASS bow_release_left preserves real gameplay duration
-PASS bow_release_left frame 0 has grip and exact head silhouette
-PASS bow_release_left frame 1 has grip and exact head silhouette
-PASS bow_release_left frame 2 has grip and exact head silhouette
-PASS bow_release_left frame 3 has grip and exact head silhouette
-PASS bow_release_left frame 4 has grip and exact head silhouette
-PASS bow_release_left frame 5 has grip and exact head silhouette
-PASS bow_release_left frame 6 has grip and exact head silhouette
-PASS bow_release_left frame 7 has grip and exact head silhouette
-PASS bow_release_left helmet follows all eight head silhouettes
-PASS bow_release_left equipment preserves visible authored hand endpoints
+PASS bow_release_left every frame has grip anchors inside the cel
+PASS bow_release_left helmet follows the head on every frame
+PASS bow_release_left grip anchor lands on the drawn bare fist on every upright frame
+PASS bow_release_left armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS bow_release_left contains actual changed anatomy poses
 PASS bow_release_left is distinct from every other action sheet
-PASS fishing_cast_left has eight authored frames
+PASS fishing_cast_left has its 8 authored frames (got 8)
 PASS fishing_cast_left preserves real gameplay duration
-PASS fishing_cast_left frame 0 has grip and exact head silhouette
-PASS fishing_cast_left frame 1 has grip and exact head silhouette
-PASS fishing_cast_left frame 2 has grip and exact head silhouette
-PASS fishing_cast_left frame 3 has grip and exact head silhouette
-PASS fishing_cast_left frame 4 has grip and exact head silhouette
-PASS fishing_cast_left frame 5 has grip and exact head silhouette
-PASS fishing_cast_left frame 6 has grip and exact head silhouette
-PASS fishing_cast_left frame 7 has grip and exact head silhouette
-PASS fishing_cast_left helmet follows all eight head silhouettes
-PASS fishing_cast_left equipment preserves visible authored hand endpoints
+PASS fishing_cast_left every frame has grip anchors inside the cel
+PASS fishing_cast_left helmet follows the head on every frame
+PASS fishing_cast_left grip anchor lands on the drawn bare fist on every upright frame
+PASS fishing_cast_left armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS fishing_cast_left contains actual changed anatomy poses
 PASS fishing_cast_left is distinct from every other action sheet
-PASS fishing_reel_left has eight authored frames
+PASS fishing_reel_left has its 8 authored frames (got 8)
 PASS fishing_reel_left preserves real gameplay duration
-PASS fishing_reel_left frame 0 has grip and exact head silhouette
-PASS fishing_reel_left frame 1 has grip and exact head silhouette
-PASS fishing_reel_left frame 2 has grip and exact head silhouette
-PASS fishing_reel_left frame 3 has grip and exact head silhouette
-PASS fishing_reel_left frame 4 has grip and exact head silhouette
-PASS fishing_reel_left frame 5 has grip and exact head silhouette
-PASS fishing_reel_left frame 6 has grip and exact head silhouette
-PASS fishing_reel_left frame 7 has grip and exact head silhouette
-PASS fishing_reel_left helmet follows all eight head silhouettes
-PASS fishing_reel_left equipment preserves visible authored hand endpoints
+PASS fishing_reel_left every frame has grip anchors inside the cel
+PASS fishing_reel_left helmet follows the head on every frame
+PASS fishing_reel_left grip anchor lands on the drawn bare fist on every upright frame
+PASS fishing_reel_left armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS fishing_reel_left contains actual changed anatomy poses
 PASS fishing_reel_left is distinct from every other action sheet
-PASS hoe_left has eight authored frames
+PASS hoe_left has its 8 authored frames (got 8)
 PASS hoe_left preserves real gameplay duration
-PASS hoe_left frame 0 has grip and exact head silhouette
-PASS hoe_left frame 1 has grip and exact head silhouette
-PASS hoe_left frame 2 has grip and exact head silhouette
-PASS hoe_left frame 3 has grip and exact head silhouette
-PASS hoe_left frame 4 has grip and exact head silhouette
-PASS hoe_left frame 5 has grip and exact head silhouette
-PASS hoe_left frame 6 has grip and exact head silhouette
-PASS hoe_left frame 7 has grip and exact head silhouette
-PASS hoe_left helmet follows all eight head silhouettes
-PASS hoe_left equipment preserves visible authored hand endpoints
+PASS hoe_left every frame has grip anchors inside the cel
+PASS hoe_left helmet follows the head on every frame
+PASS hoe_left grip anchor lands on the drawn bare fist on every upright frame
+PASS hoe_left armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS hoe_left contains actual changed anatomy poses
 PASS hoe_left is distinct from every other action sheet
-PASS net_left has eight authored frames
+PASS net_left has its 8 authored frames (got 8)
 PASS net_left preserves real gameplay duration
-PASS net_left frame 0 has grip and exact head silhouette
-PASS net_left frame 1 has grip and exact head silhouette
-PASS net_left frame 2 has grip and exact head silhouette
-PASS net_left frame 3 has grip and exact head silhouette
-PASS net_left frame 4 has grip and exact head silhouette
-PASS net_left frame 5 has grip and exact head silhouette
-PASS net_left frame 6 has grip and exact head silhouette
-PASS net_left frame 7 has grip and exact head silhouette
-PASS net_left helmet follows all eight head silhouettes
-PASS net_left equipment preserves visible authored hand endpoints
+PASS net_left every frame has grip anchors inside the cel
+PASS net_left helmet follows the head on every frame
+PASS net_left grip anchor lands on the drawn bare fist on every upright frame
+PASS net_left armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS net_left contains actual changed anatomy poses
 PASS net_left is distinct from every other action sheet
-PASS bucket_left has eight authored frames
+PASS bucket_left has its 8 authored frames (got 8)
 PASS bucket_left preserves real gameplay duration
-PASS bucket_left frame 0 has grip and exact head silhouette
-PASS bucket_left frame 1 has grip and exact head silhouette
-PASS bucket_left frame 2 has grip and exact head silhouette
-PASS bucket_left frame 3 has grip and exact head silhouette
-PASS bucket_left frame 4 has grip and exact head silhouette
-PASS bucket_left frame 5 has grip and exact head silhouette
-PASS bucket_left frame 6 has grip and exact head silhouette
-PASS bucket_left frame 7 has grip and exact head silhouette
-PASS bucket_left helmet follows all eight head silhouettes
-PASS bucket_left equipment preserves visible authored hand endpoints
+PASS bucket_left every frame has grip anchors inside the cel
+PASS bucket_left helmet follows the head on every frame
+PASS bucket_left grip anchor lands on the drawn bare fist on every upright frame
+PASS bucket_left armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS bucket_left contains actual changed anatomy poses
 PASS bucket_left is distinct from every other action sheet
-PASS pet_left has eight authored frames
+PASS pet_left has its 8 authored frames (got 8)
 PASS pet_left preserves real gameplay duration
-PASS pet_left frame 0 has grip and exact head silhouette
-PASS pet_left frame 1 has grip and exact head silhouette
-PASS pet_left frame 2 has grip and exact head silhouette
-PASS pet_left frame 3 has grip and exact head silhouette
-PASS pet_left frame 4 has grip and exact head silhouette
-PASS pet_left frame 5 has grip and exact head silhouette
-PASS pet_left frame 6 has grip and exact head silhouette
-PASS pet_left frame 7 has grip and exact head silhouette
-PASS pet_left helmet follows all eight head silhouettes
-PASS pet_left equipment preserves visible authored hand endpoints
+PASS pet_left every frame has grip anchors inside the cel
+PASS pet_left helmet follows the head on every frame
+PASS pet_left grip anchor lands on the drawn bare fist on every upright frame
+PASS pet_left armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS pet_left contains actual changed anatomy poses
 PASS pet_left is distinct from every other action sheet
-PASS pickup_left has eight authored frames
+PASS pickup_left has its 8 authored frames (got 8)
 PASS pickup_left preserves real gameplay duration
-PASS pickup_left frame 0 has grip and exact head silhouette
-PASS pickup_left frame 1 has grip and exact head silhouette
-PASS pickup_left frame 2 has grip and exact head silhouette
-PASS pickup_left frame 3 has grip and exact head silhouette
-PASS pickup_left frame 4 has grip and exact head silhouette
-PASS pickup_left frame 5 has grip and exact head silhouette
-PASS pickup_left frame 6 has grip and exact head silhouette
-PASS pickup_left frame 7 has grip and exact head silhouette
-PASS pickup_left helmet follows all eight head silhouettes
-PASS pickup_left equipment preserves visible authored hand endpoints
+PASS pickup_left every frame has grip anchors inside the cel
+PASS pickup_left helmet follows the head on every frame
+PASS pickup_left grip anchor lands on the drawn bare fist on every upright frame
+PASS pickup_left armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS pickup_left contains actual changed anatomy poses
 PASS pickup_left is distinct from every other action sheet
-PASS axe_up has eight authored frames
+PASS eat_left has its 8 authored frames (got 8)
+PASS eat_left preserves real gameplay duration
+PASS eat_left every frame has grip anchors inside the cel
+PASS eat_left helmet follows the head on every frame
+PASS eat_left grip anchor lands on the drawn bare fist on every upright frame
+PASS eat_left armour keeps the fist visible at the grip anchor (8/8 frames)
+PASS eat_left contains actual changed anatomy poses
+PASS eat_left is distinct from every other action sheet
+PASS craft_left has its 8 authored frames (got 8)
+PASS craft_left preserves real gameplay duration
+PASS craft_left every frame has grip anchors inside the cel
+PASS craft_left helmet follows the head on every frame
+PASS craft_left grip anchor lands on the drawn bare fist on every upright frame
+PASS craft_left armour keeps the fist visible at the grip anchor (8/8 frames)
+PASS craft_left contains actual changed anatomy poses
+PASS craft_left is distinct from every other action sheet
+PASS place_left has its 6 authored frames (got 6)
+PASS place_left preserves real gameplay duration
+PASS place_left every frame has grip anchors inside the cel
+PASS place_left helmet follows the head on every frame
+PASS place_left grip anchor lands on the drawn bare fist on every upright frame
+PASS place_left armour keeps the fist visible at the grip anchor (6/6 frames)
+PASS place_left contains actual changed anatomy poses
+PASS place_left is distinct from every other action sheet
+PASS interact_left has its 6 authored frames (got 6)
+PASS interact_left preserves real gameplay duration
+PASS interact_left every frame has grip anchors inside the cel
+PASS interact_left helmet follows the head on every frame
+PASS interact_left grip anchor lands on the drawn bare fist on every upright frame
+PASS interact_left armour keeps the fist visible at the grip anchor (6/6 frames)
+PASS interact_left contains actual changed anatomy poses
+PASS interact_left is distinct from every other action sheet
+PASS cheer_left has its 8 authored frames (got 8)
+PASS cheer_left preserves real gameplay duration
+PASS cheer_left every frame has grip anchors inside the cel
+PASS cheer_left helmet follows the head on every frame
+PASS cheer_left grip anchor lands on the drawn bare fist on every upright frame
+PASS cheer_left armour keeps the fist visible at the grip anchor (8/8 frames)
+PASS cheer_left contains actual changed anatomy poses
+PASS cheer_left is distinct from every other action sheet
+PASS roll_left has its 8 authored frames (got 8)
+PASS roll_left preserves real gameplay duration
+PASS roll_left every frame has grip anchors inside the cel
+PASS roll_left helmet follows the head on every frame
+PASS roll_left grip anchor lands on the drawn bare fist on every upright frame
+PASS roll_left armour keeps the fist visible at the grip anchor (5/5 frames)
+PASS roll_left contains actual changed anatomy poses
+PASS roll_left is distinct from every other action sheet
+PASS axe_up has its 8 authored frames (got 8)
 PASS axe_up preserves real gameplay duration
-PASS axe_up frame 0 has grip and exact head silhouette
-PASS axe_up frame 1 has grip and exact head silhouette
-PASS axe_up frame 2 has grip and exact head silhouette
-PASS axe_up frame 3 has grip and exact head silhouette
-PASS axe_up frame 4 has grip and exact head silhouette
-PASS axe_up frame 5 has grip and exact head silhouette
-PASS axe_up frame 6 has grip and exact head silhouette
-PASS axe_up frame 7 has grip and exact head silhouette
-PASS axe_up helmet follows all eight head silhouettes
-PASS axe_up equipment preserves visible authored hand endpoints
+PASS axe_up every frame has grip anchors inside the cel
+PASS axe_up helmet follows the head on every frame
+PASS axe_up grip anchor lands on the drawn bare fist on every upright frame
+PASS axe_up armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS axe_up contains actual changed anatomy poses
 PASS axe_up is distinct from every other action sheet
-PASS pickaxe_up has eight authored frames
+PASS pickaxe_up has its 8 authored frames (got 8)
 PASS pickaxe_up preserves real gameplay duration
-PASS pickaxe_up frame 0 has grip and exact head silhouette
-PASS pickaxe_up frame 1 has grip and exact head silhouette
-PASS pickaxe_up frame 2 has grip and exact head silhouette
-PASS pickaxe_up frame 3 has grip and exact head silhouette
-PASS pickaxe_up frame 4 has grip and exact head silhouette
-PASS pickaxe_up frame 5 has grip and exact head silhouette
-PASS pickaxe_up frame 6 has grip and exact head silhouette
-PASS pickaxe_up frame 7 has grip and exact head silhouette
-PASS pickaxe_up helmet follows all eight head silhouettes
-PASS pickaxe_up equipment preserves visible authored hand endpoints
+PASS pickaxe_up every frame has grip anchors inside the cel
+PASS pickaxe_up helmet follows the head on every frame
+PASS pickaxe_up grip anchor lands on the drawn bare fist on every upright frame
+PASS pickaxe_up armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS pickaxe_up contains actual changed anatomy poses
 PASS pickaxe_up is distinct from every other action sheet
-PASS weapon_up has eight authored frames
+PASS weapon_up has its 8 authored frames (got 8)
 PASS weapon_up preserves real gameplay duration
-PASS weapon_up frame 0 has grip and exact head silhouette
-PASS weapon_up frame 1 has grip and exact head silhouette
-PASS weapon_up frame 2 has grip and exact head silhouette
-PASS weapon_up frame 3 has grip and exact head silhouette
-PASS weapon_up frame 4 has grip and exact head silhouette
-PASS weapon_up frame 5 has grip and exact head silhouette
-PASS weapon_up frame 6 has grip and exact head silhouette
-PASS weapon_up frame 7 has grip and exact head silhouette
-PASS weapon_up helmet follows all eight head silhouettes
-PASS weapon_up equipment preserves visible authored hand endpoints
+PASS weapon_up every frame has grip anchors inside the cel
+PASS weapon_up helmet follows the head on every frame
+PASS weapon_up grip anchor lands on the drawn bare fist on every upright frame
+PASS weapon_up armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS weapon_up contains actual changed anatomy poses
 PASS weapon_up is distinct from every other action sheet
-PASS sword_up has eight authored frames
+PASS sword_up has its 8 authored frames (got 8)
 PASS sword_up preserves real gameplay duration
-PASS sword_up frame 0 has grip and exact head silhouette
-PASS sword_up frame 1 has grip and exact head silhouette
-PASS sword_up frame 2 has grip and exact head silhouette
-PASS sword_up frame 3 has grip and exact head silhouette
-PASS sword_up frame 4 has grip and exact head silhouette
-PASS sword_up frame 5 has grip and exact head silhouette
-PASS sword_up frame 6 has grip and exact head silhouette
-PASS sword_up frame 7 has grip and exact head silhouette
-PASS sword_up helmet follows all eight head silhouettes
-PASS sword_up equipment preserves visible authored hand endpoints
+PASS sword_up every frame has grip anchors inside the cel
+PASS sword_up helmet follows the head on every frame
+PASS sword_up grip anchor lands on the drawn bare fist on every upright frame
+PASS sword_up armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS sword_up contains actual changed anatomy poses
 PASS sword_up is distinct from every other action sheet
-PASS bow_draw_up has eight authored frames
+PASS bow_draw_up has its 8 authored frames (got 8)
 PASS bow_draw_up preserves real gameplay duration
-PASS bow_draw_up frame 0 has grip and exact head silhouette
-PASS bow_draw_up frame 1 has grip and exact head silhouette
-PASS bow_draw_up frame 2 has grip and exact head silhouette
-PASS bow_draw_up frame 3 has grip and exact head silhouette
-PASS bow_draw_up frame 4 has grip and exact head silhouette
-PASS bow_draw_up frame 5 has grip and exact head silhouette
-PASS bow_draw_up frame 6 has grip and exact head silhouette
-PASS bow_draw_up frame 7 has grip and exact head silhouette
-PASS bow_draw_up helmet follows all eight head silhouettes
-PASS bow_draw_up equipment preserves visible authored hand endpoints
+PASS bow_draw_up every frame has grip anchors inside the cel
+PASS bow_draw_up helmet follows the head on every frame
+PASS bow_draw_up grip anchor lands on the drawn bare fist on every upright frame
+PASS bow_draw_up armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS bow_draw_up contains actual changed anatomy poses
 PASS bow_draw_up is distinct from every other action sheet
-PASS bow_release_up has eight authored frames
+PASS bow_release_up has its 8 authored frames (got 8)
 PASS bow_release_up preserves real gameplay duration
-PASS bow_release_up frame 0 has grip and exact head silhouette
-PASS bow_release_up frame 1 has grip and exact head silhouette
-PASS bow_release_up frame 2 has grip and exact head silhouette
-PASS bow_release_up frame 3 has grip and exact head silhouette
-PASS bow_release_up frame 4 has grip and exact head silhouette
-PASS bow_release_up frame 5 has grip and exact head silhouette
-PASS bow_release_up frame 6 has grip and exact head silhouette
-PASS bow_release_up frame 7 has grip and exact head silhouette
-PASS bow_release_up helmet follows all eight head silhouettes
-PASS bow_release_up equipment preserves visible authored hand endpoints
+PASS bow_release_up every frame has grip anchors inside the cel
+PASS bow_release_up helmet follows the head on every frame
+PASS bow_release_up grip anchor lands on the drawn bare fist on every upright frame
+PASS bow_release_up armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS bow_release_up contains actual changed anatomy poses
 PASS bow_release_up is distinct from every other action sheet
-PASS fishing_cast_up has eight authored frames
+PASS fishing_cast_up has its 8 authored frames (got 8)
 PASS fishing_cast_up preserves real gameplay duration
-PASS fishing_cast_up frame 0 has grip and exact head silhouette
-PASS fishing_cast_up frame 1 has grip and exact head silhouette
-PASS fishing_cast_up frame 2 has grip and exact head silhouette
-PASS fishing_cast_up frame 3 has grip and exact head silhouette
-PASS fishing_cast_up frame 4 has grip and exact head silhouette
-PASS fishing_cast_up frame 5 has grip and exact head silhouette
-PASS fishing_cast_up frame 6 has grip and exact head silhouette
-PASS fishing_cast_up frame 7 has grip and exact head silhouette
-PASS fishing_cast_up helmet follows all eight head silhouettes
-PASS fishing_cast_up equipment preserves visible authored hand endpoints
+PASS fishing_cast_up every frame has grip anchors inside the cel
+PASS fishing_cast_up helmet follows the head on every frame
+PASS fishing_cast_up grip anchor lands on the drawn bare fist on every upright frame
+PASS fishing_cast_up armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS fishing_cast_up contains actual changed anatomy poses
 PASS fishing_cast_up is distinct from every other action sheet
-PASS fishing_reel_up has eight authored frames
+PASS fishing_reel_up has its 8 authored frames (got 8)
 PASS fishing_reel_up preserves real gameplay duration
-PASS fishing_reel_up frame 0 has grip and exact head silhouette
-PASS fishing_reel_up frame 1 has grip and exact head silhouette
-PASS fishing_reel_up frame 2 has grip and exact head silhouette
-PASS fishing_reel_up frame 3 has grip and exact head silhouette
-PASS fishing_reel_up frame 4 has grip and exact head silhouette
-PASS fishing_reel_up frame 5 has grip and exact head silhouette
-PASS fishing_reel_up frame 6 has grip and exact head silhouette
-PASS fishing_reel_up frame 7 has grip and exact head silhouette
-PASS fishing_reel_up helmet follows all eight head silhouettes
-PASS fishing_reel_up equipment preserves visible authored hand endpoints
+PASS fishing_reel_up every frame has grip anchors inside the cel
+PASS fishing_reel_up helmet follows the head on every frame
+PASS fishing_reel_up grip anchor lands on the drawn bare fist on every upright frame
+PASS fishing_reel_up armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS fishing_reel_up contains actual changed anatomy poses
 PASS fishing_reel_up is distinct from every other action sheet
-PASS hoe_up has eight authored frames
+PASS hoe_up has its 8 authored frames (got 8)
 PASS hoe_up preserves real gameplay duration
-PASS hoe_up frame 0 has grip and exact head silhouette
-PASS hoe_up frame 1 has grip and exact head silhouette
-PASS hoe_up frame 2 has grip and exact head silhouette
-PASS hoe_up frame 3 has grip and exact head silhouette
-PASS hoe_up frame 4 has grip and exact head silhouette
-PASS hoe_up frame 5 has grip and exact head silhouette
-PASS hoe_up frame 6 has grip and exact head silhouette
-PASS hoe_up frame 7 has grip and exact head silhouette
-PASS hoe_up helmet follows all eight head silhouettes
-PASS hoe_up equipment preserves visible authored hand endpoints
+PASS hoe_up every frame has grip anchors inside the cel
+PASS hoe_up helmet follows the head on every frame
+PASS hoe_up grip anchor lands on the drawn bare fist on every upright frame
+PASS hoe_up armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS hoe_up contains actual changed anatomy poses
 PASS hoe_up is distinct from every other action sheet
-PASS net_up has eight authored frames
+PASS net_up has its 8 authored frames (got 8)
 PASS net_up preserves real gameplay duration
-PASS net_up frame 0 has grip and exact head silhouette
-PASS net_up frame 1 has grip and exact head silhouette
-PASS net_up frame 2 has grip and exact head silhouette
-PASS net_up frame 3 has grip and exact head silhouette
-PASS net_up frame 4 has grip and exact head silhouette
-PASS net_up frame 5 has grip and exact head silhouette
-PASS net_up frame 6 has grip and exact head silhouette
-PASS net_up frame 7 has grip and exact head silhouette
-PASS net_up helmet follows all eight head silhouettes
-PASS net_up equipment preserves visible authored hand endpoints
+PASS net_up every frame has grip anchors inside the cel
+PASS net_up helmet follows the head on every frame
+PASS net_up grip anchor lands on the drawn bare fist on every upright frame
+PASS net_up armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS net_up contains actual changed anatomy poses
 PASS net_up is distinct from every other action sheet
-PASS bucket_up has eight authored frames
+PASS bucket_up has its 8 authored frames (got 8)
 PASS bucket_up preserves real gameplay duration
-PASS bucket_up frame 0 has grip and exact head silhouette
-PASS bucket_up frame 1 has grip and exact head silhouette
-PASS bucket_up frame 2 has grip and exact head silhouette
-PASS bucket_up frame 3 has grip and exact head silhouette
-PASS bucket_up frame 4 has grip and exact head silhouette
-PASS bucket_up frame 5 has grip and exact head silhouette
-PASS bucket_up frame 6 has grip and exact head silhouette
-PASS bucket_up frame 7 has grip and exact head silhouette
-PASS bucket_up helmet follows all eight head silhouettes
-PASS bucket_up equipment preserves visible authored hand endpoints
+PASS bucket_up every frame has grip anchors inside the cel
+PASS bucket_up helmet follows the head on every frame
+PASS bucket_up grip anchor lands on the drawn bare fist on every upright frame
+PASS bucket_up armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS bucket_up contains actual changed anatomy poses
 PASS bucket_up is distinct from every other action sheet
-PASS pet_up has eight authored frames
+PASS pet_up has its 8 authored frames (got 8)
 PASS pet_up preserves real gameplay duration
-PASS pet_up frame 0 has grip and exact head silhouette
-PASS pet_up frame 1 has grip and exact head silhouette
-PASS pet_up frame 2 has grip and exact head silhouette
-PASS pet_up frame 3 has grip and exact head silhouette
-PASS pet_up frame 4 has grip and exact head silhouette
-PASS pet_up frame 5 has grip and exact head silhouette
-PASS pet_up frame 6 has grip and exact head silhouette
-PASS pet_up frame 7 has grip and exact head silhouette
-PASS pet_up helmet follows all eight head silhouettes
-PASS pet_up equipment preserves visible authored hand endpoints
+PASS pet_up every frame has grip anchors inside the cel
+PASS pet_up helmet follows the head on every frame
+PASS pet_up grip anchor lands on the drawn bare fist on every upright frame
+PASS pet_up armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS pet_up contains actual changed anatomy poses
 PASS pet_up is distinct from every other action sheet
-PASS pickup_up has eight authored frames
+PASS pickup_up has its 8 authored frames (got 8)
 PASS pickup_up preserves real gameplay duration
-PASS pickup_up frame 0 has grip and exact head silhouette
-PASS pickup_up frame 1 has grip and exact head silhouette
-PASS pickup_up frame 2 has grip and exact head silhouette
-PASS pickup_up frame 3 has grip and exact head silhouette
-PASS pickup_up frame 4 has grip and exact head silhouette
-PASS pickup_up frame 5 has grip and exact head silhouette
-PASS pickup_up frame 6 has grip and exact head silhouette
-PASS pickup_up frame 7 has grip and exact head silhouette
-PASS pickup_up helmet follows all eight head silhouettes
-PASS pickup_up equipment preserves visible authored hand endpoints
+PASS pickup_up every frame has grip anchors inside the cel
+PASS pickup_up helmet follows the head on every frame
+PASS pickup_up grip anchor lands on the drawn bare fist on every upright frame
+PASS pickup_up armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS pickup_up contains actual changed anatomy poses
 PASS pickup_up is distinct from every other action sheet
-PASS axe_down generated crown follows head origin and facing on every cel
-PASS axe_left generated crown follows head origin and facing on every cel
-PASS axe_right generated crown follows head origin and facing on every cel
-PASS axe_up generated crown follows head origin and facing on every cel
-PASS bow_draw_down generated crown follows head origin and facing on every cel
-PASS bow_draw_left generated crown follows head origin and facing on every cel
-PASS bow_draw_right generated crown follows head origin and facing on every cel
-PASS bow_draw_up generated crown follows head origin and facing on every cel
-PASS bow_release_down generated crown follows head origin and facing on every cel
-PASS bow_release_left generated crown follows head origin and facing on every cel
-PASS bow_release_right generated crown follows head origin and facing on every cel
-PASS bow_release_up generated crown follows head origin and facing on every cel
-PASS bucket_down generated crown follows head origin and facing on every cel
-PASS bucket_left generated crown follows head origin and facing on every cel
-PASS bucket_right generated crown follows head origin and facing on every cel
-PASS bucket_up generated crown follows head origin and facing on every cel
-PASS death_down generated crown follows head origin and facing on every cel
-PASS fishing_cast_down generated crown follows head origin and facing on every cel
-PASS fishing_cast_left generated crown follows head origin and facing on every cel
-PASS fishing_cast_right generated crown follows head origin and facing on every cel
-PASS fishing_cast_up generated crown follows head origin and facing on every cel
-PASS fishing_reel_down generated crown follows head origin and facing on every cel
-PASS fishing_reel_left generated crown follows head origin and facing on every cel
-PASS fishing_reel_right generated crown follows head origin and facing on every cel
-PASS fishing_reel_up generated crown follows head origin and facing on every cel
-PASS hoe_down generated crown follows head origin and facing on every cel
-PASS hoe_left generated crown follows head origin and facing on every cel
-PASS hoe_right generated crown follows head origin and facing on every cel
-PASS hoe_up generated crown follows head origin and facing on every cel
-PASS hurt_down generated crown follows head origin and facing on every cel
-PASS hurt_left generated crown follows head origin and facing on every cel
-PASS hurt_right generated crown follows head origin and facing on every cel
-PASS hurt_up generated crown follows head origin and facing on every cel
-PASS idle_down generated crown follows head origin and facing on every cel
-PASS idle_left generated crown follows head origin and facing on every cel
-PASS idle_right generated crown follows head origin and facing on every cel
-PASS idle_up generated crown follows head origin and facing on every cel
-PASS net_down generated crown follows head origin and facing on every cel
-PASS net_left generated crown follows head origin and facing on every cel
-PASS net_right generated crown follows head origin and facing on every cel
-PASS net_up generated crown follows head origin and facing on every cel
-PASS pet_down generated crown follows head origin and facing on every cel
-PASS pet_left generated crown follows head origin and facing on every cel
-PASS pet_right generated crown follows head origin and facing on every cel
-PASS pet_up generated crown follows head origin and facing on every cel
-PASS pickaxe_down generated crown follows head origin and facing on every cel
-PASS pickaxe_left generated crown follows head origin and facing on every cel
-PASS pickaxe_right generated crown follows head origin and facing on every cel
-PASS pickaxe_up generated crown follows head origin and facing on every cel
-PASS pickup_down generated crown follows head origin and facing on every cel
-PASS pickup_left generated crown follows head origin and facing on every cel
-PASS pickup_right generated crown follows head origin and facing on every cel
-PASS pickup_up generated crown follows head origin and facing on every cel
-PASS run_down generated crown follows head origin and facing on every cel
-PASS run_left generated crown follows head origin and facing on every cel
-PASS run_right generated crown follows head origin and facing on every cel
-PASS run_up generated crown follows head origin and facing on every cel
-PASS swing_down generated crown follows head origin and facing on every cel
-PASS swing_left generated crown follows head origin and facing on every cel
-PASS swing_right generated crown follows head origin and facing on every cel
-PASS swing_up generated crown follows head origin and facing on every cel
-PASS sword_down generated crown follows head origin and facing on every cel
-PASS sword_left generated crown follows head origin and facing on every cel
-PASS sword_right generated crown follows head origin and facing on every cel
-PASS sword_up generated crown follows head origin and facing on every cel
-PASS walk_down generated crown follows head origin and facing on every cel
-PASS walk_left generated crown follows head origin and facing on every cel
-PASS walk_right generated crown follows head origin and facing on every cel
-PASS walk_up generated crown follows head origin and facing on every cel
-PASS weapon_down generated crown follows head origin and facing on every cel
-PASS weapon_left generated crown follows head origin and facing on every cel
-PASS weapon_right generated crown follows head origin and facing on every cel
-PASS weapon_up generated crown follows head origin and facing on every cel
+PASS eat_up has its 8 authored frames (got 8)
+PASS eat_up preserves real gameplay duration
+PASS eat_up every frame has grip anchors inside the cel
+PASS eat_up helmet follows the head on every frame
+PASS eat_up grip anchor lands on the drawn bare fist on every upright frame
+PASS eat_up armour keeps the fist visible at the grip anchor (8/8 frames)
+PASS eat_up contains actual changed anatomy poses
+PASS eat_up is distinct from every other action sheet
+PASS craft_up has its 8 authored frames (got 8)
+PASS craft_up preserves real gameplay duration
+PASS craft_up every frame has grip anchors inside the cel
+PASS craft_up helmet follows the head on every frame
+PASS craft_up grip anchor lands on the drawn bare fist on every upright frame
+PASS craft_up armour keeps the fist visible at the grip anchor (8/8 frames)
+PASS craft_up contains actual changed anatomy poses
+PASS craft_up is distinct from every other action sheet
+PASS place_up has its 6 authored frames (got 6)
+PASS place_up preserves real gameplay duration
+PASS place_up every frame has grip anchors inside the cel
+PASS place_up helmet follows the head on every frame
+PASS place_up grip anchor lands on the drawn bare fist on every upright frame
+PASS place_up armour keeps the fist visible at the grip anchor (6/6 frames)
+PASS place_up contains actual changed anatomy poses
+PASS place_up is distinct from every other action sheet
+PASS interact_up has its 6 authored frames (got 6)
+PASS interact_up preserves real gameplay duration
+PASS interact_up every frame has grip anchors inside the cel
+PASS interact_up helmet follows the head on every frame
+PASS interact_up grip anchor lands on the drawn bare fist on every upright frame
+PASS interact_up armour keeps the fist visible at the grip anchor (6/6 frames)
+PASS interact_up contains actual changed anatomy poses
+PASS interact_up is distinct from every other action sheet
+PASS cheer_up has its 8 authored frames (got 8)
+PASS cheer_up preserves real gameplay duration
+PASS cheer_up every frame has grip anchors inside the cel
+PASS cheer_up helmet follows the head on every frame
+PASS cheer_up grip anchor lands on the drawn bare fist on every upright frame
+PASS cheer_up armour keeps the fist visible at the grip anchor (8/8 frames)
+PASS cheer_up contains actual changed anatomy poses
+PASS cheer_up is distinct from every other action sheet
+PASS roll_up has its 8 authored frames (got 8)
+PASS roll_up preserves real gameplay duration
+PASS roll_up every frame has grip anchors inside the cel
+PASS roll_up helmet follows the head on every frame
+PASS roll_up grip anchor lands on the drawn bare fist on every upright frame
+PASS roll_up armour keeps the fist visible at the grip anchor (5/5 frames)
+PASS roll_up contains actual changed anatomy poses
+PASS roll_up is distinct from every other action sheet
+PASS armoured fists stay visible at their grip anchors on at least 90% of action frames (580/580)
+PASS axe_down helmet sits on the rendered head on every cel
+PASS axe_left helmet sits on the rendered head on every cel
+PASS axe_right helmet sits on the rendered head on every cel
+PASS axe_up helmet sits on the rendered head on every cel
+PASS bow_draw_down helmet sits on the rendered head on every cel
+PASS bow_draw_left helmet sits on the rendered head on every cel
+PASS bow_draw_right helmet sits on the rendered head on every cel
+PASS bow_draw_up helmet sits on the rendered head on every cel
+PASS bow_release_down helmet sits on the rendered head on every cel
+PASS bow_release_left helmet sits on the rendered head on every cel
+PASS bow_release_right helmet sits on the rendered head on every cel
+PASS bow_release_up helmet sits on the rendered head on every cel
+PASS bucket_down helmet sits on the rendered head on every cel
+PASS bucket_left helmet sits on the rendered head on every cel
+PASS bucket_right helmet sits on the rendered head on every cel
+PASS bucket_up helmet sits on the rendered head on every cel
+PASS cheer_down helmet sits on the rendered head on every cel
+PASS cheer_left helmet sits on the rendered head on every cel
+PASS cheer_right helmet sits on the rendered head on every cel
+PASS cheer_up helmet sits on the rendered head on every cel
+PASS craft_down helmet sits on the rendered head on every cel
+PASS craft_left helmet sits on the rendered head on every cel
+PASS craft_right helmet sits on the rendered head on every cel
+PASS craft_up helmet sits on the rendered head on every cel
+PASS death_down helmet sits on the rendered head on every cel
+PASS death_left helmet sits on the rendered head on every cel
+PASS death_right helmet sits on the rendered head on every cel
+PASS death_up helmet sits on the rendered head on every cel
+PASS eat_down helmet sits on the rendered head on every cel
+PASS eat_left helmet sits on the rendered head on every cel
+PASS eat_right helmet sits on the rendered head on every cel
+PASS eat_up helmet sits on the rendered head on every cel
+PASS fishing_cast_down helmet sits on the rendered head on every cel
+PASS fishing_cast_left helmet sits on the rendered head on every cel
+PASS fishing_cast_right helmet sits on the rendered head on every cel
+PASS fishing_cast_up helmet sits on the rendered head on every cel
+PASS fishing_reel_down helmet sits on the rendered head on every cel
+PASS fishing_reel_left helmet sits on the rendered head on every cel
+PASS fishing_reel_right helmet sits on the rendered head on every cel
+PASS fishing_reel_up helmet sits on the rendered head on every cel
+PASS hoe_down helmet sits on the rendered head on every cel
+PASS hoe_left helmet sits on the rendered head on every cel
+PASS hoe_right helmet sits on the rendered head on every cel
+PASS hoe_up helmet sits on the rendered head on every cel
+PASS hurt_down helmet sits on the rendered head on every cel
+PASS hurt_left helmet sits on the rendered head on every cel
+PASS hurt_right helmet sits on the rendered head on every cel
+PASS hurt_up helmet sits on the rendered head on every cel
+PASS idle_down helmet sits on the rendered head on every cel
+PASS idle_left helmet sits on the rendered head on every cel
+PASS idle_right helmet sits on the rendered head on every cel
+PASS idle_up helmet sits on the rendered head on every cel
+PASS interact_down helmet sits on the rendered head on every cel
+PASS interact_left helmet sits on the rendered head on every cel
+PASS interact_right helmet sits on the rendered head on every cel
+PASS interact_up helmet sits on the rendered head on every cel
+PASS net_down helmet sits on the rendered head on every cel
+PASS net_left helmet sits on the rendered head on every cel
+PASS net_right helmet sits on the rendered head on every cel
+PASS net_up helmet sits on the rendered head on every cel
+PASS pet_down helmet sits on the rendered head on every cel
+PASS pet_left helmet sits on the rendered head on every cel
+PASS pet_right helmet sits on the rendered head on every cel
+PASS pet_up helmet sits on the rendered head on every cel
+PASS pickaxe_down helmet sits on the rendered head on every cel
+PASS pickaxe_left helmet sits on the rendered head on every cel
+PASS pickaxe_right helmet sits on the rendered head on every cel
+PASS pickaxe_up helmet sits on the rendered head on every cel
+PASS pickup_down helmet sits on the rendered head on every cel
+PASS pickup_left helmet sits on the rendered head on every cel
+PASS pickup_right helmet sits on the rendered head on every cel
+PASS pickup_up helmet sits on the rendered head on every cel
+PASS place_down helmet sits on the rendered head on every cel
+PASS place_left helmet sits on the rendered head on every cel
+PASS place_right helmet sits on the rendered head on every cel
+PASS place_up helmet sits on the rendered head on every cel
+PASS ride_down helmet sits on the rendered head on every cel
+PASS ride_left helmet sits on the rendered head on every cel
+PASS ride_right helmet sits on the rendered head on every cel
+PASS ride_up helmet sits on the rendered head on every cel
+PASS roll_down helmet sits on the rendered head on every cel
+PASS roll_left helmet sits on the rendered head on every cel
+PASS roll_right helmet sits on the rendered head on every cel
+PASS roll_up helmet sits on the rendered head on every cel
+PASS run_down helmet sits on the rendered head on every cel
+PASS run_left helmet sits on the rendered head on every cel
+PASS run_right helmet sits on the rendered head on every cel
+PASS run_up helmet sits on the rendered head on every cel
+PASS swing_down helmet sits on the rendered head on every cel
+PASS swing_left helmet sits on the rendered head on every cel
+PASS swing_right helmet sits on the rendered head on every cel
+PASS swing_up helmet sits on the rendered head on every cel
+PASS sword_down helmet sits on the rendered head on every cel
+PASS sword_left helmet sits on the rendered head on every cel
+PASS sword_right helmet sits on the rendered head on every cel
+PASS sword_up helmet sits on the rendered head on every cel
+PASS walk_down helmet sits on the rendered head on every cel
+PASS walk_left helmet sits on the rendered head on every cel
+PASS walk_right helmet sits on the rendered head on every cel
+PASS walk_up helmet sits on the rendered head on every cel
+PASS weapon_down helmet sits on the rendered head on every cel
+PASS weapon_left helmet sits on the rendered head on every cel
+PASS weapon_right helmet sits on the rendered head on every cel
+PASS weapon_up helmet sits on the rendered head on every cel
 PASS armor IDs distinguish leather and bone with identical occupied slots
 PASS independent mixed armor slots produce their own cache entry
-PASS leather helmet fully occludes underlying hair color in every cel
-PASS bone helmet fully occludes underlying hair color in every cel
-PASS crystal helmet fully occludes underlying hair color in every cel
+PASS bare heads show the hair colour on every cel (least 93 px)
+PASS moss helmet hides the hair colour in every cel (at most 12 fringe px, got 0)
+PASS leather helmet hides the hair colour in every cel (at most 12 fringe px, got 8)
+PASS bone helmet hides the hair colour in every cel (at most 12 fringe px, got 0)
+PASS crystal helmet hides the hair colour in every cel (at most 12 fringe px, got 0)
+PASS tide helmet hides the hair colour in every cel (at most 12 fringe px, got 0)
+PASS rex helmet hides the hair colour in every cel (at most 12 fringe px, got 1)
 PASS mounted rider reflects current saved appearance, with distinct cache entry
 PASS mounted cache distinguishes actual armor IDs and rendered set
-PERF mounted_action_build_ms=5.344
+PERF mounted_action_build_ms=9.599
 PASS mounted aiming uses actual custom hero action pose
 PASS skin preview cache is bounded after repeated customization
 PASS mounted action cache is bounded across repeated frames and appearances
-CHARACTER_PASS6 assertions=823 failures=0
+CHARACTER_PASS6 assertions=739 failures=0

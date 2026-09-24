@@ -167,6 +167,16 @@ static func _rotated(img: Image, degrees: int, pivot: Vector2) -> Image:
 	return out
 
 
+## Where `_rotated` moves a cel point, so hand/tip/head anchors follow a fall or roll.
+static func rotated_point(p: Vector2, degrees: int, pivot: Vector2) -> Vector2:
+	var turns := posmod(int(round(degrees / 90.0)), 4)
+	if turns == 0:
+		return p
+	var c := Vector2(CEL / 2.0, CEL / 2.0)
+	var moved := (pivot - c).rotated(turns * PI / 2.0) + c
+	return (p - c).rotated(turns * PI / 2.0) + c + (pivot - moved).round()
+
+
 ## The head can glance independently of the body: pose "head_view" borrows
 ## another view's head ("side" on a front-facing body = a look to the right),
 ## "head_flip" mirrors it about the neck (a look to the left).
@@ -209,7 +219,6 @@ func _arm(img: Image, j: Dictionary, side: String, look: Dictionary, view: Strin
 	if not hidden:
 		var pts := [j["shoulder_" + side], j["elbow_" + side], j["hand_" + side]]
 		_chain(img, pts, [mats.arm_upper, mats.arm_lower], parts.metrics.arm_radius, look.outline, far, false)
-		_hand(img, j["hand_" + side], look, far)
 	# The shoulder guard is part of the chestpiece: it follows the shoulder
 	# joint (body bob) and caps the top of the arm in every pose.
 	var vparts: Dictionary = look.parts[view]
@@ -217,6 +226,10 @@ func _arm(img: Image, j: Dictionary, side: String, look: Dictionary, view: Strin
 		var guard: Dictionary = vparts["pauldron_" + side]
 		var shift: Vector2 = j["shoulder_" + side] - guard.get("shoulder", j["shoulder_" + side])
 		_stamp(img, guard, shift)
+	# The fist goes last: a hand raised to the mouth or over the shoulder in a
+	# windup stays in front of its own shoulder guard.
+	if not hidden:
+		_hand(img, j["hand_" + side], look, far)
 
 
 func _leg(img: Image, j: Dictionary, side: String, look: Dictionary, view: String, pose: Dictionary) -> void:

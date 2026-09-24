@@ -5,12 +5,27 @@ var nearby_stations: Array[String] = []
 var last_failure := ""
 var categories: Array[String] = ["All", "Tools", "Building", "Materials", "Food", "Armor", "Relics"]
 var personal_recipes: Array = [
-	{"name":"Fangbound Helmet","item_id":"bone_helmet","ingredients":{"raptor_fang":4,"trex_scale":2,"plant_fiber":3},"station":"workbench","category":"Armor","description":"Head protection. +3 defense. Equip independently or combine with other sets."},
-	{"name":"Fangbound Chestplate","item_id":"bone_chestplate","ingredients":{"raptor_fang":6,"trex_scale":4,"plant_fiber":5},"station":"workbench","category":"Armor","description":"Chest protection. +7 defense. Equip independently or combine with other sets."},
-	{"name":"Fangbound Leggings","item_id":"bone_leggings","ingredients":{"raptor_fang":4,"trex_scale":3,"plant_fiber":4},"station":"workbench","category":"Armor","description":"Legs protection. +4 defense. Equip independently or combine with other sets."},
-	{"name":"Skyshard Helmet","item_id":"crystal_helmet","ingredients":{"prism_crystal":3,"crystal_shard":4,"trex_scale":2},"station":"workbench","category":"Armor","description":"Head protection. +4 defense. Equip independently or combine with other sets."},
-	{"name":"Skyshard Chestplate","item_id":"crystal_chestplate","ingredients":{"prism_crystal":5,"crystal_shard":6,"trex_scale":4},"station":"workbench","category":"Armor","description":"Chest protection. +9 defense. Equip independently or combine with other sets."},
-	{"name":"Skyshard Leggings","item_id":"crystal_leggings","ingredients":{"prism_crystal":4,"crystal_shard":4,"trex_scale":3},"station":"workbench","category":"Armor","description":"Legs protection. +5 defense. Equip independently or combine with other sets."},
+	# Armour, tier 1-6 (docs/ARMOR_PROGRESSION.md). Bulk materials are renewable or
+	# plentiful; each scarce drop appears once per piece and only from tier 3 up:
+	# raptor_fang (bone), prism_crystal (crystal, tide, rex), trex_scale (rex).
+	{"name":"Mossweave Hood","item_id":"moss_helmet","ingredients":{"plant_fiber":6,"berry":2},"station":"workbench","category":"Armor","description":"Tier 1 head armor. Woven entirely from forage."},
+	{"name":"Mossweave Chestpiece","item_id":"moss_chestplate","ingredients":{"log":3,"plant_fiber":8},"station":"workbench","category":"Armor","description":"Tier 1 body armor. Mossy skywood bark over a fiber weave."},
+	{"name":"Mossweave Leggings","item_id":"moss_leggings","ingredients":{"plant_fiber":7,"log":2},"station":"workbench","category":"Armor","description":"Tier 1 leg armor. Vine-wrapped reeds and bark boots."},
+	{"name":"Trail Leather Cap","item_id":"leather_helmet","ingredients":{"reed_perch":2,"plant_fiber":3,"log":1},"station":"workbench","category":"Armor","description":"Tier 2 head armor. Reed perch skins cured into river leather."},
+	{"name":"Trail Leather Tunic","item_id":"leather_chestplate","ingredients":{"reed_perch":4,"plant_fiber":4,"log":2},"station":"workbench","category":"Armor","description":"Tier 2 body armor. Reed perch skins cured into river leather."},
+	{"name":"Trail Leather Leggings","item_id":"leather_leggings","ingredients":{"reed_perch":3,"plant_fiber":3,"log":1},"station":"workbench","category":"Armor","description":"Tier 2 leg armor. Reed perch skins cured into river leather."},
+	{"name":"Fangbound Helmet","item_id":"bone_helmet","ingredients":{"raptor_fang":1,"reed_perch":2,"plant_fiber":4},"station":"workbench","category":"Armor","description":"Tier 3 head armor. One raptor fang, carved and lashed over woven hide."},
+	{"name":"Fangbound Chestplate","item_id":"bone_chestplate","ingredients":{"raptor_fang":1,"reed_perch":4,"plant_fiber":6},"station":"workbench","category":"Armor","description":"Tier 3 body armor. One raptor fang, carved into plates over woven hide."},
+	{"name":"Fangbound Leggings","item_id":"bone_leggings","ingredients":{"raptor_fang":1,"reed_perch":3,"plant_fiber":5},"station":"workbench","category":"Armor","description":"Tier 3 leg armor. One raptor fang, carved into knee guards over woven hide."},
+	{"name":"Skyshard Helmet","item_id":"crystal_helmet","ingredients":{"prism_crystal":2,"crystal_shard":4,"reed_perch":1},"station":"workbench","category":"Armor","description":"Tier 4 head armor. Prism crystal needs a power 2 pickaxe."},
+	{"name":"Skyshard Chestplate","item_id":"crystal_chestplate","ingredients":{"prism_crystal":4,"crystal_shard":6,"reed_perch":2},"station":"workbench","category":"Armor","description":"Tier 4 body armor. Prism crystal needs a power 2 pickaxe."},
+	{"name":"Skyshard Leggings","item_id":"crystal_leggings","ingredients":{"prism_crystal":3,"crystal_shard":4,"reed_perch":1},"station":"workbench","category":"Armor","description":"Tier 4 leg armor. Prism crystal needs a power 2 pickaxe."},
+	{"name":"Tidecaller Helm","item_id":"tide_helmet","ingredients":{"moonscale":2,"shardfin":2,"prism_crystal":1},"station":"workbench","category":"Armor","description":"Tier 5 head armor. Moonscale and shardfin from silver ripple holes."},
+	{"name":"Tidecaller Cuirass","item_id":"tide_chestplate","ingredients":{"moonscale":5,"shardfin":2,"prism_crystal":2},"station":"workbench","category":"Armor","description":"Tier 5 body armor. Moonscale and shardfin from silver ripple holes."},
+	{"name":"Tidecaller Leggings","item_id":"tide_leggings","ingredients":{"moonscale":3,"shardfin":2,"prism_crystal":1},"station":"workbench","category":"Armor","description":"Tier 5 leg armor. Moonscale and shardfin from silver ripple holes."},
+	{"name":"Tyrant Skull Helm","item_id":"rex_helmet","ingredients":{"trex_scale":1,"prism_crystal":2,"shardfin":2},"station":"workbench","category":"Armor","description":"Tier 6 head armor. Bound with a scale of the Emerald Tyrant."},
+	{"name":"Tyrant Chestplate","item_id":"rex_chestplate","ingredients":{"trex_scale":1,"prism_crystal":4,"shardfin":3},"station":"workbench","category":"Armor","description":"Tier 6 body armor. Bound with a scale of the Emerald Tyrant."},
+	{"name":"Tyrant Greaves","item_id":"rex_leggings","ingredients":{"trex_scale":1,"prism_crystal":3,"shardfin":2},"station":"workbench","category":"Armor","description":"Tier 6 leg armor. Bound with a scale of the Emerald Tyrant."},
 	{"name":"Reedwood Bow","item_id":"reed_bow","ingredients":{"log":5,"plant_fiber":8},"category":"Tools","quantity":1,"description":"Hold left-click to draw; release to fire a bone arrow. Usable from a stego or trike saddle.","station":"workbench"},
 	{"name":"Bone Arrows","item_id":"bone_arrow","ingredients":{"log":1,"raptor_fang":1},"category":"Tools","quantity":8,"description":"A straight reed shaft, bone point and feather fletching. Ammunition for a reedwood bow."},
 	{"name":"Stone Hoe","item_id":"garden_hoe","ingredients":{"log":3,"stone":2},"category":"Tools","quantity":1,"description":"Right-click clear earth to prepare a garden plot. Sow berries or mushroom spores on tilled earth."},
@@ -47,10 +62,7 @@ var personal_recipes: Array = [
 	{"name":"Wooden Bucket", "item_id":"bucket", "ingredients":{"plank":3,"plant_fiber":2}, "station":"workbench", "category":"Tools", "description":"Scoop and place shallow water."},
 	{"name":"Woven Net", "item_id":"net", "ingredients":{"plant_fiber":5,"plank":1}, "category":"Tools", "description":"Restrain a predator, then offer meat."},
 	{"name":"Bone Dagger", "item_id":"bone_dagger", "ingredients":{"raptor_fang":2,"plank":1,"crystal_shard":2}, "station":"workbench", "category":"Tools", "description":"A shard-edged fang blade."},
-	{"name":"Roasted Meat", "item_id":"cooked_meat", "ingredients":{"trex_meat":1}, "station":"campfire", "category":"Food", "description":"Fill hunger completely; stay full for 3 minutes of walking."},
-	{"name":"Leather Helmet", "item_id":"leather_helmet", "ingredients":{"trex_scale":3,"plant_fiber":2}, "station":"workbench", "category":"Armor", "description":"Head protection. +2 defense."},
-	{"name":"Leather Chestplate", "item_id":"leather_chestplate", "ingredients":{"trex_scale":5,"plant_fiber":3}, "station":"workbench", "category":"Armor", "description":"Body protection. +5 defense."},
-	{"name":"Leather Leggings", "item_id":"leather_leggings", "ingredients":{"trex_scale":4,"plant_fiber":2}, "station":"workbench", "category":"Armor", "description":"Leg protection. +3 defense."}
+	{"name":"Roasted Meat", "item_id":"cooked_meat", "ingredients":{"trex_meat":1}, "station":"campfire", "category":"Food", "description":"Fill hunger completely; stay full for 3 minutes of walking."}
 ]
 
 func set_nearby_stations(stations: Array[String]) -> void:

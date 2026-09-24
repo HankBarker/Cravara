@@ -1,0 +1,213 @@
+{
+ "notes": [
+  "Fangbound. The bone shoulder pieces start inside the head rows (13-15); they are cut out of the skull helmet into the pauldrons.",
+  "Upper arm is bare skin in the source; the forearm is wrapped in dark red leather; greaves are bone.",
+  "eyes: the left eye sits 1px right of the base eye box (down view).",
+  "up: the pauldron top outlines (row 13) and the red chest straps (row 14) leave the helmet.",
+  "up: the peach nape under the skull (dfaa70, rows 9-12) is skin so skin tones recolour it from behind."
+ ],
+ "labels": {
+  "down": [
+   {
+    "rect": [
+     7,
+     14,
+     10,
+     16
+    ],
+    "label": "pauldron_o"
+   },
+   {
+    "px": [
+     [
+      7,
+      13
+     ],
+     [
+      8,
+      13
+     ]
+    ],
+    "label": "pauldron_o"
+   },
+   {
+    "rect": [
+     20,
+     14,
+     24,
+     16
+    ],
+    "label": "pauldron_m"
+   },
+   {
+    "px": [
+     [
+      23,
+      13
+     ],
+     [
+      24,
+      13
+     ]
+    ],
+    "label": "pauldron_m"
+   }
+  ],
+  "up": [
+   {
+    "rect": [
+     7,
+     14,
+     11,
+     16
+    ],
+    "label": "pauldron_o"
+   },
+   {
+    "rect": [
+     20,
+     14,
+     24,
+     16
+    ],
+    "label": "pauldron_m"
+   },
+   {
+    "px": [
+     [
+      7,
+      13
+     ],
+     [
+      8,
+      13
+     ]
+    ],
+    "label": "pauldron_o"
+   },
+   {
+    "px": [
+     [
+      23,
+      13
+     ],
+     [
+      24,
+      13
+     ]
+    ],
+    "label": "pauldron_m"
+   },
+   {
+    "px": [
+     [
+      13,
+      14
+     ],
+     [
+      18,
+      14
+     ]
+    ],
+    "label": "torso"
+   }
+  ],
+  "side": [
+   {
+    "rect": [
+     10,
+     15,
+     15,
+     17
+    ],
+    "label": "pauldron_m"
+   },
+   {
+    "px": [
+     [
+      10,
+      14
+     ],
+     [
+      11,
+      14
+     ]
+    ],
+    "label": "pauldron_m"
+   }
+  ]
+ },
+ "ramps": {
+  "arm_upper": "skin"
+ },
+ "ramp_hint": {
+  "arm_lower": "822e2d",
+  "leg_upper": "c9bd91",
+  "leg_lower": "c9bd91"
+ },
+ "eyes": {
+  "down": [
+   [
+    12,
+    11,
+    14,
+    13
+   ],
+   [
+    17,
+    11,
+    19,
+    13
+   ]
+  ]
+ },
+ "materials": {
+  "up": [
+   {
+    "px": [
+     [
+      13,
+      9
+     ],
+     [
+      14,
+      9
+     ],
+     [
+      14,
+      10
+     ],
+     [
+      15,
+      10
+     ],
+     [
+      16,
+      10
+     ],
+     [
+      12,
+      11
+     ],
+     [
+      14,
+      11
+     ],
+     [
+      15,
+      11
+     ],
+     [
+      16,
+      11
+     ],
+     [
+      15,
+      12
+     ]
+    ],
+    "mat": "skin"
+   }
+  ]
+ }
+}

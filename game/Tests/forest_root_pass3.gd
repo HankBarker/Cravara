@@ -1,5 +1,6 @@
 extends Node2D
 const SAVE_PATH := "user://forest_root_pass3_test.json"
+const Kit = preload("res://Tests/keeper_test_kit.gd")
 var count := 0
 var failures: Array[String] = []
 var scene
@@ -115,7 +116,12 @@ func run():
 	player._set_equipment("chest",ItemDB.make("leather_chestplate"))
 	player._set_equipment("legs",ItemDB.make("leather_leggings"))
 	player._set_equipment("light",ItemDB.make("lantern"))
+	player.finish_skin()
 	var worn: SpriteFrames = player.animated_sprite.sprite_frames
+	# The same outfit without the helmet: diffing it against the worn cels
+	# isolates the helmet pixels of every frame.
+	var skin = player._skin
+	var no_helmet: Dictionary = skin.look_for({"chest":player.get_equipment("chest"),"legs":player.get_equipment("legs")},player.appearance,player.equipped_light)
 	check(player.animated_sprite.animation == "run_right" and player.animated_sprite.frame == 3 and is_equal_approx(player.animated_sprite.frame_progress,0.42),"changing gear preserves current animation frame and progress")
 	var unchanged := true
 	var timings := true
@@ -143,18 +149,16 @@ func run():
 				var head: Array = player._skin.pose(animation,i).head
 				if not previous_head.is_empty() and head != previous_head: varying_heads = true
 				previous_head = head
-				var pose: Dictionary = player._skin.pose(animation,i)
-				var actual_facing := str(pose.get("head_facing",facing))
-				var art_path := "res://Forest/equipment/art/wardrobe/leather_head_"+actual_facing+".png"
-				var art: Image = load(art_path).get_image()
-				var center := int(round((float(pose.head_rows[0][0])+float(pose.head_rows[0][1]))*.5))
-				var hat := Vector2i(int(pose.head_origin[0])+center,int(pose.head_origin[1]))
-				var expected := art.get_pixel(32 if actual_facing in ["left","right"] else 31,22)
-				if expected.a < .95 or not dressed.get_pixelv(hat).is_equal_approx(expected): cap_tracks = false
+				# The helmet is drawn on the head the rig drew in this very frame.
+				var plain: Image = skin.render_cel(motion,facing,i,no_helmet)
+				var fit: Dictionary = Kit.helmet_fit(skin,motion,facing,i,dressed,plain,no_helmet)
+				if fit.pixels < 24 or fit.inside < 0.9:
+					cap_tracks = false
+					print("helmet off head ",animation," ",i," ",fit)
 				sheet.blend_rect(base,Rect2i(0,0,64,64),Vector2i(i*64,row*64))
 				sheet.blend_rect(dressed,Rect2i(0,0,64,64),Vector2i(i*64,(row+1)*64))
 			check(changed_pixels,motion+" "+facing+" renders visible equipment in every frame")
-			check(cap_tracks,motion+" "+facing+" helmet follows per-frame head anchor")
+			check(cap_tracks,motion+" "+facing+" helmet follows the per-frame head (drawn on the rendered head)")
 			row += 2
 	check(varying_heads,"motion test exercises actual changing head anchors")
 	DirAccess.make_dir_recursive_absolute("res://../art/forest-playtest/v3")

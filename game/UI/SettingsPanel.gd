@@ -39,12 +39,12 @@ func _ready() -> void:
 	_root.theme = theme
 	var title := _label("The Keeper's Settings",Vector2(13,5),16)
 	title.add_theme_font_override("font",load("res://Forest/fonts/IMFellEnglish.ttf"))
-	_slider("master","Master volume",37,AudioManager.master_volume,AudioManager.set_master_volume)
-	_slider("music","Music",62,AudioManager.music_volume,AudioManager.set_music_volume)
-	_slider("sfx","Effects",87,AudioManager.sfx_volume,AudioManager.set_sfx_volume)
-	_label("Camera follow",Vector2(14,116))
+	_slider("master","Master volume",34,AudioManager.master_volume,AudioManager.set_master_volume)
+	_slider("music","Music",57,AudioManager.music_volume,AudioManager.set_music_volume)
+	_slider("sfx","Effects",80,AudioManager.sfx_volume,AudioManager.set_sfx_volume)
+	_label("Camera follow",Vector2(14,106))
 	var camera := OptionButton.new()
-	camera.position = Vector2(157,112)
+	camera.position = Vector2(157,102)
 	camera.size = Vector2(169,23)
 	camera.add_item("Tight / steady")
 	camera.add_item("Smooth / drifting")
@@ -52,11 +52,12 @@ func _ready() -> void:
 	camera.item_selected.connect(func(index):GameSettings.set_camera_follow("smooth" if index == 1 else "tight"))
 	panel.add_child(camera)
 	controls.camera = camera
-	_toggle("shadows","World shadows",143,GameSettings.shadows_enabled,GameSettings.set_shadows)
-	_toggle("fullscreen","Fullscreen",168,GameSettings.fullscreen,GameSettings.set_fullscreen)
-	_toggle("shortcuts","Corner shortcut buttons",193,GameSettings.shortcut_buttons_visible,GameSettings.set_shortcut_buttons)
-	_button("Save & return",Vector2(14,223),Vector2(195,21),func():_close(true))
-	_button("Cancel",Vector2(216,223),Vector2(110,21),func():_close(false))
+	_toggle("shadows","World shadows",130,GameSettings.shadows_enabled,GameSettings.set_shadows)
+	_toggle("fullscreen","Fullscreen",153,GameSettings.fullscreen,GameSettings.set_fullscreen)
+	_toggle("shortcuts","Corner shortcut buttons",176,GameSettings.shortcut_buttons_visible,GameSettings.set_shortcut_buttons)
+	_toggle("shake","Screen shake",199,GameSettings.screen_shake,GameSettings.set_screen_shake)
+	_button("Save & return",Vector2(14,226),Vector2(195,21),func():_close(true))
+	_button("Cancel",Vector2(216,226),Vector2(110,21),func():_close(false))
 	hide()
 
 func _label(text: String,pos: Vector2,size: int = 10) -> Label:
@@ -101,7 +102,7 @@ func _toggle(id: String,label: String,y: int,value: bool,callback: Callable) -> 
 	controls[id] = button
 
 func show_settings() -> void:
-	_baseline = {"master":AudioManager.master_volume,"music":AudioManager.music_volume,"sfx":AudioManager.sfx_volume,"camera":GameSettings.camera_follow_mode,"shadows":GameSettings.shadows_enabled,"fullscreen":GameSettings.fullscreen,"shortcuts":GameSettings.shortcut_buttons_visible}
+	_baseline = {"master":AudioManager.master_volume,"music":AudioManager.music_volume,"sfx":AudioManager.sfx_volume,"camera":GameSettings.camera_follow_mode,"shadows":GameSettings.shadows_enabled,"fullscreen":GameSettings.fullscreen,"shortcuts":GameSettings.shortcut_buttons_visible,"shake":GameSettings.screen_shake}
 	for key in ["master","music","sfx"]: controls[key].value = _baseline[key]
 	controls.camera.select(1 if GameSettings.camera_follow_mode == "smooth" else 0)
 	controls.shadows.set_pressed_no_signal(GameSettings.shadows_enabled)
@@ -110,6 +111,8 @@ func show_settings() -> void:
 	controls.fullscreen.text = "On" if GameSettings.fullscreen else "Off"
 	controls.shortcuts.set_pressed_no_signal(GameSettings.shortcut_buttons_visible)
 	controls.shortcuts.text = "On" if GameSettings.shortcut_buttons_visible else "Off"
+	controls.shake.set_pressed_no_signal(GameSettings.screen_shake)
+	controls.shake.text = "On" if GameSettings.screen_shake else "Off"
 	show()
 
 func _input(event: InputEvent) -> void:
@@ -126,6 +129,7 @@ func _close(save: bool) -> void:
 		GameSettings.set_camera_follow(_baseline.camera)
 		GameSettings.set_shadows(_baseline.shadows)
 		GameSettings.set_shortcut_buttons(_baseline.shortcuts)
+		GameSettings.set_screen_shake(_baseline.shake)
 		if GameSettings.fullscreen != _baseline.fullscreen: GameSettings.set_fullscreen(_baseline.fullscreen)
 	hide()
 	closed.emit()

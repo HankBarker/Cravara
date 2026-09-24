@@ -90,5 +90,6 @@ func run():
 	check(not is_instance_valid(waiting) and InventoryManager.get_item_count("torch")==3,"Stack picks up after space opens without reentering area")
 	GameSettings.set_shortcut_buttons(initial_shortcuts)
 	check((FileAccess.get_sha256(settings_path) if FileAccess.file_exists(settings_path) else "missing")==settings_hash,"Settings file unchanged by UI test")
+	await preload("res://Tests/quiet_exit.gd").settle(get_tree())
 	print("UI_V4_TEST failures=",failures)
 	get_tree().quit(1 if failures else 0)

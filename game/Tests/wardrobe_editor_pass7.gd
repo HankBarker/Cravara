@@ -1,6 +1,8 @@
 extends Node
 const EDITOR=preload("res://UI/CharacterCreator.gd")
 const APPEARANCE=preload("res://Forest/equipment/Appearance.gd")
+const DETAILS=preload("res://UI/ItemDetails.gd")
+const Kit=preload("res://Tests/keeper_test_kit.gd")
 var checks:=0
 var failures:=0
 var accepted_look: Dictionary={}
@@ -35,10 +37,26 @@ func run():
 		if child is Button: check(Rect2(24,12,432,246).encloses(child.get_rect()),"Button fits native editor: "+child.text)
 	editor._set_page("wardrobe")
 	check(editor.wardrobe_selectors.head.visible and not editor.selectors.skin.visible,"Wardrobe tab switches editable controls")
+	# Six outfits, cycling in tier order after "none", named from ItemDetails.
+	var tiers: Array=DETAILS.ARMOR_SETS.keys()
+	check(tiers==["moss","leather","bone","crystal","tide","rex"],"Armour sets are registered in tier order")
+	check(editor._outfit_buttons.size()==tiers.size() and editor.OUTFITS==["none"]+tiers,"Creator offers every set as a complete outfit")
+	editor.wardrobe.head="none"
+	var cycle: Array=[]
+	for i in tiers.size()+1:
+		editor._cycle_armor("head",1)
+		cycle.append(editor.wardrobe.head)
+	check(cycle==tiers+["none"],"Helmet choices cycle moss < leather < bone < crystal < tide < rex, then none")
+	var names_ok:=EDITOR.outfit_name("none")=="Unarmored"
+	for material in tiers: names_ok=names_ok and EDITOR.outfit_name(material)==DETAILS.ARMOR_SETS[material].name and editor._outfit_buttons[material].tooltip_text.contains(DETAILS.ARMOR_SETS[material].name)
+	check(names_ok,"Outfit names come from the armour set table")
 	var draft_before: Dictionary=editor.draft.duplicate()
 	editor._set_outfit("leather")
 	var armor:=editor.preview_armor()
 	check(armor.size()==3 and armor.head.id=="leather_helmet" and armor.chest.id=="leather_chestplate" and armor.legs.id=="leather_leggings","Complete leather outfit resolves real independent items")
+	check(editor.wardrobe_choices.head.text==EDITOR.outfit_name("leather"),"Slot label names the chosen set")
+	editor._cycle_armor("head",-1)
+	check(editor.preview_armor().head.id=="moss_helmet","Stepping down a tier swaps only the helmet")
 	editor._cycle_armor("head",-1)
 	armor=editor.preview_armor()
 	check(not armor.has("head") and armor.size()==2,"Removing helmet preserves body and legs")
@@ -52,8 +70,20 @@ func run():
 		editor._refresh()
 		editor.tool_preview.sync_pose()
 		check(editor.tool_preview.visible==(motion in editor.tool_preview.ITEM_IDS),"Held props only appear for tool motions: "+motion)
+		if not editor.tool_preview.visible:
+			check(editor._held_id()=="","No held item is baked into non-tool motion: "+motion)
 		if editor.tool_preview.visible:
 			check(editor.tool_preview.held_item.id==editor.tool_preview.ITEM_IDS[motion],"Preview resolves actual item: "+motion)
+			# The rig bakes the item into the preview cels (the preview node only
+			# reports item and grip): swings differ from the same outfit built
+			# empty-handed; bow, rod and hoe clips carry that very item as their prop.
+			var rule: String=editor._skin.shared().motion.held_rule(motion)
+			var clip: String=str(editor.avatar.animation)
+			var empty: SpriteFrames=editor._skin.build(editor._frames_for_motion(),editor.preview_armor(),null,editor.draft,"")
+			var baked:=false
+			for frame in editor.avatar.sprite_frames.get_frame_count(clip):
+				baked=baked or Kit.diff(editor.avatar.sprite_frames.get_frame_texture(clip,frame).get_image(),empty.get_frame_texture(clip,frame).get_image())>8
+			check(editor._held_id()==editor.tool_preview.held_item.id and (baked if rule=="held" else rule==editor._held_id()),"Rig bakes the real held item into the preview cels: "+motion)
 			var hands: Dictionary={}
 			for frame in editor.avatar.sprite_frames.get_frame_count(editor.avatar.animation):
 				editor.avatar.frame=frame
@@ -101,8 +131,8 @@ func run():
 	editor._accept()
 	check(accepted_look==APPEARANCE.normalize(wanted) and accepted_look.size()==APPEARANCE.DEFAULTS.size(),"Save emits appearance only, never wardrobe state")
 	check(inventory_snapshot()==inventory_before,"All preview actions preserve inventory")
-	# Let the short equip one-shots finish before shutting down the audio server.
-	await get_tree().create_timer(0.8).timeout
+	# Silence the equip one-shots before shutting down the audio server.
+	await preload("res://Tests/quiet_exit.gd").settle(get_tree())
 	for i in 4: await get_tree().process_frame
 	if DisplayServer.get_name()!="headless": await RenderingServer.frame_post_draw
 	print("WARDROBE_EDITOR_PASS7: %d checks, %d failures" % [checks,failures])

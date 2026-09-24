@@ -68,7 +68,7 @@ func refresh() -> void:
 	if not _textures.has(key):
 		_textures[key] = ImageTexture.create_from_image(f.img)
 	_tex = _textures[key]
-	var hand := Vector2(pose.hand[0], pose.hand[1]) - Vector2(32, 32)
+	var hand := Vector2(pose.hand[0], pose.hand[1]) - Vector2(32, 32) + sprite.offset
 	_at = (hand - Vector2(f.grip)).round()
 	if _fist_tex:
 		_fist_at = (hand - Vector2(fist.centre)).round()

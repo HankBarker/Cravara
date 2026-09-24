@@ -2,14 +2,40 @@
  "parts": {
   "head_down": {
    "origin": [
-    22,
+    25,
+    13
+   ]
+  },
+  "head_down_blink": {
+   "origin": [
+    25,
     13
    ]
   },
   "torso_down": {
    "origin": [
-    23,
+    26,
     29
+   ]
+  },
+  "pauldron_m_down": {
+   "origin": [
+    36,
+    27
+   ],
+   "shoulder": [
+    36.8,
+    30.6
+   ]
+  },
+  "pauldron_o_down": {
+   "origin": [
+    22,
+    27
+   ],
+   "shoulder": [
+    27.2,
+    30.6
    ]
   },
   "boot_m_down": {
@@ -32,36 +58,36 @@
     0
    ]
   },
-  "pauldron_m_down": {
-   "origin": [
-    36,
-    29
-   ],
-   "shoulder": [
-    36.8,
-    30.6
-   ]
-  },
-  "pauldron_o_down": {
-   "origin": [
-    23,
-    29
-   ],
-   "shoulder": [
-    27.2,
-    30.6
-   ]
-  },
   "head_up": {
    "origin": [
-    24,
+    25,
     13
    ]
   },
   "torso_up": {
    "origin": [
-    26,
+    27,
     28
+   ]
+  },
+  "pauldron_m_up": {
+   "origin": [
+    35,
+    27
+   ],
+   "shoulder": [
+    37.0,
+    30.4
+   ]
+  },
+  "pauldron_o_up": {
+   "origin": [
+    23,
+    27
+   ],
+   "shoulder": [
+    27.0,
+    30.4
    ]
   },
   "boot_m_up": {
@@ -84,27 +110,13 @@
     0
    ]
   },
-  "pauldron_m_up": {
-   "origin": [
-    37,
-    28
-   ],
-   "shoulder": [
-    37.0,
-    30.4
-   ]
-  },
-  "pauldron_o_up": {
-   "origin": [
-    23,
-    28
-   ],
-   "shoulder": [
-    27.0,
-    30.4
-   ]
-  },
   "head_side": {
+   "origin": [
+    25,
+    13
+   ]
+  },
+  "head_side_blink": {
    "origin": [
     25,
     13
@@ -112,66 +124,59 @@
   },
   "torso_side": {
    "origin": [
-    25,
+    27,
     29
+   ]
+  },
+  "pauldron_m_side": {
+   "origin": [
+    25,
+    27
+   ],
+   "shoulder": [
+    30.2,
+    30.8
    ]
   },
   "boot_m_side": {
    "pivot": [
-    3.1999999999999993,
+    3.2,
     0.0
    ],
    "origin": [
     0,
     0
    ]
-  },
-  "pauldron_m_side": {
-   "origin": [
-    27,
-    30
-   ],
-   "shoulder": [
-    30.2,
-    30.8
-   ]
   }
  },
  "materials": {
   "arm_upper": [
-   "0e616b",
+   "4b7277",
    "5f9194",
-   "21dfc1",
+   "93abb0",
    "c0c5cc",
    "eef1ee"
   ],
   "arm_lower": [
-   "415450",
-   "67756e",
    "5f9194",
+   "93abb0",
    "c0c5cc",
-   "eef1ee"
-  ],
-  "hand": [
-   "67756e",
-   "d99965",
-   "c0c5cc",
-   "f1bb7f",
-   "eef1ee"
+   "eef1ee",
+   "fafafa"
   ],
   "leg_upper": [
    "0a424c",
-   "126f80",
+   "0e616b",
+   "1c8e8f",
    "29bfb2",
-   "2ef1d7",
-   "c1f3f2"
+   "21dfc1"
   ],
   "leg_lower": [
    "0a424c",
-   "126f80",
+   "0e616b",
+   "1c8e8f",
    "29bfb2",
-   "2ef1d7",
-   "c1f3f2"
+   "21dfc1"
   ]
  },
  "name": "Skyshard"

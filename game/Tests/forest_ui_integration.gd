@@ -91,8 +91,7 @@ func run():
 	scene.queue_free()
 	await process_frame
 	check(drag.dragged_slot==null and drag.dragged_icon==null,"Scene exit clears persistent drag state")
-	root.get_node("AudioManager").stop_music()
-	await create_timer(0.15).timeout
+	await preload("res://Tests/quiet_exit.gd").settle(self)
 	print("FULL UI INTEGRATION: %d failures" % failures)
 	quit(failures)
 

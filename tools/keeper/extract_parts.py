@@ -42,9 +42,12 @@ coordinates are 32x32 SOURCE pixels, rects are inclusive [x0, y0, x1, y1].
   "patches": [{"part": head|torso|pauldron_m|..., "view": v, "x": sx, "y": sy,
                "hex": "rrggbb" | "clear" | "fill", "mat": material?}]
              "fill" repaints the pixel from its neighbours (e.g. stray hand pixels).
-  "flags":   ["no_side_pauldron", "no_blink", ...]
+  "blink_line": {view: "mid"|"low"}  row of the closed-eye lash line (default mid).
+  "materials": {view: [{"rect"|"px": ..., "mat": material}]}  per-pixel material fixes.
+  "flags":   ["no_side_pauldron", "no_blink", "pauldron_skinlike_ok", ...]
   "side_back_x": 12   source column of the rebuilt side-view torso back outline.
 """
+import colorsys
 import json
 import math
 import os
@@ -128,6 +131,15 @@ def hair_like(c):
     return 34 <= h <= 62 and s >= 0.22 and l >= 0.2
 
 
+def outline_of(pix):
+    """The source's dominant outline colour (sets differ: warm brown, black...)."""
+    counts = {}
+    for c in pix.values():
+        if is_outline(c):
+            counts[c] = counts.get(c, 0) + 1
+    return max(counts, key=lambda c: (counts[c], -lum(c))) if counts else OUTLINE
+
+
 def rects_to_set(rects):
     out = set()
     for r in rects or []:
@@ -147,6 +159,8 @@ def default_label(view, x, y):
             return "legs"
         if 16 <= y <= 23 and (x <= 10 or x >= 20):
             return "arm_o" if x <= 10 else "arm_m"   # main hand = screen right
+        if y >= 24 and (x <= 9 or x >= 20):
+            return "arm_o" if x <= 9 else "arm_m"    # low-hanging hands
         return "torso"
     if view == "up":
         if y <= 14:
@@ -155,6 +169,8 @@ def default_label(view, x, y):
             return "legs"
         if 15 <= y <= 23 and (x <= 11 or x >= 21):
             return "arm_o" if x <= 11 else "arm_m"
+        if y >= 24 and (x <= 10 or x >= 21):
+            return "arm_o" if x <= 10 else "arm_m"
         return "torso"
     if view == "side":
         if y <= 15:
@@ -167,7 +183,7 @@ def default_label(view, x, y):
     raise ValueError(view)
 
 
-def label_map(view, pix, ov, material_hint=None):
+def label_map(view, pix, ov):
     lab = {p: default_label(view, *p) for p in pix}
     # Boots: the bottom BOOT_H rows of the legs. The side view keeps only the
     # near (grounded) foot; the far foot of a stride is dropped.
@@ -177,7 +193,7 @@ def label_map(view, pix, ov, material_hint=None):
         top = ground - BOOT_H + 1
         if view == "side":
             xs = [p[0] for p in legs if p[1] == ground]
-            x0, x1 = min(xs), max(xs) + 1
+            x0, x1 = min(xs) - 1, max(xs) + 1
         for p in legs:
             if p[1] < top:
                 continue
@@ -211,6 +227,16 @@ class Zones:
         self.eyes = eyes
 
 
+def material_overrides(view, ov):
+    """{pos: material} from an overrides "materials" block."""
+    out = {}
+    for rule in ov.get("materials", {}).get(view, []):
+        pts = rects_to_set([rule["rect"]]) if "rect" in rule else {tuple(p) for p in rule["px"]}
+        for p in pts:
+            out[p] = rule["mat"]
+    return out
+
+
 def zones_for(view, ov, base_ov):
     face = ov.get("face", {}).get(view, base_ov.get("face", {}).get(view, []))
     eyes = ov.get("eyes", {}).get(view, base_ov.get("eyes", {}).get(view, []))
@@ -234,6 +260,8 @@ def head_material(c, p, z, base_c=None, base_m=None, armored=False):
     if p in z.face:
         if l < 0.2:
             return "outline"
+        if not armored and h >= 40 and hair_like(c):
+            return "hair"                     # fringe over the face
         if skin_like(c) and (h < 39.5 or _near_skin(c)):
             return "skin"
         if hair_like(c) and (not armored or (base_m == "hair" and base_c is not None and dist2(c, base_c) < 900)):
@@ -244,20 +272,30 @@ def head_material(c, p, z, base_c=None, base_m=None, armored=False):
     if armored:
         if base_m == "skin" and skin_like(c) and _near_skin(c):
             return "skin"
+        if hair_like(c) and _near_hair(c):
+            return "hair"                     # hair peeking out under a hood
         return "armor"
-    if skin_like(c) and h < 39.5 and l >= 0.45 and _near_skin(c):
-        return "skin"                         # ears, neck, forehead gaps
+    if skin_like(c) and h < 39.5 and l >= 0.45 and _near_skin(c) \
+            and any((p[0] + dx, p[1] + dy) in z.face for dx, dy in N8):
+        return "skin"                         # ears / neck just outside the face box
     return "hair"
 
 
 _SKIN_REF = []
+_HAIR_REF = []
 
 
 def _near_skin(c):
     return bool(_SKIN_REF) and min(dist2(c, s) for s in _SKIN_REF) < 2000
 
 
-def torso_material_base(c):
+def _near_hair(c):
+    return bool(_HAIR_REF) and min(dist2(c, s) for s in _HAIR_REF) < 700
+
+
+def torso_material_base(c, y=None):
+    """Material of a bare-tunic torso pixel; skin only at the neck opening
+    (a warm highlight lower down is a buckle or stitching)."""
     h, l, s = hls(c)
     if l < 0.14:
         return "outline"
@@ -266,7 +304,7 @@ def torso_material_base(c):
     if l > 0.62 and h >= 39.5:
         return "trim"
     if l > 0.55 and h < 39.5:
-        return "skin"
+        return "skin" if y is None or y <= 17 else "trim"
     return "leather"
 
 
@@ -317,7 +355,7 @@ def write_part(img, mats, folder, name, ranks=None):
     return ranks
 
 
-def apply_patches(part, patches, name, view, pix):
+def apply_patches(part, patches, name, view, pix, line=OUTLINE):
     fills = []
     for pt in patches:
         if pt.get("part") != name or pt.get("view") != view:
@@ -345,7 +383,7 @@ def apply_patches(part, patches, name, view, pix):
                 part[p] = max(cand.items(), key=lambda kv: (kv[1], -lum(kv[0][0])))[0]
                 todo.discard(p)
     for p in todo:
-        part[p] = (OUTLINE, "outline")
+        part[p] = (line, "outline")
 
 
 def outline_ring(core, pix, colour=OUTLINE):
@@ -388,83 +426,112 @@ def _hue_shift(h, toward, amount):
     return (h + step) % 360
 
 
-def shade(c, dl):
-    """Darken (dl<0) or lighten (dl>0) with pixel-art hue shifting: shadows
-    lean cool/red, lights lean warm-yellow."""
-    import colorsys
+def step_lum(c, dlum):
+    """A darker (dlum<0) / lighter (dlum>0) shade of `c` whose luminance
+    differs by about |dlum|, hue-shifted like a hand-made ramp (shadows lean
+    cool, lights lean warm)."""
     h, l, s = hls(c)
-    if dl < 0:
-        l2 = max(0.04, l * (1 + dl))
-        s2 = min(1.0, s * 1.08 + 0.02)
-        h2 = _hue_shift(h, 250 if 70 < h < 250 else 330, 8)
-    else:
-        l2 = min(0.97, l + (1 - l) * dl)
-        s2 = max(0.0, s * 0.94)
-        h2 = _hue_shift(h, 55, 8)
-    r, g, b = colorsys.hls_to_rgb(h2 / 360.0, l2, s2)
-    return (int(round(r * 255)), int(round(g * 255)), int(round(b * 255)))
-
-
-def _similar(a, b):
-    ha, la, sa = hls(a)
-    hb, lb, sb = hls(b)
-    na, nb = sa < 0.16 or la > 0.9, sb < 0.16 or lb > 0.9
-    if na and nb:
-        return True
-    if na != nb:
-        return False
-    dh = min(abs(ha - hb), 360 - abs(ha - hb))
-    return dh <= 24
-
-
-def families(counts):
-    fams = []
-    for c in sorted(counts, key=lambda k: (-counts[k], k)):
-        for f in fams:
-            if _similar(c, f["seed"]):
-                f["cols"][c] = counts[c]
-                break
+    target = lum(c) + dlum
+    best = c
+    for i in range(1, 100):
+        t = i / 100.0
+        if dlum < 0:
+            l2 = max(0.02, l * (1 - t))
+            s2 = min(1.0, s * (1 + 0.25 * t))
+            h2 = _hue_shift(h, 250 if 70 < h < 250 else 330, 20 * t)
         else:
-            fams.append({"seed": c, "cols": {c: counts[c]}})
-    return fams
+            l2 = min(0.98, l + (1 - l) * t)
+            s2 = max(0.0, s * (1 - 0.2 * t))
+            h2 = _hue_shift(h, 55, 20 * t)
+        r, g, b = colorsys.hls_to_rgb(h2 / 360.0, l2, s2)
+        best = (int(round(r * 255)), int(round(g * 255)), int(round(b * 255)))
+        if (dlum < 0 and lum(best) <= target) or (dlum > 0 and lum(best) >= target):
+            break
+    return best
 
 
-def build_ramp(counts, hint=None):
+def _hdist(a, b):
+    d = abs(a - b) % 360
+    return min(d, 360 - d)
+
+
+def same_ramp(anchor, c):
+    """True when `c` reads as a lighter/darker shade of the same material as
+    `anchor` (hue and saturation may drift further the more the lightness
+    differs - pixel-art ramps hue-shift)."""
+    h0, l0, s0 = hls(anchor)
+    h, l, s = hls(c)
+    dl = abs(l - l0)
+    if s0 < 0.12 or s < 0.12:
+        return abs(s - s0) <= 0.14 + 0.2 * dl
+    return _hdist(h, h0) <= 12 + 45 * dl and abs(s - s0) <= 0.16 + 0.45 * dl
+
+
+def _pick_step(mid, cands, counts, target):
+    """Candidate whose luminance offset from `mid` is closest to `target`."""
+    best, score = None, 1e9
+    for c in cands:
+        d = lum(c) - lum(mid)
+        if (target < 0 and d > -12) or (target > 0 and d < 12) or abs(d) > abs(target) * 1.7:
+            continue
+        sc = abs(d - target) - 3.0 * math.log(1 + counts.get(c, 0))
+        if sc < score:
+            best, score = c, sc
+    return best
+
+
+def build_ramp(counts, hint=None, palette=None):
     """Five distinct, luminance-ordered shades [deep, dark, mid, light,
-    highlight] of the dominant material in `counts` ({rgb: n})."""
+    highlight] of the dominant material in `counts` ({rgb: n}). Shades are
+    chosen from `palette` (the whole source's colours) when a harmonious one
+    exists, otherwise synthesised with hue shifting."""
     counts = {c: n for c, n in counts.items() if not is_outline(c)}
-    if not counts:
+    if not counts and hint is None:
         return None
-    fams = families(counts)
+    palette = dict(palette or {})
+    for c, n in counts.items():
+        palette[c] = palette.get(c, 0) + n
     if hint is not None:
-        fam = min(fams, key=lambda f: min(dist2(hint, c) for c in f["cols"]))
+        mid = min(palette, key=lambda c: dist2(hint, c))
+        if dist2(mid, hint) > 300:
+            mid = hint
     else:
-        fam = max(fams, key=lambda f: sum(f["cols"].values()))
-    cols = fam["cols"]
-    mid = max(cols, key=lambda c: (cols[c], -abs(lum(c) - 128)))
-    if hint is not None:
-        mid = min(cols, key=lambda c: dist2(hint, c))
-    lm = lum(mid)
-    darker = [c for c in cols if lm - 75 <= lum(c) <= lm - 10]
-    lighter = [c for c in cols if lm + 10 <= lum(c) <= lm + 75]
-    dark = max(darker, key=lambda c: (cols[c], lum(c))) if darker else shade(mid, -0.28)
-    light = max(lighter, key=lambda c: (cols[c], -lum(c))) if lighter else shade(mid, 0.3)
-    deeper = [c for c in cols if lum(c) <= lum(dark) - 10]
-    deep = min(deeper, key=lum) if deeper else shade(dark, -0.3)
-    brighter = [c for c in cols if lum(c) >= lum(light) + 10]
-    hi = max(brighter, key=lum) if brighter else shade(light, 0.35)
+        # Anchor = the colour whose material family covers most samples.
+        def cover(a):
+            return sum(n for c, n in counts.items() if same_ramp(a, c))
+        mid = max(counts, key=lambda a: (cover(a), counts[a], -abs(lum(a) - 120)))
+        fam = {c: n for c, n in counts.items() if same_ramp(mid, c)}
+        # Prefer the most used colour of the family unless it is an extreme.
+        by_l = sorted(fam, key=lum)
+        top = max(fam, key=lambda c: (fam[c], -abs(lum(c) - 120)))
+        if len(by_l) >= 3 and top in (by_l[0], by_l[-1]):
+            acc, half = 0, sum(fam.values()) / 2.0
+            for c in by_l:
+                acc += fam[c]
+                if acc >= half:
+                    top = c
+                    break
+        mid = top
+    def down(c, most):
+        # Dark materials get proportionally smaller steps so the deep shade
+        # never collapses into the outline.
+        return -max(10.0, min(most, 0.42 * lum(c)))
+
+    cands = [c for c in palette if not is_outline(c) and same_ramp(mid, c)]
+    dark = _pick_step(mid, cands, palette, down(mid, 30)) or step_lum(mid, down(mid, 30))
+    light = _pick_step(mid, cands, palette, 30) or step_lum(mid, 30)
+    cands_d = [c for c in palette if not is_outline(c) and same_ramp(dark, c)]
+    cands_l = [c for c in palette if not is_outline(c) and same_ramp(light, c)]
+    deep = _pick_step(dark, cands_d, palette, down(dark, 26)) or step_lum(dark, down(dark, 26))
+    hi = _pick_step(light, cands_l, palette, 26) or step_lum(light, 26)
     ramp = [deep, dark, mid, light, hi]
     # Enforce strictly increasing luminance with a visible step.
     for i in range(1, 5):
-        tries = 0
-        while lum(ramp[i]) < lum(ramp[i - 1]) + 9 and tries < 12:
-            ramp[i] = shade(ramp[i], 0.12)
-            tries += 1
+        if lum(ramp[i]) < lum(ramp[i - 1]) + 10:
+            ramp[i] = step_lum(ramp[i - 1], 14)
     for i in range(3, -1, -1):
-        tries = 0
-        while lum(ramp[i]) > lum(ramp[i + 1]) - 9 and tries < 12:
-            ramp[i] = shade(ramp[i], -0.12)
-            tries += 1
+        if lum(ramp[i]) > lum(ramp[i + 1]) - 8:
+            ramp[i] = step_lum(ramp[i + 1], -10)
     return [hexc(c) for c in ramp]
 
 
@@ -473,45 +540,80 @@ def _count(d, c):
 
 
 # ------------------------------------------------------------------ side torso
-def rebuild_side_back(torso, back_pix, back_lab, back_x, mat_of):
-    """The near arm hides the back half of the side-view torso. Rebuild it:
-    colours come from the same rows of the back (north) view's right flank so
-    belts and plates continue, the column next to the new back outline is
-    shaded one step darker for form."""
+def _back_samples(back_pix, back_lab, y, n):
+    """n colours for row y of the side view's hidden back, taken from the
+    right flank of the back (north) view so belts and plates continue.
+    Glints and glows (gems, orbs, catch-lights) are replaced by the row's
+    dominant colour: they belong to the back view's centre, not the flank."""
+    row = [back_pix[(x, y)] for x in range(0, 32)
+           if back_lab.get((x, y)) == "torso" and (x, y) in back_pix and not is_outline(back_pix[(x, y)])]
+    if not row:
+        return []
+    counts = {}
+    for c in row:
+        counts[c] = counts.get(c, 0) + 1
+    mode = max(counts, key=lambda c: (counts[c], -abs(lum(c) - 110)))
+
+    def odd(c):
+        h, l, s = hls(c)
+        return lum(c) > 190 or (s > 0.5 and not same_ramp(mode, c) and counts[c] < 3)
+
+    flank = [back_pix[(x, y)] for x in range(16, 32)
+             if back_lab.get((x, y)) == "torso" and (x, y) in back_pix and not is_outline(back_pix[(x, y)])]
+    flank = [mode if odd(c) else c for c in flank] or [mode]
+    if len(flank) >= n:
+        return flank[-n:]
+    return [flank[0]] * (n - len(flank)) + flank
+
+
+def rebuild_side_back(torso, back_pix, back_lab, back_x, mat_of, line=OUTLINE):
+    """The near arm hides the back half of the side-view torso. Rebuild it as
+    the same garment wrapping round: colours come from the same rows of the
+    back view's flank (belts and plates continue), the column next to the new
+    back outline is one shade darker for form, and the back gets an outline."""
     for y in range(ARM_ROWS[0], ARM_ROWS[1] + 1):
         row = sorted(x for (x, yy) in torso if yy == y)
         vis = [x for x in row if x > back_x and torso[(x, y)][1] != "outline"]
+        for x in list(row):
+            if x < back_x:
+                torso.pop((x, y), None)
         if not vis:
             continue
         xf = min(vis)
         hidden = list(range(back_x + 1, xf))
-        for x in list(row):
-            if x < back_x:
-                torso.pop((x, y), None)
         if hidden:
-            samples = [back_pix[(x, y)] for x in range(16, 32)
-                       if back_lab.get((x, y)) == "torso" and (x, y) in back_pix and not is_outline(back_pix[(x, y)])]
-            if not samples:
-                samples = [torso[(xf, y)][0]]
-            take = samples[-len(hidden):] if len(samples) >= len(hidden) else ([samples[0]] * (len(hidden) - len(samples)) + samples)
+            take = _back_samples(back_pix, back_lab, y, len(hidden)) or [torso[(xf, y)][0]] * len(hidden)
             for x, c in zip(hidden, take):
                 torso[(x, y)] = (c, mat_of(c))
             c0, m0 = torso[(hidden[0], y)]
             torso[(hidden[0], y)] = (_darker_in(c0, torso, m0), m0)
-        torso[(back_x, y)] = (OUTLINE, "outline")
+        torso[(back_x, y)] = (line, "outline")
+    # Below the arm rows the near hand can still hang over the hip: repaint
+    # those skin pixels like hidden ones.
+    for y in (ARM_ROWS[1] + 1, ARM_ROWS[1] + 2):
+        spots = sorted(x for (x, yy) in torso if yy == y and x <= 15 and torso[(x, y)][1] != "outline"
+                       and skin_like(torso[(x, y)][0]) and _near_skin(torso[(x, y)][0]))
+        if not spots:
+            continue
+        take = _back_samples(back_pix, back_lab, y, len(spots))
+        for i, x in enumerate(spots):
+            c = take[i] if take else line
+            torso[(x, y)] = (c, "outline" if is_outline(c) else mat_of(c))
 
 
 def _darker_in(c, part, mat):
     """Next darker colour of the same material already used in `part`."""
     pal = sorted({pc for (pc, pm) in part.values() if pm == mat}, key=lum)
-    cands = [q for q in pal if lum(q) < lum(c) - 6 and _similar(q, c)]
+    cands = [q for q in pal if lum(c) - 70 < lum(q) < lum(c) - 6 and same_ramp(c, q)]
     if cands:
         return max(cands, key=lum)
-    return shade(c, -0.22)
+    h, l, s_ = hls(c)
+    r, g, b = colorsys.hls_to_rgb(h / 360.0, l * 0.8, s_)
+    return (int(round(r * 255)), int(round(g * 255)), int(round(b * 255)))
 
 
 # ------------------------------------------------------------------ blink
-def make_blink(head):
+def make_blink(head, line_mode="mid"):
     """Closed-eye copy of a head part ({pos: (rgb, mat)}), or None when no
     eye is visible. Each eye box (iris + lash row) becomes lid skin with a
     dark lash line across its lower-middle row."""
@@ -536,8 +638,23 @@ def make_blink(head):
             below = (p[0], p[1] + 1)
             fill = head[below][0] if below in head and head[below][1] == "skin" else lid
             out[p] = (fill, "skin")
-        for x in range(x0, x1 + 1):
-            if (x, line) in comp:
+        # The closed lid is a lash line across the eye's widest row; a side
+        # view eye (1px iris) gets a 2px line so it does not read as a pupil.
+        width = {y: [p[0] for p in comp if p[1] == y] for y in range(y0, y1 + 1)}
+        iris = [p for p in comp if head[p][0] != lash and lum(head[p][0]) >= 20]
+        irx = sorted({p[0] for p in iris}) or list(range(x0, x1 + 1))
+        if len(irx) == 1:
+            line = max(p[1] for p in iris) if iris else y1
+            for x in (irx[0] - 1, irx[0]):
+                if (x, line) in out and out[(x, line)][1] in ("skin", "eye"):
+                    out[(x, line)] = (lash, "outline")
+        else:
+            if line_mode == "low":
+                line = max(p[1] for p in iris) if iris else y1
+                xs_line = [p[0] for p in iris if p[1] == line]
+            else:
+                xs_line = width.get(line, [])
+            for x in xs_line:
                 out[(x, line)] = (lash, "outline")
     return out
 
@@ -545,7 +662,6 @@ def make_blink(head):
 # ------------------------------------------------------------------ extraction
 def classify_parts(kind, ident, views, base, ov, base_ov):
     """Label every source pixel and build the part dicts for every view."""
-    global _SKIN_REF
     parts = {}
     labels = {}
     for dname, sname in VIEWS.items():
@@ -558,17 +674,24 @@ def classify_parts(kind, ident, views, base, ov, base_ov):
         vp = {}
         # ---- head
         head = {}
+        mat_ov = material_overrides(dname, ov)
         for p, c in pix.items():
             if lab[p] != "head":
                 continue
+            bc = bpix.get(p)
+            bm = blab.get(p)
             if kind == "set":
-                bc = bpix.get(p)
-                bm = blab.get(p)
-                head[p] = (c, head_material(c, p, z, bc, bm, armored=True))
+                m = head_material(c, p, z, bc, bm, armored=True)
+            elif kind == "hair" and bc is not None and bm in ("hair", "skin", "eye", "outline") \
+                    and dist2(c, bc) < 500:
+                m = bm                        # unchanged from the base: same material
             else:
-                head[p] = (c, head_material(c, p, z))
-        if kind == "hair" and base:
-            head.update(hair_extras(dname, pix, lab, bpix, head, z))
+                m = head_material(c, p, z)
+            head[p] = (c, mat_ov.get(p, m))
+        if kind == "hair" and base and dname != "down":
+            # Tails and braids hang behind the body: they show in the side
+            # and back views only (the front view keeps the plain head).
+            head.update(hair_extras(dname, pix, lab, bpix, head, z, blab))
         vp["head"] = head
         # ---- torso
         torso = {}
@@ -579,19 +702,21 @@ def classify_parts(kind, ident, views, base, ov, base_ov):
                 bm = blab.get(p)
                 m = "outline" if is_outline(c) else ("skin" if (bm == "skin" and skin_like(c)) else "armor")
             else:
-                m = torso_material_base(c)
+                m = torso_material_base(c, p[1])
             torso[p] = (c, m)
         vp["torso"] = torso
         # ---- pauldrons (clean shapes with a fresh outline)
         for side in ("m", "o"):
+            keep_skin = "pauldron_skinlike_ok" in ov.get("flags", [])
             core = {p: (c, "armor") for p, c in pix.items()
-                    if lab[p] == "pauldron_" + side and not is_outline(c) and not skin_like(c)}
+                    if lab[p] == "pauldron_" + side and not is_outline(c)
+                    and (keep_skin or not (skin_like(c) and _near_skin(c)))}
             if dname == "side" and side == "m" and "no_side_pauldron" in ov.get("flags", []):
                 core = {}
             if len(core) >= 3:
                 comps = sorted(components(core, N8), key=len, reverse=True)
                 core = {p: core[p] for comp in comps if len(comp) >= 2 for p in comp}
-                vp["pauldron_" + side] = dict(core, **outline_ring(core, pix))
+                vp["pauldron_" + side] = {**core, **outline_ring(core, pix, outline_of(pix))}
         # ---- boots
         for side in ("m", "o"):
             pts = {p: pix[p] for p in pix if lab[p] == "boot_" + side}
@@ -612,46 +737,72 @@ def base_labels(dname, bpix, base_ov):
         return _BASE_LABEL_CACHE[key]
     lab = label_map(dname, bpix, base_ov)
     z = zones_for(dname, {}, base_ov)
+    mat_ov = material_overrides(dname, base_ov)
     out = {}
     for p, c in bpix.items():
         if lab[p] == "head":
-            out[p] = head_material(c, p, z)
+            out[p] = mat_ov.get(p, head_material(c, p, z))
         elif lab[p] == "torso":
-            out[p] = torso_material_base(c)
+            out[p] = torso_material_base(c, p[1])
         else:
             out[p] = "skin" if skin_like(c) and not is_outline(c) else "other"
     _BASE_LABEL_CACHE[key] = out
     return out
 
 
-def hair_extras(dname, pix, lab, bpix, head, z):
+def hair_extras(dname, pix, lab, bpix, head, z, blab):
     """Hair below the head rows (tails, braids): hair-coloured pixels that
     differ from the base and connect to the head, plus their outline."""
     extra = {}
     frontier = [p for p in head]
     seen = set(head)
+    palette = {c for (c, m) in head.values() if m == "hair"}
 
     def differs(p):
         return p not in bpix or dist2(pix[p], bpix[p]) > 900
 
+    def hairy(c, q):
+        if blab.get(q) == "skin" and skin_like(c):
+            return False                      # the base shows skin here (arm, nape)
+        if palette and min(dist2(c, h) for h in palette) < 900:
+            return True
+        h, l, s = hls(c)
+        return (34 <= h <= 62 and s >= 0.2 and l >= 0.2) or (22 <= h <= 50 and s >= 0.3 and 0.1 <= l < 0.4)
+
     while frontier:
         x, y = frontier.pop()
+        here = head.get((x, y)) or extra.get((x, y))
+        from_line = here is not None and here[1] == "outline"
         for dx, dy in N4:
             q = (x + dx, y + dy)
-            if q in seen or q not in pix or lab.get(q) == "head":
+            if q in seen or q not in pix or lab.get(q) in ("head", "arm_m", "arm_o"):
                 continue
             c = pix[q]
             if not differs(q):
                 continue
-            if hair_like(c) or (q not in bpix and not skin_like(c)):
+            if q not in bpix:
+                ok = True                     # outside the base body: only new hair lives there
+            elif is_outline(c):
+                ok = not from_line            # cross a 1px line (a braid tie), never run along one
+            else:
+                ok = hairy(c, q)
+            if ok:
                 seen.add(q)
                 extra[q] = (c, "outline" if is_outline(c) else "hair")
                 frontier.append(q)
-    # Outline pixels hugging the new hair.
+    # Specks (1-2 px) are AI noise around the neck, not hair.
+    for comp in components(list(extra), N4):
+        if len(comp) <= 2:
+            for q in comp:
+                del extra[q]
+    # True outline pixels hugging the new hair.
     for (x, y) in list(extra):
-        for dx, dy in N8:
+        if extra[(x, y)][1] != "hair":
+            continue
+        for dx, dy in N4:
             q = (x + dx, y + dy)
-            if q in pix and q not in head and q not in extra and is_outline(pix[q]) and differs(q):
+            if q in pix and q not in head and q not in extra and lum(pix[q]) < 20 and differs(q) \
+                    and lab.get(q) not in ("arm_m", "arm_o"):
                 extra[q] = (pix[q], "outline")
     return extra
 
@@ -681,10 +832,13 @@ def sample_ramps(dname, pix, lab, samples):
 
 def extract(kind, ident, views, base, ov, base_ov, debug=False):
     """kind: base | set | hair."""
-    global _SKIN_REF
+    global _SKIN_REF, _HAIR_REF
     if base:
         _SKIN_REF = sorted({c for sname, bp in base.items() for p, c in bp.items()
                             if skin_like(c) and hls(c)[0] < 39.5 and hls(c)[1] > 0.45})
+        _HAIR_REF = sorted({c for dname, sname in VIEWS.items() for p, c in base[sname].items()
+                            if default_label(dname, *p) == "head" and hair_like(c)
+                            and head_material(c, p, zones_for(dname, {}, base_ov)) == "hair"})
     parts, labels = classify_parts(kind, ident, views, base, ov, base_ov)
     patches = ov.get("patches", [])
     if kind == "hair":
@@ -705,14 +859,14 @@ def extract(kind, ident, views, base, ov, base_ov, debug=False):
         if kind != "hair" and dname == "side" and vp.get("torso"):
             back_x = ov.get("side_back_x", 12)
             bl = labels["up"]
-            mat_of = (lambda c: torso_material_base(c)) if kind == "base" else \
+            mat_of = (lambda c: torso_material_base(c, 20)) if kind == "base" else \
                      (lambda c: "outline" if is_outline(c) else "armor")
-            rebuild_side_back(vp["torso"], views["north"], bl, back_x, mat_of)
+            rebuild_side_back(vp["torso"], views["north"], bl, back_x, mat_of, outline_of(pix))
         for name in names:
             part = vp.get(name)
             if not part:
                 continue
-            apply_patches(part, patches, name, dname, pix)
+            apply_patches(part, patches, name, dname, pix, outline_of(pix))
             if not part:
                 continue
             img, mats, origin = crop(part)
@@ -721,7 +875,8 @@ def extract(kind, ident, views, base, ov, base_ov, debug=False):
             ranks = write_part(img, mats, folder, fname)
             if name == "head":
                 meta["parts"][fname] = {"origin": cel}
-                blink = None if "no_blink" in ov.get("flags", []) else make_blink(part)
+                mode = ov.get("blink_line", {}).get(dname, "mid")
+                blink = None if "no_blink" in ov.get("flags", []) else make_blink(part, mode)
                 if blink:
                     bimg, bmats, borigin = crop(blink)
                     assert borigin == origin
@@ -749,22 +904,27 @@ def extract(kind, ident, views, base, ov, base_ov, debug=False):
                         if os.path.exists(stale):
                             os.remove(stale)
     if kind == "set":
-        meta["materials"] = limb_ramps(samples, ov)
+        palette = {}
+        for sname in VIEWS.values():
+            for c in views[sname].values():
+                if not is_outline(c) and not (skin_like(c) and _near_skin(c)):
+                    palette[c] = palette.get(c, 0) + 1
+        meta["materials"] = limb_ramps(samples, ov, palette)
     if debug:
         debug_sheet(kind, ident, views, labels, parts)
     return meta
 
 
-def limb_ramps(samples, ov):
+def limb_ramps(samples, ov, palette):
+    """Limb ramps of an armour state. Hands stay bare skin unless the
+    overrides give them a glove ramp ("hand": [..] or "auto")."""
     hints = {k: parse_hex(v) for k, v in ov.get("ramp_hint", {}).items()}
     forced = ov.get("ramps", {})
     mats = {}
-    skin_hand = sum(n for c, n in samples["hand"].items() if skin_like(c) and _near_skin(c))
-    other_hand = sum(n for c, n in samples["hand"].items() if not (skin_like(c) and _near_skin(c)))
     plan = {
         "arm_upper": samples["arm_upper"],
         "arm_lower": samples["arm_lower"],
-        "hand": samples["hand"] if other_hand > skin_hand else None,
+        "hand": samples["hand"] if forced.get("hand") == "auto" or "hand" in hints else None,
         "leg_upper": samples["leg"],
         "leg_lower": samples["leg"],
     }
@@ -777,14 +937,14 @@ def limb_ramps(samples, ov):
             continue
         if counts is None:
             continue
-        # Bare skin on a sleeve segment means "no sleeve": keep appearance skin.
-        if key != "hand":
+        if key not in hints:
+            # Bare skin on a sleeve segment means "no sleeve": keep appearance skin.
             sk = sum(n for c, n in counts.items() if skin_like(c) and _near_skin(c))
             tot = sum(n for c, n in counts.items() if not is_outline(c))
-            if tot and sk / tot > 0.6 and key not in hints:
+            if tot and sk / tot > 0.6:
                 continue
-            counts = {c: n for c, n in counts.items() if not (skin_like(c) and _near_skin(c))} or counts
-        r = build_ramp(counts, hints.get(key))
+        counts = {c: n for c, n in counts.items() if not (skin_like(c) and _near_skin(c))} or counts
+        r = build_ramp(counts, hints.get(key), palette)
         if r:
             mats[key] = r
     return mats

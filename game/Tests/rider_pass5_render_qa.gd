@@ -1,4 +1,5 @@
 extends Node2D
+const Kit = preload("res://Tests/keeper_test_kit.gd")
 var count := 0
 var failures: Array[String] = []
 var scene
@@ -46,22 +47,25 @@ func run():
 	player.animated_sprite.play("idle_right")
 	await get_tree().create_timer(0.2).timeout
 	await capture("hero-basic-cloth.png")
+	# Standing hero, seated rider (the rig's "ride" pose) and seated rider in a
+	# helmet, all dressed with the player's actual appearance.
 	var comparison := Image.create(256,192,false,Image.FORMAT_RGBA8)
-	var seated := SpriteFrames.new()
-	seated.remove_animation("default")
 	var dirs := ["down","right","left","up"]
-	for dir in dirs:
-		seated.add_animation("idle_"+dir)
-		var rider_path: String = "res://Forest/creatures/mount_art/rider_"+dir+".png"
-		seated.add_frame("idle_"+dir,load(rider_path))
-	var skin = preload("res://Forest/equipment/EquipmentSkin.gd").new()
-	var cloth := skin.build(seated,{},null)
-	var helmet := skin.build(seated,{"head":ItemDB.make("leather_helmet")},null)
+	player.finish_skin()
+	var skin = player._skin
+	var cloth: Dictionary = skin.look_for({},player.appearance)
+	var helmet: Dictionary = skin.look_for({"head":ItemDB.make("leather_helmet")},player.appearance)
 	for i in dirs.size():
 		var clip: String = "idle_"+dirs[i]
-		comparison.blend_rect(player.animated_sprite.sprite_frames.get_frame_texture(clip,0).get_image(),Rect2i(0,0,64,64),Vector2i(i*64,0))
-		comparison.blend_rect(cloth.get_frame_texture(clip,0).get_image(),Rect2i(0,0,64,64),Vector2i(i*64,64))
-		comparison.blend_rect(helmet.get_frame_texture(clip,0).get_image(),Rect2i(0,0,64,64),Vector2i(i*64,128))
+		var standing: Image = player.animated_sprite.sprite_frames.get_frame_texture(clip,0).get_image()
+		var seated: Image = skin.render_cel("ride",dirs[i],0,cloth)
+		var seated_helmet: Image = skin.render_cel("ride",dirs[i],0,helmet)
+		comparison.blend_rect(standing,Rect2i(0,0,64,64),Vector2i(i*64,0))
+		comparison.blend_rect(seated,Rect2i(0,0,64,64),Vector2i(i*64,64))
+		comparison.blend_rect(seated_helmet,Rect2i(0,0,64,64),Vector2i(i*64,128))
+		check(Kit.diff(standing,seated)>30,dirs[i]+" seated rider is reposed from the standing hero")
+		var fit: Dictionary=Kit.helmet_fit(skin,"ride",dirs[i],0,seated_helmet,seated,cloth)
+		check(fit.pixels>=24 and fit.inside>=0.9,dirs[i]+" seated rider wears the helmet on its head %s" % fit)
 	check(comparison.save_png(OUTPUT+"hero-standing-seated-helmet-native.png")==OK,"four-direction source identity and dark helmet comparison exported")
 	player._set_equipment("head",ItemDB.make("leather_helmet"))
 	player._set_equipment("chest",ItemDB.make("leather_chestplate"))
@@ -74,6 +78,16 @@ func run():
 		Input.action_press("Right")
 		await get_tree().create_timer(0.30).timeout
 		check(mount._mount_controller.visible and mount.saddle != null and player.mounted_creature == mount,kind+" saddle overlay and rider are active")
+		# The hero sprite hides while riding; the mount's composite frame on
+		# screen carries the seated, dressed rider instead.
+		var clip_now := str(mount._sprite.animation)
+		var shown: Image = mount._sprite.sprite_frames.get_frame_texture(clip_now,mount._sprite.frame).get_image()
+		var creature_only: Image = preload("res://Forest/creatures/MountedAppearance.gd").new().build(kind).get_frame_texture(clip_now,mount._sprite.frame).get_image()
+		var rider_look: Dictionary = skin.look_for(player.equipped_armor,player.appearance,player.equipped_light)
+		var ride_cel: Image = skin.render_cel("ride","right",0,rider_look)
+		var rider_head := Kit.crop(ride_cel,Kit.head_footprint(skin,"ride","right",0,rider_look,ride_cel))
+		var added: int = Kit.opaque(shown)-Kit.opaque(creature_only)
+		check(not player.animated_sprite.visible and Kit.contains_sprite(shown,rider_head) and added>=Kit.opaque(ride_cel)/3,kind+" seated, helmeted rider is visible in the mount's current frame (%d px added, head drawn)" % added)
 		check(mount._sprite.animation == "walk_side" and player.animated_sprite.animation == "idle_right",kind+" actual side pose retained at capture")
 		print("POSE ",kind," side creature=",mount._sprite.animation," rider=",player.animated_sprite.animation," seat=",mount._mount_controller.riding_offset())
 		await capture("mounted-"+kind+"-side.png")
@@ -144,8 +158,7 @@ func run():
 	check(not is_instance_valid(marker) and not is_instance_valid(scene._locator),"target removal cleans up tracking marker and its UI")
 	scene.queue_free()
 	await get_tree().process_frame
-	AudioManager.stop_music()
-	await get_tree().create_timer(0.5).timeout
+	await preload("res://Tests/quiet_exit.gd").settle(get_tree())
 	print("RIDER_PASS5_RENDER_QA assertions=%d failures=%d" % [count,failures.size()])
 	get_tree().quit(0 if failures.is_empty() else 1)
 

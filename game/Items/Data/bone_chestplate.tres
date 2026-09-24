@@ -7,7 +7,7 @@
 script = ExtResource("1")
 id = "bone_chestplate"
 name = "Fangbound Chestplate"
-description = "Carved fang plates over woven hide. Chest protection; +7 defense. Mix freely with other armor."
+description = "Carved fang plates over a rib-bound breastplate of woven hide. A hunter's trophy, worn."
 icon = ExtResource("2")
 max_stack = 1
 rarity = "rare"

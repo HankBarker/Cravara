@@ -35,6 +35,7 @@ func _init() -> void:
 	var seated := false
 	var crop := Rect2i(12, 10, 40, 40)
 	var scale := 4
+	var overlay := false
 	var i := 0
 	while i < args.size():
 		match args[i]:
@@ -65,6 +66,8 @@ func _init() -> void:
 				i += 1
 			"--seated":
 				seated = true
+			"--overlay":
+				overlay = true
 			"--crop":
 				var c: PackedStringArray = args[i + 1].split(",")
 				crop = Rect2i(int(c[0]), int(c[1]), int(c[2]), int(c[3]))
@@ -108,7 +111,10 @@ func _init() -> void:
 						pose.tool.id = id
 					else:
 						pose.erase("tool")
-				frames.append(rig.render(pose, look, tools))
+				var cel: Image = rig.render(pose, look, tools)
+				if overlay:
+					_overlay(cel, clip, f, pose, rig, motion, tools)
+				frames.append(cel)
 			rows.append(frames)
 			meta.append({"clip": clip, "facing": facing, "frames": count, "fps": info.fps,
 				"loop": info.get("loop", false), "durations": info.get("durations", [])})
@@ -131,3 +137,52 @@ func _init() -> void:
 	fa.close()
 	print("KEEPER_PREVIEW ", out_dir + out_name + ".png ", rows.size(), " rows")
 	quit()
+
+
+## --overlay: draw what the live controllers add on top of the Keeper cels,
+## using the same anchors they read (KeeperSkin.pose: hand, offhand, tip):
+## BowController's string (braced bow tips at grip +- tool direction * 6.5,
+## 3 px back towards the archer, to the off
+## hand) and nocked arrow while drawing / straight string for the release
+## flash; FishingController's line leaving the rod tip.
+func _overlay(cel: Image, clip: String, f: int, pose: Dictionary, rig, motion, tools) -> void:
+	if not clip in ["bow_draw", "bow_release", "fishing_cast", "fishing_reel"]:
+		return
+	var j: Dictionary = rig.solve(pose)
+	var mirror: bool = pose.get("mirror", false)
+	var hand: Vector2 = j.hand_m
+	var off: Vector2 = j.hand_o
+	var angle: float = float(pose.get("tool", {}).get("angle", -45.0))
+	if mirror:
+		hand = Vector2(64.0 - hand.x, hand.y)
+		off = Vector2(64.0 - off.x, off.y)
+		angle = 180.0 - angle
+	var dir := Vector2.RIGHT.rotated(deg_to_rad(angle))
+	var facing: String = "down" if pose.view == "down" else ("up" if pose.view == "up" else ("left" if mirror else "right"))
+	var aim: Vector2 = {"down": Vector2.DOWN, "up": Vector2.UP, "left": Vector2.LEFT, "right": Vector2.RIGHT}[facing]
+	if clip.begins_with("bow"):
+		# Same as BowController: the braced reed bow's tips sit 3 px behind the grip.
+		var top := (hand + dir * 6.5 - aim * 3.0).round()
+		var bottom := (hand - dir * 6.5 - aim * 3.0).round()
+		if clip == "bow_draw":
+			_line(cel, top, off.round(), Color("e0d1ad"))
+			_line(cel, off.round(), bottom, Color("e0d1ad"))
+			_line(cel, off.round(), (off + aim * 11).round(), Color("d9c39a"))
+			_line(cel, (off + aim * 9).round(), (off + aim * 11).round(), Color("f7efc8"))
+		elif f <= 5:  # _release_flash lasts 0.16 s of the 0.24 s release
+			_line(cel, top, bottom, Color("e0d1ad"))
+	else:
+		var tip: Vector2 = hand + dir * float(tools.reach("fishing_rod"))
+		var cast := 1.0 if clip == "fishing_reel" else clampf((f + 0.5) * 0.075 / 0.45, 0.0, 1.0)
+		var far: Vector2 = tip + aim * 24.0
+		var bob: Vector2 = tip.lerp(far, cast) + Vector2(0, -sin(cast * PI) * 14.0)
+		_line(cel, tip.round(), bob.round(), Color("d6d6ab"))
+		cel.set_pixelv(Vector2i(tip.round()), Color("ff4060"))
+
+
+static func _line(img: Image, a: Vector2, b: Vector2, c: Color) -> void:
+	var n := int(maxf(absf(b.x - a.x), absf(b.y - a.y)))
+	for i in n + 1:
+		var p := Vector2i(a.lerp(b, float(i) / maxf(1.0, n)).round())
+		if Rect2i(0, 0, img.get_width(), img.get_height()).has_point(p):
+			img.set_pixelv(p, c)

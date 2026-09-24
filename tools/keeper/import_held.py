@@ -39,7 +39,8 @@ def grip_for(img, hang):
 def main():
     os.makedirs(DST, exist_ok=True)
     for name in sorted(os.listdir(SRC)):
-        if not name.endswith(".png"):
+        # <id>_full.png keeps an original before a hand resize; not an item.
+        if not name.endswith(".png") or name.endswith("_full.png"):
             continue
         item = name[:-4]
         img = Image.open(os.path.join(SRC, name)).convert("RGBA")
@@ -47,6 +48,10 @@ def main():
         grip, angle = grip_for(img, hang)
         img.save(os.path.join(DST, name))
         meta = {"grip": grip, "angle": angle, "hang": hang}
+        manual = os.path.join(SRC, item + ".json")
+        if os.path.exists(manual):
+            # Hand-authored grips win (e.g. the braced reed bow).
+            meta = json.load(open(manual))
         with open(os.path.join(DST, item + ".json"), "w") as f:
             json.dump(meta, f)
         print(item, meta)

@@ -2,7 +2,8 @@ extends Node2D
 const GearSkin = preload("res://Forest/equipment/EquipmentSkin.gd")
 const Appearance = preload("res://Forest/equipment/Appearance.gd")
 const Actions = preload("res://Forest/equipment/ActionFrames.gd")
-const SETS := ["leather", "bone", "crystal"]
+## Every armour set in tier order (ItemDetails.ARMOR_SETS).
+const SETS := ["moss", "leather", "bone", "crystal", "tide", "rex"]
 const PIECES := {"head":"helmet", "chest":"chestplate", "legs":"leggings"}
 var assertions := 0
 var failures := 0
@@ -46,6 +47,8 @@ func run():
 				source.add_frame(clip,original.get_frame_texture(clip,index),original.get_frame_duration(clip,index))
 	var initial_hash := signature(source)
 	var skin := GearSkin.new()
+	check(SETS==preload("res://UI/ItemDetails.gd").ARMOR_SETS.keys(),"wardrobe test covers every registered armour set in tier order")
+	for family in SETS: check(skin.shared().parts.has_set(family),family+" set is registered with the Keeper rig")
 	var identity: Dictionary = Appearance.normalize({"skin":"umber","hair":"silver","cloth":"river"})
 	var naked := skin.build(source,{},null,identity)
 	var seen := {}
@@ -100,7 +103,7 @@ func run():
 	check(not player.unequip_to_inventory("head"),"full-bag unequip preserves equipped armor")
 	InventoryManager.inventory[1]={"item":null,"quantity":0}
 	check(player.unequip_to_inventory("head") and player.get_equipment("head")==null,"unequip succeeds when an empty slot is available")
-	for family in ["bone","crystal"]:
+	for family in SETS:
 		for piece in PIECES.values():
 			var id: String=family+"_"+piece
 			var recipe: Dictionary=CraftingManager.get_recipe(id)

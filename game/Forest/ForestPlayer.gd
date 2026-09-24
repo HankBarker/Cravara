@@ -7,7 +7,6 @@ var in_water := false
 var _swing_time := 0.0
 var _swing_item: Item
 var _attack_target := Vector2.ZERO
-var _ripple_time := 0.0
 var respawning := false
 signal equipment_changed
 var equipped_trinkets: Array[Item] = [null, null, null]
@@ -29,6 +28,9 @@ var action_kind := ""
 var action_time := 0.0
 const KeeperHeld = preload("res://Forest/keeper/KeeperHeld.gd")
 const ARMOR_GLOW := {"crystal": Color("5ff3ff"), "tide": Color("8ff5e0"), "rex": Color("5cf39a")}
+## The Keeper Y-sorts by the centre of the foot collider (like creatures and
+## props by their bases), not by the origin at the body centre 11 px higher.
+const SORT_Y := 8.0
 var _armor_glow: PointLight2D
 var _held_back: Node2D
 var _held_front: Node2D
@@ -123,14 +125,16 @@ func _tick_hunger(delta: float):
 	else: _starve_accum = 0
 
 func take_damage(amount: int, attacker = null):
-	if state == "dead" or respawning or is_invulnerable: return
+	if state == "dead" or respawning or is_invulnerable or roll_invulnerable: return
 	stop_action()
 	var session := get_tree().get_first_node_in_group("forest_session")
 	if session and is_instance_valid(session.get("fishing")) and session.fishing.is_active(): session.fishing.cancel()
 	if session and is_instance_valid(session.get("bow")): session.bow.cancel()
 	var controller = mounted_creature._mount_controller if is_instance_valid(mounted_creature) else null
 	var actual_damage := CombatMath.mitigate(amount, defense)
+	var health_before := current_health
 	super.take_damage(amount, attacker)
+	_feel_hurt(health_before - current_health, attacker)
 	if is_instance_valid(controller) and is_instance_valid(mounted_creature):
 		controller.on_rider_damaged(actual_damage, attacker)
 
@@ -145,6 +149,11 @@ func _ready():
 	$CollisionShape2D.shape = feet
 	$CollisionShape2D.position = Vector2(0,8)
 	$Camera2D.position = Vector2.ZERO
+	# The sprite node sits on the feet so the y-sorted world orders the Keeper
+	# by where they stand; `offset` keeps the drawing exactly where it was.
+	y_sort_enabled = true
+	animated_sprite.position = Vector2(0, SORT_Y)
+	animated_sprite.offset = Vector2(0, -SORT_Y)
 	_carried_light = PointLight2D.new()
 	var glow := GradientTexture2D.new()
 	var gradient := Gradient.new()
@@ -187,9 +196,11 @@ func _ready():
 	# A queued clip that starts playing is rendered on the spot.
 	animated_sprite.animation_changed.connect(func(): _skin.ensure(animated_sprite.sprite_frames, str(animated_sprite.animation)))
 	_refresh_skin()
+	_setup_feel()
 
 func _physics_process(delta):
 	_tick_recovery(delta)
+	_tick_roll(delta)
 	if action_time>0:
 		action_time=maxf(0,action_time-delta)
 		if action_time<=0: stop_action()
@@ -202,7 +213,6 @@ func _physics_process(delta):
 		_tick_hunger(delta)
 		return
 	_swing_time = maxf(0.0, _swing_time - delta)
-	_ripple_time += delta
 	if forest_world:
 		in_water = forest_world.is_water_at(global_position)
 	var wade_boost := 0.0
@@ -210,14 +220,16 @@ func _physics_process(delta):
 		if trinket: wade_boost += trinket.wading_bonus
 	walk_speed = int(40 + 76 * wade_boost) if in_water else 76
 	sprint_speed = int(52 + 125 * wade_boost) if in_water else 125
+	move_accel_scale = WATER_ACCEL_SCALE if in_water else 1.0
 	if controls_locked and state != "dead":
 		_tick_hunger(delta)
 		_tick_stamina(delta)
 		velocity = Vector2.ZERO
-		if state in ["walk", "run"]:
+		if state in ["walk", "run", "roll"]:
 			switch_state("idle")
 		queue_redraw()
 		return
+	_try_start_roll()
 	super._physics_process(delta)
 	queue_redraw()
 
@@ -239,6 +251,7 @@ func switch_state(state_name: String):
 	if state_name == "attack" and state == "attack":
 		_swing_time = _swing_duration
 		_swing_item = InventoryManager.get_selected_item()
+	_feel_state_entered(state_name)
 
 func _forest_hit():
 	if state != "attack" or not is_instance_valid(forest_world):
@@ -277,18 +290,13 @@ func _forest_hit():
 			for trinket in equipped_trinkets:
 				if trinket: damage += trinket.damage_bonus
 			creature.take_damage(damage, self)
+			_feel_creature_hit(creature, damage, tool)
 			break
 
 func _on_SwordHitbox_area_entered(area):
 	if area.get_parent().is_in_group("forest_creatures"):
 		return
 	super._on_SwordHitbox_area_entered(area)
-
-func _draw():
-	if in_water:
-		var ripple := 9.0 + fmod(_ripple_time * 10.0, 8.0)
-		draw_arc(Vector2(0, 8), ripple, 0.1, PI - 0.1, 14, Color(0.55, 0.94, 0.95, 0.6), 1)
-		draw_line(Vector2(-9, 7), Vector2(8, 7), Color("76cad0"), 1)
 
 func die():
 	if respawning:
@@ -522,6 +530,7 @@ func eat(item: Item) -> bool:
 		# One ongoing effect per food prevents a stack of meals becoming instant healing.
 		_food_healing = _food_healing.filter(func(effect): return effect.get("id", "") != item.id)
 		_food_healing.append({"id":item.id,"left":item.healing_duration,"rate":item.healing_total/maxf(1,item.healing_duration),"potion":item.hunger_value == 0})
+	play_gesture("eat")
 	return true
 
 func consume_slot(source: Node, index: int) -> bool:
@@ -564,3 +573,79 @@ func _tick_recovery(delta: float):
 		if forest_world and forest_world.has_method("get_hazard_damage_at") and not is_instance_valid(mounted_creature):
 			var harm: int = forest_world.get_hazard_damage_at(global_position+Vector2(0,8))
 			if harm>0: take_damage(harm)
+
+# --- Movement feel: dodge roll, gestures, feedback hooks ---------------------
+# Drawing, particles and sound live in res://Forest/fx/KeeperFeel.gd; the roll
+# itself is the "roll" FSM state (res://Player/States/Roll.gd).
+const KeeperFeel = preload("res://Forest/fx/KeeperFeel.gd")
+const ROLL_COOLDOWN := 0.35       # seconds after a roll ends
+const ROLL_BUFFER := 0.15         # a press this early still rolls once allowed
+const WATER_ACCEL_SCALE := 0.62   # wading: heavier starts, stops and turns
+var feel: Node
+var roll_invulnerable := false
+var roll_cooldown := 0.0
+var _roll_buffer := 0.0
+
+func _setup_feel() -> void:
+	states["roll"] = preload("res://Player/States/Roll.gd").new()
+	feel = KeeperFeel.new()
+	feel.name = "KeeperFeel"
+	add_child(feel)
+	feel.setup(self)
+
+## Dodge input (Space / Ctrl, routed by ForestPlaytest). Buffered briefly, so a
+## press in the tail of a swing or of the cooldown rolls the moment it can.
+func request_roll() -> void:
+	_roll_buffer = ROLL_BUFFER
+
+func can_roll() -> bool:
+	if respawning or controls_locked or action_time > 0.0 or is_instance_valid(mounted_creature): return false
+	if roll_cooldown > 0.0 or not states.has("roll"): return false
+	var session := get_tree().get_first_node_in_group("forest_session")
+	if session and is_instance_valid(session.get("fishing")) and session.fishing.is_active(): return false
+	# A swing can be cancelled into a roll after its contact, never in the windup.
+	if state == "attack": return states.attack.get("hit_done") == true
+	return state in ["idle", "walk", "run"]
+
+func _tick_roll(delta: float) -> void:
+	roll_cooldown = maxf(0.0, roll_cooldown - delta)
+	_roll_buffer = maxf(0.0, _roll_buffer - delta)
+
+func _try_start_roll() -> void:
+	if _roll_buffer > 0.0 and can_roll():
+		_roll_buffer = 0.0
+		switch_state("roll")
+
+## The held direction, or the facing when nothing is held.
+func roll_direction() -> Vector2:
+	var input := get_movement_input()
+	if input != Vector2.ZERO: return input
+	return {"down": Vector2.DOWN, "up": Vector2.UP, "left": Vector2.LEFT, "right": Vector2.RIGHT}.get(last_facing, Vector2.DOWN)
+
+## End of the tumble: straight into walking/running if a direction is held.
+func finish_roll() -> void:
+	var input := get_movement_input()
+	if input == Vector2.ZERO: switch_state("idle")
+	else: switch_state("run" if Input.is_action_pressed("Sprint") else "walk")
+
+## Short gesture clips (eat, craft, place, interact, cheer). They never lock
+## input or freeze movement (unlike play_action) and are skipped while busy,
+## moving or mounted; any state change simply takes the sprite back.
+func play_gesture(kind: String, target := Vector2.INF) -> bool:
+	return is_instance_valid(feel) and feel.play_gesture(kind, target)
+
+## As play_gesture, but waits briefly for a free moment (e.g. after an action).
+func queue_gesture(kind: String, target := Vector2.INF) -> void:
+	if is_instance_valid(feel): feel.queue_gesture(kind, target)
+
+func _feel_state_entered(state_name: String) -> void:
+	if is_instance_valid(feel): feel.on_state_entered(state_name)
+
+func _feel_hurt(amount: int, attacker) -> void:
+	if amount > 0 and is_instance_valid(feel): feel.on_hurt(amount, attacker)
+
+func _feel_creature_hit(creature: Node2D, damage: int, tool: String) -> void:
+	if is_instance_valid(feel): feel.on_creature_hit(creature, damage, tool)
+
+func _locomotion_event(kind: String) -> void:
+	if is_instance_valid(feel): feel.on_locomotion_event(kind)

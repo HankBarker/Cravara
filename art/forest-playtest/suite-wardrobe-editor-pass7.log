@@ -1,7 +1,7 @@
 ﻿Godot Engine v4.6.1.stable.official.14d19694e - https://godotengine.org
 OpenGL API 3.3.0 Core Profile Context 24.10.36.04.250109 - Compatibility - Using Device: ATI Technologies Inc. - AMD Radeon RX 7700S
 
-📦 ItemDB loaded 62 items: basic_axe, basic_pickaxe, berry, berry_compote, berry_seed, bone_arrow, bone_chestplate, bone_dagger, bone_helmet, bone_leggings, bucket, campfire, chest, cooked_fish, cooked_meat, crystal_axe, crystal_chestplate, crystal_flask, crystal_helmet, crystal_leggings, crystal_pendant, crystal_pickaxe, crystal_shard, dodo_egg, fishing_rod, forest_omelet, garden_hoe, hide_bed, hunter_charm, lantern, leather_chestplate, leather_helmet, leather_leggings, log, moonscale, mushroom, mushroom_potion, mushroom_spore, net, plank, plant_fiber, prism_crystal, raptor_fang, reed_bow, reed_perch, river_totem, shardfin, shard_sword, stego_saddle, stone, tent, thatch_roof, torch, trex_meat, trex_scale, trike_saddle, water_bucket, water_flask, wood_door, wood_floor, wood_wall, workbench
+📦 ItemDB loaded 71 items: basic_axe, basic_pickaxe, berry, berry_compote, berry_seed, bone_arrow, bone_chestplate, bone_dagger, bone_helmet, bone_leggings, bucket, campfire, chest, cooked_fish, cooked_meat, crystal_axe, crystal_chestplate, crystal_flask, crystal_helmet, crystal_leggings, crystal_pendant, crystal_pickaxe, crystal_shard, dodo_egg, fishing_rod, forest_omelet, garden_hoe, hide_bed, hunter_charm, lantern, leather_chestplate, leather_helmet, leather_leggings, log, moonscale, moss_chestplate, moss_helmet, moss_leggings, mushroom, mushroom_potion, mushroom_spore, net, plank, plant_fiber, prism_crystal, raptor_fang, reed_bow, reed_perch, rex_chestplate, rex_helmet, rex_leggings, river_totem, shardfin, shard_sword, stego_saddle, stone, tent, thatch_roof, tide_chestplate, tide_helmet, tide_leggings, torch, trex_meat, trex_scale, trike_saddle, water_bucket, water_flask, wood_door, wood_floor, wood_wall, workbench
 PASS Creator initializes normalized choices
 PASS Tool canvas is clipped inside the native portrait
 PASS Appearance page hides wardrobe selectors
@@ -24,9 +24,12 @@ PASS Button fits native editor: <
 PASS Button fits native editor: >
 PASS Button fits native editor: <
 PASS Button fits native editor: >
+PASS Button fits native editor: Mossweave
 PASS Button fits native editor: Leather
-PASS Button fits native editor: Bone
-PASS Button fits native editor: Crystal
+PASS Button fits native editor: Fangbound
+PASS Button fits native editor: Skyshard
+PASS Button fits native editor: Tidecaller
+PASS Button fits native editor: Tyrant
 PASS Button fits native editor: Turn preview
 PASS Button fits native editor: Idle >
 PASS Button fits native editor: Preview: clothing
@@ -34,30 +37,61 @@ PASS Button fits native editor: Reset
 PASS Button fits native editor: Cancel
 PASS Button fits native editor: Begin journey
 PASS Wardrobe tab switches editable controls
+PASS Armour sets are registered in tier order
+PASS Creator offers every set as a complete outfit
+PASS Helmet choices cycle moss < leather < bone < crystal < tide < rex, then none
+PASS Outfit names come from the armour set table
 PASS Complete leather outfit resolves real independent items
+PASS Slot label names the chosen set
+PASS Stepping down a tier swaps only the helmet
 PASS Removing helmet preserves body and legs
 PASS Outfit preview cannot modify appearance or inventory
 PASS Clothing-only hides all preview armor
 PASS Held props only appear for tool motions: idle
+PASS No held item is baked into non-tool motion: idle
 PASS Motion exists: idle_down
 PASS Motion exists: idle_left
 PASS Motion exists: idle_up
 PASS Motion exists: idle_right
 PASS Only active motion is composited: idle
 PASS Held props only appear for tool motions: walk
+PASS No held item is baked into non-tool motion: walk
 PASS Motion exists: walk_down
 PASS Motion exists: walk_left
 PASS Motion exists: walk_up
 PASS Motion exists: walk_right
 PASS Only active motion is composited: walk
 PASS Held props only appear for tool motions: run
+PASS No held item is baked into non-tool motion: run
 PASS Motion exists: run_down
 PASS Motion exists: run_left
 PASS Motion exists: run_up
 PASS Motion exists: run_right
 PASS Only active motion is composited: run
+PASS Held props only appear for tool motions: roll
+PASS No held item is baked into non-tool motion: roll
+PASS Motion exists: roll_down
+PASS Motion exists: roll_left
+PASS Motion exists: roll_up
+PASS Motion exists: roll_right
+PASS Only active motion is composited: roll
+PASS Held props only appear for tool motions: cheer
+PASS No held item is baked into non-tool motion: cheer
+PASS Motion exists: cheer_down
+PASS Motion exists: cheer_left
+PASS Motion exists: cheer_up
+PASS Motion exists: cheer_right
+PASS Only active motion is composited: cheer
+PASS Held props only appear for tool motions: eat
+PASS No held item is baked into non-tool motion: eat
+PASS Motion exists: eat_down
+PASS Motion exists: eat_left
+PASS Motion exists: eat_up
+PASS Motion exists: eat_right
+PASS Only active motion is composited: eat
 PASS Held props only appear for tool motions: axe
 PASS Preview resolves actual item: axe
+PASS Rig bakes the real held item into the preview cels: axe
 PASS Grip follows pose: axe 0
 PASS Grip follows pose: axe 1
 PASS Grip follows pose: axe 2
@@ -74,6 +108,7 @@ PASS Motion exists: axe_right
 PASS Only active motion is composited: axe
 PASS Held props only appear for tool motions: pickaxe
 PASS Preview resolves actual item: pickaxe
+PASS Rig bakes the real held item into the preview cels: pickaxe
 PASS Grip follows pose: pickaxe 0
 PASS Grip follows pose: pickaxe 1
 PASS Grip follows pose: pickaxe 2
@@ -90,6 +125,7 @@ PASS Motion exists: pickaxe_right
 PASS Only active motion is composited: pickaxe
 PASS Held props only appear for tool motions: sword
 PASS Preview resolves actual item: sword
+PASS Rig bakes the real held item into the preview cels: sword
 PASS Grip follows pose: sword 0
 PASS Grip follows pose: sword 1
 PASS Grip follows pose: sword 2
@@ -106,6 +142,7 @@ PASS Motion exists: sword_right
 PASS Only active motion is composited: sword
 PASS Held props only appear for tool motions: bow_draw
 PASS Preview resolves actual item: bow_draw
+PASS Rig bakes the real held item into the preview cels: bow_draw
 PASS Grip follows pose: bow_draw 0
 PASS Grip follows pose: bow_draw 1
 PASS Grip follows pose: bow_draw 2
@@ -122,6 +159,7 @@ PASS Motion exists: bow_draw_right
 PASS Only active motion is composited: bow_draw
 PASS Held props only appear for tool motions: fishing_cast
 PASS Preview resolves actual item: fishing_cast
+PASS Rig bakes the real held item into the preview cels: fishing_cast
 PASS Grip follows pose: fishing_cast 0
 PASS Grip follows pose: fishing_cast 1
 PASS Grip follows pose: fishing_cast 2
@@ -136,7 +174,32 @@ PASS Motion exists: fishing_cast_left
 PASS Motion exists: fishing_cast_up
 PASS Motion exists: fishing_cast_right
 PASS Only active motion is composited: fishing_cast
+PASS Held props only appear for tool motions: hoe
+PASS Preview resolves actual item: hoe
+PASS Rig bakes the real held item into the preview cels: hoe
+PASS Grip follows pose: hoe 0
+PASS Grip follows pose: hoe 1
+PASS Grip follows pose: hoe 2
+PASS Grip follows pose: hoe 3
+PASS Grip follows pose: hoe 4
+PASS Grip follows pose: hoe 5
+PASS Grip follows pose: hoe 6
+PASS Grip follows pose: hoe 7
+PASS Grip moves with animated hand: hoe
+PASS Motion exists: hoe_down
+PASS Motion exists: hoe_left
+PASS Motion exists: hoe_up
+PASS Motion exists: hoe_right
+PASS Only active motion is composited: hoe
+PASS Held props only appear for tool motions: craft
+PASS No held item is baked into non-tool motion: craft
+PASS Motion exists: craft_down
+PASS Motion exists: craft_left
+PASS Motion exists: craft_up
+PASS Motion exists: craft_right
+PASS Only active motion is composited: craft
 PASS Held props only appear for tool motions: pet
+PASS No held item is baked into non-tool motion: pet
 PASS Motion exists: pet_down
 PASS Motion exists: pet_left
 PASS Motion exists: pet_up
@@ -147,4 +210,4 @@ PASS Full crystal outfit resolves
 PASS Three materials mix independently
 PASS Save emits appearance only, never wardrobe state
 PASS All preview actions preserve inventory
-WARDROBE_EDITOR_PASS7: 145 checks, 0 failures
+WARDROBE_EDITOR_PASS7: 208 checks, 0 failures

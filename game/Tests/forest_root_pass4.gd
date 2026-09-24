@@ -1,5 +1,6 @@
 extends Node2D
 const SAVE := "user://forest_pass4_root_test.json"
+const Kit = preload("res://Tests/keeper_test_kit.gd")
 var failures: Array[String] = []
 var count := 0
 var stage
@@ -46,49 +47,79 @@ func run():
 	check(stage.hud.is_open(),"nearby workbench opens with E without cursor targeting")
 	stage.hud.close_panels()
 	await get_tree().process_frame
-	# Helmet follows cel outlines and idle glances, preserving eyes and source.
-	player.equip_armor("head",ItemDB.make("leather_helmet"))
+	# Helmet follows the head through idle breathing, blinks and glances,
+	# keeps the face visible, hides the hair, and never touches the source.
 	var source: SpriteFrames=player._base_frames
+	var source_before: Dictionary={}
+	for facing in ["down","up","left","right"]:
+		for i in source.get_frame_count("idle_"+facing): source_before["%s%d" % [facing,i]]=source.get_frame_texture("idle_"+facing,i).get_image().get_data()
+	player.equip_armor("head",ItemDB.make("leather_helmet"))
+	player.finish_skin()
 	var dressed: SpriteFrames=player.animated_sprite.sprite_frames
-	var sheet:=Image.create(64*12,64*8,false,Image.FORMAT_RGBA8)
+	var skin=player._skin
+	var motion_lib=skin.shared().motion
+	var bare_look: Dictionary=skin.look_for({},player.appearance,player.equipped_light)
+	var helmet: Dictionary={"head":player.get_equipment("head")}
+	# Same helmet, other hair colour / skin tone: only fringe pixels may differ
+	# for the hair; the face under the helmet must still take the skin tone.
+	var other_hair: Dictionary=player.appearance.duplicate()
+	other_hair.hair="charcoal" if other_hair.hair!="charcoal" else "flax"
+	var other_skin: Dictionary=player.appearance.duplicate()
+	other_skin.skin="umber" if other_skin.skin!="umber" else "warm"
+	var hair_look: Dictionary=skin.look_for(helmet,other_hair,player.equipped_light)
+	var bare_hair_look: Dictionary=skin.look_for({},other_hair,player.equipped_light)
+	var skin_look: Dictionary=skin.look_for(helmet,other_skin,player.equipped_light)
+	var idle_frames:=1
+	for facing in ["down","up","left","right"]: idle_frames=maxi(idle_frames,source.get_frame_count("idle_"+facing))
+	var sheet:=Image.create(64*idle_frames,64*8,false,Image.FORMAT_RGBA8)
 	sheet.fill(Color("16332c"))
 	var row:=0
-	var outline_changes:=0
+	var head_moves:=0
 	for facing in ["down","up","left","right"]:
 		var animation: String="idle_"+facing
-		var prior: Dictionary={}
+		var prior: Array=[]
+		var crops: Array=[]
 		for i in source.get_frame_count(animation):
 			var pose: Dictionary=player._skin.pose(animation,i)
 			var img: Image=dressed.get_frame_texture(animation,i).get_image()
 			var raw: Image=source.get_frame_texture(animation,i).get_image()
-			var origin:=Vector2i(int(pose.head_origin[0]),int(pose.head_origin[1]))
-			var actual_facing := str(pose.get("head_facing",facing))
-			var art_path := "res://Forest/equipment/art/wardrobe/leather_head_"+actual_facing+".png"
-			var art: Image = load(art_path).get_image()
-			var center := int(round((float(pose.head_rows[0][0])+float(pose.head_rows[0][1]))*.5))
-			var crown := origin+Vector2i(center,0)
-			var expected := art.get_pixel(32 if actual_facing in ["left","right"] else 31,22)
-			check(expected.a > .95 and img.get_pixelv(crown).is_equal_approx(expected),"helmet crown follows "+animation+" frame "+str(i))
-			var ear_x := int(pose.head_rows[8][1]) if actual_facing=="left" else int(pose.head_rows[8][0])
-			var reference: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://Forest/equipment/art/pose_anchors.json"))
-			var original_pose: Dictionary = reference["idle_"+actual_facing][5 if actual_facing=="left" else 0]
-			var original_ear := int(original_pose.head_rows[8][1]) if actual_facing=="left" else int(original_pose.head_rows[8][0])
-			var ear_color := art.get_pixel(int(original_pose.head_origin[0])+original_ear,30)
-			if ear_color.a < .95:
-				var darkest := 1.0
-				for ay in art.get_height():
-					for ax in art.get_width():
-						var candidate := art.get_pixel(ax,ay)
-						if candidate.a > .95 and candidate.get_luminance() < darkest:
-							darkest = candidate.get_luminance()
-							ear_color = candidate
-			check(ear_color.a > .95 and img.get_pixelv(origin+Vector2i(ear_x,8)).is_equal_approx(ear_color),"helmet covers ear in "+animation+" frame "+str(i))
-			if not prior.is_empty() and (prior.head_rows!=pose.head_rows or prior.head_origin!=pose.head_origin): outline_changes+=1
-			prior=pose
+			var plain: Image=skin.render_cel("idle",facing,i,bare_look)
+			var fit: Dictionary=Kit.helmet_fit(skin,"idle",facing,i,img,plain,bare_look)
+			check(fit.pixels>=24 and fit.inside>=0.9,"helmet crown follows "+animation+" frame "+str(i)+" %s" % fit)
+			var hair_fringe:=Kit.diff(img,skin.render_cel("idle",facing,i,hair_look))
+			var bare_hair:=Kit.diff(plain,skin.render_cel("idle",facing,i,bare_hair_look))
+			check(hair_fringe<=12 and bare_hair>24,"helmet covers hair and ears in "+animation+" frame "+str(i)+" (%d px vs %d bare)" % [hair_fringe,bare_hair])
+			if facing!="up":
+				# The face stays visible under the helmet: the skin tone reaches
+				# pixels of the helmeted head itself (not just the hands).
+				var toned:=Kit.changed(img,skin.render_cel("idle",facing,i,skin_look))
+				var head:=Kit.head_footprint(skin,"idle",facing,i,skin.look_for(helmet,player.appearance,player.equipped_light),img)
+				var face:=0
+				for p in toned:
+					if head.has(p): face+=1
+				check(face>=3,"helmet preserves the face in "+animation+" frame "+str(i)+" (%d px)" % face)
+			crops.append(Kit.crop(img,Kit.changed(img,plain)).get_data())
+			if not prior.is_empty() and prior!=pose.head: head_moves+=1
+			prior=pose.head
 			sheet.blend_rect(raw,Rect2i(0,0,64,64),Vector2i(i*64,row*128))
 			sheet.blend_rect(img,Rect2i(0,0,64,64),Vector2i(i*64,row*128+64))
+		# A glance swaps the head view: the helmet must turn with it (its pixels
+		# change against a plain, open-eyed frame, wherever it sits in the cel).
+		var plain_frame:=-1
+		for i in crops.size():
+			var p: Dictionary=motion_lib.pose("idle",facing,i)
+			if not p.has("head_view") and not p.get("blink",false):
+				plain_frame=i
+				break
+		for i in crops.size():
+			if motion_lib.pose("idle",facing,i).has("head_view"):
+				check(plain_frame>=0 and crops[i]!=crops[plain_frame],"helmet turns with the "+animation+" glance (frame %d)" % i)
 		row+=1
-	check(outline_changes>3,"idle comparison exercises actual head silhouette and position changes")
+	check(head_moves>3,"idle comparison exercises actual head position changes (%d)" % head_moves)
+	var untouched:=true
+	for facing in ["down","up","left","right"]:
+		for i in source.get_frame_count("idle_"+facing): untouched=untouched and source.get_frame_texture("idle_"+facing,i).get_image().get_data()==source_before["%s%d" % [facing,i]]
+	check(untouched,"equipping a helmet leaves the source idle cels untouched")
 	sheet.save_png("res://../art/forest-pass4/helmet-idle-comparison.png")
 	# Bed binding uses a safe location and persists through journey restore.
 	var cell:=Vector2i(0,3)

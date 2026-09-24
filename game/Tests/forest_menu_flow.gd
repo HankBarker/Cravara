@@ -89,7 +89,6 @@ func run():
 	check(get_nodes_in_group("player").is_empty(), "Returning to title removes old player")
 	check(get_nodes_in_group("forest_creatures").is_empty(), "Returning to title removes old wildlife")
 	check(current_scene.has_method("_start"), "Title returns after forest scene")
-	root.get_node("AudioManager").stop_music()
-	await create_timer(0.15).timeout
+	await preload("res://Tests/quiet_exit.gd").settle(self)
 	print("MENU FLOW: %d failures" % failures)
 	quit(failures)

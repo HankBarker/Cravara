@@ -2,14 +2,40 @@
  "parts": {
   "head_down": {
    "origin": [
-    22,
+    24,
+    13
+   ]
+  },
+  "head_down_blink": {
+   "origin": [
+    24,
     13
    ]
   },
   "torso_down": {
    "origin": [
-    22,
+    26,
     29
+   ]
+  },
+  "pauldron_m_down": {
+   "origin": [
+    35,
+    26
+   ],
+   "shoulder": [
+    36.8,
+    30.6
+   ]
+  },
+  "pauldron_o_down": {
+   "origin": [
+    22,
+    26
+   ],
+   "shoulder": [
+    27.2,
+    30.6
    ]
   },
   "boot_m_down": {
@@ -32,36 +58,36 @@
     0
    ]
   },
-  "pauldron_m_down": {
-   "origin": [
-    36,
-    29
-   ],
-   "shoulder": [
-    36.8,
-    30.6
-   ]
-  },
-  "pauldron_o_down": {
-   "origin": [
-    22,
-    29
-   ],
-   "shoulder": [
-    27.2,
-    30.6
-   ]
-  },
   "head_up": {
    "origin": [
-    22,
+    24,
     13
    ]
   },
   "torso_up": {
    "origin": [
-    22,
+    27,
     28
+   ]
+  },
+  "pauldron_m_up": {
+   "origin": [
+    34,
+    26
+   ],
+   "shoulder": [
+    37.0,
+    30.4
+   ]
+  },
+  "pauldron_o_up": {
+   "origin": [
+    22,
+    26
+   ],
+   "shoulder": [
+    27.0,
+    30.4
    ]
   },
   "boot_m_up": {
@@ -84,27 +110,13 @@
     0
    ]
   },
-  "pauldron_m_up": {
-   "origin": [
-    37,
-    28
-   ],
-   "shoulder": [
-    37.0,
-    30.4
-   ]
-  },
-  "pauldron_o_up": {
-   "origin": [
-    22,
-    28
-   ],
-   "shoulder": [
-    27.0,
-    30.4
-   ]
-  },
   "head_side": {
+   "origin": [
+    24,
+    13
+   ]
+  },
+  "head_side_blink": {
    "origin": [
     24,
     13
@@ -112,66 +124,59 @@
   },
   "torso_side": {
    "origin": [
-    26,
+    27,
     29
+   ]
+  },
+  "pauldron_m_side": {
+   "origin": [
+    26,
+    27
+   ],
+   "shoulder": [
+    30.2,
+    30.8
    ]
   },
   "boot_m_side": {
    "pivot": [
-    3.1999999999999993,
+    3.2,
     0.0
    ],
    "origin": [
     0,
     0
    ]
-  },
-  "pauldron_m_side": {
-   "origin": [
-    27,
-    30
-   ],
-   "shoulder": [
-    30.2,
-    30.8
-   ]
   }
  },
  "materials": {
   "arm_upper": [
-   "2a4e20",
+   "2e4b1b",
    "486829",
    "5e8737",
-   "5e8737",
-   "81b344"
+   "81b344",
+   "a5c56e"
   ],
   "arm_lower": [
-   "4e321b",
-   "4e321b",
+   "4f3e20",
+   "6a5a2e",
    "96794a",
-   "ebc881",
-   "ebc881"
-  ],
-  "hand": [
-   "4e321b",
-   "96794a",
-   "e09f76",
-   "e09f76",
-   "ebc881"
+   "b29a67",
+   "c4b78e"
   ],
   "leg_upper": [
-   "486829",
-   "486829",
-   "5e8737",
-   "ebc881",
-   "ebc881"
+   "091c0a",
+   "142f11",
+   "2a4e20",
+   "437531",
+   "5e8737"
   ],
   "leg_lower": [
-   "486829",
-   "486829",
-   "5e8737",
-   "ebc881",
-   "ebc881"
+   "091c0a",
+   "142f11",
+   "2a4e20",
+   "437531",
+   "5e8737"
   ]
  },
  "name": "Mossweave Warden"

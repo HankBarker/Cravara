@@ -1,0 +1,161 @@
+{
+ "styles": {
+  "cropped": true,
+  "tied": true,
+  "braid": true,
+  "curly": true,
+  "ponytail": true
+ },
+ "parts": {
+  "cropped_down": {
+   "origin": [
+    24,
+    14
+   ]
+  },
+  "cropped_down_blink": {
+   "origin": [
+    24,
+    14
+   ]
+  },
+  "cropped_up": {
+   "origin": [
+    24,
+    14
+   ]
+  },
+  "cropped_side": {
+   "origin": [
+    24,
+    14
+   ]
+  },
+  "cropped_side_blink": {
+   "origin": [
+    24,
+    14
+   ]
+  },
+  "tied_down": {
+   "origin": [
+    24,
+    14
+   ]
+  },
+  "tied_down_blink": {
+   "origin": [
+    24,
+    14
+   ]
+  },
+  "tied_up": {
+   "origin": [
+    24,
+    14
+   ]
+  },
+  "tied_side": {
+   "origin": [
+    22,
+    14
+   ]
+  },
+  "tied_side_blink": {
+   "origin": [
+    22,
+    14
+   ]
+  },
+  "braid_down": {
+   "origin": [
+    22,
+    14
+   ]
+  },
+  "braid_down_blink": {
+   "origin": [
+    22,
+    14
+   ]
+  },
+  "braid_up": {
+   "origin": [
+    24,
+    14
+   ]
+  },
+  "braid_side": {
+   "origin": [
+    23,
+    14
+   ]
+  },
+  "braid_side_blink": {
+   "origin": [
+    23,
+    14
+   ]
+  },
+  "curly_down": {
+   "origin": [
+    22,
+    13
+   ]
+  },
+  "curly_down_blink": {
+   "origin": [
+    22,
+    13
+   ]
+  },
+  "curly_up": {
+   "origin": [
+    23,
+    14
+   ]
+  },
+  "curly_side": {
+   "origin": [
+    22,
+    14
+   ]
+  },
+  "curly_side_blink": {
+   "origin": [
+    22,
+    14
+   ]
+  },
+  "ponytail_down": {
+   "origin": [
+    25,
+    13
+   ]
+  },
+  "ponytail_down_blink": {
+   "origin": [
+    25,
+    13
+   ]
+  },
+  "ponytail_up": {
+   "origin": [
+    25,
+    14
+   ]
+  },
+  "ponytail_side": {
+   "origin": [
+    20,
+    13
+   ]
+  },
+  "ponytail_side_blink": {
+   "origin": [
+    20,
+    13
+   ]
+  }
+ }
+}

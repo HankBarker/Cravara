@@ -93,10 +93,16 @@ func run():
 	Input.action_press("Right")
 	await pause(.18)
 	Input.action_release("Right")
+	# The draw pose follows the real cursor (BowController): put it right of the
+	# rider now, since other windows may have moved the OS cursor meanwhile.
+	get_viewport().warp_mouse(get_viewport().get_canvas_transform()*(player.global_position+Vector2(60,0)))
+	await get_tree().process_frame
 	check(scene.bow.begin_draw(player.position+Vector2(100,0)),"real mounted bow draw starts")
 	await pause(.70)
 	check(player.action_kind=="bow_draw" and player.animated_sprite.frame==7,"draw stays at full tension during charge")
-	check(str(player.animated_sprite.animation)=="bow_draw_right","mount does not override aiming action")
+	var aim: Vector2=player.get_global_mouse_position()-player.global_position
+	var aim_facing: String=("right" if aim.x>0 else "left") if absf(aim.x)>absf(aim.y) else ("down" if aim.y>0 else "up")
+	check(str(player.animated_sprite.animation)=="bow_draw_"+aim_facing,"mount does not override aiming action (%s, aim %s)" % [player.animated_sprite.animation,aim_facing])
 	title.text="Custom hero, seated bow draw, actual game"
 	await capture("in-game-mounted-custom-bow.png")
 	check(scene.bow.release(player.position+Vector2(100,0)),"real mounted arrow release")
@@ -107,6 +113,6 @@ func run():
 	check(mount.dismount(),"custom hero safely dismounts after firing")
 	scene.queue_free()
 	await get_tree().process_frame
-	AudioManager.stop_music()
+	await preload("res://Tests/quiet_exit.gd").settle(get_tree())
 	print("CHARACTER_PASS6_RENDER assertions=%d failures=%d" % [count,failures.size()])
 	get_tree().quit(0 if failures.is_empty() else 1)

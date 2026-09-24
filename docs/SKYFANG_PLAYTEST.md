@@ -1,5 +1,42 @@
 # Cravera: The Skyfang Wilds
 
+## Eighth pass: Keeper v2 hero, six armour sets and game feel
+
+The keeper was rebuilt as **Keeper v2**, a taller (~30 px) PixelLab-drawn hero rendered by a
+skeletal pixel rig. Helmet, chest and legs are now *parts of the body* in every frame, so
+armour can no longer slide off or vanish (the old run-left/right bug) in any animation, facing,
+tool action or while riding.
+
+1. **Armour.** Six mix-and-match sets, crafted at a workbench (tier order):
+   Mossweave Warden (forage), Trail Leather (reed perch skins), Fangbound (raptor fangs),
+   Skyshard (prism crystal), Moonscale Tidecaller (moonscale + shardfin from fishing) and
+   Emerald Tyrant (the rex's crystal scales). See [ARMOR_PROGRESSION.md](ARMOR_PROGRESSION.md).
+   Skyshard, Tidecaller and Tyrant gems glow softly at night. `tools/playtest_forest.ps1
+   -ArmorPreview` grants all 18 pieces.
+2. **Keeper's Atelier (K → Appearance).** Six hairstyles now redrawn for the new hero, skin,
+   hair, tunic and trouser colours, blinking eyes, and a Wardrobe tab that previews all six
+   sets piece by piece across 14 motions (idle, run, tools, bow, fishing, roll, cheer, eat…).
+3. **In hand.** The selected hotbar tool is held in the keeper's hand while walking, rests on
+   the shoulder in profile, and every swing (axe, pickaxe, dagger, sword, hoe, net) has an
+   anticipation, a clear impact frame (hits still land at the same moments) and
+   follow-through. Bow and fishing lines leave from the real bow and rod.
+4. **Feel.** Walking accelerates and brakes instead of snapping, footsteps kick up
+   surface-coloured dust with quiet footfalls, wading shows a waterline and splashes, hits
+   flash white with a short hitstop and gentle screen shake (toggle in Settings), and the
+   keeper turns to face whatever hit them.
+5. **New moves.** **SPACE (or Ctrl) dodge-rolls** with brief invulnerability. The keeper now
+   visibly eats, crafts (hammers at a workbench), places structures, reaches to open chests
+   and doors, cheers when a creature is tamed, and falls over on death facing any direction.
+6. **Riding.** The rider is drawn by the same rig in a seated pose on stego and trike, wearing
+   exactly the equipped armour, and keeps its legs seated while aiming the bow.
+7. **In the world.** The keeper now layers against trees, rocks and creatures by where their
+   feet stand (like everything else in the forest), so walking past a trunk no longer tucks
+   them behind it. Raised fists stay in front of shoulder guards, and skin tones reach the
+   nape under the Fangbound and Tyrant helmets.
+
+Art and code live in `game/Forest/keeper/` and `tools/keeper/`; review boards are in
+`art/keeper-v2/review/` and in-game captures in `art/keeper-v2/world/` and `art/keeper-v2/feel/`.
+
 ## Seventh-pass character wardrobe
 
 Press **K → Appearance** to open the upgraded keeper editor. Choose among six hairstyles,

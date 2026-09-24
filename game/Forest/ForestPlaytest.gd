@@ -29,6 +29,7 @@ var _has_spawn_bed := false
 var fishing: Node2D
 var gardening: Node2D
 var bow: Node2D
+var _dodge_guard := 0.0
 
 func _enter_tree():
 	SaveManager.disable_for_playtest()
@@ -117,7 +118,8 @@ func _starter_inventory():
 	InventoryManager.selected_slot_index = 0
 	if "--armor-playtest" in OS.get_cmdline_user_args() and "--no-save-playtest" in OS.get_cmdline_user_args():
 		var granted := 0
-		for material in ["leather", "bone", "crystal"]:
+		# Every armour set, tier 1-6 (moss, leather, bone, crystal, tide, rex).
+		for material in preload("res://UI/ItemDetails.gd").ARMOR_SETS:
 			for piece in ["helmet", "chestplate", "leggings"]:
 				var armor_item: Item = ItemDB.make(material+"_"+piece)
 				if armor_item:
@@ -162,6 +164,8 @@ func _process(delta):
 	var menu_open: bool = get_tree().paused or hud.is_open() or _overlay_kind != "" or is_instance_valid(DragController.dragged_slot)
 	if fishing.is_active() and (menu_open or player.respawning): fishing.cancel()
 	player.controls_locked = player.respawning or menu_open or fishing.is_active()
+	# Space reels the line: a press landing as the catch resolves is not a dodge.
+	_dodge_guard = 0.3 if fishing.is_active() else maxf(0.0, _dodge_guard - delta)
 	if player.respawning:
 		_respawn_left = maxf(0, _respawn_left - delta)
 		if is_instance_valid(_death_screen): _death_screen.set_countdown(_respawn_left)
@@ -222,7 +226,7 @@ func _update_context():
 	elif player.global_position.distance_to(get_global_mouse_position()) <= 52:
 		hud.set_context(world.get_interaction_hint(get_global_mouse_position()))
 	else:
-		hud.set_context("Tab  Satchel   K  Gear   P  Companions   Hold Q  Orders")
+		hud.set_context("Space  Roll   Tab  Satchel   K  Gear   P  Companions   Hold Q  Orders")
 
 func _draw():
 	if not is_instance_valid(player) or get_tree().paused or hud.is_open():
@@ -245,6 +249,13 @@ func _unhandled_input(event):
 		var tapped_key := _command_key
 		_command_key = 0
 		if tapped_key == KEY_E and not player.controls_locked: _interact_creature()
+		return
+	# Dodge roll (Space / Ctrl). Reaches here only when no GUI control or modal
+	# (the fishing reel owns Space) consumed the key; the player refuses rolls
+	# while mounted, acting, locked or respawning.
+	if event.is_action_pressed("dodge") and not event.is_echo():
+		if not player.controls_locked and _dodge_guard <= 0.0: player.request_roll()
+		get_viewport().set_input_as_handled()
 		return
 	if event is InputEventKey and event.pressed and not event.echo:
 		match event.physical_keycode:
@@ -322,12 +333,14 @@ func _interact_creature():
 		var aimed = world.props.get(world._target_cell(target))
 		if is_instance_valid(aimed) and _can_reach_prop(aimed) and world.interact_at(target, ""):
 			if aimed.kind in ["bush","fern","mushroom","flowers","cattail"]: player.play_action("pickup",target)
+			elif is_instance_valid(aimed): player.play_gesture("interact", aimed.global_position)
 			if world.last_feedback != "": _toast(world.last_feedback)
 			return
 	var creature = _nearest_creature()
 	var prop = _interaction_prop()
 	if prop and (not creature or _prop_distance(prop) < creature.global_position.distance_to(player.global_position)):
 		if world.interact_at(prop.global_position, ""):
+			if is_instance_valid(prop): player.play_gesture("interact", prop.global_position)
 			if world.last_feedback != "": _toast(world.last_feedback)
 			return
 	if not creature:
@@ -463,6 +476,8 @@ func _use_selected():
 			_milestones["water"] = true
 		elif item.placeable:
 			_milestones["build"] = true
+			player.play_gesture("place", target)
+			AudioManager.play_sfx("place_object")
 	else:
 		_toast(world.last_feedback if world.last_feedback != "" else "Cannot use " + item.name + " here.")
 
@@ -483,10 +498,30 @@ func _garden_placement_cells(target: Vector2, item_id: String) -> Array[Vector2i
 func _on_crafted(id: String):
 	_milestones["craft"] = true
 	_milestones["craft_" + id] = true
+	# Station work shows on the Keeper behind the open satchel: hammering at the
+	# workbench, a quick reach at the campfire. By-hand crafting stays still.
+	var station: String = str(CraftingManager.get_recipe(id).get("station", ""))
+	var spot = _nearest_station(station)
+	if spot:
+		player.play_gesture("craft" if station == "workbench" else "interact", spot.global_position)
+
+func _nearest_station(kind: String) -> Node2D:
+	if kind == "": return null
+	var nearest: Node2D = null
+	var distance := 72.0
+	for prop in world.props.values():
+		if is_instance_valid(prop) and prop.kind == kind and prop.global_position.distance_to(player.global_position) < distance:
+			distance = prop.global_position.distance_to(player.global_position)
+			nearest = prop
+	return nearest
 
 func _on_tamed(_creature):
 	_milestones["tame"] = true
 	_toast("Trust earned. Your new companion will follow you.")
+	# A happy hop once the taming pet/feed action (which faces the new friend)
+	# has played out.
+	if is_instance_valid(player):
+		player.queue_gesture("cheer")
 
 func _on_pickup(item: Item, _quantity: int):
 	if item.id in ["log", "stone", "crystal_shard"]:

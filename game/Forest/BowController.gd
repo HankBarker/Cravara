@@ -75,6 +75,9 @@ func _physics_process(delta: float):
 	if not is_instance_valid(player): return
 	cooldown=maxf(0,cooldown-delta)
 	_release_flash=maxf(0,_release_flash-delta)
+	# Aiming away from the camera, the string and nocked arrow are behind the
+	# keeper's head; otherwise they read in front of the body.
+	z_index=-1 if drawing and _aim.y < -absf(_aim.x) else 5
 	if drawing:
 		if not selected() or player.controls_locked or player.respawning or session.hud.is_open(): cancel()
 		else:
@@ -125,8 +128,10 @@ func _draw():
 	if player.has_method("tool_tip_position"):
 		var tip: Vector2=player.global_position+player.tool_tip_position()+seat
 		if tip.distance_to(grip)>0.5: along=grip.direction_to(tip)
-	var top: Vector2=(grip+along*6).round()
-	var bottom: Vector2=(grip-along*6).round()
+	# The rig's reed bow is braced: its tips sit 3 px behind the grip (towards
+	# the archer), so the string runs tip to tip behind the belly.
+	var top: Vector2=(grip+along*6.5-_aim*3.0).round()
+	var bottom: Vector2=(grip-along*6.5-_aim*3.0).round()
 	if drawing:
 		draw_polyline(PackedVector2Array([top,nock.round(),bottom]),Color("e0d1ad"),1)
 		draw_line(nock.round(),(nock+_aim*11).round(),Color("d9c39a"),1)

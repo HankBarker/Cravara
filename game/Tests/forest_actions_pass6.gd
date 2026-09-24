@@ -91,6 +91,6 @@ func run():
 	await shot("06-forest-survivor")
 	stage.queue_free()
 	await get_tree().process_frame
-	AudioManager.stop_music()
+	await preload("res://Tests/quiet_exit.gd").settle(get_tree())
 	print("FOREST_ACTIONS_PASS6 assertions=%d failures=%d" % [checks,failures])
 	get_tree().quit(0 if failures==0 else 1)

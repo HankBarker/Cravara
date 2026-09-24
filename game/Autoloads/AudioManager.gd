@@ -13,6 +13,13 @@ var _music_path := ""
 var _tone_cache: Dictionary = {}
 var _last_foley: Dictionary = {}
 const LEATHER_CUES := {"equip_gear":"equip-gear","unequip_gear":"unequip-gear","satchel_open":"satchel-open","satchel_close":"satchel-close"}
+# Procedural movement/combat foley (res://Forest/audio/generated, made by
+# make_feel_sfx.py). Each family is an AudioStreamRandomizer: random variant,
+# never the same one twice in a row, small pitch/level spread.
+const GENERATED_FOLEY := "res://Forest/audio/generated/%s_%d.wav"
+# Legacy cue names that now use a generated family: [family, dB, pitch].
+const GENERATED_CUES := {"player_hurt":["hurt", -10.0, 1.0], "player_death":["hurt", -8.0, 0.8], "hit":["hit", -11.0, 0.95]}
+var _foley_banks: Dictionary = {}
 
 func get_leather_cue_path(sfx_name: String) -> String:
 	return "res://Forest/audio/leather/%s.ogg" % LEATHER_CUES[sfx_name] if LEATHER_CUES.has(sfx_name) else ""
@@ -29,6 +36,7 @@ func get_foley_path(sfx_name: String, variant: int) -> String:
 func _exit_tree():
 	stop_music()
 	_tone_cache.clear()
+	_foley_banks.clear()
 
 func stop_music():
 	if is_instance_valid(_music_player):
@@ -93,6 +101,10 @@ func _apply_volumes():
 
 func play_sfx(sfx_name: String):
 	if sfx_volume <= 0.01 or DisplayServer.get_name()=="headless":
+		return
+	if GENERATED_CUES.has(sfx_name) and _foley_bank(GENERATED_CUES[sfx_name][0]) != null:
+		var cue: Array = GENERATED_CUES[sfx_name]
+		play_foley(cue[0], cue[1], cue[2])
 		return
 	var leather_path := get_leather_cue_path(sfx_name)
 	if leather_path != "":
@@ -204,3 +216,35 @@ func _play_sample(path: String, volume: float):
 	add_child(voice)
 	voice.finished.connect(voice.queue_free)
 	voice.play()
+
+## Quiet generated foley (footsteps, splashes, whooshes, hits). volume_db is
+## the playback level (footsteps sit around -16..-20 dB); pitch multiplies the
+## bank's own +-6% jitter. Headless runs stay silent.
+func play_foley(family: String, volume_db := -18.0, pitch := 1.0) -> void:
+	if sfx_volume <= 0.01 or DisplayServer.get_name() == "headless":
+		return
+	var bank := _foley_bank(family)
+	if bank == null:
+		return
+	var voice := AudioStreamPlayer.new()
+	voice.bus = "SFX"
+	voice.stream = bank
+	voice.volume_db = volume_db
+	voice.pitch_scale = pitch
+	add_child(voice)
+	voice.finished.connect(voice.queue_free)
+	voice.play()
+
+func _foley_bank(family: String) -> AudioStreamRandomizer:
+	if _foley_banks.has(family):
+		return _foley_banks[family]
+	var bank := AudioStreamRandomizer.new()
+	bank.playback_mode = AudioStreamRandomizer.PLAYBACK_RANDOM_NO_REPEATS
+	bank.random_pitch = 1.06
+	bank.random_volume_offset_db = 1.5
+	var count := 0
+	while ResourceLoader.exists(GENERATED_FOLEY % [family, count]):
+		bank.add_stream(-1, load(GENERATED_FOLEY % [family, count]))
+		count += 1
+	_foley_banks[family] = bank if count > 0 else null
+	return _foley_banks[family]

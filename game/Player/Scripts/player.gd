@@ -15,6 +15,15 @@ var is_invulnerable := false
 var invulnerability_duration := 0.6
 var knockback_velocity := Vector2.ZERO
 var knockback_friction := 800.0
+var hurt_from := Vector2.INF   # where the last accepted hit came from (Hurt faces it)
+
+# Movement feel: velocity eases toward the input target instead of snapping.
+# Snappy on purpose: walk speed in ~4 frames, a stop in ~3, a reversal in ~7.
+const MOVE_ACCEL := 1100.0   # px/s^2 speeding up or steering gently
+const MOVE_DECEL := 1400.0   # px/s^2 braking to a stop or to a slower target
+const MOVE_TURN := 2000.0    # px/s^2 sharp turns and reversals (a short skid)
+const FACING_HYSTERESIS := 1.2  # the other axis must beat the current one by this ratio
+var move_accel_scale := 1.0  # < 1 for heavier footing (the forest sets it while wading)
 
 # Armor / defense
 var defense := 0
@@ -75,10 +84,12 @@ func switch_state(state_name: String):
 		print("Tried to switch to missing state:", state_name)
 
 func _physics_process(delta):
-	# Apply knockback decay
-	if knockback_velocity.length() > 5.0:
+	# Knockback decays here and is layered onto each step by move_with_knockback(),
+	# so a shove never accumulates into the body's own walking velocity.
+	if knockback_velocity != Vector2.ZERO:
 		knockback_velocity = knockback_velocity.move_toward(Vector2.ZERO, knockback_friction * delta)
-		velocity += knockback_velocity
+		if knockback_velocity.length() <= 5.0:
+			knockback_velocity = Vector2.ZERO
 
 	if current_state and current_state.has_method("update_state"):
 		current_state.update_state(delta)
@@ -145,17 +156,71 @@ func get_movement_input() -> Vector2:
 	var input = Vector2.ZERO
 	if Input.is_action_pressed("Right"):
 		input.x += 1
-		last_facing = "right"
 	elif Input.is_action_pressed("Left"):
 		input.x -= 1
-		last_facing = "left"
 	if Input.is_action_pressed("Down"):
 		input.y += 1
-		last_facing = "down"
 	elif Input.is_action_pressed("Up"):
 		input.y -= 1
-		last_facing = "up"
+	if input != Vector2.ZERO:
+		last_facing = facing_for(input, last_facing)
 	return input.normalized()
+
+## Four-way facing for a direction, with hysteresis: near diagonals the current
+## axis is kept, so walking diagonally never flickers between two views.
+static func facing_for(dir: Vector2, current: String) -> String:
+	var ax := absf(dir.x)
+	var ay := absf(dir.y)
+	if current in ["left", "right"] and ax > 0.0 and ay <= ax * FACING_HYSTERESIS:
+		return "right" if dir.x > 0 else "left"
+	if current in ["up", "down"] and ay > 0.0 and ax <= ay * FACING_HYSTERESIS:
+		return "down" if dir.y > 0 else "up"
+	if ax > ay:
+		return "right" if dir.x > 0 else "left"
+	return "down" if dir.y > 0 else "up"
+
+## Turn (without hysteresis) toward a world point.
+func face_toward(point: Vector2) -> void:
+	var aim := point - global_position
+	if aim.length_squared() < 0.01:
+		return
+	last_facing = ("right" if aim.x > 0 else "left") if absf(aim.x) > absf(aim.y) else ("down" if aim.y > 0 else "up")
+
+## Ease the body's own velocity toward `target` (px/s), then move with any
+## knockback layered on top. Stopping and turning brake harder than starting.
+func locomote(target: Vector2, delta: float) -> void:
+	var rate := MOVE_ACCEL
+	var speed_sq := velocity.length_squared()
+	if target == Vector2.ZERO or target.length_squared() < speed_sq - 1.0:
+		rate = MOVE_DECEL
+	if speed_sq > 1.0 and target != Vector2.ZERO and velocity.dot(target) < 0.3 * sqrt(speed_sq) * target.length():
+		rate = MOVE_TURN
+		if speed_sq > 8100.0:
+			_locomotion_event("skid")
+	elif target == Vector2.ZERO and speed_sq > 9025.0:
+		_locomotion_event("brake")
+	velocity = velocity.move_toward(target, rate * move_accel_scale * delta)
+	move_with_knockback()
+
+## move_and_slide() with this frame's knockback added for the step only; walls
+## still trim the body's own velocity so pushing into them never banks speed.
+func move_with_knockback() -> void:
+	if knockback_velocity == Vector2.ZERO:
+		move_and_slide()
+		return
+	var own := velocity
+	velocity = own + knockback_velocity
+	move_and_slide()
+	for i in get_slide_collision_count():
+		var normal := get_slide_collision(i).get_normal()
+		if own.dot(normal) < 0.0:
+			own = own.slide(normal)
+	velocity = own
+
+## Hook for feedback on locomotion moments ("skid", "brake"); the forest player
+## turns these into dust. Intentionally empty here.
+func _locomotion_event(_kind: String) -> void:
+	pass
 
 func _on_SwordHitbox_area_entered(area):
 	if area.name == "Hurtbox":
@@ -189,9 +254,11 @@ func take_damage(amount: int, attacker = null):
 	SignalBus.player_health_changed.emit(current_health, max_health)
 
 	# Knockback away from attacker
+	hurt_from = Vector2.INF
 	if attacker and is_instance_valid(attacker):
 		var knockback_dir = (global_position - attacker.global_position).normalized()
 		knockback_velocity = knockback_dir * 200.0
+		hurt_from = attacker.global_position
 
 	# Play hit sound
 	AudioManager.play_sfx("player_hurt")

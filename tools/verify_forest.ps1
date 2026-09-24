@@ -40,7 +40,13 @@ $suites = @(
     @{Name='save-compat-pass6'; Args=@('res://Tests/ForestSaveCompatPass6.tscn')},
     @{Name='wardrobe-pass7'; Args=@('res://Tests/WardrobePass7.tscn')},
     @{Name='wardrobe-editor-pass7'; Args=@('res://Tests/WardrobeEditorPass7.tscn')},
-    @{Name='wardrobe-save-pass7'; Args=@('res://Tests/WardrobeSavePass7.tscn')}
+    @{Name='wardrobe-save-pass7'; Args=@('res://Tests/WardrobeSavePass7.tscn')},
+    # Keeper v2 rig contracts: armour on every cel of every clip, facing and set.
+    @{Name='keeper-rig-pass8'; Args=@('--script','res://Tests/keeper_rig_pass8.gd')},
+    @{Name='armor-capture-pass8'; Args=@('res://Tests/ArmorWardrobeCapture.tscn')},
+    @{Name='keeper-feel-pass8'; Args=@('res://Tests/KeeperFeelCapture.tscn')},
+    # The Keeper Y-sorts by his feet: in front of a trunk his feet stand before.
+    @{Name='keeper-sort-pass8'; Args=@('res://Tests/KeeperSortCapture.tscn')}
 )
 if ($FromSuite -ne '' -and $FromSuite -notin $suites.Name) { throw ('Unknown suite: ' + $FromSuite) }
 $started = $FromSuite -eq ''
@@ -48,12 +54,21 @@ foreach ($suite in $suites) {
     if ($suite.Name -eq $FromSuite) { $started = $true }
     if (-not $started) { continue }
     $logFile = Join-Path $logDirectory ('suite-' + $suite.Name + '.log')
-    [string[]]$mode = @(if ($suite.Name -in @('gui-input','menu-flow','ui-pass2','ui-pass3','ui-pass4','interaction-pass4','mount-render-pass4','fishing-pass5','rider-render-pass5','ui-pass6','actions-pass6','character-render-pass6','wardrobe-editor-pass7')) { '--rendering-method'; 'gl_compatibility'; '--resolution'; '960x540' } else { '--headless' })
+    [string[]]$mode = @(if ($suite.Name -in @('gui-input','menu-flow','ui-pass2','ui-pass3','ui-pass4','interaction-pass4','mount-render-pass4','fishing-pass5','rider-render-pass5','ui-pass6','actions-pass6','character-render-pass6','wardrobe-editor-pass7','keeper-feel-pass8','keeper-sort-pass8')) { '--rendering-method'; 'gl_compatibility'; '--resolution'; '960x540' } else { '--headless' })
     # Bound power use and give timer-based UI/death tests enough real time even
     # after rendering optimizations greatly increase the available frame rate.
-    $arguments = $mode + @('--path',$gameDirectory,'--max-fps','120','--quit-after','14400') + $suite.Args + @('--','--no-save-playtest') + $suite.UserArgs
-    & $godotBinary @arguments 2>&1 | Out-File -LiteralPath $logFile -Encoding utf8
+    # The Dummy audio driver still mixes in real time, so rendered suites no
+    # longer depend on the machine's output device: a stalled or missing device
+    # never stops playbacks and Godot reports them as resources in use at exit.
+    $arguments = $mode + @('--audio-driver','Dummy','--path',$gameDirectory,'--max-fps','120','--quit-after','14400') + $suite.Args + @('--','--no-save-playtest') + $suite.UserArgs
+    # Windows PowerShell wraps each engine stderr line (WARNING:, ERROR:,
+    # SCRIPT ERROR:) in an error record; under 'Stop' the first one aborted the
+    # run before the log below was checked. Log both streams as plain lines so
+    # the ERROR-line check sees exactly what Godot printed.
+    $ErrorActionPreference = 'Continue'
+    & $godotBinary @arguments 2>&1 | ForEach-Object { "$_" } | Out-File -LiteralPath $logFile -Encoding utf8
     $engineExit = $LASTEXITCODE
+    $ErrorActionPreference = 'Stop'
     $logText = Get-Content -LiteralPath $logFile -Raw
     if ($engineExit -ne 0 -or $logText -match '(?m)^(SCRIPT ERROR|ERROR):' -or $logText -notmatch '(FOREST_WORLD_TEST_PASS|failures=0|0 failures)') {
         Write-Output $logText

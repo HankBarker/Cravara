@@ -1,13 +1,14 @@
-[gd_resource type="Resource" script_class="Item" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/equipment/art/wardrobe/icons/leather_chestplate.png" id="2"]
 
 [resource]
 script = ExtResource("1")
 id = "leather_chestplate"
-name = "Leather Chestplate"
-description = "A sturdy chestplate from T-Rex hide. +5 Defense."
-icon_generator = "armor_chest"
+name = "Trail Leather Tunic"
+description = "A laced tunic of river-cured leather, supple enough to wade in and tough enough to turn a claw."
+icon = ExtResource("2")
 max_stack = 1
 rarity = "common"
 armor_slot = "chest"

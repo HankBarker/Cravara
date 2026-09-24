@@ -1,14 +1,15 @@
-[gd_resource type="Resource" script_class="Item" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/equipment/art/wardrobe/icons/leather_helmet.png" id="2"]
 
 [resource]
 script = ExtResource("1")
 id = "leather_helmet"
-name = "Leather Helmet"
-description = "A basic helmet made from T-Rex hide. +2 Defense."
-icon_generator = "armor_head"
+name = "Trail Leather Cap"
+description = "A trail cap of river leather: reed perch skins cured over bark smoke and stitched with fiber."
+icon = ExtResource("2")
 max_stack = 1
 rarity = "common"
 armor_slot = "head"
-defense = 2
+defense = 3

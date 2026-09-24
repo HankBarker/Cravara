@@ -1,29 +1,70 @@
 ﻿Godot Engine v4.6.1.stable.official.14d19694e - https://godotengine.org
 
-📦 ItemDB loaded 62 items: basic_axe, basic_pickaxe, berry, berry_compote, berry_seed, bone_arrow, bone_chestplate, bone_dagger, bone_helmet, bone_leggings, bucket, campfire, chest, cooked_fish, cooked_meat, crystal_axe, crystal_chestplate, crystal_flask, crystal_helmet, crystal_leggings, crystal_pendant, crystal_pickaxe, crystal_shard, dodo_egg, fishing_rod, forest_omelet, garden_hoe, hide_bed, hunter_charm, lantern, leather_chestplate, leather_helmet, leather_leggings, log, moonscale, mushroom, mushroom_potion, mushroom_spore, net, plank, plant_fiber, prism_crystal, raptor_fang, reed_bow, reed_perch, river_totem, shardfin, shard_sword, stego_saddle, stone, tent, thatch_roof, torch, trex_meat, trex_scale, trike_saddle, water_bucket, water_flask, wood_door, wood_floor, wood_wall, workbench
-PASS down seated head torso and arms exactly match actual current hero cel
+📦 ItemDB loaded 71 items: basic_axe, basic_pickaxe, berry, berry_compote, berry_seed, bone_arrow, bone_chestplate, bone_dagger, bone_helmet, bone_leggings, bucket, campfire, chest, cooked_fish, cooked_meat, crystal_axe, crystal_chestplate, crystal_flask, crystal_helmet, crystal_leggings, crystal_pendant, crystal_pickaxe, crystal_shard, dodo_egg, fishing_rod, forest_omelet, garden_hoe, hide_bed, hunter_charm, lantern, leather_chestplate, leather_helmet, leather_leggings, log, moonscale, moss_chestplate, moss_helmet, moss_leggings, mushroom, mushroom_potion, mushroom_spore, net, plank, plant_fiber, prism_crystal, raptor_fang, reed_bow, reed_perch, rex_chestplate, rex_helmet, rex_leggings, river_totem, shardfin, shard_sword, stego_saddle, stone, tent, thatch_roof, tide_chestplate, tide_helmet, tide_leggings, torch, trex_meat, trex_scale, trike_saddle, water_bucket, water_flask, wood_door, wood_floor, wood_wall, workbench
+PASS down seated rider keeps the standing hero's exact head, face and hair
 PASS down seated pose introduces no foreign skin or palette colors
-PASS down source leg clusters are reposed for sitting
-PASS down basic cloth visible without armor
+PASS down source leg clusters are reposed for sitting (85 px)
+PASS down riding hips sit on the saddle point (32,39): (32.0, 38.6)
+PASS down seated rider wears the equipped armour
+PASS down basic cloth visible without armor (tunic takes the dye)
 PASS down cloth preserves identity face and hair pixels
-PASS right seated head torso and arms exactly match actual current hero cel
+PASS right seated rider keeps the standing hero's exact head, face and hair
 PASS right seated pose introduces no foreign skin or palette colors
-PASS right source leg clusters are reposed for sitting
-PASS right basic cloth visible without armor
+PASS right source leg clusters are reposed for sitting (50 px)
+PASS right riding hips sit on the saddle point (32,39): (32.0, 38.6)
+PASS right seated rider wears the equipped armour
+PASS right basic cloth visible without armor (tunic takes the dye)
 PASS right cloth preserves identity face and hair pixels
-PASS left seated head torso and arms exactly match actual current hero cel
+PASS left seated rider keeps the standing hero's exact head, face and hair
 PASS left seated pose introduces no foreign skin or palette colors
-PASS left source leg clusters are reposed for sitting
-PASS left basic cloth visible without armor
+PASS left source leg clusters are reposed for sitting (50 px)
+PASS left riding hips sit on the saddle point (32,39): (32.0, 38.6)
+PASS left seated rider wears the equipped armour
+PASS left basic cloth visible without armor (tunic takes the dye)
 PASS left cloth preserves identity face and hair pixels
-PASS up seated head torso and arms exactly match actual current hero cel
+PASS up seated rider keeps the standing hero's exact head, face and hair
 PASS up seated pose introduces no foreign skin or palette colors
-PASS up source leg clusters are reposed for sitting
-PASS up basic cloth visible without armor
+PASS up source leg clusters are reposed for sitting (89 px)
+PASS up riding hips sit on the saddle point (32,39): (32.0, 38.6)
+PASS up seated rider wears the equipped armour
+PASS up basic cloth visible without armor (tunic takes the dye)
 PASS up cloth preserves identity face and hair pixels
+PASS bow_draw down mounted action keeps the riding legs on every frame
+PASS bow_draw down seated action differs from the standing one
+PASS bow_draw right mounted action keeps the riding legs on every frame
+PASS bow_draw right seated action differs from the standing one
+PASS bow_draw left mounted action keeps the riding legs on every frame
+PASS bow_draw left seated action differs from the standing one
+PASS bow_draw up mounted action keeps the riding legs on every frame
+PASS bow_draw up seated action differs from the standing one
+PASS bow_release down mounted action keeps the riding legs on every frame
+PASS bow_release down seated action differs from the standing one
+PASS bow_release right mounted action keeps the riding legs on every frame
+PASS bow_release right seated action differs from the standing one
+PASS bow_release left mounted action keeps the riding legs on every frame
+PASS bow_release left seated action differs from the standing one
+PASS bow_release up mounted action keeps the riding legs on every frame
+PASS bow_release up seated action differs from the standing one
+PASS sword down mounted action keeps the riding legs on every frame
+PASS sword down seated action differs from the standing one
+PASS sword right mounted action keeps the riding legs on every frame
+PASS sword right seated action differs from the standing one
+PASS sword left mounted action keeps the riding legs on every frame
+PASS sword left seated action differs from the standing one
+PASS sword up mounted action keeps the riding legs on every frame
+PASS sword up seated action differs from the standing one
+PASS axe down mounted action keeps the riding legs on every frame
+PASS axe down seated action differs from the standing one
+PASS axe right mounted action keeps the riding legs on every frame
+PASS axe right seated action differs from the standing one
+PASS axe left mounted action keeps the riding legs on every frame
+PASS axe left seated action differs from the standing one
+PASS axe up mounted action keeps the riding legs on every frame
+PASS axe up seated action differs from the standing one
 PASS cosmetic baseline grants no armor or defense
-PASS leather crown reads predominantly dark brown and darker than source blonde hair
+PASS leather crown reads predominantly dark brown and darker than source blonde hair (189 px, 0.51 brown)
 PASS source-first rider mounts
+PASS mounted rider sprite is visible in the composite (180 px added, head drawn)
 PASS mounted player retains live separate hurtbox
 PASS movement body collision still delegates to dinosaur
 PASS mounted attack works with zero legacy energy
@@ -39,4 +80,4 @@ PASS enclosed knockoff lands inside existing mount footprint without crossing wa
 PASS rider can remount before lethal hit
 PASS rider death detaches before respawn independently of living mount
 PASS player death does not kill or heal the mount
-FOREST_RIDER_PASS5 assertions=38 failures=0
+FOREST_RIDER_PASS5 assertions=79 failures=0

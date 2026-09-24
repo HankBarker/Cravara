@@ -244,10 +244,19 @@ func pose(animation: String, index: int) -> Dictionary:
 		var mirror: bool = p.get("mirror", false)
 		var hand: Vector2 = j.hand_m
 		var off: Vector2 = j.hand_o
+		var head: Vector2 = j.head
 		var angle: float = float(p.get("tool", {}).get("angle", -45.0))
+		if p.has("rot"):
+			# The cel is turned before it is mirrored (KeeperRig.render).
+			var pivot: Vector2 = p.get("pivot", Vector2(32, 38))
+			hand = _rig.rotated_point(hand, int(p.rot), pivot)
+			off = _rig.rotated_point(off, int(p.rot), pivot)
+			head = _rig.rotated_point(head, int(p.rot), pivot)
+			angle += posmod(int(round(float(p.rot) / 90.0)), 4) * 90.0
 		if mirror:
 			hand = Vector2(64.0 - hand.x, hand.y)
 			off = Vector2(64.0 - off.x, off.y)
+			head = Vector2(64.0 - head.x, head.y)
 			angle = 180.0 - angle
 		var reach := 12.0
 		var rule: String = _motion.held_rule(kind)
@@ -262,7 +271,7 @@ func pose(animation: String, index: int) -> Dictionary:
 			"tip": [hand.x + cos(deg_to_rad(angle)) * reach, hand.y + sin(deg_to_rad(angle)) * reach],
 			"view": p.view,
 			"mirror": mirror,
-			"head": [32.0 + (j.head.x - 32.0) * (-1.0 if mirror else 1.0), j.head.y],
+			"head": [head.x, head.y],
 		}
 	else:
 		out = {"hand": [35, 36], "offhand": [29, 36], "tool_angle": -45.0, "tool_layer": "front", "holds_tool": false, "tip": [44, 27]}

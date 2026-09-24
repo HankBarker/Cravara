@@ -3,6 +3,7 @@ var player
 var count := 0
 var failures: Array[String] = []
 const CREATURE = preload("res://Forest/creatures/ForestCreature.gd")
+const Kit = preload("res://Tests/keeper_test_kit.gd")
 func _enter_tree(): SaveManager.disable_for_playtest()
 func _ready():
 	player = preload("res://Player/player.tscn").instantiate()
@@ -43,57 +44,81 @@ func run():
 	if not "--no-save-playtest" in OS.get_cmdline_user_args():
 		get_tree().quit(1)
 		return
+	# The rider is the Keeper rig's "ride" pose (MountedAppearance), dressed
+	# with the same look as the standing hero.
 	var skin = preload("res://Forest/equipment/EquipmentSkin.gd").new()
-	var cloth: SpriteFrames = skin.build(player._base_frames,{},null)
+	var sh: Dictionary = skin.shared()
+	var bare_look: Dictionary = skin.look_for({},{})
+	var leather_look: Dictionary = skin.look_for({"head":ItemDB.make("leather_helmet"),"chest":ItemDB.make("leather_chestplate"),"legs":ItemDB.make("leather_leggings")},{})
+	var dyed_look: Dictionary = skin.look_for({},{"cloth":"river"})
+	# Every colour the standing and acting hero uses; the seated rider adds none.
+	var hero_palette: Dictionary = Kit.palette(skin,bare_look,sh.motion.kinds().filter(func(kind): return kind != "ride"))
 	for dir in ["down","right","left","up"]:
 		var original: Image = player._base_frames.get_frame_texture("idle_"+dir,0).get_image()
-		var rider_path: String = "res://Forest/creatures/mount_art/rider_"+dir+".png"
-		var seated: Image = load(rider_path).get_image()
-		var same := true
-		var palette := {}
-		for y in 64:
-			for x in 64:
-				palette[original.get_pixel(x,y).to_rgba32()] = true
-				if y<40 and (original.get_pixel(x,y).a>0 or seated.get_pixel(x,y).a>0) and original.get_pixel(x,y) != seated.get_pixel(x,y): same = false
-		check(same,dir+" seated head torso and arms exactly match actual current hero cel")
-		var colors_match := true
-		for y in 64:
-			for x in 64:
-				if seated.get_pixel(x,y).a>0 and not palette.has(seated.get_pixel(x,y).to_rgba32()): colors_match=false
-		check(colors_match,dir+" seated pose introduces no foreign skin or palette colors")
-		check(original.get_data()!=seated.get_data(),dir+" source leg clusters are reposed for sitting")
-		var dressed: Image = cloth.get_frame_texture("idle_"+dir,0).get_image()
-		check(dressed.get_data()!=original.get_data(),dir+" basic cloth visible without armor")
+		var seated: Image = skin.render_cel("ride",dir,0,bare_look)
+		var seated_head := Kit.crop(seated,Kit.head_footprint(skin,"ride",dir,0,bare_look,seated))
+		var standing_head := Kit.crop(original,Kit.head_footprint(skin,"idle",dir,0,bare_look,original))
+		check(seated_head.get_width()>=8 and seated_head.get_size()==standing_head.get_size() and seated_head.get_data()==standing_head.get_data(),dir+" seated rider keeps the standing hero's exact head, face and hair")
+		check(Kit.foreign_pixels(seated,hero_palette)==0,dir+" seated pose introduces no foreign skin or palette colors")
+		var legs_moved := 0
+		for p in Kit.changed(original,seated):
+			if p.y >= 38: legs_moved += 1
+		check(legs_moved>=8,dir+" source leg clusters are reposed for sitting (%d px)" % legs_moved)
+		var joints: Dictionary = sh.rig.solve(sh.motion.pose("ride",dir,0))
+		var hips: Vector2 = (joints.hip_m+joints.hip_o)/2.0
+		check(absf(hips.x-32.0)<=1.0 and absf(hips.y-39.0)<=1.0,dir+" riding hips sit on the saddle point (32,39): %s" % hips)
+		check(Kit.diff(seated,skin.render_cel("ride",dir,0,leather_look))>30,dir+" seated rider wears the equipped armour")
+		var cloth := Kit.changed(original,skin.render_cel("idle",dir,0,dyed_look))
+		check(cloth.size()>=8,dir+" basic cloth visible without armor (tunic takes the dye)")
+		var head := Kit.head_footprint(skin,"idle",dir,0,bare_look,original)
 		var face_same := true
-		for y in 35:
-			for x in 64:
-				if dressed.get_pixel(x,y)!=original.get_pixel(x,y): face_same=false
+		for p in cloth:
+			if head.has(p): face_same = false
 		check(face_same,dir+" cloth preserves identity face and hair pixels")
+	# Mounted actions (bow, swings) keep the riding legs; only the upper body acts.
+	for kind in ["bow_draw","bow_release","sword","axe"]:
+		for dir in ["down","right","left","up"]:
+			var ride_joints: Dictionary = sh.rig.solve(sh.motion.pose("ride",dir,0))
+			var same_legs := true
+			var differs := false
+			for i in sh.motion.info(kind).frames:
+				var j: Dictionary = sh.rig.solve(sh.motion.pose(kind,dir,i,true))
+				for joint in ["hip_m","hip_o","knee_m","knee_o","foot_m","foot_o"]:
+					if j[joint].distance_to(ride_joints[joint])>0.01: same_legs = false
+				differs = differs or Kit.diff(skin.render_cel(kind,dir,i,bare_look,"",true),skin.render_cel(kind,dir,i,bare_look))>4
+			check(same_legs,kind+" "+dir+" mounted action keeps the riding legs on every frame")
+			check(differs,kind+" "+dir+" seated action differs from the standing one")
 	check(player.defense==0 and player.equipped_armor.head==null,"cosmetic baseline grants no armor or defense")
 	player._set_equipment("head",ItemDB.make("leather_helmet"))
+	player.finish_skin()
 	var helmet: Image = player.animated_sprite.sprite_frames.get_frame_texture("idle_down",0).get_image()
-	# Judge the whole crown material, allowing pale stitching and its fastener.
-	# A single fixed pixel can legitimately become a highlight in revised art.
+	# Judge the whole helmet material against the blonde hair it replaces,
+	# allowing pale stitching and highlights in revised art.
 	var bare_head: Image = player._base_frames.get_frame_texture("idle_down",0).get_image()
-	var crown_pose: Dictionary = skin.pose("idle_down",0)
 	var crown_luma := 0.0
 	var hair_luma := 0.0
 	var dark_brown := 0
 	var samples := 0
-	for y in 6:
-		for x in range(int(crown_pose.head_rows[y][0]),int(crown_pose.head_rows[y][1])+1):
-			var at := Vector2i(int(crown_pose.head_origin[0])+x,int(crown_pose.head_origin[1])+y)
-			var color := helmet.get_pixelv(at)
-			var source_color := bare_head.get_pixelv(at)
-			if source_color.a < .95: continue
-			samples += 1
-			crown_luma += color.get_luminance()
-			hair_luma += source_color.get_luminance()
-			if color.a > .95 and color.get_luminance()<.5 and color.r>color.g and color.g>color.b: dark_brown += 1
-	check(samples>20 and crown_luma/samples<.5 and crown_luma<hair_luma*.8 and float(dark_brown)/samples>.6,"leather crown reads predominantly dark brown and darker than source blonde hair")
+	for at in Kit.changed(bare_head,helmet):
+		var color := helmet.get_pixelv(at)
+		var source_color := bare_head.get_pixelv(at)
+		if color.a < .95 or source_color.a < .95: continue
+		samples += 1
+		crown_luma += color.get_luminance()
+		hair_luma += source_color.get_luminance()
+		if color.get_luminance()<.5 and color.r>color.g and color.g>color.b: dark_brown += 1
+	check(samples>20 and crown_luma/samples<.5 and crown_luma<hair_luma*.8 and float(dark_brown)/samples>.45,"leather crown reads predominantly dark brown and darker than source blonde hair (%d px, %.2f brown)" % [samples,float(dark_brown)/maxf(1,samples)])
 	player._set_equipment("head",null)
 	var mount = spawn("stego",Vector2.ZERO,true)
 	check(mount.mount(player),"source-first rider mounts")
+	# The hero sprite hides; the mount's composite frames carry the seated rider:
+	# the rider's exact head sprite is drawn, unoccluded, above the saddle.
+	var composite: Image = mount._sprite.sprite_frames.get_frame_texture("idle_side",0).get_image()
+	var creature_only: Image = preload("res://Forest/creatures/MountedAppearance.gd").new().build("stego").get_frame_texture("idle_side",0).get_image()
+	var ride_cel: Image = skin.render_cel("ride","right",0,bare_look)
+	var rider_head := Kit.crop(ride_cel,Kit.head_footprint(skin,"ride","right",0,bare_look,ride_cel))
+	var added: int = Kit.opaque(composite)-Kit.opaque(creature_only)
+	check(not player.animated_sprite.visible and Kit.contains_sprite(composite,rider_head) and added>=Kit.opaque(ride_cel)/3,"mounted rider sprite is visible in the composite (%d px added, head drawn)" % added)
 	check(player.get_node("PlayerHurtbox").collision_layer!=0 and player.get_node("PlayerHurtbox").collision_mask!=0,"mounted player retains live separate hurtbox")
 	check(player.collision_layer==0,"movement body collision still delegates to dinosaur")
 	player.current_stamina=0

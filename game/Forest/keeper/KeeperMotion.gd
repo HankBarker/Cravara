@@ -34,7 +34,7 @@ const NUM_FIELDS := ["ta", "ho_grip"]
 ## Procedural locomotion clips. fps is the base rate; the player scales walk/run
 ## speed_scale by actual velocity so the feet never skate.
 const LOCO := {
-	"idle": {"frames": 8, "fps": 5.0, "loop": true},
+	"idle": {"frames": 24, "fps": 6.0, "loop": true},
 	"walk": {"frames": 8, "fps": 12.0, "loop": true},
 	"run": {"frames": 8, "fps": 15.0, "loop": true},
 }
@@ -222,23 +222,28 @@ func _apply(p: Dictionary, r: Dictionary, k: Dictionary) -> void:
 
 # ---------------------------------------------------------------- locomotion
 ## Idle/walk/run carry the selected item at a relaxed angle that never covers
-## the face. Front and back views hold it upright on the main-hand side (it
-## pokes out past the shoulder, so the item still reads from behind); profile
-## rests it on the shoulder behind the head. Hanging items (bucket, lantern)
-## ignore the angle and hang behind the near hand, so they never hide the legs.
+## the face. Front and back views hold it upright on the main-hand side,
+## behind the body (it pokes out past the shoulder, so the item still reads
+## from behind). Profile rests it on the near shoulder with the head of the
+## tool behind the head: drawn in front so long hair and tall helmets never
+## swallow it, but always behind the face. Hanging items (bucket, lantern)
+## ignore the angle and simply hang from the hand. The tool clips start and
+## end on these same angles/layers, so actions blend in and out without a pop.
 ## _gait may pre-set p.carry_angle / p.carry_layer for its own frames.
 func _carry(p: Dictionary, view: String) -> void:
 	var angle: float = {"down": -70.0, "up": -70.0, "side": -125.0}[view]
 	p.tool = {"angle": float(p.get("carry_angle", angle))}
-	p.tool_layer = str(p.get("carry_layer", "back"))
+	p.tool_layer = str(p.get("carry_layer", "front" if view == "side" else "back"))
 	p.erase("carry_angle")
 	p.erase("carry_layer")
 
 
 ## Idle, 8 frames at 5 fps (1.6 s): the chest rises a pixel and the arms answer
-## a beat later, the front view glances to the side for two frames, and the
-## hero blinks as the head comes back.
+## a beat later; on frames 4-5 the head glances (front: to the side, profile:
+## at the camera, back: over the shoulder) and the hero blinks as it comes back.
 func _idle(p: Dictionary, r: Dictionary, view: String, i: int) -> void:
+	# 24 frames at 6 fps = a 4 s loop: three slow breaths, one glance and two
+	# blinks, so standing still reads alive without twitching.
 	var f := i % 8
 	var breath: int = [0, 0, 0, -1, -1, -1, 0, 0][f]
 	var arm: int = [0, 0, 0, 0, -1, -1, -1, 0][f]
@@ -247,9 +252,12 @@ func _idle(p: Dictionary, r: Dictionary, view: String, i: int) -> void:
 	p.head = Vector2.ZERO
 	p.hand_m = r.hand_m + Vector2(0, arm)
 	p.hand_o = r.hand_o + Vector2(0, arm)
-	p.blink = f == 6
-	if view == "down" and (f == 4 or f == 5):
-		p.head_view = "side"
+	p.blink = i == 6 or i == 20
+	if i == 12 or i == 13:
+		# Front: a look to the side. Back: a peek over the shoulder. The profile
+		# keeps its head (a front head there would hide braids and tails).
+		if view != "side":
+			p.head_view = "side"
 
 
 ## Walk / run, eight frames = two steps: 0 main foot contact (forward),
@@ -275,10 +283,13 @@ func _walk(p: Dictionary, r: Dictionary, view: String, f: int, o: int) -> void:
 	var s: int = [-1, -1, 0, 1, 1, 1, 0, -1][f]
 	p.light_swing = float([0, -1, -1, 0, 0, 1, 1, 0][f])
 	if view == "side":
-		var fx: Array = [2, 1, 0, -1, -2, -1, 0, 1]
+		# Legs are 3.4 px long: a 3 px step clamps to ~2.6 px, the widest stride
+		# that still separates the 6 px boots.
+		var fx: Array = [3, 2, 0, -2, -3, -2, 0, 2]
 		var fy: Array = [0, 0, 0, 0, 0, -1, -2, -1]
 		p.foot_m = r.foot_m + Vector2(fx[f], fy[f])
 		p.foot_o = r.foot_o + Vector2(fx[o], fy[o])
+		_square_hips(p, r)
 		p.knee_m = -1.0
 		p.knee_o = -1.0
 		# The near arm carries the tool, so it swings less than the far arm.
@@ -292,6 +303,17 @@ func _walk(p: Dictionary, r: Dictionary, view: String, f: int, o: int) -> void:
 		p.foot_o = r.foot_o + Vector2(0, fy[o])
 		p.hand_m = r.hand_m + p.body + _swing_fb(view, s, 1)
 		p.hand_o = r.hand_o + p.body + _swing_fb(view, -s, -1)
+
+
+## Profile rest hips sit 1.6 px apart (near leg behind the far one), which
+## makes one contact frame read twice as wide as the other; stride from a
+## shared centre so both steps look the same.
+static func _square_hips(p: Dictionary, r: Dictionary) -> void:
+	var mid: float = (r.hip_m.x + r.hip_o.x) * 0.5
+	p.hp_m = Vector2(mid - r.hip_m.x, 0)
+	p.hp_o = Vector2(mid - r.hip_o.x, 0)
+	p.foot_m += p.hp_m
+	p.foot_o += p.hp_o
 
 
 ## Front/back arm swing for one hand: forward tucks in towards the body line
@@ -316,11 +338,14 @@ func _run(p: Dictionary, r: Dictionary, view: String, f: int, o: int) -> void:
 			Vector2(-1, -3), Vector2(1, -3), Vector2(3, -2), Vector2(3, -1)]
 		p.foot_m = r.foot_m + feet[f]
 		p.foot_o = r.foot_o + feet[o]
+		_square_hips(p, r)
 		p.knee_m = -1.0
 		p.knee_o = -1.0
-		# Bent arms pump against the legs; the near (tool) arm pumps less.
-		var near: Array = [Vector2(-1, -2), Vector2(-1, -2), Vector2(0, -3), Vector2(2, -3),
-			Vector2(2, -3), Vector2(1, -3), Vector2(0, -2), Vector2(-1, -2)]
+		# Bent arms pump against the legs; the near (tool) arm pumps less and the
+		# carried item trails further back with the lean, clear of the jaw.
+		var near: Array = [Vector2(-1, -1), Vector2(-1, -1), Vector2(0, -2), Vector2(1, -2),
+			Vector2(1, -2), Vector2(0, -2), Vector2(0, -1), Vector2(-1, -1)]
+		p.carry_angle = -150.0
 		var far: Array = [Vector2(3, -4), Vector2(3, -4), Vector2(1, -3), Vector2(-1, -2),
 			Vector2(-2, -2), Vector2(-2, -2), Vector2(0, -2), Vector2(2, -3)]
 		p.hand_m = r.hand_m + p.body + near[f]

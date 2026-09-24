@@ -516,8 +516,11 @@ func _die() -> void:
 	for id in worker.cargo: loot[id]=int(loot.get(id,0))+int(worker.cargo[id])
 	worker.cargo.clear()
 	if saddle: loot[saddle.id] = 1
-	if species == "raptor": loot["raptor_fang"] = 2
-	if species == "rex": loot["trex_scale"] = 3
+	# Wildlife never respawns, so these are a journey's whole supply (see
+	# docs/ARMOR_PROGRESSION.md): one raptor covers the Fangbound set (1 fang per
+	# piece) even if the other is tamed; the rex covers the Tyrant set plus a bed.
+	if species == "raptor": loot["raptor_fang"] = 3
+	if species == "rex": loot["trex_scale"] = 5
 	for id in loot:
 		var item = ItemDB.make(id)
 		if item:

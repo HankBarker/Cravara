@@ -1,46 +1,277 @@
 ﻿Godot Engine v4.6.1.stable.official.14d19694e - https://godotengine.org
 
-📦 ItemDB loaded 62 items: basic_axe, basic_pickaxe, berry, berry_compote, berry_seed, bone_arrow, bone_chestplate, bone_dagger, bone_helmet, bone_leggings, bucket, campfire, chest, cooked_fish, cooked_meat, crystal_axe, crystal_chestplate, crystal_flask, crystal_helmet, crystal_leggings, crystal_pendant, crystal_pickaxe, crystal_shard, dodo_egg, fishing_rod, forest_omelet, garden_hoe, hide_bed, hunter_charm, lantern, leather_chestplate, leather_helmet, leather_leggings, log, moonscale, mushroom, mushroom_potion, mushroom_spore, net, plank, plant_fiber, prism_crystal, raptor_fang, reed_bow, reed_perch, river_totem, shardfin, shard_sword, stego_saddle, stone, tent, thatch_roof, torch, trex_meat, trex_scale, trike_saddle, water_bucket, water_flask, wood_door, wood_floor, wood_wall, workbench
+📦 ItemDB loaded 71 items: basic_axe, basic_pickaxe, berry, berry_compote, berry_seed, bone_arrow, bone_chestplate, bone_dagger, bone_helmet, bone_leggings, bucket, campfire, chest, cooked_fish, cooked_meat, crystal_axe, crystal_chestplate, crystal_flask, crystal_helmet, crystal_leggings, crystal_pendant, crystal_pickaxe, crystal_shard, dodo_egg, fishing_rod, forest_omelet, garden_hoe, hide_bed, hunter_charm, lantern, leather_chestplate, leather_helmet, leather_leggings, log, moonscale, moss_chestplate, moss_helmet, moss_leggings, mushroom, mushroom_potion, mushroom_spore, net, plank, plant_fiber, prism_crystal, raptor_fang, reed_bow, reed_perch, rex_chestplate, rex_helmet, rex_leggings, river_totem, shardfin, shard_sword, stego_saddle, stone, tent, thatch_roof, tide_chestplate, tide_helmet, tide_leggings, torch, trex_meat, trex_scale, trike_saddle, water_bucket, water_flask, wood_door, wood_floor, wood_wall, workbench
 PASS nearby workbench opens with E without cursor targeting
-PASS helmet crown follows idle_down frame 0
-PASS helmet covers ear in idle_down frame 0
-PASS helmet crown follows idle_down frame 1
-PASS helmet covers ear in idle_down frame 1
-PASS helmet crown follows idle_down frame 2
-PASS helmet covers ear in idle_down frame 2
-PASS helmet crown follows idle_down frame 3
-PASS helmet covers ear in idle_down frame 3
-PASS helmet crown follows idle_down frame 4
-PASS helmet covers ear in idle_down frame 4
-PASS helmet crown follows idle_up frame 0
-PASS helmet covers ear in idle_up frame 0
-PASS helmet crown follows idle_left frame 0
-PASS helmet covers ear in idle_left frame 0
-PASS helmet crown follows idle_left frame 1
-PASS helmet covers ear in idle_left frame 1
-PASS helmet crown follows idle_left frame 2
-PASS helmet covers ear in idle_left frame 2
-PASS helmet crown follows idle_left frame 3
-PASS helmet covers ear in idle_left frame 3
-PASS helmet crown follows idle_left frame 4
-PASS helmet covers ear in idle_left frame 4
-PASS helmet crown follows idle_left frame 5
-PASS helmet covers ear in idle_left frame 5
-PASS helmet crown follows idle_right frame 0
-PASS helmet covers ear in idle_right frame 0
-PASS helmet crown follows idle_right frame 1
-PASS helmet covers ear in idle_right frame 1
-PASS helmet crown follows idle_right frame 2
-PASS helmet covers ear in idle_right frame 2
-PASS helmet crown follows idle_right frame 3
-PASS helmet covers ear in idle_right frame 3
-PASS helmet crown follows idle_right frame 4
-PASS helmet covers ear in idle_right frame 4
-PASS helmet crown follows idle_right frame 5
-PASS helmet covers ear in idle_right frame 5
-PASS helmet crown follows idle_right frame 6
-PASS helmet covers ear in idle_right frame 6
-PASS idle comparison exercises actual head silhouette and position changes
+PASS helmet crown follows idle_down frame 0 { "pixels": 223, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_down frame 0 (1 px vs 126 bare)
+PASS helmet preserves the face in idle_down frame 0 (34 px)
+PASS helmet crown follows idle_down frame 1 { "pixels": 223, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_down frame 1 (1 px vs 126 bare)
+PASS helmet preserves the face in idle_down frame 1 (34 px)
+PASS helmet crown follows idle_down frame 2 { "pixels": 223, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_down frame 2 (1 px vs 126 bare)
+PASS helmet preserves the face in idle_down frame 2 (34 px)
+PASS helmet crown follows idle_down frame 3 { "pixels": 223, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_down frame 3 (1 px vs 126 bare)
+PASS helmet preserves the face in idle_down frame 3 (34 px)
+PASS helmet crown follows idle_down frame 4 { "pixels": 223, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_down frame 4 (1 px vs 126 bare)
+PASS helmet preserves the face in idle_down frame 4 (34 px)
+PASS helmet crown follows idle_down frame 5 { "pixels": 223, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_down frame 5 (1 px vs 126 bare)
+PASS helmet preserves the face in idle_down frame 5 (34 px)
+PASS helmet crown follows idle_down frame 6 { "pixels": 223, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_down frame 6 (1 px vs 126 bare)
+PASS helmet preserves the face in idle_down frame 6 (43 px)
+PASS helmet crown follows idle_down frame 7 { "pixels": 223, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_down frame 7 (1 px vs 126 bare)
+PASS helmet preserves the face in idle_down frame 7 (34 px)
+PASS helmet crown follows idle_down frame 8 { "pixels": 223, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_down frame 8 (1 px vs 126 bare)
+PASS helmet preserves the face in idle_down frame 8 (34 px)
+PASS helmet crown follows idle_down frame 9 { "pixels": 223, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_down frame 9 (1 px vs 126 bare)
+PASS helmet preserves the face in idle_down frame 9 (34 px)
+PASS helmet crown follows idle_down frame 10 { "pixels": 223, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_down frame 10 (1 px vs 126 bare)
+PASS helmet preserves the face in idle_down frame 10 (34 px)
+PASS helmet crown follows idle_down frame 11 { "pixels": 223, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_down frame 11 (1 px vs 126 bare)
+PASS helmet preserves the face in idle_down frame 11 (34 px)
+PASS helmet crown follows idle_down frame 12 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_down frame 12 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_down frame 12 (29 px)
+PASS helmet crown follows idle_down frame 13 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_down frame 13 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_down frame 13 (29 px)
+PASS helmet crown follows idle_down frame 14 { "pixels": 223, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_down frame 14 (1 px vs 126 bare)
+PASS helmet preserves the face in idle_down frame 14 (34 px)
+PASS helmet crown follows idle_down frame 15 { "pixels": 223, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_down frame 15 (1 px vs 126 bare)
+PASS helmet preserves the face in idle_down frame 15 (34 px)
+PASS helmet crown follows idle_down frame 16 { "pixels": 223, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_down frame 16 (1 px vs 126 bare)
+PASS helmet preserves the face in idle_down frame 16 (34 px)
+PASS helmet crown follows idle_down frame 17 { "pixels": 223, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_down frame 17 (1 px vs 126 bare)
+PASS helmet preserves the face in idle_down frame 17 (34 px)
+PASS helmet crown follows idle_down frame 18 { "pixels": 223, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_down frame 18 (1 px vs 126 bare)
+PASS helmet preserves the face in idle_down frame 18 (34 px)
+PASS helmet crown follows idle_down frame 19 { "pixels": 223, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_down frame 19 (1 px vs 126 bare)
+PASS helmet preserves the face in idle_down frame 19 (34 px)
+PASS helmet crown follows idle_down frame 20 { "pixels": 223, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_down frame 20 (1 px vs 126 bare)
+PASS helmet preserves the face in idle_down frame 20 (43 px)
+PASS helmet crown follows idle_down frame 21 { "pixels": 223, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_down frame 21 (1 px vs 126 bare)
+PASS helmet preserves the face in idle_down frame 21 (34 px)
+PASS helmet crown follows idle_down frame 22 { "pixels": 223, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_down frame 22 (1 px vs 126 bare)
+PASS helmet preserves the face in idle_down frame 22 (34 px)
+PASS helmet crown follows idle_down frame 23 { "pixels": 223, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_down frame 23 (1 px vs 126 bare)
+PASS helmet preserves the face in idle_down frame 23 (34 px)
+PASS helmet turns with the idle_down glance (frame 12)
+PASS helmet turns with the idle_down glance (frame 13)
+PASS helmet crown follows idle_up frame 0 { "pixels": 196, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_up frame 0 (8 px vs 140 bare)
+PASS helmet crown follows idle_up frame 1 { "pixels": 196, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_up frame 1 (8 px vs 140 bare)
+PASS helmet crown follows idle_up frame 2 { "pixels": 196, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_up frame 2 (8 px vs 140 bare)
+PASS helmet crown follows idle_up frame 3 { "pixels": 196, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_up frame 3 (8 px vs 140 bare)
+PASS helmet crown follows idle_up frame 4 { "pixels": 196, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_up frame 4 (8 px vs 140 bare)
+PASS helmet crown follows idle_up frame 5 { "pixels": 196, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_up frame 5 (8 px vs 140 bare)
+PASS helmet crown follows idle_up frame 6 { "pixels": 196, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_up frame 6 (8 px vs 140 bare)
+PASS helmet crown follows idle_up frame 7 { "pixels": 196, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_up frame 7 (8 px vs 140 bare)
+PASS helmet crown follows idle_up frame 8 { "pixels": 196, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_up frame 8 (8 px vs 140 bare)
+PASS helmet crown follows idle_up frame 9 { "pixels": 196, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_up frame 9 (8 px vs 140 bare)
+PASS helmet crown follows idle_up frame 10 { "pixels": 196, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_up frame 10 (8 px vs 140 bare)
+PASS helmet crown follows idle_up frame 11 { "pixels": 196, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_up frame 11 (8 px vs 140 bare)
+PASS helmet crown follows idle_up frame 12 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_up frame 12 (1 px vs 121 bare)
+PASS helmet crown follows idle_up frame 13 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_up frame 13 (1 px vs 121 bare)
+PASS helmet crown follows idle_up frame 14 { "pixels": 196, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_up frame 14 (8 px vs 140 bare)
+PASS helmet crown follows idle_up frame 15 { "pixels": 196, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_up frame 15 (8 px vs 140 bare)
+PASS helmet crown follows idle_up frame 16 { "pixels": 196, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_up frame 16 (8 px vs 140 bare)
+PASS helmet crown follows idle_up frame 17 { "pixels": 196, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_up frame 17 (8 px vs 140 bare)
+PASS helmet crown follows idle_up frame 18 { "pixels": 196, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_up frame 18 (8 px vs 140 bare)
+PASS helmet crown follows idle_up frame 19 { "pixels": 196, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_up frame 19 (8 px vs 140 bare)
+PASS helmet crown follows idle_up frame 20 { "pixels": 196, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_up frame 20 (8 px vs 140 bare)
+PASS helmet crown follows idle_up frame 21 { "pixels": 196, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_up frame 21 (8 px vs 140 bare)
+PASS helmet crown follows idle_up frame 22 { "pixels": 196, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_up frame 22 (8 px vs 140 bare)
+PASS helmet crown follows idle_up frame 23 { "pixels": 196, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_up frame 23 (8 px vs 140 bare)
+PASS helmet turns with the idle_up glance (frame 12)
+PASS helmet turns with the idle_up glance (frame 13)
+PASS helmet crown follows idle_left frame 0 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_left frame 0 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_left frame 0 (29 px)
+PASS helmet crown follows idle_left frame 1 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_left frame 1 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_left frame 1 (29 px)
+PASS helmet crown follows idle_left frame 2 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_left frame 2 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_left frame 2 (29 px)
+PASS helmet crown follows idle_left frame 3 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_left frame 3 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_left frame 3 (29 px)
+PASS helmet crown follows idle_left frame 4 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_left frame 4 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_left frame 4 (29 px)
+PASS helmet crown follows idle_left frame 5 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_left frame 5 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_left frame 5 (29 px)
+PASS helmet crown follows idle_left frame 6 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_left frame 6 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_left frame 6 (32 px)
+PASS helmet crown follows idle_left frame 7 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_left frame 7 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_left frame 7 (29 px)
+PASS helmet crown follows idle_left frame 8 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_left frame 8 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_left frame 8 (29 px)
+PASS helmet crown follows idle_left frame 9 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_left frame 9 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_left frame 9 (29 px)
+PASS helmet crown follows idle_left frame 10 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_left frame 10 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_left frame 10 (29 px)
+PASS helmet crown follows idle_left frame 11 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_left frame 11 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_left frame 11 (29 px)
+PASS helmet crown follows idle_left frame 12 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_left frame 12 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_left frame 12 (29 px)
+PASS helmet crown follows idle_left frame 13 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_left frame 13 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_left frame 13 (29 px)
+PASS helmet crown follows idle_left frame 14 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_left frame 14 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_left frame 14 (29 px)
+PASS helmet crown follows idle_left frame 15 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_left frame 15 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_left frame 15 (29 px)
+PASS helmet crown follows idle_left frame 16 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_left frame 16 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_left frame 16 (29 px)
+PASS helmet crown follows idle_left frame 17 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_left frame 17 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_left frame 17 (29 px)
+PASS helmet crown follows idle_left frame 18 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_left frame 18 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_left frame 18 (29 px)
+PASS helmet crown follows idle_left frame 19 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_left frame 19 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_left frame 19 (29 px)
+PASS helmet crown follows idle_left frame 20 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_left frame 20 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_left frame 20 (32 px)
+PASS helmet crown follows idle_left frame 21 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_left frame 21 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_left frame 21 (29 px)
+PASS helmet crown follows idle_left frame 22 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_left frame 22 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_left frame 22 (29 px)
+PASS helmet crown follows idle_left frame 23 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_left frame 23 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_left frame 23 (29 px)
+PASS helmet crown follows idle_right frame 0 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_right frame 0 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_right frame 0 (29 px)
+PASS helmet crown follows idle_right frame 1 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_right frame 1 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_right frame 1 (29 px)
+PASS helmet crown follows idle_right frame 2 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_right frame 2 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_right frame 2 (29 px)
+PASS helmet crown follows idle_right frame 3 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_right frame 3 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_right frame 3 (29 px)
+PASS helmet crown follows idle_right frame 4 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_right frame 4 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_right frame 4 (29 px)
+PASS helmet crown follows idle_right frame 5 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_right frame 5 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_right frame 5 (29 px)
+PASS helmet crown follows idle_right frame 6 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_right frame 6 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_right frame 6 (32 px)
+PASS helmet crown follows idle_right frame 7 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_right frame 7 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_right frame 7 (29 px)
+PASS helmet crown follows idle_right frame 8 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_right frame 8 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_right frame 8 (29 px)
+PASS helmet crown follows idle_right frame 9 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_right frame 9 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_right frame 9 (29 px)
+PASS helmet crown follows idle_right frame 10 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_right frame 10 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_right frame 10 (29 px)
+PASS helmet crown follows idle_right frame 11 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_right frame 11 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_right frame 11 (29 px)
+PASS helmet crown follows idle_right frame 12 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_right frame 12 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_right frame 12 (29 px)
+PASS helmet crown follows idle_right frame 13 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_right frame 13 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_right frame 13 (29 px)
+PASS helmet crown follows idle_right frame 14 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_right frame 14 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_right frame 14 (29 px)
+PASS helmet crown follows idle_right frame 15 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_right frame 15 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_right frame 15 (29 px)
+PASS helmet crown follows idle_right frame 16 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_right frame 16 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_right frame 16 (29 px)
+PASS helmet crown follows idle_right frame 17 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_right frame 17 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_right frame 17 (29 px)
+PASS helmet crown follows idle_right frame 18 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_right frame 18 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_right frame 18 (29 px)
+PASS helmet crown follows idle_right frame 19 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_right frame 19 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_right frame 19 (29 px)
+PASS helmet crown follows idle_right frame 20 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_right frame 20 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_right frame 20 (32 px)
+PASS helmet crown follows idle_right frame 21 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_right frame 21 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_right frame 21 (29 px)
+PASS helmet crown follows idle_right frame 22 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_right frame 22 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_right frame 22 (29 px)
+PASS helmet crown follows idle_right frame 23 { "pixels": 211, "inside": 1.0 }
+PASS helmet covers hair and ears in idle_right frame 23 (1 px vs 121 bare)
+PASS helmet preserves the face in idle_right frame 23 (29 px)
+PASS idle comparison exercises actual head position changes (24)
+PASS equipping a helmet leaves the source idle cels untouched
 PASS bed binds nearby player spawn
 PASS bed returns a nearby clear respawn point
 PASS journey saves bed binding
@@ -53,4 +284,4 @@ PASS respawn reenables physics and idle state without reload
 PASS respawn restores vitality at bound bed
 PASS player actually walks after respawning
 PASS destroyed spawn bed falls back to camp
-FOREST_ROOT_PASS4 assertions=52 failures=0
+FOREST_ROOT_PASS4 assertions=283 failures=0

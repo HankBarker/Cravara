@@ -2,7 +2,8 @@
  "notes": [
   "Face and eye zones of the base hero (32x32 source coords, inclusive rects).",
   "They drive the skin/eye/hair materials of every head: the base, the hair styles and (unless a set overrides them) the helmets.",
-  "Eye boxes include the dark lash row above the iris; blink sprites close exactly these pixels."
+  "Eye boxes include the dark lash row above the iris; blink sprites close exactly these pixels.",
+  "materials: per-pixel fixes where flax hair and skin highlights share colours (fringe strands over the forehead are hair, the pale cheek highlight is skin). Hair styles inherit these for unchanged pixels."
  ],
  "face": {
   "down": [[12, 9, 19, 10], [11, 11, 19, 15]],
@@ -12,5 +13,27 @@
  "eyes": {
   "down": [[11, 11, 13, 13], [17, 11, 19, 13]],
   "side": [[17, 10, 19, 12]]
+ },
+ "materials": {
+  "down": [
+   {
+    "px": [[12, 9], [15, 9], [16, 9], [17, 9], [14, 10]],
+    "mat": "hair"
+   },
+   {
+    "px": [[17, 13]],
+    "mat": "eye"
+   }
+  ],
+  "side": [
+   {
+    "px": [[20, 8], [21, 8], [16, 9], [17, 9]],
+    "mat": "hair"
+   },
+   {
+    "px": [[20, 12], [19, 13], [20, 13], [14, 14]],
+    "mat": "skin"
+   }
+  ]
  }
 }

@@ -118,8 +118,7 @@ func run():
 	check(not is_instance_valid(marker) and not is_instance_valid(scene._locator),"target removal cleans up tracking marker and its UI")
 	scene.queue_free()
 	await get_tree().process_frame
-	AudioManager.stop_music()
-	await get_tree().create_timer(0.5).timeout
+	await preload("res://Tests/quiet_exit.gd").settle(get_tree())
 	print("MOUNT_PASS4_RENDER_QA assertions=%d failures=%d" % [count,failures.size()])
 	get_tree().quit(0 if failures.is_empty() else 1)
 

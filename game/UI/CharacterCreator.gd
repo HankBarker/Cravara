@@ -4,11 +4,14 @@ signal cancelled
 const APPEARANCE=preload("res://Forest/equipment/Appearance.gd")
 const FRAME=preload("res://UI/CrystalFrame.gd")
 const ACTIONS=preload("res://Forest/equipment/ActionFrames.gd")
-const OUTFITS := ["none","leather","bone","crystal"]
-const OUTFIT_NAMES := {"none":"Unarmored","leather":"Trail leather","bone":"Fangbound","crystal":"Skyshard"}
+const DETAILS=preload("res://UI/ItemDetails.gd")
+## Wardrobe choices in tier order: "none" plus every armour set (names and
+## tiers live in ItemDetails.ARMOR_SETS).
+const OUTFITS := ["none","moss","leather","bone","crystal","tide","rex"]
 const SUFFIXES := {"head":"helmet","chest":"chestplate","legs":"leggings"}
-const MOTIONS := ["idle","walk","run","axe","pickaxe","sword","bow_draw","fishing_cast","pet"]
-const MOTION_NAMES := ["Idle","Walk","Run","Axe","Mine","Sword","Bow","Cast","Pet"]
+## Keeper clips (<motion>_<facing>). Held items are baked in by the rig.
+const MOTIONS := ["idle","walk","run","roll","cheer","eat","axe","pickaxe","sword","bow_draw","fishing_cast","hoe","craft","pet"]
+const MOTION_NAMES := ["Idle","Walk","Run","Roll","Cheer","Eat","Axe","Mine","Sword","Bow","Cast","Hoe","Craft","Pet"]
 var draft: Dictionary
 var subject: Node
 var new_journey := false
@@ -35,6 +38,8 @@ var _tabs: Dictionary={}
 var _motion_button: Button
 var _caption: Label
 var _wardrobe_custom := false
+var _outfit_buttons: Dictionary={}
+var _bounds: Dictionary={}
 
 func configure(initial: Dictionary={}, preview_subject: Node=null, creating := false):
 	draft=APPEARANCE.normalize(initial)
@@ -99,8 +104,8 @@ func _ready():
 	portrait_clip.mouse_filter=Control.MOUSE_FILTER_IGNORE
 	root.add_child(portrait_clip)
 	avatar=AnimatedSprite2D.new()
-	avatar.position=Vector2(68,54)
-	avatar.scale=Vector2(4,4)
+	avatar.position=portrait_clip.size/2.0
+	avatar.scale=Vector2(3,3)
 	avatar.texture_filter=CanvasItem.TEXTURE_FILTER_NEAREST
 	portrait_clip.add_child(avatar)
 	tool_preview=preload("res://UI/WardrobeToolPreview.gd").new()
@@ -135,21 +140,25 @@ func _ready():
 	var slots := ["head","chest","legs"]
 	for i in slots.size():
 		var slot: String=slots[i]
-		var y:=94+i*29
-		_wardrobe_controls.append(_label(["Head","Body","Legs"][i],Vector2(199,y+5),9))
-		_wardrobe_controls.append(_button("<",Vector2(245,y),Vector2(21,23),func():_cycle_armor(slot,-1)))
-		var choice:=_label("",Vector2(269,y+5),10)
-		choice.size=Vector2(146,18)
+		var y:=95+i*23
+		_wardrobe_controls.append(_label(["Head","Body","Legs"][i],Vector2(199,y+4),9))
+		_wardrobe_controls.append(_button("<",Vector2(245,y),Vector2(21,21),func():_cycle_armor(slot,-1)))
+		var choice:=_label("",Vector2(269,y+3),10)
+		choice.size=Vector2(146,17)
 		choice.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
 		wardrobe_choices[slot]=choice
 		_wardrobe_controls.append(choice)
-		var next:=_button(">",Vector2(420,y),Vector2(21,23),func():_cycle_armor(slot,1))
+		var next:=_button(">",Vector2(420,y),Vector2(21,21),func():_cycle_armor(slot,1))
 		wardrobe_selectors[slot]=next
 		_wardrobe_controls.append(next)
-	_wardrobe_controls.append(_label("COMPLETE OUTFITS",Vector2(199,180),8))
-	for i in 3:
+	_wardrobe_controls.append(_label("COMPLETE OUTFITS",Vector2(199,164),8))
+	# Six sets in tier order, two rows of three, inside the 432px editor frame.
+	for i in OUTFITS.size()-1:
 		var material: String=OUTFITS[i+1]
-		_wardrobe_controls.append(_button(["Leather","Bone","Crystal"][i],Vector2(199+i*82,191),Vector2(78,19),func():_set_outfit(material)))
+		var outfit:=_button(DETAILS.ARMOR_SETS[material].short,Vector2(199+(i%3)*82,175+int(i/3.0)*19),Vector2(78,17),func():_set_outfit(material))
+		outfit.tooltip_text="Tier %d · %s" % [i+1,outfit_name(material)]
+		_outfit_buttons[material]=outfit
+		_wardrobe_controls.append(outfit)
 	_button("Turn preview",Vector2(40,186),Vector2(88,20),_turn)
 	_motion_button=_button("Idle >",Vector2(132,186),Vector2(52,20),_cycle_motion)
 	_motion_button.tooltip_text="Preview movement and action poses"
@@ -265,14 +274,39 @@ func _frames_for_motion() -> SpriteFrames:
 	_preview_sources[motion]=frames
 	return frames
 
+## Largest integer scale (at most 3) at which every facing of the motion,
+## held item included, fits the portrait clip, with its drawn pixels centred.
+## The frame covers all four facings, so turning never shifts the keeper.
 func _frame_portrait():
-	var tool_motion: bool=motion in tool_preview.ITEM_IDS
-	avatar.scale=Vector2(3,3) if tool_motion else Vector2(4,4)
-	avatar.position=Vector2(68,54)
-	if tool_motion:
-		# Keep the full reach of held props within the specimen frame.
-		avatar.position.x+=8 if direction=="left" else (-8 if direction=="right" else 0)
-		if motion=="fishing_cast": avatar.position.y+=7
+	var bounds:=_frames_bounds(avatar.sprite_frames)
+	if bounds.size==Vector2i.ZERO: bounds=Rect2i(16,8,32,48)
+	var fit:=3
+	while fit>1 and (bounds.size.x*fit>portrait_clip.size.x or bounds.size.y*fit>portrait_clip.size.y): fit-=1
+	avatar.scale=Vector2(fit,fit)
+	var centre:=Vector2(bounds.position)+Vector2(bounds.size)/2.0-Vector2(32,32)
+	avatar.position=(portrait_clip.size/2.0-centre*fit).round()
+
+## Union of the drawn pixels of every cel in `frames` (64x64 cel space).
+func _frames_bounds(frames: SpriteFrames) -> Rect2i:
+	var key:=frames.get_instance_id()
+	if _bounds.has(key): return _bounds[key]
+	var bounds:=Rect2i()
+	for clip in frames.get_animation_names():
+		for index in frames.get_frame_count(clip):
+			var texture:=frames.get_frame_texture(clip,index)
+			if texture==null: continue
+			var used:=texture.get_image().get_used_rect()
+			if used.size==Vector2i.ZERO: continue
+			bounds=used if bounds.size==Vector2i.ZERO else bounds.merge(used)
+	_bounds[key]=bounds
+	return bounds
+
+## The real item a tool motion shows; the rig bakes it into the preview cels.
+func _held_id() -> String:
+	return str(tool_preview.ITEM_IDS.get(motion,""))
+
+static func outfit_name(material: String) -> String:
+	return str(DETAILS.ARMOR_SETS[material].name) if DETAILS.ARMOR_SETS.has(material) else "Unarmored"
 
 func _refresh_caption():
 	_caption.text=direction.capitalize()+"  /  "+MOTION_NAMES[MOTIONS.find(motion)]
@@ -281,9 +315,12 @@ func _refresh():
 	for field in choices:
 		for option in APPEARANCE.OPTIONS[field]:
 			if option.id==draft[field]: choices[field].text=option.label
-	for slot in wardrobe_choices: wardrobe_choices[slot].text=OUTFIT_NAMES[wardrobe[slot]]
+	for slot in wardrobe_choices: wardrobe_choices[slot].text=outfit_name(wardrobe[slot])
+	for material in _outfit_buttons:
+		var complete: bool=wardrobe.values().all(func(worn): return worn==material)
+		_outfit_buttons[material].modulate=Color("f3d99a") if complete and show_gear else Color.WHITE
 	var light: Item=subject.equipped_light if is_instance_valid(subject) and show_gear and not _wardrobe_custom else null
-	avatar.sprite_frames=_skin.build(_frames_for_motion(),preview_armor(),light,draft)
+	avatar.sprite_frames=_skin.build(_frames_for_motion(),preview_armor(),light,draft,_held_id())
 	avatar.play(motion+"_"+direction)
 	_frame_portrait()
 	tool_preview.sync_pose()

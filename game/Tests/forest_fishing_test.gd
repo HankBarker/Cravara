@@ -253,5 +253,6 @@ func run():
 	check(is_equal_approx(rest,float(fishing.spots[0].cooldown)),"Fishing cooldown stops while game is paused")
 	get_tree().paused=false
 	check((FileAccess.get_sha256(settings_path) if FileAccess.file_exists(settings_path) else "missing")==settings_hash,"Fishing test preserves real settings file")
+	await preload("res://Tests/quiet_exit.gd").settle(get_tree())
 	print("FISHING TEST: %d checks, %d failures" % [checks,failures])
 	get_tree().quit(1 if failures else 0)

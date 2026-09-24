@@ -11,6 +11,7 @@ var shadows_enabled := true
 var fullscreen := false
 var shortcut_buttons_visible := true
 var persistence_enabled := true
+var screen_shake := true   # transient camera trauma on hurt and heavy hits
 
 const SETTINGS_PATH := "user://settings.cfg"
 
@@ -33,6 +34,7 @@ func save_settings():
 	config.set_value("display", "shadows_enabled", shadows_enabled)
 	config.set_value("display", "fullscreen", fullscreen)
 	config.set_value("display", "shortcut_buttons_visible", shortcut_buttons_visible)
+	config.set_value("display", "screen_shake", screen_shake)
 	config.save(SETTINGS_PATH)
 
 func load_settings():
@@ -51,6 +53,7 @@ func load_settings():
 	shadows_enabled = bool(config.get_value("display","shadows_enabled",true))
 	fullscreen = bool(config.get_value("display","fullscreen",false))
 	shortcut_buttons_visible = bool(config.get_value("display","shortcut_buttons_visible",true))
+	screen_shake = bool(config.get_value("display","screen_shake",true))
 	apply_display()
 
 func apply_display() -> void:
@@ -72,4 +75,8 @@ func set_fullscreen(value: bool) -> void:
 
 func set_shortcut_buttons(value: bool) -> void:
 	shortcut_buttons_visible = value
+	settings_changed.emit()
+
+func set_screen_shake(value: bool) -> void:
+	screen_shake = value
 	settings_changed.emit()

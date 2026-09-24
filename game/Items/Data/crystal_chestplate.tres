@@ -7,7 +7,7 @@
 script = ExtResource("1")
 id = "crystal_chestplate"
 name = "Skyshard Chestplate"
-description = "Luminous crystal facets secured by dark hide straps. Chest protection; +9 defense. Mix freely with other armor."
+description = "Faceted prism crystal over dark hide straps. It glows faintly with the Sky-Fangs' light."
 icon = ExtResource("2")
 max_stack = 1
 rarity = "epic"

@@ -151,6 +151,9 @@ func _button(parent: Node, text: String, pos: Vector2, dimensions: Vector2, call
 	b.text = text
 	b.position = pos
 	b.size = dimensions
+	# Mouse-driven HUD: a clicked button must not keep keyboard focus, or Space
+	# (dodge) / Enter would press it again through ui_accept.
+	b.focus_mode = Control.FOCUS_NONE
 	b.add_theme_font_size_override("font_size",9)
 	b.add_theme_color_override("font_hover_color",Color("dcffe6"))
 	b.pressed.connect(callback)
@@ -256,6 +259,7 @@ func _build_inventory() -> void:
 	var filter := _button(recipes_panel,"Ready only",Vector2(163,30),Vector2(77,17),func(): craftable_only=not craftable_only; _refresh_recipes())
 	filter.toggle_mode = true
 	var selector := OptionButton.new()
+	selector.focus_mode = Control.FOCUS_NONE
 	selector.position = Vector2(7,50)
 	selector.size = Vector2(233,16)
 	selector.add_theme_font_size_override("font_size",8)
@@ -623,6 +627,7 @@ func _refresh_equipment() -> void:
 		count += 1
 		var index := i
 		var b := Button.new()
+		b.focus_mode = Control.FOCUS_NONE
 		b.text = item.name + "  / Equip"
 		b.icon = item.icon
 		b.expand_icon = true
@@ -855,6 +860,7 @@ func _equip_saddle(creature: Node) -> void:
 
 func _shortcut(caption: String,key: String,pos: Vector2,dimensions: Vector2,action: Callable) -> void:
 	var button := preload("res://UI/ShortcutCharm.gd").new()
+	button.focus_mode = Control.FOCUS_NONE
 	button.caption = caption
 	button.key_hint = key
 	button.position = pos
