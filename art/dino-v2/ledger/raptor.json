@@ -17,9 +17,10 @@
   "status": "done",
   "cost": 1.0,
   "prompt": "A slim velociraptor with blue crystal quills, walking in place with a natural stride: the two legs step alternately, each foot lifting and planting, the body bobs with every step and the tail sways for balance. It keeps facing toward the viewer and stays in the same spot. Keep the exact same creature design, colours, markings and size. No visual effects of any kind: no motion blur, smears, speed lines, dust, particles or impact flashes; only the animal itself moves.",
-  "frames": 9,
+  "frames": 8,
   "submitted": 1790216862.5185103,
-  "finished": 1790217063.8080652
+  "finished": 1790217063.8080652,
+  "method": "walk_front.py (walk gait from the down drawing)"
  },
  "walk_up": {
   "job": "5220da39-a3f2-40dc-b174-ca94db223f6c",
@@ -677,14 +678,15 @@
   "status": "done",
   "cost": 1.0,
   "prompt": "Runs in place with long fast strides, its body leaning forward and its tail held straight out behind. It stays in place, facing the viewer the whole time.",
-  "frames": 9,
+  "frames": 8,
   "submitted": 1790219788.73993,
   "finished": 1790219933.1195045,
   "score": {
    "bright": 7,
    "area": 1.16,
    "wide": 1.85
-  }
+  },
+  "method": "walk_front.py (run gait from the down drawing)"
  },
  "slash_up": {
   "job": "472a24c5-aa53-4377-9299-25968d43a998",

@@ -1,0 +1,98 @@
+{
+ "idle_side": {
+  "job": "a488890d-e9b6-49b7-94c9-e1d14f010c6b",
+  "tool": "animate_image_pixminimax",
+  "seed": 1905692,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stands still in a relaxed pose; its body rises and falls very slightly and its tail sways a little. It stays in place, facing right.",
+  "frames": 9,
+  "submitted": 1790338517.5798519,
+  "finished": 1790339128.7285032,
+  "score": {
+   "bright": 0,
+   "area": 1.02,
+   "wide": 1.0
+  }
+ },
+ "walk_side": {
+  "job": "f082bf9f-65a4-43ff-8cae-5674856549e2",
+  "tool": "animate_image",
+  "seed": 3210251,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Walks in place: its legs step one after the other, its body bobs gently with each step and its tail sways. It stays in place, facing right.",
+  "frames": 9,
+  "submitted": 1790339129.5236685,
+  "finished": 1790339219.3832636,
+  "score": {
+   "bright": 0,
+   "area": 1.07,
+   "wide": 1.1
+  }
+ },
+ "run_side": {
+  "job": "ba5a8591-6ac2-45c4-9905-e23ec2f99f07",
+  "tool": "animate_image_pixminimax",
+  "seed": 16008227,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Runs in place with long fast strides, its body leaning forward and its tail held straight out behind. It stays in place, facing right.",
+  "frames": 9,
+  "submitted": 1790339220.1769383,
+  "finished": 1790339895.6078563,
+  "score": {
+   "bright": 1,
+   "area": 1.05,
+   "wide": 1.05
+  }
+ },
+ "bite_side": {
+  "job": "95453ba0-b7b5-4b36-8f75-e08233d9e823",
+  "tool": "animate_image_pixminimax",
+  "seed": 12605071,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Pulls its head back with its jaws open, then snaps its head forward and bites, then returns to its stance. It stays in place, facing right.",
+  "frames": 9,
+  "submitted": 1790339968.2076423,
+  "finished": 1790341283.919244,
+  "score": {
+   "bright": 2,
+   "area": 1.11,
+   "wide": 1.14
+  }
+ },
+ "hurt_side": {
+  "job": "047c9943-fd79-44cc-952e-f9a248188c26",
+  "tool": "animate_image_pixminimax",
+  "seed": 4862277,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Flinches: jerks its head and body back, then returns to its stance. It stays in place, facing right.",
+  "frames": 5,
+  "submitted": 1790341284.7845547,
+  "finished": 1790342921.4275985,
+  "score": {
+   "bright": 3,
+   "area": 1.09,
+   "wide": 1.05
+  }
+ },
+ "death_side": {
+  "job": "7c353d2e-f34c-4208-8ccb-b57f5e7ed301",
+  "tool": "animate_image_pixminimax",
+  "seed": 6745877,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stumbles, its legs give way and it falls over onto its side, then lies still. It stays in place, facing right.",
+  "frames": 13,
+  "submitted": 1790342922.2358165,
+  "finished": 1790344090.2441394,
+  "score": {
+   "bright": 0,
+   "area": 1.02,
+   "wide": 1.19
+  }
+ }
+}

@@ -18,6 +18,14 @@ uniform ivec2 st_pebbles;
 uniform ivec2 st_twigs;
 uniform ivec2 canvas_px = ivec2(1792, 1792);
 uniform ivec2 world_offset = ivec2(-896, -896);
+// The Pale Hills (pass 11): cells (x0, y0, x1, y1) where the ground turns pale
+// and cool, fading in over its southernmost rows (pale_fade cells).
+uniform ivec4 pale_area = ivec4(0, 0, 0, 0);
+uniform float pale_fade = 10.0;
+// The Mirefen Bog (pass 12): cells where the ground is dark, wet and olive,
+// fading in over its easternmost bog_fade columns.
+uniform ivec4 bog_area = ivec4(0, 0, 0, 0);
+uniform float bog_fade = 12.0;
 
 const vec3 GRASS[5] = {vec3(0.243, 0.420, 0.247), vec3(0.357, 0.573, 0.322), vec3(0.478, 0.678, 0.333), vec3(0.588, 0.773, 0.373), vec3(0.729, 0.827, 0.384)};
 const vec3 MEADOW[5] = {vec3(0.369, 0.498, 0.227), vec3(0.498, 0.612, 0.275), vec3(0.627, 0.702, 0.353), vec3(0.722, 0.765, 0.373), vec3(0.816, 0.839, 0.431)};
@@ -230,6 +238,24 @@ void fragment() {
 			col = DIRT[1];
 		} else if (up == K_WATER || lf == K_WATER || rt == K_WATER) {
 			col = mix(shade_of(draw_k, 0, meadow, wet), DIRT[0], 0.5);
+		}
+		// The Pale Lands (pass 12): ash lies over everything, grey-white,
+		// with the odd dark cinder.
+		ivec2 here = ivec2(floor(vec2(p) / 16.0));
+		if (here.x >= pale_area.x && here.x < pale_area.z && here.y >= pale_area.y && here.y < pale_area.w) {
+			float f = clamp(float(pale_area.w - 1 - here.y) / pale_fade + (bayer4(p) - 0.5) * 0.12, 0.0, 1.0);
+			float luma = dot(col, vec3(0.3, 0.59, 0.11));
+			vec3 pale = mix(col, vec3(luma), 0.88) * vec3(0.96, 0.94, 0.9) + vec3(0.3, 0.29, 0.27);
+			if (rnd(p, 977u) < 0.012) pale *= 0.55;
+			col = mix(col, pale, f);
+		}
+		// The bog: wet, dark olive ground and black mud.
+		if (here.x >= bog_area.x && here.x < bog_area.z && here.y >= bog_area.y && here.y < bog_area.w) {
+			float fb = clamp(float(bog_area.z - 1 - here.x) / bog_fade + (bayer4(p) - 0.5) * 0.12, 0.0, 1.0);
+			float lb = dot(col, vec3(0.3, 0.59, 0.11));
+			vec3 wet = (k == K_DIRT || k == K_SOIL) ? mix(vec3(0.12, 0.1, 0.08), vec3(0.3, 0.25, 0.18), smoothstep(0.15, 0.6, lb))
+				: mix(col, vec3(lb) * vec3(0.86, 1.0, 0.7), 0.35) * 0.82;
+			col = mix(col, wet, fb);
 		}
 		COLOR = vec4(col, 1.0);
 	}

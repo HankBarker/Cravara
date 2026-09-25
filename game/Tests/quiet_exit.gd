@@ -29,4 +29,7 @@ static func settle(tree: SceneTree) -> void:
 		# A stopped playback fades out on one mix and is released on the next.
 		await tree.create_timer(0.3, true, false, true).timeout
 		if not busy:
+			# One more round for a machine under load (pass 11's bigger world):
+			# the music's playback was still held at exit after a single wait.
+			await tree.create_timer(0.3, true, false, true).timeout
 			return

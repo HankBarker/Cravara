@@ -103,8 +103,12 @@ func _dress_den() -> void:
 		for offset in BONES:
 			var c: Vector2i = den + offset
 			if not world.props.has(c) and not world.water.has(c): world._spawn_prop(c, "bone_pile")
-	world._flora_dirty = true
-	if world.surface: world.surface.rebuild()
+	var touched: Array = []
+	for dy in range(-CLEAR, CLEAR + 1):
+		for dx in range(-CLEAR, CLEAR + 1):
+			touched.append(den + Vector2i(dx, dy))
+	for c in touched: world._flora_cells[c] = true
+	if world.surface: world.surface.rebuild_cells(touched)
 
 
 func _raise_alpha() -> void:

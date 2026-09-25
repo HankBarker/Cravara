@@ -143,6 +143,25 @@ outside, starts his `CAST.guide.intro` lines ("Easy, easy. You're awake…
 I saw you come down last night… what falls from the sky must be kept… A
 Keeper."). Suite: `Tests/IntroSuite.tscn`.
 
+## Tasks (pass 11: `Forest/quests/QuestData.gd`, `QuestManager.gd`)
+Each of the folk gives tasks one at a time, in order: Orrin (`guide`) sends the keeper exploring and
+at the bosses, Tamsin (`trader`) wants the new lands' goods, Kaya (`warden`) wants eggs, hatchlings
+and new beasts tamed. A task is `{id, giver, title, needs?, ask, done, goals[], reward{}}`.
+- `needs` gates it: `region:<id>` (the world has that region), `species:<id>` (in
+  `ForestCreature.SPECIES`), `item:<id>` (in ItemDB). A task whose needs aren't met yet is skipped
+  over for now, not lost.
+- Goal types: `have` (in the pack; `take: true` hands them over), `craft`, `lore` (carvings read),
+  `house` (valid homes), `defeat` (species; a boss beaten before the task was taken counts via its
+  milestone: alpha, ossuar, maw), `region`, `visit`, `bones`, `egg`, `hatch`, `grow`, `dig`,
+  `fish`, `tame` (`ids`: any of them, lifetime or now).
+- Tallies come from SignalBus (item_crafted, creature_defeated, creature_tamed, region_entered,
+  nest_robbed, egg_hatched, creature_grew, relic_dug, fish_caught, bones_searched,
+  place_visited). A `creature_defeated` sender only needs a `species` property (Old Maw sends
+  `maw`).
+- The talk panel has a Tasks page (accept, hand in; the reward bursts out at the keeper); a `!`
+  or `?` bobs over the giver's head (`FolkActor.task_mark`); the HUD lists taken tasks with their
+  goal lines (`ForestHUD.show_tasks`). Saved as `quests` (state and tallies).
+
 ## Folk & houses panel (`UI/FolkHousesPanel.gd`, H or the pause menu)
 
 The Terraria housing menu, drawn in the session overlay (kind `houses`):
@@ -226,3 +245,63 @@ The Terraria housing menu, drawn in the session overlay (kind `houses`):
   straight in (stage `home`, not `ready`).
 - Banners queue, one at a time for about 6 s each. Several arrivals in a row
   show in order.
+
+## Tribes (pass 12): the Sunward and the Ashen
+The wilds' people (`game/Forest/tribes/`). They are separate from the folk: never housed, never
+saved (only their memory is).
+
+- **`Tribes.gd`** holds the data:
+  - Tribes: `sunward` (desert nomads who trade) and `ashen` (raiders).
+  - `LOOKS`: every look a tribesman can wear. A look is a rig set per slot, an appearance and a
+    held weapon.
+  - `CLIPS` per role (melee, archer, trader, chief). `ROLES` gives each role's hp, damage, reach,
+    cooldown, walk/run pace and bow range.
+  - `LOOT`, the Sunward `STOCK`/`BUYS`, their `LINES`, and `CAST` (the trader in the folk dialogue).
+- **Art.** The tribes' dress is two **rig sets** (`sunward`, `ashen`), made with PixelLab
+  `create_character_state` from the keeper's base character → `extract_parts.py` →
+  `build_rig.py`, just like armour. So every tribesman moves with the keeper's own clips.
+  `Tests/tribe_bake.gd` (headless `--script`) renders each look's clips from the rig into strips:
+  `Forest/tribes/art/<look>/<clip>_<facing>.png`, `clips.json` and `portrait.png` (with an
+  archer's bowstring). `TribeArt.gd` loads them as one shared SpriteFrames per look; left is right
+  mirrored. Rebake after changing a set or a look.
+- **`Tribesman.gd`** (CharacterBody2D on the beasts' layer 2, group `tribesmen`):
+  - **Villagers** potter near home. A **band's leader** walks to goals and the rest follow in a
+    loose file.
+  - **Raiders** come for the keeper on sight (NOTICE 170, 300 once the band has cried out), but not
+    a keeper in the whole Ashen dress (`SetBonus.disguised`) unless struck. **The Sunward** fight
+    only what hurts them. Striking one turns its band and the village folk within 220 px; the
+    tribe won't trade for `ANGER` seconds.
+  - A band out **hunting** runs down small game (`GAME`), then rests.
+  - **Melee:** the blow lands at 45% of the sword clip. **Archers** keep 56 px to their range and
+    shoot `TribeArrow` along the ground feet-to-feet, drawn at chest height. The keeper's body is a
+    feet box, so arrows aimed at the chest flew over it. A friendly arrow passes the keeper and
+    their beasts by.
+  - Badly hurt, anyone but a chief flees. Everyone barks a few words. A health bar shows when hurt.
+- **Tribe beasts** are ForestCreatures with `master` set to a tribesman (meta `tribe_beast`). They
+  keep to their master and fight its foe. A raider's beast also takes the keeper, unless the
+  keeper is disguised. They go wild when the master falls, and are never saved.
+- **`TribeKeeper.gd`** (session, group `tribe_keeper`):
+  - Peoples `world.villages` from `WildsGen._villages()`: the Sunward oasis by a dune oasis, and
+    the Ashen war camp in the Pale Lands' east. The villages have tents, a stall and totems
+    (`tools/world/make_tribe_art.py`, pixflux), a campfire and beasts. It does this in
+    `_prepare_bosses()`, on every new journey and load.
+  - A camp wiped out stays empty for `EMPTY_FOR`.
+  - Bands set out every 70–150 s, per `REGION_BANDS`. They spawn 460–700 px off in the keeper's
+    region: the forest only gets Sunward hunters after 20 minutes, and Ashen raids at night after
+    Skarn. They walk goal to goal and melt away when left 1300 px behind. The limit is 2 at once.
+- **Barter** runs through the folk dialogue. `Folk.info` and `FolkActor.portrait` answer `tribe_*`
+  ids. `TribeTrade.gd` (a RefCounted) answers the manager's calls, so `FolkDialogue.manager` and
+  `open()` take an `Object`, not a `Node`: typed `Node`, E at Ishka threw a type error and the
+  dialogue never opened, while the suite (calling TribeTrade directly) passed. The Home button
+  shows only for managers with `rooms()`. The trade page's sell tab shows for any manager with
+  `buys_for()`.
+- **Arrows** (`TribeArrow`) take the archer's tribe and friendliness at the draw: they never hit
+  the tribe or its beasts, and still fly true after the archer falls.
+- **Beasts:** wild hunters take tribesmen as prey (`_wild_target` scans group `tribesmen`).
+  DinoMoves' `_candidates` adds the target tribesman, and other tribesmen caught in a wild beast's
+  blow.
+- **Tests:** `Tests/TribeSuite.tscn` (38 checks, including opening trade through the real
+  dialogue). Keep test spots cleared of wildlife (2000 px: compy swarms run far) and old tribe
+  beasts. Every sub-test uses the same patch of dunes: `_clear_folk()` stops tribesmen, beasts and
+  arrows as well as freeing them, or a node freed at a frame's start swings or shoots once more
+  into the next test.

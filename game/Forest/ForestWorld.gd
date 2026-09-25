@@ -5,8 +5,17 @@ const EXTENT := 56
 ## Pass 10: the world is the forest (the original EXTENT square, generated
 ## exactly as before) plus the Bonelands east of it. BOUNDS covers both.
 const BONELANDS := Rect2i(56, -56, 112, 112)
-const BOUNDS := Rect2i(-56, -56, 224, 112)
+## Pass 11: the wilds all round (world/WildsGen.gd).
+const GLASSMERE := Rect2i(-168, -56, 112, 112)
+const PALE_HILLS := Rect2i(-168, -140, 336, 84)
+const DUNES := Rect2i(-168, 56, 336, 80)
+const BOUNDS := Rect2i(-168, -140, 336, 276)
+## The world as pass 10 knew it: the Bonelands still lay their rim by it.
+const OLD_BOUNDS := Rect2i(-56, -56, 224, 112)
 const Prop = preload("res://Forest/ForestProp.gd")
+const Nesting = preload("res://Forest/world/Nesting.gd")
+const WildsGen = preload("res://Forest/world/WildsGen.gd")
+const Life = preload("res://Forest/creatures/Life.gd")
 const GROUND = preload("res://Forest/ground/ForestGround.gd")
 const FLORA = preload("res://Forest/ground/ForestFlora.gd")
 const ROOFS = preload("res://Forest/ForestRoofs.gd")
@@ -43,7 +52,7 @@ var noise := FastNoiseLite.new()
 ## from the gardens.
 var surface: Node2D
 ## Swaying grass and flowers (ForestFlora), refreshed once a frame after edits.
-var flora: MultiMeshInstance2D
+var flora: Node2D
 ## Draws each patch of joined roof tiles as one roof on the wall tops.
 var roof_layer: Node2D
 var _flora_dirty := false
@@ -64,6 +73,33 @@ var _station_timer := 0.0
 var last_feedback := ""
 var last_hit_material := "stone"
 var decor_atlas: Texture2D = preload("res://WorldObjects/Images/Objects.png")
+## Wild nests and the keeper's incubators (pass 11, world/Nesting.gd).
+var nesting
+## Glassmere's deep water (cell -> true: a boat's water; walking stops at it),
+## the piranhas' shallows, the bay they school round, and the Ossuary.
+var deep := {}
+var piranha := {}
+var piranha_bay := Vector2i(9999, 9999)
+var ossuary := Vector2i(9999, 9999)
+## The tribes' homes (pass 12, WildsGen._villages): id -> {tribe, cell}.
+var villages := {}
+var _deep_body: StaticBody2D
+## Glassmere's banks, solid to a boat (layer 64): land beside the lake.
+var _shore_body: StaticBody2D
+## Props far from the view are hidden (pass 11: the wilds hold ~11,000, and
+## the renderer walks every visible one each frame), in CULL-cell squares.
+const CULL := 16
+const CULL_MARGIN := 420.0
+var _cull := {}
+var _cull_shown := {}
+var _cull_clock := 0.0
+## Bone heaps already picked through (cell -> true).
+var searched := {}
+## Cells whose grass may have to hide or come back (a prop came or went).
+var _flora_cells := {}
+var _nest_clock := 0.0
+## An incubator hatched its egg: the session brings out the baby.
+signal egg_hatched_at(cell: Vector2i, species: String)
 
 func _ready() -> void:
 	add_to_group("forest_world")
@@ -84,7 +120,30 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if _flora_dirty and flora:
 		_flora_dirty = false
+		_flora_cells.clear()
 		flora.refresh()
+	elif not _flora_cells.is_empty() and flora:
+		flora.refresh_cells(_flora_cells.keys())
+		_flora_cells.clear()
+	_nest_clock += delta
+	if _nest_clock >= 0.25 and nesting:
+		var speed := 1.0
+		var session := get_tree().get_first_node_in_group("forest_session")
+		if session and session.get("buffs") != null: speed = session.buffs.incubation_speed()
+		for hatch in nesting.tick(_nest_clock, speed):
+			egg_hatched_at.emit(hatch.cell, hatch.species)
+		for c in clams.keys():
+			clams[c] = float(clams[c]) - _nest_clock
+			if float(clams[c]) <= 0.0:
+				clams.erase(c)
+				if props.has(c) and props[c].kind == "clam_bed":
+					props[c].harvested = false
+					props[c].queue_redraw()
+		_nest_clock = 0.0
+	_cull_clock -= delta
+	if _cull_clock <= 0.0:
+		_cull_clock = 0.25
+		_cull_props()
 	_station_timer += delta
 	if _station_timer < 0.4: return
 	_station_timer = 0.0
@@ -92,13 +151,22 @@ func _process(delta: float) -> void:
 	if not player: player = get_parent().get_node_or_null("Player")
 	if not player or not CraftingManager.has_method("set_nearby_stations"): return
 	var stations: Array[String] = []
-	for key in props:
-		var p = props[key]
-		if is_instance_valid(p) and p.kind in ["workbench","campfire"] and p.global_position.distance_to(player.global_position) < 64:
-			stations.append(p.kind)
+	var here := to_cell(player.global_position)
+	for y in range(here.y - 5, here.y + 6):
+		for x in range(here.x - 5, here.x + 6):
+			var p = props.get(Vector2i(x, y))
+			if is_instance_valid(p) and p.kind in ["workbench","campfire"] and p.global_position.distance_to(player.global_position) < 64:
+				stations.append(p.kind)
 	CraftingManager.set_nearby_stations(stations)
 
 func _generate() -> void:
+	nesting = Nesting.new(self)
+	searched.clear()
+	clams.clear()
+	deep.clear()
+	piranha.clear()
+	_cull.clear()
+	_cull_shown.clear()
 	rng.seed = world_seed
 	noise.seed = world_seed
 	noise.frequency = 0.058
@@ -151,6 +219,14 @@ func _generate() -> void:
 	# Last of all, from its own noise and random numbers, so the forest keeps
 	# every seeded prop where old saves expect it.
 	_generate_bonelands()
+	# The wilds all round (pass 11), with numbers of their own; the old rims
+	# come down along every seam.
+	WildsGen.new(self).generate()
+	# The wild nests (pass 11), on ground nothing else took, with numbers of
+	# their own.
+	nesting.place_all()
+	_build_deep_water()
+	_build_shore()
 
 ## The world, in cells (the forest and the Bonelands).
 func bounds() -> Rect2i:
@@ -158,7 +234,130 @@ func bounds() -> Rect2i:
 
 
 func region_of(c: Vector2i) -> String:
-	return "bonelands" if BONELANDS.has_point(c) else "forest"
+	if BONELANDS.has_point(c): return "bonelands"
+	if GLASSMERE.has_point(c): return "glassmere"
+	if PALE_HILLS.has_point(c): return "pale_hills"
+	if DUNES.has_point(c): return "dunes"
+	return "forest"
+
+
+func has_region(region: String) -> bool:
+	return region in ["forest", "bonelands", "glassmere", "pale_hills", "dunes"]
+
+
+## The pass-10 world's rim (the Bonelands' own walls are laid by it).
+func _old_edge(c: Vector2i) -> bool:
+	return c.x <= OLD_BOUNDS.position.x + 1 or c.x >= OLD_BOUNDS.end.x - 1 or c.y <= OLD_BOUNDS.position.y + 1 or c.y >= OLD_BOUNDS.end.y - 1
+
+
+## What the world's rim says to a keeper who tries it.
+func edge_text(c: Vector2i) -> String:
+	if PALE_HILLS.has_point(c) and c.y <= BOUNDS.position.y + 1:
+		return "The ash lies deep to the north, and the mountain beyond still smoulders. Not yet."
+	return "The wilds go on beyond here, one day."
+
+
+func _cull_props() -> void:
+	var cam := get_viewport().get_camera_2d()
+	var eye: Vector2 = cam.get_screen_center_position() if cam else Vector2.ZERO
+	if not cam:
+		var keeper := get_tree().get_first_node_in_group("player") as Node2D
+		if keeper: eye = keeper.global_position
+	var view := Rect2(eye - Vector2(240, 135) - Vector2(CULL_MARGIN, CULL_MARGIN), Vector2(480, 270) + Vector2(CULL_MARGIN, CULL_MARGIN) * 2.0)
+	var span := float(CULL * CELL)
+	for square in _cull:
+		var shown := view.intersects(Rect2(Vector2(square) * span, Vector2(span, span)))
+		if _cull_shown.get(square, true) == shown: continue
+		_cull_shown[square] = shown
+		var kept: Array = []
+		for p in _cull[square]:
+			if is_instance_valid(p) and not p.is_queued_for_deletion():
+				p.visible = shown
+				kept.append(p)
+		_cull[square] = kept
+
+
+## A landmark's footing near a cell (keep scatter off it).
+func _solid_near(c: Vector2i) -> bool:
+	for y in range(-2, 3):
+		for x in range(-2, 3):
+			if _solid_cells.has(c + Vector2i(x, y)): return true
+	return false
+
+
+## The grass's tint for a cell: dead and grey under the Pale Lands' ash
+## (pass 12), fading in over their southern rows.
+func grass_tint(c: Vector2i) -> Color:
+	if not PALE_HILLS.has_point(c): return Color.WHITE
+	var fade := clampf(float(PALE_HILLS.end.y - 1 - c.y) / 10.0, 0.0, 1.0)
+	return Color.WHITE.lerp(Color(0.8, 0.78, 0.72), fade)
+
+
+## Deep water can't be walked (or waded) into: a solid body on its own layer
+## (32) over it, in row runs. A keeper in a boat leaves that layer.
+func _build_deep_water() -> void:
+	if is_instance_valid(_deep_body): _deep_body.queue_free()
+	_deep_body = null
+	if deep.is_empty(): return
+	_deep_body = StaticBody2D.new()
+	_deep_body.name = "DeepWater"
+	_deep_body.collision_layer = 32
+	_deep_body.collision_mask = 0
+	var rows := {}
+	for c in deep: rows[c.y] = true
+	for y in rows:
+		var xs: Array = []
+		for c in deep:
+			if c.y == y: xs.append(c.x)
+		xs.sort()
+		var start: int = xs[0]
+		var prev: int = xs[0]
+		for i in range(1, xs.size() + 1):
+			var x: int = xs[i] if i < xs.size() else 999999
+			if x == prev + 1:
+				prev = x
+				continue
+			var shape := CollisionShape2D.new()
+			var box := RectangleShape2D.new()
+			box.size = Vector2((prev - start + 1) * CELL, CELL)
+			shape.shape = box
+			shape.position = Vector2(start * CELL, y * CELL) + box.size / 2.0
+			_deep_body.add_child(shape)
+			start = x
+			prev = x
+	if is_inside_tree(): add_child(_deep_body)
+	else: call_deferred("add_child", _deep_body)
+
+
+## A boat can't be sailed onto land: the lake's banks are solid on layer 64
+## (the keeper takes that layer only while afloat, Boating.gd).
+func _build_shore() -> void:
+	if is_instance_valid(_shore_body): _shore_body.queue_free()
+	_shore_body = null
+	var bank := {}
+	for c in water:
+		if not GLASSMERE.has_point(c): continue
+		for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1), Vector2i(1, 1), Vector2i(-1, 1), Vector2i(1, -1), Vector2i(-1, -1)]:
+			var n: Vector2i = c + d
+			if terrain.has(n) and not water.has(n): bank[n] = true
+	if bank.is_empty(): return
+	_shore_body = StaticBody2D.new()
+	_shore_body.name = "Shore"
+	_shore_body.collision_layer = 64
+	_shore_body.collision_mask = 0
+	for c in bank:
+		var shape := CollisionShape2D.new()
+		var box := RectangleShape2D.new()
+		box.size = Vector2(CELL, CELL)
+		shape.shape = box
+		shape.position = Vector2(c * CELL) + Vector2(8, 8)
+		_shore_body.add_child(shape)
+	if is_inside_tree(): add_child(_shore_body)
+	else: call_deferred("add_child", _shore_body)
+
+
+func is_deep_at(pos: Vector2) -> bool:
+	return deep.has(to_cell(pos))
 
 
 ## The world's outer wall (two cells deep west and north, one east and south,
@@ -201,7 +400,7 @@ func _generate_bonelands() -> void:
 			var hole := n < -0.45 and absi(y) < 48 and x > BONELANDS.position.x + 6
 			terrain[c] = 2 if hole else (1 if wash else 0)
 			if hole: water[c] = true
-			if on_edge(c):
+			if _old_edge(c):
 				_spawn_prop(c, "wall")
 			elif not hole and not wash and n > 0.3 and x > BONELANDS.position.x + 4:
 				_spawn_prop(c, "ore" if r.randf() < 0.28 else "wall")
@@ -445,6 +644,7 @@ func dig_at(pos: Vector2) -> bool:
 	var loot: Dictionary = Loot.relic(c, world_seed) if kind == "relic" else Loot.roots(c, world_seed)
 	_remove_prop(c)
 	mined[c] = true
+	if kind == "relic": SignalBus.relic_dug.emit(c)
 	_burst(loot, Vector2(c * CELL) + Vector2(8, 10))
 	AudioManager.play_sfx("harvest_plant")
 	var names: Array = []
@@ -468,9 +668,14 @@ func is_river_cell(c: Vector2i) -> bool:
 
 ## The gardens' tilled cells (cell -> watered), drawn into the ground.
 func set_soil(soil: Dictionary) -> void:
+	var changed := {}
+	for c in tilled:
+		if not soil.has(c) or soil[c] != tilled[c]: changed[c] = true
+	for c in soil:
+		if not tilled.has(c): changed[c] = true
 	tilled = soil.duplicate()
-	_flora_dirty = true
-	if surface: surface.rebuild()
+	for c in changed: _flora_cells[c] = true
+	if surface: surface.rebuild_cells(changed.keys())
 
 func _clear_landmark(c: Vector2i, radius: int) -> void:
 	for y in range(c.y-radius,c.y+radius+1):
@@ -489,7 +694,7 @@ func _clear_for_prop(c: Vector2i) -> bool:
 	return true
 
 func _spawn_prop(c: Vector2i, kind: String) -> void:
-	_flora_dirty = true
+	_flora_cells[c] = true
 	if kind in Prop.FLOORS:
 		_spawn_floor(c, kind)
 		return
@@ -498,13 +703,20 @@ func _spawn_prop(c: Vector2i, kind: String) -> void:
 	p.kind=kind
 	p.rich_vein=kind=="ore" and Vector2(c).length()>25 and posmod(c.x*7+c.y*11,3)==0
 	p.variant=rng.randi_range(0,4)
-	p.max_hp=STRUCTURE_HP.get(kind,1)
+	p.max_hp=STRUCTURE_HP.get(kind, int(Prop.WILD.get(kind, {}).get("hp", 1)))
 	p.hp=p.max_hp
 	p.cell=c
-	p.sandstone=kind in Prop.SANDSTONE and BONELANDS.has_point(c)
+	p.sandstone=kind in Prop.SANDSTONE and (BONELANDS.has_point(c) or DUNES.has_point(c))
+	p.chalk=kind in Prop.SANDSTONE and PALE_HILLS.has_point(c)
+	p.ashen=kind in Prop.ASHEN_KINDS and PALE_HILLS.has_point(c)
 	p.position=Vector2(c*CELL)+Vector2(8,8)
 	props[c]=p
 	add_child(p)
+	if kind == "incubator" and nesting and not nesting.incubators.has(c): nesting.incubators[c] = {}
+	var square := Vector2i(floori(float(c.x) / CULL), floori(float(c.y) / CULL))
+	if not _cull.has(square): _cull[square] = []
+	_cull[square].append(p)
+	p.visible = _cull_shown.get(square, true)
 	if p.has_parts(): _index_solids(p, true)
 
 ## Note (or forget) the cells a landmark's footing touches.
@@ -522,7 +734,7 @@ func _index_solids(p, add: bool) -> void:
 					if _solid_cells[c].is_empty(): _solid_cells.erase(c)
 
 ## How many hits a prop takes; stone outlasts timber.
-const STRUCTURE_HP := {"tree":3,"wall":3,"ore":3,"rock":8,"wood_wall":4,"wood_floor":3,"workbench":6,"chest":6,"torch":3,"campfire":5,"wood_door":5,"thatch_roof":3,"hide_bed":5,"tent":8,"stone_wall":10,"stone_floor":6,"stone_door":8,"slate_roof":5}
+const STRUCTURE_HP := {"tree":3,"wall":3,"ore":3,"rock":8,"wood_wall":4,"wood_floor":3,"workbench":6,"chest":6,"torch":3,"campfire":5,"sun_sail":5,"wood_door":5,"thatch_roof":3,"hide_bed":5,"tent":8,"stone_wall":10,"stone_floor":6,"stone_door":8,"slate_roof":5}
 
 func _spawn_floor(c: Vector2i, kind := "wood_floor") -> void:
 	_flora_dirty = true
@@ -567,10 +779,16 @@ func _remove_roof(c: Vector2i) -> void:
 	if roof_layer: roof_layer.dirty=true
 
 func _remove_prop(c: Vector2i) -> void:
-	_flora_dirty = true
+	_flora_cells[c] = true
 	if not props.has(c): return
 	var p=props[c]
 	props.erase(c)
+	if is_instance_valid(p) and nesting:
+		if p.kind == "nest": nesting.nests.erase(c)
+		elif p.kind == "incubator":
+			# A broken incubator gives its egg back.
+			var egg: String = nesting.remove_egg(c)
+			if egg != "" and is_inside_tree(): _burst({egg: 1}, Vector2(c * CELL) + Vector2(8, 10))
 	if is_instance_valid(p):
 		if p.has_parts(): _index_solids(p, false)
 		p.collision_layer=0
@@ -579,9 +797,23 @@ func _remove_prop(c: Vector2i) -> void:
 func get_spawn_position() -> Vector2: return Vector2.ZERO
 func to_cell(pos: Vector2) -> Vector2i: return Vector2i((to_local(pos)/CELL).floor())
 func is_water_at(pos: Vector2) -> bool: return water.has(to_cell(pos))
+
+## The Pale Lands' ash (pass 12): the keeper breathes it out there (ForestPlayer).
+func is_ashen_at(pos: Vector2) -> bool: return region_of(to_cell(pos)) == "pale_hills"
+
+## Out of the ash: under a roof, or in a tent's shelter (within a cell or two).
+const SHELTERS := ["tent", "sunward_tent", "ashen_tent", "folk_hut", "folk_camp", "keeper_camp"]
+func sheltered_at(pos: Vector2) -> bool:
+	var c := to_cell(pos)
+	if roofs.has(c): return true
+	for y in range(-2, 3):
+		for x in range(-2, 3):
+			var p = props.get(c + Vector2i(x, y))
+			if is_instance_valid(p) and p.kind in SHELTERS: return true
+	return false
 func is_blocked_at(pos: Vector2) -> bool:
 	var c:=to_cell(pos)
-	if not terrain.has(c): return true
+	if not terrain.has(c) or deep.has(c): return true
 	# Landmarks are solid only along the footing of each part (arches, the
 	# stone circle and the grove stay walkable).
 	for p in _solid_cells.get(c,[]):
@@ -655,6 +887,26 @@ func get_spawnable_position(preferred: Vector2) -> Vector2:
 			if not is_water_at(p) and not is_blocked_at(p) and not is_blocked_at(p+Vector2(12,0)) and not is_blocked_at(p-Vector2(12,0)): return p
 	return Vector2.ZERO
 
+## Room for a body of `radius` px (pass 12): dry, open ground with nothing
+## solid within the body plus a margin all round, near `preferred` (a big
+## beast placed between two rocks was wedged there for good). The plain
+## spawnable spot when nothing roomier is close.
+func get_open_position(preferred: Vector2, radius: float) -> Vector2:
+	var margin := radius + 6.0
+	for ring in range(0, 8):
+		for i in range(16):
+			var p := preferred + Vector2(cos(i * TAU / 16), sin(i * TAU / 16)) * ring * 16
+			if is_water_at(p) or is_blocked_at(p): continue
+			var roomy := true
+			for k in 8:
+				var edge := p + Vector2.from_angle(k * TAU / 8.0) * margin
+				if is_blocked_at(edge) or is_deep_at(edge):
+					roomy = false
+					break
+			if roomy: return p
+			if ring == 0: break
+	return get_spawnable_position(preferred)
+
 ## What a swing or E at `pos` reaches, in the order things are drawn:
 ## - a roof seen from outside covers everything under it; the roof over the
 ##   keeper's own head has faded away and can't be struck from below;
@@ -708,7 +960,23 @@ func get_interaction_hint(pos: Vector2) -> String:
 			"folk_camp": return "A cold camp"
 			"folk_cage": return "E · Break the trap open"
 			"folk_cage_open": return "A broken beast-trap"
-			"bone_pile": return "Old bones. Something big dens here."
+			"bone_pile": return "Old bones · picked clean" if searched.has(c) else "Old bones · E: search through them"
+			"nest":
+				var nest: Dictionary = nesting.nest_at(c)
+				if nest.is_empty(): return ""
+				return "%s nest · %d %s · E: take one (its parents will fight)" % [str(Life.SHORT.get(nest.species, nest.species)), int(nest.eggs), "egg" if int(nest.eggs) == 1 else "eggs"]
+			"incubator": return nesting.status(c)
+			"palm", "pine", "birch", "dead_tree": return "AXE · Fell the tree"
+			"cactus": return "Strike to pick the red fruit"
+			"reeds": return "Strike to cut reeds"
+			"chalk_rock": return "PICKAXE · Chalk stone"
+			"pale_crystal": return "PICKAXE POWER 2 · Pale Sky-Fang crystal"
+			"clam_bed": return "Clams, shut tight" if props[c].harvested else "E · Open the clams"
+			"keeper_camp": return "E · The last Keeper's camp"
+			"mesa": return "A sandstone mesa"
+			"ossuary": return "E · The Ossuary"
+			"lily_pads": return "Lily pads"
+			"boat": return "E · Board the boat · strike to pick it up"
 			"relic": return "HOE · Dig up the buried find"
 			"roots": return "HOE · Dig up wild tubers"
 		if props[c].kind in Prop.LANDMARKS:
@@ -727,13 +995,13 @@ func mine_at(pos: Vector2, tool_type: String, power: int = 1) -> bool:
 	if not props.has(c) and not roof and not floor_tile: return false
 	var p=roofs[c] if roof else (floors[c] if floor_tile else props[c])
 	if on_edge(c):
-		last_feedback="The wilds go on beyond here, one day."
+		last_feedback=edge_text(c)
 		return false
 	if p.kind=="shrine" or p.kind in Prop.LANDMARKS or p.kind=="cache":
 		last_feedback="This ancient landmark cannot be dismantled."
 		return false
 	if p.kind in Prop.DECOR:
-		last_feedback="Old bones, picked clean long ago."
+		last_feedback="Leave the nest be: press E to take an egg." if p.kind == "nest" else "Too big to break up. Press E to search through them."
 		return false
 	if p.kind in Prop.FOLK_SITES:
 		last_feedback="This belongs to someone."
@@ -746,6 +1014,30 @@ func mine_at(pos: Vector2, tool_type: String, power: int = 1) -> bool:
 			if slot.item and slot.quantity>0:
 				last_feedback="Empty the chest before reclaiming it."
 				return false
+	if Prop.WILD.has(p.kind):
+		var wild: Dictionary = Prop.WILD[p.kind]
+		if bool(wild.get("landmark", false)):
+			last_feedback="This cannot be dismantled."
+			return false
+		if not wild.has("tool"):
+			return false
+		if str(wild.tool) != "" and tool_type != str(wild.tool):
+			last_feedback="Equip %s." % ("an axe to fell it" if wild.tool == "axe" else "a pickaxe to break it")
+			return false
+		if power < p.required_power():
+			last_feedback="Requires pickaxe power %d (yours: %d)." % [p.required_power(), power]
+			return false
+		last_hit_material = "wood" if wild.tool == "axe" else ("stone" if wild.tool == "pickaxe" else "plant")
+		var gifts_w = get_tree().get_first_node_in_group("companion_buffs")
+		var bonus: int = gifts_w.break_bonus() if gifts_w and str(wild.tool) != "" else 0
+		p.receive_hit((maxi(1, power) + bonus) if str(wild.tool) != "" else 1)
+		if p.hp > 0: return true
+		var drop: Array = wild.get("drop", [])
+		_remove_prop(c)
+		mined[c] = true
+		placed.erase(c)
+		if not drop.is_empty(): _drop(str(drop[0]), int(drop[1]), Vector2(c * CELL) + Vector2(8, 8))
+		return true
 	if p.kind=="tree" and tool_type!="axe":
 		last_feedback="Equip an axe to fell this tree."
 		return false
@@ -757,7 +1049,9 @@ func mine_at(pos: Vector2, tool_type: String, power: int = 1) -> bool:
 	if power < hardness and p.kind in ["tree","rock","wall","ore"]:
 		last_feedback="Requires %s power %d (yours: %d)." % ["axe" if p.kind=="tree" else "pickaxe",hardness,power]
 		return false
-	p.receive_hit(maxi(1,power) if p.kind in ["tree","rock","wall","ore"] else 1)
+	var gifts = get_tree().get_first_node_in_group("companion_buffs")
+	var extra: int = gifts.break_bonus() if gifts and p.kind in ["tree","rock","wall","ore"] else 0
+	p.receive_hit((maxi(1,power) + extra) if p.kind in ["tree","rock","wall","ore"] else 1)
 	if p.hp>0: return true
 	var kind: String=p.kind
 	if roof:
@@ -770,7 +1064,10 @@ func mine_at(pos: Vector2, tool_type: String, power: int = 1) -> bool:
 		mined[c]=true
 		placed.erase(c)
 	var id: String="prism_crystal" if p.rich_vein else {"tree":"log","rock":"stone","wall":"stone","ore":"crystal_shard","bush":"berry","fern":"plant_fiber","flowers":"plant_fiber","mushroom":"mushroom","cattail":"plant_fiber"}.get(kind,kind)
-	_drop(id,3 if kind in ["tree","bush","fern","rock"] else 1,Vector2(c*CELL)+Vector2(8,8))
+	var amount := 3 if kind in ["tree","bush","fern","rock"] else 1
+	if kind == "bush" and gifts: amount += gifts.extra_berries()
+	if kind in ["rock","wall","ore"] and gifts: amount += gifts.extra_ore()
+	_drop(id,amount,Vector2(c*CELL)+Vector2(8,8))
 	return true
 
 func _drop(id: String, count: int, pos: Vector2) -> void:
@@ -837,6 +1134,31 @@ func interact_at(pos: Vector2, item_id: String) -> bool:
 				"relic","roots":
 					last_feedback="Dig it up with a hoe."
 					return false
+				"nest":
+					return _take_egg(target)
+				"incubator":
+					_notify(nesting.status(target))
+					return true
+				"bone_pile":
+					return _search_bones(target)
+				"clam_bed":
+					return _open_clams(target, prop)
+				"keeper_camp":
+					var keeper_session:=get_tree().get_first_node_in_group("forest_session")
+					if keeper_session and keeper_session.has_method("show_lore"): keeper_session.show_lore("keeper_journal")
+					SignalBus.place_visited.emit("keeper_camp")
+					return true
+				"mesa":
+					_notify("Red stone, layered like pages. The wind has been reading it for a long time.")
+					return true
+				"boat":
+					var boat_session:=get_tree().get_first_node_in_group("forest_session")
+					return boat_session != null and boat_session.boating.board(target)
+				"ossuary":
+					var ossuary_session:=get_tree().get_first_node_in_group("forest_session")
+					if ossuary_session and ossuary_session.has_method("use_ossuary"): return ossuary_session.use_ossuary(target, "")
+					_notify("A ring of giant ribs around a skull on an altar. Something is buried here.")
+					return true
 			if prop.kind in Prop.LANDMARKS:
 				var session:=get_tree().get_first_node_in_group("forest_session")
 				if lore_at.has(target) and session and session.has_method("show_lore"):
@@ -849,16 +1171,25 @@ func interact_at(pos: Vector2, item_id: String) -> bool:
 		water.erase(c)
 		terrain[c]=1
 		edits[c]=false
-		surface.rebuild()
-		_flora_dirty = true
+		surface.rebuild_cells([c])
+		_flora_cells[c] = true
 		return true
 	if item_id=="water_bucket" and not water.has(c) and not props.has(c) and not floors.has(c):
 		if not _exchange_bucket("water_bucket","bucket"): return false
 		water[c]=true
 		terrain[c]=2
 		edits[c]=true
-		surface.rebuild()
-		_flora_dirty = true
+		surface.rebuild_cells([c])
+		_flora_cells[c] = true
+		return true
+	if item_id == "boat":
+		if not water.has(c) or not GLASSMERE.has_point(c) or props.has(c):
+			last_feedback = "Set the boat on the open water of the Mirefen's mere."
+			return false
+		if not InventoryManager.remove_item("boat", 1): return false
+		_spawn_prop(c, "boat")
+		props[c].is_placed = true
+		placed[c] = "boat"
 		return true
 	if item_id in Prop.ROOFS and not water.has(c) and not roofs.has(c):
 		if not InventoryManager.remove_item(item_id,1): return false
@@ -876,7 +1207,7 @@ func interact_at(pos: Vector2, item_id: String) -> bool:
 		if not InventoryManager.remove_item(item_id,1): return false
 		_spawn_floor(c, item_id)
 		return true
-	if item_id in ["wood_wall","stone_wall","campfire","workbench","torch","chest","wood_door","stone_door","hide_bed","tent"] and not water.has(c) and not props.has(c):
+	if item_id in ["wood_wall","stone_wall","campfire","workbench","torch","chest","wood_door","stone_door","hide_bed","tent","incubator","sun_sail"] and not water.has(c) and not props.has(c):
 		if _placement_overlaps_actor(c,item_id):
 			last_feedback="A creature or survivor is standing in the way."
 			return false
@@ -893,6 +1224,60 @@ func interact_at(pos: Vector2, item_id: String) -> bool:
 		props[target].hp=1
 		return mine_at(pos,"")
 	return false
+
+## Take an egg from a wild nest: it pops out beside it, and every guardian
+## of the nest comes for the thief (SignalBus.nest_robbed; the session rouses
+## them). A bare nest lays again in time.
+func _take_egg(c: Vector2i) -> bool:
+	var nest: Dictionary = nesting.nest_at(c)
+	if nest.is_empty(): return false
+	var egg: String = nesting.take_egg(c)
+	var name := str(Life.SHORT.get(nest.species, nest.species)).to_lower()
+	if egg == "":
+		_notify("The %s nest is bare. It will be laid again in time." % name)
+		return true
+	_burst({egg: 1}, Vector2(c * CELL) + Vector2(8, 12))
+	AudioManager.play_sfx("harvest_plant")
+	_notify("You take a %s egg. Its parents are coming!" % name)
+	SignalBus.nest_robbed.emit(c, str(nest.species))
+	return true
+
+
+## A clam bed on Glassmere's islands and beaches: a clear pearl, once in a
+## while (it grows another in CLAM_REGROW seconds).
+const CLAM_REGROW := 600.0
+var clams := {}
+
+func _open_clams(c: Vector2i, bed) -> bool:
+	if bed.harvested:
+		_notify("The clams are shut tight. A pearl takes time to grow.")
+		return true
+	bed.harvested = true
+	bed.queue_redraw()
+	clams[c] = CLAM_REGROW
+	_burst({"glass_pearl": 1}, Vector2(c * CELL) + Vector2(8, 10))
+	AudioManager.play_sfx("harvest_plant")
+	_notify("A pearl, clear as the lake.")
+	return true
+
+
+## Pick through a bone heap once: old bones, sometimes a fossil or a shard of
+## Sky-Fang crystal (the same for a cell every time).
+func _search_bones(c: Vector2i) -> bool:
+	if searched.has(c):
+		_notify("Picked clean. Only splinters are left.")
+		return true
+	searched[c] = true
+	var h := posmod(hash(Vector3i(c.x, c.y, world_seed ^ 0xB0E)), 1000)
+	var loot := {"old_bone": 2 + h % 3}
+	if h % 10 < 3: loot["fossil_bone"] = 1
+	if h % 7 == 0: loot["crystal_shard"] = 1 + h % 2
+	_burst(loot, Vector2(c * CELL) + Vector2(8, 10))
+	AudioManager.play_sfx("harvest_plant")
+	_notify("You pick through the old bones.")
+	if props.has(c): props[c].queue_redraw()
+	SignalBus.bones_searched.emit(c)
+	return true
 
 func _notify(message: String) -> void:
 	last_feedback=message
@@ -941,7 +1326,11 @@ func _exchange_bucket(before: String, after: String) -> bool:
 	return false
 
 func serialize() -> Dictionary:
-	var data:={"seed":world_seed,"mined":[],"water_edits":[],"placed":[],"chests":[],"roofs":[],"doors":[],"damage":[],"floors":[],"caches":[]}
+	var data:={"seed":world_seed,"mined":[],"water_edits":[],"placed":[],"chests":[],"roofs":[],"doors":[],"damage":[],"floors":[],"caches":[],"searched":[]}
+	if nesting: data.nesting = nesting.serialize()
+	data.clams = []
+	for c in clams: data.clams.append([c.x, c.y, float(clams[c])])
+	for c in searched: data.searched.append([c.x, c.y])
 	for c in mined: data.mined.append([c.x,c.y])
 	for c in edits: data.water_edits.append([c.x,c.y,edits[c]])
 	for c in placed:
@@ -1015,6 +1404,15 @@ func restore(data: Dictionary) -> void:
 		var c:=Vector2i(entry[0],entry[1])
 		if props.has(c): props[c].hp=clampi(int(entry[2]),1,props[c].max_hp)
 		elif floors.has(c): floors[c].hp=clampi(int(entry[2]),1,floors[c].max_hp)
+	if nesting: nesting.restore(data.get("nesting", {}))
+	clams.clear()
+	for entry in data.get("clams", []):
+		var clam_cell := Vector2i(int(entry[0]), int(entry[1]))
+		if props.has(clam_cell) and props[clam_cell].kind == "clam_bed":
+			props[clam_cell].harvested = true
+			clams[clam_cell] = float(entry[2])
+	for entry in data.get("searched", []):
+		searched[Vector2i(int(entry[0]), int(entry[1]))] = true
 	if surface: surface.rebuild()
 	_flora_dirty = true
 

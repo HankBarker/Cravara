@@ -96,3 +96,14 @@ saddle contract); cel (32,32) = player origin; soles on cel row 43 (local +11).
 - Feel layer: `Forest/fx/KeeperFeel.gd` puts a ShaderMaterial (hit flash + waterline) on the
   sprite and sets `use_parent_material` on its children (KeeperHeld), so held tools flash and
   wade with the body.
+
+## Pass 12: three armour sets and two tribal outfits
+- **Hornguard** (`horn`, trike), **Plateback** (`plate`, stego) and **Rustback** (`rust`, allo) are
+  armour sets from the beasts' own materials.
+- **Sunward** (`sunward`) and **Ashen** (`ashen`) are the tribes' dress. They are rig sets too
+  (states of the base keeper), worn by tribesmen through baked strips (`Tests/tribe_bake.gd`), and
+  wearable by the keeper:
+  - Sunward: bought from Ishka; ash guard 0.5 and faster on sand.
+  - Ashen: dropped by raiders; raiders take you for one of their own.
+- **Set bonuses** live in `Forest/equipment/SetBonus.gd`: 11 sets. `rig.json` has 211 parts and
+  11 sets.

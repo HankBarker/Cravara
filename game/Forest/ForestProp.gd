@@ -19,8 +19,16 @@ var rich_vein := false
 ## Out in the Bonelands, stone is sun-baked sandstone (ForestWorld sets this
 ## when it places a wall, vein or boulder there).
 var sandstone := false
+## Up in the Pale Hills, stone is chalk (pass 11).
+var chalk := false
+## Pass 12: growing things in the Pale Lands stand dead and ash-covered
+## (ashen.gdshader), and still: no wind moves them.
+var ashen := false
+const ASHEN_KINDS := ["tree", "pine", "birch", "bush", "fern", "flowers", "mushroom", "cattail", "dead_tree", "palm", "reeds"]
+static var _ashen_material: ShaderMaterial
 
 func required_power() -> int:
+	if WILD.has(kind): return int(WILD[kind].get("power", 1))
 	return 2 if kind=="ore" and rich_vein else 1
 var atlas: Texture2D = preload("res://WorldObjects/Images/Objects.png")
 const ART = {
@@ -61,6 +69,11 @@ const ART = {
 	"folk_cage": preload("res://Forest/folk/art/folk_cage.png"),
 	"folk_cage_open": preload("res://Forest/folk/art/folk_cage_open.png"),
 	"bone_pile": preload("res://Forest/art/poi/bone_pile.png"),
+	# Nests and the keeper's incubator (pass 11, art/pass11).
+	"nest": preload("res://Forest/art/pass11/nest.png"),
+	"incubator": preload("res://Forest/art/pass11/incubator.png"),
+	# The Sun Sail (pass 12, tools/world/make_pass12_art.py): a garden's sun.
+	"sun_sail": preload("res://Forest/art/pass12/sun_sail.png"),
 	"relic": preload("res://Forest/art/poi/relic_mound.png"),
 	"roots": preload("res://Forest/art/poi/wild_roots.png"),
 }
@@ -70,6 +83,13 @@ const SANDSTONE = {
 	"wall_alt": preload("res://Forest/art/bonelands/sand_wall_alt.png"),
 	"ore": preload("res://Forest/art/bonelands/sand_ore.png"),
 	"rock": preload("res://Forest/art/bonelands/sand_rock.png"),
+}
+## The Pale Hills' stone (tools/world/make_bonelands_art.py).
+const CHALK = {
+	"wall": preload("res://Forest/art/bonelands/chalk_wall.png"),
+	"wall_alt": preload("res://Forest/art/bonelands/chalk_wall_alt.png"),
+	"ore": preload("res://Forest/art/bonelands/chalk_ore.png"),
+	"rock": preload("res://Forest/art/bonelands/chalk_rock.png"),
 }
 ## Points of interest (ForestWorld._place_points_of_interest). Ruins of the
 ## first builders and the old tribe's idols are landmarks, never dismantled. A
@@ -83,14 +103,74 @@ const DIG_SPOTS := ["relic","roots"]
 ## under the arch, and can never walk through a stone.
 const PARTS_FILE := "res://Forest/art/poi/pieces.json"
 const PARTS_DIR := "res://Forest/art/poi/pieces/"
-const POI_SOLID := {"cache": Rect2(-8,-4,16,11), "folk_hut": Rect2(-22,-10,44,17), "folk_camp": Rect2(-15,-9,36,11), "folk_cage": Rect2(-14,-7,28,14), "bone_pile": Rect2(-16,-6,32,12)}
+const POI_SOLID := {"cache": Rect2(-8,-4,16,11), "folk_hut": Rect2(-22,-10,44,17), "folk_camp": Rect2(-15,-9,36,11), "folk_cage": Rect2(-14,-7,28,14), "bone_pile": Rect2(-16,-6,32,12),
+	"sunward_tent": Rect2(-22,-9,44,14), "ashen_tent": Rect2(-22,-9,44,14), "sunward_stall": Rect2(-17,-6,34,11), "ashen_totem": Rect2(-5,-3,10,8)}
 ## Small finds sit on the ground and still cast a small shadow.
 const POI_SHADOW := {"relic": Rect2(-7,3,14,4), "roots": Rect2(-4,4,8,3), "folk_cage_open": Rect2(-14,-4,28,11)}
-const POI_HEIGHT := {"cache":12.0,"relic":6.0,"roots":7.0,"folk_hut":72.0,"folk_camp":34.0,"folk_cage":30.0,"folk_cage_open":14.0,"bone_pile":22.0}
+const POI_HEIGHT := {"cache":12.0,"relic":6.0,"roots":7.0,"folk_hut":72.0,"folk_camp":34.0,"folk_cage":30.0,"folk_cage_open":14.0,"bone_pile":22.0,
+	"sunward_tent":40.0,"ashen_tent":40.0,"sunward_stall":26.0,"ashen_totem":44.0}
 ## The folk's own places: someone's hut, a cold camp, an old beast-trap.
 const FOLK_SITES := ["folk_hut","folk_camp","folk_cage","folk_cage_open"]
 ## The alpha's den dressing (AlphaBoss): raised with the world, never mined.
-const DECOR := ["bone_pile"]
+const DECOR := ["bone_pile", "nest"]
+## The new regions' things (pass 11): Glassmere, the Pale Hills and the Sunscar
+## Dunes, drawn by PixelLab (art/pass11, tools/world/make_objects.py).
+##   solid: footing (Rect2, empty = walk through) · height: shadow height
+##   tool: what breaks it ("" = by hand; none = unbreakable) · hp · power
+##   drop: [item, count] · landmark: never dismantled · float: on water
+##   sway: [height, amount] in the wind
+const WILD := {
+	"palm": {"solid": Rect2(-5, -2, 10, 7), "height": 64.0, "tool": "axe", "hp": 3, "drop": ["log", 2], "sway": [66.0, 1.2]},
+	"pine": {"solid": Rect2(-6, -2, 12, 8), "height": 72.0, "tool": "axe", "hp": 3, "drop": ["log", 3], "sway": [72.0, 0.8]},
+	"birch": {"solid": Rect2(-4, -2, 8, 7), "height": 64.0, "tool": "axe", "hp": 3, "drop": ["log", 2], "sway": [64.0, 1.2]},
+	"dead_tree": {"solid": Rect2(-5, -2, 10, 7), "height": 50.0, "tool": "axe", "hp": 2, "drop": ["log", 2]},
+	"cactus": {"solid": Rect2(-6, -3, 12, 7), "height": 40.0, "tool": "", "hp": 1, "drop": ["cactus_fruit", 2]},
+	"reeds": {"solid": Rect2(), "height": 30.0, "tool": "", "hp": 1, "drop": ["plant_fiber", 2], "sway": [34.0, 2.0]},
+	"lily_pads": {"solid": Rect2(), "height": 0.0, "float": true},
+	"clam_bed": {"solid": Rect2(), "height": 6.0},
+	"chalk_rock": {"solid": Rect2(-14, -9, 28, 15), "height": 30.0, "tool": "pickaxe", "hp": 8, "drop": ["stone", 3]},
+	"pale_crystal": {"solid": Rect2(-9, -4, 18, 9), "height": 30.0, "tool": "pickaxe", "hp": 4, "power": 2, "drop": ["pale_crystal", 1]},
+	"mesa": {"solid": Rect2(-26, -12, 52, 19), "height": 48.0, "landmark": true},
+	"ossuary": {"solid": Rect2(-40, -10, 80, 16), "height": 60.0, "landmark": true},
+	"keeper_camp": {"solid": Rect2(-30, -12, 62, 18), "height": 50.0, "landmark": true},
+	"boat": {"solid": Rect2(), "height": 4.0, "float": true, "tool": "", "hp": 2, "drop": ["boat", 1]},
+}
+static var _wild_art := {}
+const ROWBOAT := preload("res://Forest/art/pass12/rowboat.png")
+## A moored boat's heading (0 east, clockwise in eighths), as it was left.
+var heading := 0
+
+## A pass-11 kind's drawing (imported, or straight from the file when the art
+## is newer than the import).
+## The tribes' village props (pass 12, tools/world/make_tribe_art.py), loaded
+## when first drawn.
+const TRIBE_PROPS := ["sunward_tent", "ashen_tent", "sunward_stall", "ashen_totem"]
+static var _tribe_art := {}
+static func tribe_art(prop_kind: String) -> Texture2D:
+	if not _tribe_art.has(prop_kind):
+		var path := "res://Forest/tribes/art/props/%s.png" % prop_kind
+		_tribe_art[prop_kind] = load(path) if ResourceLoader.exists(path) else null
+	return _tribe_art[prop_kind]
+
+static func wild_art(prop_kind: String) -> Texture2D:
+	if _wild_art.has(prop_kind): return _wild_art[prop_kind]
+	var path := "res://Forest/art/pass11/%s.png" % prop_kind
+	var tex: Texture2D = null
+	if ResourceLoader.exists(path):
+		tex = load(path)
+	elif FileAccess.file_exists(path):
+		var img := Image.load_from_file(ProjectSettings.globalize_path(path))
+		if img: tex = ImageTexture.create_from_image(img)
+	_wild_art[prop_kind] = tex
+	return tex
+
+## This prop's whole drawing, when it has one (landmarks, decor, new kinds).
+func art_texture() -> Texture2D:
+	if WILD.has(kind): return wild_art(kind)
+	return ART.get(kind)
+const Life = preload("res://Forest/creatures/Life.gd")
+## Egg colours by species (shell, shade, speckle), as the egg icons.
+const EGG_TINT := {"dodo": [Color("f0e3c2"), Color("c9b58c"), Color("d9772e")], "lystro": [Color("c4cc96"), Color("96a068"), Color("626e3e")], "stego": [Color("ded6aa"), Color("b2a878"), Color("d4802c")], "trike": [Color("e2c4aa"), Color("b89278"), Color("48a08c")], "longneck": [Color("c4dce2"), Color("8cb0be"), Color("407caa")], "raptor": [Color("c8d6de"), Color("92a6b6"), Color("3096b4")], "allo": [Color("dabea0"), Color("aa8868"), Color("784028")], "parasaur": [Color("d4deb0"), Color("a0b07c"), Color("be703c")]}
 static var _parts := {}
 static var _part_rects := {}
 
@@ -175,6 +255,15 @@ func _shake_offset() -> float:
 const SWAY := {"tree": [80.0, 1.0], "bush": [34.0, 1.4], "fern": [32.0, 1.8], "cattail": [32.0, 2.0], "flowers": [12.0, 1.4]}
 static var _sway_materials := {}
 
+static func _wild_sway(sway_kind: String) -> ShaderMaterial:
+	if not _sway_materials.has(sway_kind):
+		var m := ShaderMaterial.new()
+		m.shader = preload("res://Forest/ground/sway.gdshader")
+		m.set_shader_parameter("height", float(WILD[sway_kind].sway[0]))
+		m.set_shader_parameter("amount", float(WILD[sway_kind].sway[1]))
+		_sway_materials[sway_kind] = m
+	return _sway_materials[sway_kind]
+
 static func _sway_material(sway_kind: String) -> ShaderMaterial:
 	if not _sway_materials.has(sway_kind):
 		var m := ShaderMaterial.new()
@@ -185,7 +274,13 @@ static func _sway_material(sway_kind: String) -> ShaderMaterial:
 	return _sway_materials[sway_kind]
 
 func _ready() -> void:
-	if SWAY.has(kind): material = _sway_material(kind)
+	if ashen:
+		if _ashen_material == null:
+			_ashen_material = ShaderMaterial.new()
+			_ashen_material.shader = preload("res://Forest/fx/ashen.gdshader")
+		material = _ashen_material
+	elif SWAY.has(kind): material = _sway_material(kind)
+	elif WILD.has(kind) and WILD[kind].has("sway"): material = _wild_sway(kind)
 	set_process(kind in ["campfire","thatch_roof","slate_roof","chest"])
 	collision_layer = 16
 	collision_mask = 0
@@ -308,13 +403,30 @@ func _draw_visual() -> void:
 	if kind == "cache" and opened:
 		draw_texture(CACHE_OPEN, Vector2(-CACHE_OPEN.get_width()/2, 7-CACHE_OPEN.get_height()))
 		return
+	if kind == "nest" or kind == "incubator":
+		_draw_nesting()
+		return
+	if kind in TRIBE_PROPS:
+		var art := tribe_art(kind)
+		if art: draw_texture(art, Vector2(-art.get_width() / 2, 7 - art.get_height()))
+		return
+	if kind == "boat":
+		# Moored: the rowboat as it was left (pass 12, BoatRide's 8 headings).
+		draw_texture_rect_region(ROWBOAT, Rect2(-17, -15, 34, 34), Rect2(heading * 34, 0, 34, 34))
+		return
+	if WILD.has(kind):
+		var tex := wild_art(kind)
+		if tex:
+			var dim := Color(0.62, 0.62, 0.6) if kind == "clam_bed" and harvested else Color.WHITE
+			draw_texture(tex, Vector2(-tex.get_width() / 2, 7 - tex.get_height()), dim)
+		return
 	if ART.has(kind):
 		# Child chest/torch scenes retain their interaction, storage and light logic.
 		if kind in ["chest", "torch"]: return
 		# Landmarks draw as their part sprites.
 		if has_parts(): return
 		var key := "wall_alt" if kind == "wall" and variant % 3 == 1 else kind
-		var texture: Texture2D = SANDSTONE[key] if sandstone and SANDSTONE.has(key) else ART[key]
+		var texture: Texture2D = CHALK[key] if chalk and CHALK.has(key) else (SANDSTONE[key] if sandstone and SANDSTONE.has(key) else ART[key])
 		var bottom := 8 if kind in ["wall", "ore", "wood_wall", "wood_floor", "stone_wall", "stone_floor"] else 7
 		draw_texture(texture, Vector2(-texture.get_width()/2, bottom-texture.get_height()), Color("b99be8") if rich_vein else Color.WHITE)
 		return
@@ -345,6 +457,10 @@ func _draw_visual() -> void:
 
 func get_collision_rect() -> Rect2:
 	if POI_SOLID.has(kind): return POI_SOLID[kind]
+	if WILD.has(kind): return WILD[kind].solid
+	if kind == "nest": return Rect2()
+	if kind == "incubator": return Rect2(-11,-5,22,9)
+	if kind == "sun_sail": return Rect2(-10,-2,20,5)
 	if has_parts():
 		# The whole footing's bounds (for code that wants one box).
 		var bounds := Rect2()
@@ -366,10 +482,26 @@ func get_collision_rect() -> Rect2:
 
 func get_shadow_footprint() -> Rect2:
 	if POI_SHADOW.has(kind): return POI_SHADOW[kind]
-	if kind in ["wood_floor","stone_floor","thatch_roof","slate_roof","flowers","mushroom","fern","bush","cattail"]: return Rect2()
+	if WILD.has(kind):
+		if bool(WILD[kind].get("float", false)) or kind in ["reeds", "clam_bed"]: return Rect2()
+		var solid: Rect2 = WILD[kind].solid
+		# Where the drawing meets the ground: a thin strip along its base
+		# (pass 12: the whole solid block, merged into the sun's shadow, drew
+		# a dark box round the mesa, so it looked set down on the sand).
+		if not solid.has_area(): return Rect2(-4, 3, 8, 4)
+		return Rect2(solid.position.x * 0.8, 3, solid.size.x * 0.8, 4)
+	if kind in ["wood_floor","stone_floor","thatch_roof","slate_roof","flowers","mushroom","fern","bush","cattail","nest"]: return Rect2()
 	return get_collision_rect()
 
 func get_target_rect() -> Rect2:
+	if kind in TRIBE_PROPS:
+		var art := tribe_art(kind)
+		if art: return Rect2(-art.get_width()/2.0, 7.0-art.get_height(), art.get_width(), art.get_height()).grow(2)
+		return Rect2(-8,-16,16,24)
+	if WILD.has(kind):
+		var tex := wild_art(kind)
+		if tex: return Rect2(-tex.get_width()/2.0, 7.0-tex.get_height(), tex.get_width(), tex.get_height()).grow(2)
+		return Rect2(-8,-16,16,24)
 	if kind in LANDMARKS or kind in DIG_SPOTS or kind == "cache" or kind in FOLK_SITES or kind in DECOR:
 		# The whole drawing, bottom-anchored like _draw_visual draws it.
 		var art: Texture2D = ART[kind]
@@ -385,13 +517,61 @@ func get_target_rect() -> Rect2:
 		"campfire": return Rect2(-14,-17,28,24)
 		"chest": return Rect2(-8,-13,16,20)
 		"torch": return Rect2(-7,-25,14,32)
+		"incubator": return Rect2(-14,-15,28,22)
+		"sun_sail": return Rect2(-12,-23,24,30)
 		"wood_wall","wood_door","stone_wall","stone_door": return Rect2(-8,-20,16,28)
 		"mushroom","bush","fern","cattail","flowers": return Rect2(-16,-20,32,28)
 	return Rect2(-8,-16,16,24)
 
 func get_shadow_height() -> float:
 	if POI_HEIGHT.has(kind): return POI_HEIGHT[kind]
+	if WILD.has(kind): return float(WILD[kind].height)
+	if kind == "incubator": return 12.0
+	if kind == "sun_sail": return 24.0
 	return {"tree":65.0,"rock":31.0,"tent":43.0,"shrine":55.0,"workbench":12.0,"wood_wall":23.0,"wood_door":23.0,"stone_wall":23.0,"stone_door":23.0,"torch":22.0,"chest":13.0,"campfire":12.0,"thatch_roof":18.0,"slate_roof":18.0}.get(kind,18.0)
+
+## A wild nest with its eggs, or the keeper's incubator with the egg it's
+## warming (it rocks as it nears hatching; a bar shows how close it is).
+func _draw_nesting() -> void:
+	var art: Texture2D = ART[kind]
+	draw_texture(art, Vector2(-art.get_width() / 2, 7 - art.get_height()))
+	var world = get_parent()
+	var nesting = world.get("nesting") if world else null
+	if nesting == null: return
+	if kind == "nest":
+		var nest: Dictionary = nesting.nest_at(cell)
+		if nest.is_empty(): return
+		var spots := [Vector2(-5, -5), Vector2(3, -6), Vector2(-1, -2), Vector2(6, -2)]
+		for i in mini(int(nest.eggs), spots.size()):
+			_draw_egg(spots[i], str(nest.species), 0.0)
+		return
+	if not nesting.has_egg(cell): return
+	var entry: Dictionary = nesting.incubators[cell]
+	var p: float = nesting.progress(cell)
+	var rock := 0.0
+	if p > 0.8: rock = sin(Time.get_ticks_msec() / 70.0) * (1.0 if p < 0.95 else 1.6)
+	_draw_egg(Vector2(0, -9) + Vector2(rock, 0), Life.species_of_egg(str(entry.egg)), p)
+	draw_rect(Rect2(-9, -22, 18, 3), Color("2e241f"))
+	draw_rect(Rect2(-8, -21, 16.0 * p, 1), Color("f2c84b") if nesting.is_warm(cell) else Color("8fb8d4"))
+
+
+func _draw_egg(at: Vector2, species: String, hatching: float) -> void:
+	var tint: Array = EGG_TINT.get(species, EGG_TINT.dodo)
+	var outline := Color("221a16")
+	# A 5 x 7 egg: outline, shell, shade on the right, speckles, a glint.
+	for row in [[0, 1, 3], [1, 0, 5], [2, 0, 5], [3, 0, 5], [4, 0, 5], [5, 1, 3]]:
+		draw_rect(Rect2(at.x - 2 + row[1] - 1, at.y - 3 + row[0], row[2] + 2, 1), outline)
+	draw_rect(Rect2(at.x - 1, at.y - 4, 3, 1), outline)
+	draw_rect(Rect2(at.x - 1, at.y + 3, 3, 1), outline)
+	for row in [[0, 1, 3], [1, 0, 5], [2, 0, 5], [3, 0, 5], [4, 0, 5], [5, 1, 3]]:
+		draw_rect(Rect2(at.x - 2 + row[1], at.y - 3 + row[0], row[2], 1), tint[0])
+	draw_rect(Rect2(at.x + 1, at.y - 2, 1, 4), tint[1])
+	draw_rect(Rect2(at.x - 1, at.y - 1, 1, 1), tint[2])
+	draw_rect(Rect2(at.x + 1, at.y + 1, 1, 1), tint[2])
+	draw_rect(Rect2(at.x - 1, at.y - 2, 1, 1), Color("fffaec"))
+	if hatching > 0.9:
+		draw_line(at + Vector2(-2, -1), at + Vector2(0, 0), outline, 1)
+		draw_line(at + Vector2(0, 0), at + Vector2(2, -1), outline, 1)
 
 func set_open(value: bool) -> void:
 	opened=value

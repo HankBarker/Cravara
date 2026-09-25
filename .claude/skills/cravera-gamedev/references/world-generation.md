@@ -501,6 +501,41 @@ for now; once there are three or four regions they can be generated outward (Han
 edge ring, sandstone, wash/waterholes/fade, scatter, wildlife, an old journey gaining the new
 wildlife once). Look: `Tests/BonelandsLookCapture.tscn` -> `art/world-v2/bonelands-*.png`.
 
+**The wilds (pass 11): three new regions round the old map.** `BOUNDS = Rect2i(-168,-140,336,276)`
+(92,736 cells, ~3.7x pass 10). `GLASSMERE = Rect2i(-168,-56,112,112)` (west),
+`PALE_HILLS = Rect2i(-168,-140,336,84)` (the whole north), `DUNES = Rect2i(-168,56,336,80)` (the whole
+south); `OLD_BOUNDS = Rect2i(-56,-56,224,112)` is the pass-10 map, and the Bonelands keep their east
+rim via `_old_edge`. `region_of(c)` answers forest/bonelands/glassmere/pale_hills/dunes;
+`Forest/world/Regions.gd` holds names, a one-line blurb (the first-visit banner) and map colours.
+`Forest/world/WildsGen.gd` runs **after** the forest and the Bonelands with its own RNG swapped into
+`w.rng` (`world_seed ^ 0x7711`), so both old squares stay cell for cell (the legacy signature now
+covers the forest interior `Rect2i(-54,-54,108,109)` and the Bonelands interior
+`Rect2i(56,-54,111,109)`, POIs filtered to each area; fixture in `Tests/fixtures/`).
+- **Glassmere:** an ellipse lake round `lake_centre (-116,-2)` with four islands; a BFS from the
+  shore gives each water cell its depth, and depth >= 3 is `w.deep` (a StaticBody2D on layer 32:
+  walkers' masks include 32; the keeper drops it while boating and takes layer 64, the shore, so a
+  boat can't sail onto land). The piranha bay (`w.piranha`, `w.piranha_bay`) is the shallows of the
+  south-east shore. Beaches, the Fishers' Shrine (lore `glass_isle`), lily pads, reeds, clam beds.
+- **Pale Hills:** a winding road (`road_y(x)`), ponds, chalk outcrops (`ForestProp.chalk` swaps
+  `art/pass11/chalk_*` like sandstone), 12 `pale_crystal` (power 2), pines and birches, the Last
+  Keeper's Camp (E: lore `keeper_journal`) and the Pale Waystone (lore `pale_road`).
+- **Dunes:** oases, sandstone, sand fading in over 9 rows, cacti (fruit), dead trees, bone heaps,
+  relics, mesas, the Ossuary (`w.ossuary`, the second boss's ring) and the Kingstone to its west
+  (lore `buried_king`, which unlocks the Grave Horn recipe).
+- `_open_seams()` takes the old rim's walls/ore off rows y=-56,-55,55 and columns x=-56,-55.
+- Nests (`Forest/world/Nesting.gd`) are placed after all of it from `world_seed ^ 0x4E57`.
+
+**Rendering a world this size** (pass 11; 11,000 props and ~180 beasts at ~11 ms):
+- `ForestGround` bakes the ground in 32-cell chunks near the view (`BAKES_PER_FRAME 2`,
+  `MARGIN 320` px ahead, dropped past `KEEP 900`); `rebuild_cells(cells)` re-bakes the chunks an
+  edit touches.
+- `ForestFlora` is a Node2D of per-chunk MultiMesh patches (`refresh_cells`).
+- `ForestWorld._cull_props()` hides props in 16-cell squares outside the view plus `CULL_MARGIN 420`
+  (every 0.25 s): the renderer walks every *visible* CanvasItem each frame, so hiding far props is
+  what keeps the frame cheap.
+- Lighting and the workbench scan look at a window of cells round the keeper only.
+- Creatures: see dinosaurs.md "Performance (pass 11)".
+
 **Review tools.** `res://Tests/WorldLookCapture.tscn` (rendered) shoots the camp, trail, ford, river,
 lake, shore, moss, tribe camp, every POI and every carved companion piece to
 `art/world-v2/look-*.png`, then benchmarks a busy meadow **with vsync off** (otherwise it only
@@ -549,3 +584,46 @@ Prioritized, concrete upgrades.
 - [Core Keeper world generation — Core Keeper Wiki](https://corekeeper.atma.gg/en/World)
 - [Terraria world generation — tModLoader / Terraria Wiki](https://hackmd.io/@tModLoader/HJUiVKXzu)
 - [Stardew Valley uses hand-authored maps — GamesRadar](https://www.gamesradar.com/games/simulation/stardew-valley-creator-wanted-the-mines-to-be-like-terraria-but-it-was-way-too-ambitious-in-the-end-should-have-been-an-entire-game-on-its-own/)
+
+## Pass 12: the bog, the barren dunes, the ashen Pale Lands, villages (Hank's direction)
+See `vision.md` for why.
+
+- **Glassmere → the Mirefen Bog** (region id still `glassmere`). `WildsGen._glassmere()` keeps a
+  dark central mere (`e < 0.86`: deep water, so the boat and Old Maw keep working).
+  - A marsh ring (`e < 1.4`) holds black pools (pool noise < −0.24) and mud flats
+    (`ground_style "mud"`, drawn as dirt). Mud replaces the beaches.
+  - Props: reeds and cattails at the water's edge, dead and bog trees, ferns and toadstools, lily
+    pads on 30% of still water, clams by the mere's isles. No palms.
+  - Shaders take a `bog_area` uniform (fading in over the easternmost 12 columns): the water goes
+    peaty green-brown (`water.gdshader`) and the ground dark olive with black mud
+    (`ground_bake.gdshader`).
+- **The Sunscar Dunes, barren.**
+  - `ground_style "hardpan"` (bare dirt) flats break through the sand deeper in (badlands noise
+    > 0.34).
+  - The props lean to rock, dead trees, bone piles and mesas; the oases' green edges are sparse.
+  - The flora on sand is mostly bare: a few sprigs and dry scrub (`ForestFlora._scatter`).
+- **The Pale Hills → the Pale Lands.** They are pale with ash from the mountain beyond (Embercrack
+  Ridge, to come).
+  - Ground: the `pale_area` blend in the ground shader is ash-grey with dark cinder specks.
+  - Grass: the flora shader greys it dead (`pale_area` there too).
+  - Trees and brush: `ForestProp.ashen` draws them with `fx/ashen.gdshader`, grey and dusted pale
+    on top, and still (no sway).
+  - The edge text points north to the smouldering mountain.
+- **Region air** (`fx/RegionAir.gd`, presets `ash` and `mire`, one node each on the session):
+  - **Grade.** A screen grade on CanvasLayer 5 under the HUD (`fx/region_grade.gdshader`):
+    desaturate toward the air's tint, a haze thickening up the screen and darkening with night, and
+    in the Pale Lands the mountain's orange glow on the northern edge after dark. It strengthens
+    with depth into the region.
+  - **Particles:** ash and embers, or soft mist puffs (a radial gradient texture; untextured
+    particles draw squares), plus fireflies at night.
+  - **The ash hush:** `Ambience.hush` fades the insects out and pitches the wind down, the music is
+    ducked, and the mountain rumbles now and then.
+  - **First visit** (milestone `pale_dread`): a synthesised toll (`tools/audio/make_pale_audio.py`),
+    a pitched-down roar, and a warning about the ash.
+- **The keeper's ash** (`ForestPlayer.ash`) fills over 70 s in the Pale Lands, reduced by
+  `ash_guard`:
+  - Sail-skin Veil 0.6, Sunward wraps 0.5, Ashmane Mantle or a tamed Ashmane 1.0.
+  - It clears under a roof or by a tent (`world.sheltered_at`) and outside the region.
+  - Full: CHOKING (−2 hp every 1.25 s) and slower. The HUD row reads "ASH n%".
+- **Villages:** `WildsGen._villages()` lays the Sunward oasis and the Ashen war camp from their
+  own RNG, lists them in `world.villages` and marks them on the map (teal and red).

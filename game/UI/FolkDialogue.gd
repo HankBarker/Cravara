@@ -10,6 +10,7 @@ extends CanvasLayer
 ## E says goodbye; Esc steps back to the talk page first.
 const UI = preload("res://UI/SkyfangUI.gd")
 const FRAME = preload("res://UI/CrystalFrame.gd")
+const QuestData = preload("res://Forest/quests/QuestData.gd")
 const Folk = preload("res://Forest/folk/Folk.gd")
 const Actor = preload("res://Forest/folk/FolkActor.gd")
 const Housing = preload("res://Forest/folk/Housing.gd")
@@ -21,7 +22,8 @@ const WIDTH := 176.0
 const REACH := 76.0
 
 signal closed
-var manager: Node
+## FolkManager for the folk; TribeTrade (a RefCounted) for a tribe's trader.
+var manager: Object
 var id := ""
 var page := ""
 var root: Control
@@ -59,7 +61,7 @@ func panel_rect() -> Rect2:
 
 
 ## Talk to one of the folk (the manager answers for services and housing).
-func open(folk_id: String, folk_manager: Node) -> void:
+func open(folk_id: String, folk_manager: Object) -> void:
 	manager = folk_manager
 	id = folk_id
 	_chat = randi()
@@ -238,7 +240,7 @@ func _item_button(parent: Control, item: Item, text: String, callback: Callable)
 
 ## Lines said one after another ("Go on", or E), from `from_step`; then
 ## `on_done` and the usual talk page. Walking away leaves it at script_step.
-func open_script(folk_id: String, folk_manager: Node, lines: Array, from_step := 0, on_done := Callable()) -> void:
+func open_script(folk_id: String, folk_manager: Object, lines: Array, from_step := 0, on_done := Callable()) -> void:
 	open(folk_id, folk_manager)
 	_script = lines
 	script_step = clampi(from_step, 0, maxi(lines.size() - 1, 0))
@@ -294,8 +296,76 @@ func show_talk(words: String) -> void:
 			"trade": _button(grid, "Trade", show_trade)
 			"advice": _button(grid, "The beasts", show_advice)
 			"tend": _button(grid, "Tend beasts", func(): say(manager.tend()))
-	_button(grid, "Home", show_house)
+	var quests = _quests()
+	if quests and not QuestData.for_giver(id).is_empty():
+		var mark: String = quests.marker(id)
+		_button(grid, "Tasks" + (" (new)" if mark == "!" else (" (done!)" if mark == "?" else "")), show_tasks)
+	# Only the folk move in (a tribe's trader has a home of their own).
+	if manager.has_method("rooms"): _button(grid, "Home", show_house)
 	_button(grid, "Goodbye", close)
+	_refit()
+
+
+func _quests():
+	var session := get_tree().get_first_node_in_group("forest_session")
+	return session.get("quests") if session else null
+
+
+## Their task: what they ask (take it or leave it), how it's going, or hand
+## it in for the reward.
+func show_tasks() -> void:
+	page = "tasks"
+	_clear()
+	var quests = _quests()
+	var q: Dictionary = quests.current(id) if quests else {}
+	if q.is_empty():
+		var any_left := false
+		for task in QuestData.for_giver(id):
+			if str(quests.state.get(task.id, "")) != "done": any_left = true
+		say("Nothing for now. Go and see more of the wilds, and come back to me." if any_left else "You've done everything I could ask, and more. Thank you, Keeper.")
+		_button(_content, "Back", func(): show_talk(""))
+		_refit()
+		return
+	var status: String = quests.status(q)
+	var title := Label.new()
+	title.text = str(q.title) + ("  (taken)" if status == "active" else ("  (ready!)" if status == "ready" else ""))
+	title.add_theme_color_override("font_color", UI.GOLD)
+	title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	title.custom_minimum_size = Vector2(WIDTH - 16, 0)
+	_content.add_child(title)
+	for line in quests.goal_lines(q):
+		var row := Label.new()
+		row.text = "- " + str(line)
+		row.add_theme_color_override("font_color", UI.MINT if str(line).ends_with("done") else UI.PAPER)
+		row.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		row.custom_minimum_size = Vector2(WIDTH - 16, 0)
+		_content.add_child(row)
+	var reward := Label.new()
+	reward.text = "Reward: " + quests.reward_text(q)
+	reward.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	reward.custom_minimum_size = Vector2(WIDTH - 16, 0)
+	_content.add_child(reward)
+	var grid := _grid(2)
+	match status:
+		"offer":
+			say(str(q.ask))
+			_button(grid, "I'll do it", func():
+				quests.accept(q.id)
+				show_tasks())
+			_button(grid, "Not now", func(): show_talk(""))
+		"active":
+			say("How's it going? " + str(q.ask))
+			_button(grid, "Back", func(): show_talk(""))
+		"ready":
+			say("You've done it? Let me see...")
+			_button(grid, "Hand it in", func():
+				var words := str(q.done)
+				var got: String = quests.reward_text(q)
+				if quests.turn_in(q.id):
+					show_talk(words + " (" + got + ")")
+				else:
+					show_tasks())
+			_button(grid, "Back", func(): show_talk(""))
 	_refit()
 
 
@@ -341,9 +411,10 @@ func _uses_of(item: Item) -> String:
 func show_trade(side := "buy") -> void:
 	page = "trade"
 	_clear()
-	if id != "merchant": side = "buy"
+	var pays: Dictionary = manager.buys_for(id) if manager.has_method("buys_for") else (Folk.BUYS if id == "merchant" else {})
+	if pays.is_empty(): side = "buy"
 	say("You have %d ancient coins. What'll it be?" % manager.coins() if side == "buy" else "Show me what you've found. One at a time.")
-	if id == "merchant":
+	if not pays.is_empty():
 		var tabs := _grid(2)
 		var buy_tab := _button(tabs, "Buy", func(): show_trade("buy"))
 		var sell_tab := _button(tabs, "Sell", func(): show_trade("sell"))
@@ -362,18 +433,19 @@ func show_trade(side := "buy") -> void:
 			_item_button(list, item, "%s%s  %dc" % [item.name, " x%d" % int(offer[1]) if int(offer[1]) > 1 else "", int(offer[0])], func():
 				say(manager.buy(id, ware)))
 	else:
-		for item_id in Folk.BUYS:
+		for item_id in pays:
 			var count := InventoryManager.get_item_count(item_id)
 			if count <= 0: continue
 			var item: Item = ItemDB.make(item_id)
+			if item == null: continue
 			var find: String = item_id
-			_item_button(list, item, "%s (%d)  +%dc" % [item.name, count, int(Folk.BUYS[item_id])], func():
+			_item_button(list, item, "%s (%d)  +%dc" % [item.name, count, int(pays[item_id])], func():
 				var said: String = manager.sell(find)
 				show_trade("sell")
 				say(said))
 		if list.get_child_count() == 0:
 			var none := Label.new()
-			none.text = "Nothing she wants yet. Bring fossils, idols, crystal, scales or fangs."
+			none.text = "Nothing they want yet. Bring fossils, hides, scales, horns or fangs."
 			none.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 			none.custom_minimum_size.x = WIDTH - 20
 			none.add_theme_color_override("font_color", UI.DIM)

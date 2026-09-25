@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/art/items/club_maul.png" id="2"]
+[resource]
+script = ExtResource("1")
+id = "club_maul"
+name = "Sandclub Maul"
+description = "An ankylosaur's tail club on a heavy haft. 30 damage: blows that break through plate."
+icon = ExtResource("2")
+max_stack = 1
+rarity = "epic"
+tool_type = "sword"
+damage = 30

@@ -1,0 +1,11 @@
+8fe74b82-813a-4e90-a50d-86c3b93ae1db
+status: completed
+id: 8fe74b82-813a-4e90-a50d-86c3b93ae1db
+job_id: 8fe74b82-813a-4e90-a50d-86c3b93ae1db
+frames: 1
+transparent: yes
+asset_id: a15277b2-616c-5893-a19e-071554d8c52f
+asset_type: image
+asset_status: saved
+gallery: saved to your PixelLab gallery (pixellab.ai/create)
+download: https://api.pixellab.ai/mcp/images/8fe74b82-813a-4e90-a50d-86c3b93ae1db/download

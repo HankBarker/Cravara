@@ -178,5 +178,53 @@
     "source": "chicken.mp3+monster-17.wav+monster-7.wav",
     "pitch": 0.5,
     "duration": 2.04
+  },
+  {
+    "file": "parasaur-ambient.ogg",
+    "source": "monster-13.wav",
+    "pitch": 0.82,
+    "duration": 0.740499
+  },
+  {
+    "file": "parasaur-attack.ogg",
+    "source": "monster-15.wav",
+    "pitch": 0.82,
+    "duration": 0.694739
+  },
+  {
+    "file": "parasaur-hurt.ogg",
+    "source": "monster-16.wav",
+    "pitch": 0.82,
+    "duration": 0.745578
+  },
+  {
+    "file": "ossuar-ambient.ogg",
+    "source": "monster-9.wav",
+    "pitch": 0.42,
+    "duration": 1.533923
+  },
+  {
+    "file": "ossuar-attack.ogg",
+    "source": "monster-1.wav",
+    "pitch": 0.42,
+    "duration": 2.680952
+  },
+  {
+    "file": "ossuar-hurt.ogg",
+    "source": "monster-4.wav",
+    "pitch": 0.42,
+    "duration": 1.688889
+  },
+  {
+    "file": "parasaur-roar.ogg",
+    "source": "monster-13.wav+monster-15.wav",
+    "pitch": 0.72,
+    "duration": 1.001043
+  },
+  {
+    "file": "ossuar-roar.ogg",
+    "source": "monster-9.wav+monster-1.wav+monster-17.wav",
+    "pitch": 0.36,
+    "duration": 3.258685
   }
 ]

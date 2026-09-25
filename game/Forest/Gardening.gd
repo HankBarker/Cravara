@@ -77,14 +77,32 @@ func use_at(target: Vector2, id: String) -> bool:
 	_sync_soil()
 	return true
 
+## A tamed lystrosaur about tills the soil: crops grow faster (Buffs.gd).
+func _crop_speed() -> float:
+	var gifts = get_tree().get_first_node_in_group("companion_buffs")
+	return gifts.crop_speed() if gifts else 1.0
+
+## A Sun Sail (pass 12: dimetrodon sail scales on a frame) gathers the sun
+## over the garden: crops within SAIL_REACH cells grow half again as fast by
+## day, and a quarter faster through the night on the warmth it held.
+const SAIL_REACH := 3
+func _sail_speed(c: Vector2i, sails: Array) -> float:
+	for s in sails:
+		if absi(s.x - c.x) <= SAIL_REACH and absi(s.y - c.y) <= SAIL_REACH:
+			return 1.25 if TimeCycle.is_night() else 1.5
+	return 1.0
+
 func _process(delta: float):
 	_tick+=delta
 	if _tick<0.5: return
+	var sails: Array = []
+	for cell in world.placed:
+		if world.placed[cell] == "sun_sail": sails.append(cell)
 	for c in plots.keys():
 		# Water edits/structures cannot leave orphaned crops or grow under floors.
 		if world.water.has(c) or world.floors.has(c) or world.props.has(c): continue
 		var p: Dictionary=plots[c]
-		if p.watered and CROPS.has(p.seed): p.growth=minf(float(CROPS[p.seed].seconds),float(p.growth)+_tick)
+		if p.watered and CROPS.has(p.seed): p.growth=minf(float(CROPS[p.seed].seconds),float(p.growth)+_tick*_crop_speed()*_sail_speed(c, sails))
 	_tick=0.0
 	_sync_soil()
 	queue_redraw()

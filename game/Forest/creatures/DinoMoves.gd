@@ -47,9 +47,42 @@ const MOVES := {
 	"lystro": [
 		{"id": "peck", "kind": "strike", "clip": "peck", "range": [0, 8], "cooldown": 1.1, "dmg": 1.0, "knock": 40, "shape": "jaws", "reach": 10, "arc": 110, "lunge": 4},
 	],
+	"parasaur": [
+		{"id": "stomp", "kind": "strike", "clip": "stomp", "range": [0, 14], "cooldown": 3.6, "dmg": 1.2, "knock": 260, "shape": "ring", "radius": 36.0, "front": true},
+	],
+	"ossuar": [
+		{"id": "chomp", "kind": "strike", "clip": "chomp", "range": [0, 14], "cooldown": 4.2, "dmg": 1.7, "knock": 300, "shape": "jaws", "reach": 22, "arc": 90, "lunge": 12, "chance": 0.5, "heavy": true},
+		{"id": "bite", "kind": "strike", "clip": "bite", "range": [0, 16], "cooldown": 1.3, "dmg": 1.0, "knock": 200, "shape": "jaws", "reach": 24, "arc": 100, "lunge": 10},
+	],
 	"allo": [
 		{"id": "chomp", "kind": "strike", "clip": "chomp", "range": [0, 12], "cooldown": 4.5, "dmg": 1.5, "knock": 230, "shape": "jaws", "reach": 18, "arc": 80, "lunge": 10, "chance": 0.5, "heavy": true},
 		{"id": "bite", "kind": "strike", "clip": "bite", "range": [0, 14], "cooldown": 1.1, "dmg": 1.0, "knock": 170, "shape": "jaws", "reach": 20, "arc": 90, "lunge": 9},
+	],
+	# Pass 12. The dimetrodon bites, and now and then clamps on and shakes;
+	# the protoceratops butts with its beak; the ankylosaur's club is the
+	# hardest blow in the wilds (and bleeds nothing: it crushes); the
+	# carnotaurus charges horns first; the Ashmane bites like a rex; a
+	# compy nips and darts out (raptor tactics: its move is a "slash").
+	"dimetrodon": [
+		{"id": "chomp", "kind": "strike", "clip": "chomp", "range": [0, 10], "cooldown": 4.0, "dmg": 1.5, "knock": 200, "shape": "jaws", "reach": 16, "arc": 80, "lunge": 12, "chance": 0.5, "heavy": true},
+		{"id": "bite", "kind": "strike", "clip": "bite", "range": [0, 12], "cooldown": 1.3, "dmg": 1.0, "knock": 150, "shape": "jaws", "reach": 16, "arc": 90, "lunge": 10},
+	],
+	"proto": [
+		{"id": "peck", "kind": "strike", "clip": "peck", "range": [0, 9], "cooldown": 1.2, "dmg": 1.0, "knock": 90, "shape": "jaws", "reach": 11, "arc": 110, "lunge": 5},
+	],
+	"anky": [
+		{"id": "tail", "kind": "strike", "clip": "tail_swing", "range": [0, 22], "cooldown": 2.4, "dmg": 1.0, "knock": 460, "shape": "tail", "reach": 30, "heavy": true},
+	],
+	"carno": [
+		{"id": "charge", "kind": "charge", "windup": "roar", "windup_speed": 1.6, "clip": "run", "range": [50, 170], "cooldown": 6.0, "dmg": 1.45, "knock": 440, "shape": "body", "dash_speed": 196.0, "distance": 210.0, "heavy": true},
+		{"id": "bite", "kind": "strike", "clip": "bite", "range": [0, 14], "cooldown": 1.0, "dmg": 1.0, "knock": 190, "shape": "jaws", "reach": 20, "arc": 90, "lunge": 10},
+	],
+	"yuty": [
+		{"id": "chomp", "kind": "strike", "clip": "chomp", "range": [0, 12], "cooldown": 4.6, "dmg": 1.6, "knock": 260, "shape": "jaws", "reach": 20, "arc": 80, "lunge": 12, "chance": 0.5, "heavy": true},
+		{"id": "bite", "kind": "strike", "clip": "bite", "range": [0, 14], "cooldown": 1.25, "dmg": 1.0, "knock": 190, "shape": "jaws", "reach": 22, "arc": 90, "lunge": 10},
+	],
+	"compy": [
+		{"id": "slash", "kind": "strike", "clip": "bite", "range": [0, 8], "cooldown": 0.8, "dmg": 1.0, "knock": 30, "shape": "jaws", "reach": 9, "arc": 110, "lunge": 6},
 	],
 	"alpha": [
 		{"id": "pounce", "kind": "pounce", "clip": "pounce", "range": [40, 150], "cooldown": 3.6, "dmg": 1.5, "knock": 260, "shape": "claws", "reach": 18, "takeoff": 0.3, "heavy": true},
@@ -64,7 +97,8 @@ const MOUNT_DAMAGE := {"stego": 18, "trike": 22}
 const CHARGE_TIME := 1.0
 const MOUNT_RAM_DAMAGE := {"trike": 40}
 ## How far a shove moves each species (heavy bodies barely budge).
-const MASS := {"dodo": 1.0, "lystro": 1.0, "raptor": 0.8, "trike": 0.35, "stego": 0.35, "allo": 0.4, "alpha": 0.3, "rex": 0.25, "longneck": 0.15}
+const MASS := {"dodo": 1.0, "lystro": 1.0, "raptor": 0.8, "trike": 0.35, "stego": 0.35, "allo": 0.4, "alpha": 0.3, "rex": 0.25, "longneck": 0.15, "parasaur": 0.4, "ossuar": 0.1,
+	"dimetrodon": 0.5, "proto": 0.8, "anky": 0.12, "carno": 0.3, "yuty": 0.22, "compy": 1.2}
 
 var c  # ForestCreature
 var move := {}
@@ -515,6 +549,12 @@ func _candidates() -> Array:
 	for other in c.roster(c.get_tree()):
 		if other != c and not other.is_dead and _enemy(other):
 			out.append(other)
+	# The tribes' folk (pass 12) are not beasts: the one it's aimed at, and any
+	# of them in the way of a wild beast's blow.
+	for folk in c.folk(c.get_tree()):
+		if folk in out or not c._valid_target(folk): continue
+		if folk == target or (not c.tamed and not mounted and folk.global_position.distance_to(c.global_position) < 90.0 and not (is_instance_valid(c.master) and folk.get("tribe") == c.master.get("tribe"))):
+			out.append(folk)
 	return out
 
 

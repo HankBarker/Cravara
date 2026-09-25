@@ -23,9 +23,11 @@ tree and fells it with the tail; the trike gores bushes).
    originals carry thousands of near-identical shades), palette-snapped drawings, and each drawing on
    its species canvas with feet on row `H-7` (`CANVAS` leaves room for sweeps, rearing, leaps).
 2. `clips.json` — the spec: per key its clips, per clip model/frames/fps/loop/clean options/motion.
-3. `gen.py run` — submits (≤7 in flight; PixelLab caps an account at 8), ledgers every job
+3. `gen.py run` — submits (≤7 in flight by default, `--inflight 8` when nothing else generates;
+   PixelLab caps an account at 8; a restart resumes the ledger's in-flight jobs), ledgers every job
    (`art/dino-v2/ledger/<key>.json`, never pays twice), downloads raw frames, scores them
-   (`effect_score`: extra near-white pixels, silhouette area/width growth), **auto-retries flagged
+   (`effect_score`: extra near-white pixels beyond 30 + a quarter of the drawing's own, so a pale
+   beast like the white Ashmane isn't flagged for its coat; silhouette area/width growth), **auto-retries flagged
    clips with a new seed (up to `MAX_ATTEMPTS`) and keeps the least-bad attempt**, cleans
    (`clean.py`: palette snap, binary alpha, drop islands not touching the body, ground/anchor
    alignment, `clamp_top` for loops, frame 0 = the untouched drawing, pinned loop frame dropped).
@@ -41,6 +43,14 @@ tree and fells it with the tail; the trike gores bushes).
    - `tail_front.py KEY` builds the **front-view tail sweep procedurally** (front idle body + the
      spiked tail tip cut from the side drawing, swung out from behind the body and back): the models
      always turned the whole animal side-on for it, which is exactly what the design forbids.
+     Pass 12 (the ankylosaur, whose generated sweeps grew a giant sausage, a fan and a log):
+     `--view up` builds the back sweep (the tail hanging toward the viewer, swung out in front of
+     the body); `--hip ROW` sets the row it turns about; `--hide x0,y0,x1,y1` takes the resting
+     tail out of the body frames once the swing is under way (a club that shows at rest: over
+     the rump from the front, below the hips from behind; box the whole bob); `--tip-boxes`
+     picks the tail from the side drawing by boxes where a column cut would take body too. Anky:
+     `--tip-boxes "28,44,38,60;30,56,46,68" --hip 42 --reach 20 --hide 53,26,67,40` (down) and
+     `--view up ... --hip 68 --hide 48,71,62,83`, then drop 1-3 px specks.
    - `tail_side.py KEY [--near] [--far]` builds **side-view tail sweeps procedurally**: the side
      drawing's body stays still while its tail (cut at the hips, `CUT`) bends about its root, from
      nothing at the hips to the full angle at the tip, so the root stays attached and the spiked end
@@ -51,8 +61,10 @@ tree and fells it with the tail; the trike gores bushes).
      foreshortening read as the tail retracting, so the tail keeps (and briefly exceeds) its length.
      Stego and stego_saddle use both; the longneck keeps its AI near sweep (its tail wraps in front
      of its legs) and gets the far one at a lower angle (`SWING_KEY`, since its curled tail hooks).
-   - `walk_back.py KEY [--run]` builds **back-view (walking away) locomotion** from the resting back drawing. The hind legs are two columns at the bottom sides, with the tail between them (`RIG` boxes per key). They lift in turn (2 px walking, 3 running) and never leave their columns. The body dips on each footfall; the planted leg stretches by the bob so it never tears from the rump; the tail sways against the step. Used for the stego and trike (and saddled) walk_up and the trike run_up: the models' back walks splayed the hind legs out sideways.
-   - **Back views stand on their feet:** prepare.py stood each drawing's lowest pixel on the ground line, and from behind that is the tail tip hanging toward the viewer. `export.py` `VIEW_DROP` drops every up strip (rex 6, stego 6, trike 4, raptor 4, longneck 4 px) so the hind feet meet the shadow, and moves the up `origin` by the same amount so riders stay on the saddle.
+     The ankylosaur (pass 12) keeps its AI near sweep and gets the far one (`CUT` 39: its drawing
+     pitches forward, the club up behind the hips).
+   - `walk_back.py KEY [--run]` builds **back-view (walking away) locomotion** from the resting back drawing. The hind legs are two columns at the bottom sides, with the tail between them (`RIG` boxes per key). They lift in turn (2 px walking, 3 running) and never leave their columns. The body dips on each footfall; the planted leg stretches by the bob so it never tears from the rump; the tail sways against the step. Used for the stego and trike (and saddled) walk_up and the trike run_up: the models' back walks splayed the hind legs out sideways. Pass 12: the Ashmane's run_up (its model run away turned the whole animal round); a tail that curls up over the back rides with the body (an empty tail box).
+   - **Back views stand on their feet:** prepare.py stood each drawing's lowest pixel on the ground line, and from behind that is the tail tip hanging toward the viewer. `export.py` `VIEW_DROP` drops every up strip (rex 6, stego 6, trike 4, raptor 4, longneck 4, anky 6 px: its club hangs 10 below its feet, capped by the canvas) so the hind feet meet the shadow, and moves the up `origin` by the same amount so riders stay on the saddle.
    - `cap_clamp.py KEY CLIP_VIEW… [--tol N | --cap ROWS]` removes growths out of the top of a
      front/back loop that `clamp_top` only caps. It follows each frame's bob (frill and face band)
      and either clears everything above the resting per-column top, or (`--cap`, for a growth
@@ -69,7 +81,13 @@ tree and fells it with the tail; the trike gores bushes).
      to some facings.
    - `clips.json` `overrides` give one KEY/CLIP_VIEW its own model/motion; `gen.py run` re-reads the
      spec every round, so edits apply without a restart.
-5. `godot --headless --import`, then `Tests/DinoV2Suite.tscn` and `Tests/DinoCapture.tscn`.
+5. `stride.py KEY [CLIP …]` measures how fast a walk or run clip's planted feet drift under the
+   body (px/s): `ForestCreature.BODY[KEY].walk/.run`, the speed at which the feet don't slide. It
+   matched the tuned stego and trike walks, the allo and rex runs and the Blender carno's exact 30.
+   Hunters' runs sit higher on purpose (the run clip plays at most 2.4x, so it suggests
+   `chase / 2.4` when that's more). A sprawling gait whose feet step in place (the dimetrodon's
+   walk) reads near zero: keep a sensible value there.
+6. `godot --headless --import`, then `Tests/DinoV2Suite.tscn` and `Tests/DinoCapture.tscn`.
 
 ### Prompt lessons (each cost real generations)
 - **Short, motion-only prompts.** The model sees the drawing. Naming the body ("crystal spikes"),
@@ -94,6 +112,12 @@ tree and fells it with the tail; the trike gores bushes).
   (tail sweepers twice: a target below the rear and one above it).
 - `Tests/DinoBehaviourCapture.tscn` (rendered): raptor pack, rex roar/charge, herd defence, dodo
   scatter around an invulnerable keeper, with per-creature state logs and checks.
+- `Tests/Beasts12Capture.tscn` (rendered, pass 12): the new beasts posed in their own ground
+  (`place()` stops physics and sets the facing and idle clip; wandering spoiled the shots), then
+  let walk → `art/pass12/beasts-*.png`: the dunes (dimetrodon, protoceratops herd, ankylosaur,
+  compy swarm), Dune raptors, the Pale Lands (the Ashmane and Ashfang raptors), the Ashmane
+  roaring front-on. A species without exported art is skipped.
+- The creatures suite checks only the side view for a side-on species (the compy; `DinoArt.has_view`).
 - Knockback lives in `_knock`, layered on the steering velocity (`_move_velocity`) each frame and
   never folded into it — folding it in once compounded a shove to ~700 px/s. External code halts a
   creature with `stop()`.
@@ -180,3 +204,153 @@ Now about 14 ms everywhere once settled:
   something changes (who's near, a door or lid, the sun's step, shadows toggled), and at most 6
   stale shapes are rebuilt per frame when the sun moves on. Occluder polygons are set only when they
   change, and lights are looked for only on campfires, shrines and torches.
+
+## Pass 11: lives, nests, babies, the wilds' beasts and bosses
+- **Lives** (`Forest/creatures/CreatureLife.gd`, `c.life`): hunger (`Life.HUNGER_TIME`) and thirst
+  (`THIRST_TIME`) drive goals: graze (the `GRAZE` table), drink (nearest water), rest at night,
+  keep to the nest, follow the mother (babies), and move on (the herd's leader, its lowest instance
+  id, picks new ground 18-34 cells away in the same region; predators keep 24+ cells from camp).
+  Goals only steer when nothing is being hunted or fled: `_wild_behaviour` asks
+  `life.steer(delta)` after `_current_target()`, and `NO_GOAL` (Vector2.INF) falls through to
+  wandering. Kin within 220 px rush anything that hurts a baby (`PROTECT`); nest guardians
+  (`NEST_GUARD`) stay by their nest and `CreatureLife.rob(tree, cell, thief)` rouses them all.
+- **Babies** (`Life.gd`): every `BREEDS` kind has a `<species>_baby` art key (side view only;
+  `tools/dino/babies.py`: pixflux restyle of the parent at half scale on its palette, then
+  prepare.py `prepare_baby` and gen.py clips idle/walk/run/eat, hurt/death as stand-ins).
+  `Life.baby_stats`: hp x0.3, damage x0.25, radius x0.55, feeds ceil(/4), never a predator,
+  "Baby X". `set_baby(true, grown)`, `grow_up()` after `GROW_TIME`; saved as baby/growth.
+- **Nests and eggs** (`Forest/world/Nesting.gd`, world-owned; `Forest/life/LifeKeeper.gd`,
+  session-owned): `SITES` per species, `EGGS` each, `REGROW` 420 s; guardians per nest (`GUARDS`)
+  and a chance of young (`YOUNG`); an incubator hatches after `HATCH_TIME` (x0.35 away from a
+  campfire or torch within `WARM_CELLS` 3); the hatchling comes out tamed and following
+  (`SignalBus.egg_hatched`). Two tamed adults of a kind kept at home for `TOGETHER` seconds lay an
+  egg, then rest `REST_AFTER`. Wild nests keep the wilds from emptying (wildlife is never
+  re-spawned and hunters take their toll): `LifeKeeper.wild_hatch()`, once a minute at most
+  world-wide, hatches one egg of a nest whose kind has fewer than `THIN` 3 within `THIN_RANGE`
+  640 px, never within `UNSEEN` 360 px of the keeper; the baby keeps to the nest (`life.nest`).
+- **Kin never hunt kin:** `_hunter_near()` skips its own species. Without that a raptor pack
+  hunting beside one of its babies counted as a threat to it and `_guard_baby` set the adults
+  on their own packmate (7 raptors killed by raptors in a new world's first minute).
+- **Gifts** (`Forest/life/Buffs.gd`, group `companion_buffs`): a tamed beast within `NEAR` 480 px
+  gives its species' gift (`GIFTS`); the keeper, gardens, incubators, harvest and berry code ask
+  the accessors (`crop_speed`, `incubation_speed`, `defense_bonus`, `break_bonus`, `extra_berries`,
+  `speed_mult`, `damage_mult`, `recovery_mult`); the parasaur's `_alarm` toasts a nearby hunter.
+- **New species:** the Crestcaller Parasaur (Glassmere's herds; the crest is hand-drawn onto the
+  PixelLab drawings by `tools/dino/parasaur_crest.py`) and Ossuar, the Buried King (boss only,
+  never wild). Both were drawn with `new_species.py` and animated by gen.py (bipeds). Front and
+  back views that fell apart were rebuilt from the resting drawing: `tools/dino/walk_front.py`
+  (the parasaur's front walk and run: its crest pumped) and `tools/dino/lunge_front.py` (legs
+  planted, the body above the hips rears and snaps: Ossuar's front/back bite and chomp, its
+  front/back roar and side hurt, the parasaur's front graze; pass 12: the Ashmane's back chomp,
+  which spread its arms and flexed, and its back roar). Ossuar's glowing crystal trips gen.py's
+  "bright" QA on every retry, so its roars and hurt were built this way instead. lunge_front now
+  writes its contact frame into hits.json itself (it only said so before). A clip flagged "wide"
+  isn't always turned: the Ashmane's front chomp swung its tail up behind, and its slam frame
+  was the best of the set, so look before rebuilding.
+- **Variants** (`ForestCreature.VARIANTS`, `set_variant`): `crystal` (Crystalback X, the Pale
+  Hills), `dune` (the Dunestalker allosaur), `old` (Greyhorn, a hostile trike), `bone` (the Buried
+  King's Bone Raptors: `Forest/creatures/bone.gdshader` turns the raptor's drawing to old bone;
+  no meat, never saved). A variant with a `title`, and the rex (`MINIBOSS`), wear a `Nameplate`
+  (name and a slim health bar, within 250 px, z 60).
+- **Ossuar** (`Forest/creatures/OssuarBoss.gd`, like AlphaBoss): called with the Grave Horn at
+  `world.ossuary` (`use_ossuary`: E asks, a second E or using the horn blows it; the horn is
+  spent). It rises from the sand (`_emerge`: the sprite slides up 26 px and fades in), then
+  bone spikes (`Forest/fx/BoneSpikes.gd`: a cracked ring for 0.85 s, then damage), a burrow
+  (`untouchable`, physics off, a `SandMound` chases the keeper 1.7 s, holds 0.75 s, then it bursts
+  up), three bone raptors below 60%, rage below 30% (haste 1.25). Leash 22 cells; beaten ->
+  milestone `ossuar`, the crown (`bone_crown`, trinket +6 defence: trinket `defense` now guards).
+- **Old Maw** (`Forest/creatures/OldMaw.gd`, group `sea_beasts`, not a ForestCreature): a shadow
+  under `world.deep` (roam -> stalk a boat on the deep -> charge -> breach -> dive). Only a
+  breaching Maw can be hit (`can_be_hit()`): the keeper's melee and arrows check `sea_beasts`.
+  It never leaves the deep (a breach that lands in the shallows swims straight back). Beaten ->
+  milestone `maw`, maw teeth (the Maw Charm) and pearls.
+- **Piranhas** (`Forest/creatures/Piranhas.gd`): 16 drawn fish in `world.piranha`; a wader (or
+  their mount) in the bay is nipped for 3 every 0.5 s (no attacker passed, so a mount never turns
+  on its rider); a boat is safe.
+
+## Performance (pass 11: ~180 creatures, a world 3.7x bigger)
+(Superseded in pass 12, below.) Tiers by distance from the keeper (`_lazy_step`): full rate within `OFFSCREEN` 400 px, every 2nd
+tick to `LAZY_RANGE` 640, every 4th to `FAR_RANGE` 1400, every 16th beyond (always full rate
+when tamed, mid-move, or hunting/fighting a foe within `CLOSE_FIGHT` 110 px: a lazy stride
+carried a far rex right into the stego it fought, and jaws that close on a body already inside
+them miss; ai-pass2 caught it). Beyond `HIDE_RANGE` 760 px a creature isn't drawn at all. Neighbour
+queries go through `ForestCreature.near(tree, at, radius)`: the roster sorted into 64 px buckets
+once per physics tick. `MountController._process` returns at once when nobody rides. Camp, the
+Bonelands and the south-west forest measure 10-12 ms a frame (`Tests/PerfProbe.tscn`).
+
+## Performance (pass 12: ~240 creatures and two villages; frames had crept to 25-39 ms)
+Measured with `Tests/PerfProbe.tscn` (frame split; pass 12 adds the camps, the bog and a
+sandstorm) and `Tests/PerfSplit.tscn -- --at <village id|camp|dunes>` (mean physics time a tick
+with each group's physics switched off in turn; mean, because the engine's own
+`TIME_PHYSICS_PROCESS` monitor holds each second's *worst* tick and was too noisy to compare). A
+creature's full tick costs ~90-160 us of GDScript, spread over targeting, obstacle probes,
+herd spacing and the clip choice: no single hotspot, so the wins came from ticking less.
+- **Lazy ticks are cached:** a full tick sets `_lazy_wait` (ticks to bank before the next one,
+  on the beast's own staggered slot of the cycle); in between `_physics_process` only banks the
+  time and returns. `wake()` ends the wait (a blow, a tame); `wake_all(tree)` after a respawn.
+- **Tiers:** full rate in or within `VIEW_MARGIN` 110 px of the view (`HALF_VIEW` 240 x 135: a
+  circle counted beasts well above and below the screen as near), every 2nd tick beyond that,
+  4th past `LAZY_RANGE` 640, 16th past `FAR_RANGE` 1400, 32nd past `REMOTE_RANGE` 2400.
+- **Hidden beasts skip what only shows:** herd spacing (`_separation`: beasts don't collide with
+  each other) and the clip choice, unless a move is playing.
+- **Per-frame nodes sleep:** each beast's `MountController` stops processing until `mount()`;
+  its `CreatureAudio` processes only within `EARSHOT` 520 px.
+- **Once-a-tick caches:** `folk(tree)` (the tribesmen), `_rex_shadow()`. Tribesmen look for
+  companions and game through `ForestCreature.near()`, not the whole group.
+Result: 10-19 ms a frame across runs (camp ~11-14, the villages ~10-18, a sandstorm ~15), from 25-39, with 252 beasts.
+
+## Pass 12: tougher beasts, new species, coats, territory, the Blender Scarhorn
+- **Tougher and faster** (Hank: "I shouldn't be faster than a raptor"). hp roughly doubled to
+  quadrupled. BODY `chase` is a hunter's run-down speed and `tire` how long before it's winded
+  (`_chase_speed`, `_give_up`). Raptors (132), allosaurs (118), rex (110) and the Scarhorn (146)
+  all outrun the keeper's 125 sprint.
+- **Stuck detection:** `_watch_stuck` sidesteps and paths with A* for a while.
+- **Rival fights end short of a kill:** below 35% hp from a wild creature, a beast breaks off and
+  runs (`_rival_check`).
+- **Territory** (`RIVALS`, `DISPUTE_RANGE` 170):
+  - Rival hunters (rex, carno, yuty, allo in pairs) square up when they meet (`_find_rival` and
+    `_start_dispute`, checked once a second in `_current_target`).
+  - The loser runs; the winner lets it go with a roar and won't pick another fight for 90–120 s.
+  - Against the keeper they fight to the end.
+- **New species**. SPECIES/BODY/MOVES/PREY/NOTICE, loot, gifts in `Buffs.GIFTS`, spawns in
+  `ForestPlaytest.WILDS12_LIFE` (with the `wilds12` region marker for old saves):
+  - **Sunsail Dimetrodon** (dunes):
+    - `_sun_pace`: sluggish at night, quick at noon; basks side-on by day (`_basking`).
+    - Notices a keeper only within 64 px.
+    - Drops sail scale: the Sun Sail placeable and the Sail-skin Veil.
+    - Gift "Sun-warmed": crops +25% by day.
+  - **Dune Protoceratops:** SKITTISH herds that flee and peck when cornered. Gift "Sand digger":
+    digs up bones, fossils and coins on sand.
+  - **Sandclub Ankylosaur:**
+    - `PLATED` takes 9 off every blow, so bring heavy weapons.
+    - Club tail knock 460.
+    - Drops plates for the Sandclub Maul. Gift "Rockbreaker" (the vision's anky = mining): one more stone, crystal or ore per rock or vein broken (`Buffs.extra_ore`, `ForestWorld.mine_at`), +3 defence.
+  - **Scarhorn Carnotaurus** (dunes apex): a bellow on lock-on, then a horned charge. Drops horns
+    for the Scarhorn Lance.
+  - **Ashmane Yutyrannus** (Pale Lands apex, a pair): its roar blasts ash (`_ash_roar` →
+    `apply_ash`). Drops fur for the Ashmane Mantle.
+  - **Compy:** swarms that won't come for the keeper unless 3 or more are about. It uses the
+    raptor's pack tactics (its move is a "slash").
+- **Drawings:**
+  - Most were drawn with PixelLab **create_character v3 from words alone** (2 generations, 8
+    views; `tools/dino/pick12.py`).
+  - v3 fills its canvas, so pick the canvas size as the animal's game size.
+  - For these long bodies the side view came out as "north-east", the front as "south-east" and
+    the back as "north-west".
+  - Per-view pixflux restyles couldn't make the dimetrodon's sail or the ankylosaur's shell read
+    from the front.
+  - v3 *rotation* of a side-view reference treats the reference as the front, so every label is
+    off by 90°. Give it a front view or nothing.
+  - The protoceratops stayed a pixflux restyle (v3 gave it horns, like a baby trike).
+  - The compy is side-on only (`prepare.py has_view`).
+- **Coats** (`tools/dino/coats.py`, no generations): recolour a species' exported strips part by
+  part (outline, body, crystal quills, belly by hue) into a new art key. `VARIANTS[...].art` picks
+  it (`wanted_art_key`).
+  - `raptor_sand`: Dune raptors, sandy with dark back stripes.
+  - `raptor_ash`: Ashfang raptors of the Pale Lands: soot-dark with a baked fringe of ash-pale
+    fur and ember flecks, the Sky-Fang mutation look. First baked ash-grey, they all but vanished
+    on the Pale Lands' pale, greyed ground (`Tests/Beasts12Capture.tscn` showed it): a beast
+    that lives on a pale ground needs a dark body to read as a threat.
+- **Tribe beasts:** `master` (see folk-and-housing.md → Tribes).
+- **The Scarhorn's art is Blender-made** (`blender-pipeline.md`): catalogue `"source": "blender"`,
+  and BODY walk/run matched to the render's stride.

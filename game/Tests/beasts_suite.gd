@@ -92,12 +92,16 @@ func _wildlife() -> void:
 	var counts := {}
 	var at_camp := 0
 	var raptors_ne := 0
+	var forest_raptors := 0
 	for c in get_tree().get_nodes_in_group("forest_creatures"):
 		counts[c.species] = int(counts.get(c.species, 0)) + 1
 		if c.species != "alpha" and c.global_position.length() < 40.0: at_camp += 1
-		if c.species == "raptor" and c.global_position.x > 0 and c.global_position.y < 0: raptors_ne += 1
+		# The forest's own packs (pass 11 adds others in the hills and dunes).
+		if c.species == "raptor" and world.region_of(world.to_cell(c.global_position)) == "forest":
+			forest_raptors += 1
+			if c.global_position.x > 0 and c.global_position.y < 0: raptors_ne += 1
 	check(int(counts.get("rex", 0)) == 1, "there is one rex (%s)" % [counts])
-	check(int(counts.get("raptor", 0)) >= 4 and raptors_ne == int(counts.get("raptor", 0)), "raptor packs keep to the north-east")
+	check(forest_raptors >= 4 and raptors_ne == forest_raptors, "the forest's raptor packs keep to the north-east (%d of %d)" % [raptors_ne, forest_raptors])
 	check(int(counts.get("allo", 0)) >= 1 and int(counts.get("lystro", 0)) >= 2, "allosaurs and lystrosaurs roam")
 	check(at_camp == 0, "nothing is spawned at camp")
 	check(int(counts.get("alpha", 0)) == 1, "the alpha waits in its den")
@@ -194,9 +198,12 @@ func _hunting() -> void:
 	var dodo = _spawn("dodo", base + Vector2(-60, 40))
 	var lone = _spawn("raptor", base + Vector2(90, 0))
 	stage.player.global_position = base + Vector2(0, 600)
+	# Wild hunters start out fed (pass 12); these are hungry.
+	lone.sated = 0.0
 	await frames(3)
 	check(lone._wild_target() == dodo, "a lone raptor goes for the dodo, not the stego")
 	var pack := [_spawn("raptor", base + Vector2(90, 20)), _spawn("raptor", base + Vector2(100, -20))]
+	for r in pack: r.sated = 0.0
 	dodo.queue_free()
 	await frames(3)
 	check(lone._pack_size() >= 3 and lone._wild_target() == stego, "a pack of three takes on a stego")
@@ -209,6 +216,7 @@ func _hunting() -> void:
 	var lystro = _spawn("lystro", base + Vector2(40, 50))
 	await frames(2)
 	lone.sated = 0.0
+	lone._hunt_scan = 0.0  # it looks about afresh, not from its fed moment's "nothing"
 	lone._attack_target = lystro
 	lone.state = "hunt"
 	await frames(2)
@@ -253,7 +261,7 @@ func _boss() -> void:
 	alpha.health = int(alpha.stats.hp * 0.55)
 	await frames(3)
 	var raptors_after := get_tree().get_nodes_in_group("forest_creatures").filter(func(c): return c.species == "raptor").size()
-	check(boss._called and raptors_after == raptors_before + 2, "wounded, it calls two of its pack")
+	check(boss._called and raptors_after == raptors_before + 2, "wounded, it calls two of its pack (%s: %d -> %d)" % [boss._called, raptors_before, raptors_after])
 	alpha.health = int(alpha.stats.hp * 0.25)
 	await frames(3)
 	check(boss._enraged and alpha.haste > 1.0, "and at the last it's enraged")

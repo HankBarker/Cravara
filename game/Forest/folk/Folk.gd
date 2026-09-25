@@ -94,6 +94,13 @@ const CAST := {
 
 ## What the warden knows of each beast ([food, how to earn trust, riding]).
 const BEASTS := {
+	"parasaur": ["Berries", "Eighteen berries, stepping back between. They graze the Mirefen's edges in herds and trumpet when a hunter comes.", "Too skittish to ride, but one at your side warns you of hunters."],
+	# Pass 12.
+	"dimetrodon": ["Meat", "Net it first; then meat, stepping back between. Go by day, when it's warm and slow to anger.", "Too low to ride, but its sail gathers the sun: your crops grow faster by day."],
+	"protoceratops": ["Berries", "A few berries; the herd bolts, so come at them slowly.", "Too small to ride. On sand it noses up old bones, fossils and coins."],
+	"ankylosaur": ["Berries", "Two dozen berries, stepping back between. Its plates shrug off light blows; don't make it angry.", "Not for riding, but beside you its club cracks stone: more from every rock and vein you mine, and it stands guard."],
+	"scarhorn": ["Meat", "A net, then meat and patience. It's the fastest hunter in the dunes: don't run from it.", "Not yet ridden. At your side you sprint faster."],
+	"ashmane": ["Meat", "A net, then meat and patience, in the ash of the Pale Lands.", "Not yet ridden. With one at your side the ash can't reach you."],
 	"dodo": ["Berries", "Offer berries from your hand. Dodos trust quickly and lay eggs at home.", "Too small to ride. Set them to work and they'll gather for you."],
 	"lystro": ["Berries", "A berry or two and it's yours. Lystrosaurs are the friendliest things in the wilds.", "Too small to ride, but it'll follow you anywhere."],
 	"stego": ["Berries", "Twenty berries and a lot of patience. Feed it, then step well back and let it settle before the next. Crowd it and that tail comes round.", "Fit a stego saddle (workbench). Steady, strong, and its tail swing bleeds foes."],
@@ -113,13 +120,15 @@ const STOCK := {
 ## Rarer wares that turn up one or two at a time, a new pick each day.
 const RARE := {"merchant": {"hunter_charm": 20, "crystal_pendant": 25, "river_totem": 25, "mushroom_potion": 8, "prism_crystal": 6}}
 ## What the trader pays (ancient coins each).
-const BUYS := {"fossil_bone": 4, "sky_idol": 15, "crystal_shard": 1, "prism_crystal": 4, "trex_scale": 6, "raptor_fang": 2, "moonscale": 5, "shardfin": 3, "dodo_egg": 1}
+const BUYS := {"fossil_bone": 4, "sky_idol": 15, "crystal_shard": 1, "prism_crystal": 4, "trex_scale": 6, "raptor_fang": 2, "moonscale": 5, "shardfin": 3, "dodo_egg": 1, "old_bone": 1, "glass_pearl": 6, "pale_crystal": 8, "maw_tooth": 20, "cactus_fruit": 1, "raptor_hide": 1, "trike_horn": 3, "trike_hide": 1, "stego_plate": 3, "longneck_hide": 1, "allo_tooth": 5, "parasaur_crest": 3}
 const COIN := "ancient_coin"
 ## What tending a companion costs at the warden's (coins each).
 const TEND_PRICE := 1
 
 
 static func info(id: String) -> Dictionary:
+	# The tribes' traders (pass 12) talk through the same dialogue.
+	if id.begins_with("tribe_"): return preload("res://Forest/tribes/Tribes.gd").CAST.get(id, {})
 	return CAST.get(id, {})
 
 

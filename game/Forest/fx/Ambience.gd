@@ -10,6 +10,10 @@ const DIR := "res://Forest/audio/generated/"
 const LEVELS := {"wind": -10.0, "day": -12.0, "night": -9.0}
 
 var player: Node2D
+## 0..1: the Pale Lands' hush (RegionAir): no insects, a low wind.
+var hush := 0.0
+## 0..1: a sandstorm (RegionAir): the wind roars.
+var storm := 0.0
 var _beds := {}
 var _chirp: AudioStreamPlayer2D
 var _next_chirp := 4.0
@@ -52,13 +56,14 @@ func _process(delta: float) -> void:
 	if _beds.is_empty(): return
 	# 1 at noon, 0 through the night.
 	var daylight := clampf(sin((TimeCycle.time_of_day - 0.25) * TAU) * 1.4, 0.0, 1.0)
-	var wanted := {"wind": 1.0, "day": daylight, "night": 1.0 - daylight}
+	var wanted := {"wind": 1.0 + 0.4 * hush + 3.0 * storm, "day": daylight * (1.0 - hush) * (1.0 - storm), "night": (1.0 - daylight) * (1.0 - hush) * (1.0 - storm)}
 	for key in _beds:
 		var bed: AudioStreamPlayer = _beds[key]
 		var target: float = float(LEVELS[key]) + linear_to_db(maxf(float(wanted[key]), 0.001))
 		bed.volume_db = move_toward(bed.volume_db, maxf(target, -60.0), 18.0 * delta)
+		if key == "wind": bed.pitch_scale = lerpf(1.0, 0.7, hush) * lerpf(1.0, 1.25, storm)
 	_next_chirp -= delta
-	if _next_chirp <= 0.0 and is_instance_valid(player):
+	if _next_chirp <= 0.0 and is_instance_valid(player) and hush < 0.4:
 		# More often at night.
 		_next_chirp = _rng.randf_range(2.5, 6.0) if daylight < 0.5 else _rng.randf_range(6.0, 14.0)
 		var bank = AudioManager._foley_bank("chirp") if AudioManager.has_method("_foley_bank") else null

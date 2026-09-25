@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/art/items/parasaur_crest.png" id="2"]
+[resource]
+script = ExtResource("1")
+id = "parasaur_crest"
+name = "Crestbone"
+description = "The hollow crest of a parasaur. Blow through it and it booms across the water."
+icon = ExtResource("2")
+max_stack = 10
+rarity = "rare"

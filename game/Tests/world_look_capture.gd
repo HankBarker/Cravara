@@ -110,7 +110,7 @@ func run() -> void:
 		clock += get_process_delta_time()
 		frames += 1
 		draws = maxi(draws, RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME))
-	print("WORLD_LOOK fps=%.0f draw_calls=%d flora=%d" % [frames / clock, draws, world.flora.multimesh.instance_count])
+	print("WORLD_LOOK fps=%.0f draw_calls=%d flora=%d" % [frames / clock, draws, world.flora.instance_count()])
 	print("WORLD_LOOK shots=%d ground_revision=%d" % [shots.size(), world.surface.revision])
 	await QuietExit.settle(get_tree())
 	get_tree().quit(0)

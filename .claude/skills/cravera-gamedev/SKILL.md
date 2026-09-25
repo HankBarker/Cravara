@@ -68,6 +68,9 @@ substantive work in that area. **Keep it updated** — see "Continuous improveme
 | **Townsfolk (guide, trader, warden), Terraria-style housing, stone building, roofs, talking, the opening story** | `references/folk-and-housing.md` |
 | Frame time, creature update cost, the sun-shadow pass (`Tests/PerfProbe.tscn`) | `references/dinosaurs.md` → Performance |
 | The `godot_mcp` toolchain + build/test/debug loop | `references/mcp-workflow.md` |
+| **Hank's long-term vision: Sky-Fang lore, the 10-biome roadmap and today's map, dinos to add, system pillars** (read before planning content) | `references/vision.md` |
+| **Blender as the dinosaur animation factory** (model, rig, animate, render the Cravera camera, pixelize; the Scarhorn test) | `references/blender-pipeline.md` |
+| **The tribes (Sunward, Ashen): villages, bands, tribal beasts, barter** | `references/folk-and-housing.md` → Tribes |
 
 ## Cross-cutting principles (from the research)
 - **One palette, one PPU, integer scale.** Never mix sprite resolutions or non-integer scale/rotate
@@ -120,10 +123,22 @@ DONE (implemented & verified booting in Godot 4.6.1 headless, 2026-06-28):
    saves untouched. 54 creatures run at about 14 ms a frame. *(dinosaurs.md, world-generation.md,
    folk-and-housing.md)*
 
+9. ✅ **Pass 11 (2026-09): nests and babies, tasks, the wilds, two new great beasts.** Front walks
+   redrawn for every dino that slid. Wild lives (hunger, thirst, grazing, drinking, resting, moving
+   on as a herd, guarding young and nests). Nests with guardians, eggs, the incubator, baby versions
+   of every kind (quicker to tame, grow up), breeding at home, and companion gifts. Tasks from Orrin,
+   Tamsin and Kaya. The world grew to 336 x 276 cells: Glassmere (a lake with islands, deep water,
+   the boat, parasaurs, pearls, a piranha bay and Old Maw the Megalodon), the Sunscar Dunes (the
+   Ossuary, where Ossuar the Buried King is called with the Grave Horn) and the Pale Hills (the
+   dangerous north). Roaming mini-bosses wear their names. Chunked ground and flora, prop culling
+   and creature LOD keep ~180 beasts at ~11 ms. *(dinosaurs.md, world-generation.md,
+   folk-and-housing.md)*
+
 STILL OPEN:
-- **World scale:** two hand-authored regions now (forest, Bonelands). Hank's plan: author three or four,
-  then generate outward procedurally (Core Keeper style). Biome JSON is still not wired in, and there is
-  no NavigationRegion2D bake yet. *(world-generation.md)*
+- **World scale:** five hand-authored regions now (forest, Bonelands, Glassmere, Pale Hills, Dunes).
+  Hank's plan: generate further out procedurally (Core Keeper style), more dangerous the further
+  out. Biome JSON is still not wired in, and there is no NavigationRegion2D bake yet.
+  *(world-generation.md)*
 - **UI polish:** drag merge/drop semantics. *(ui-ux.md)*
 - **Boss music:** Skarn's fight uses Hank's "Travel Music (Cave)" as a stand-in; a battle track of his own
   would replace `Forest/audio/boss-echoes.mp3`.

@@ -12,6 +12,7 @@ var egg_time:=0.0
 var search_time:=0.0
 var returning:=false
 func role()->String:
+	if creature.get("baby"): return ""
 	return {"stego":"timber","trike":"vegetation","dodo":"eggs"}.get(creature.species,"")
 func count()->int:
 	var total:=0

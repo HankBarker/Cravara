@@ -146,6 +146,43 @@ static func clips() -> Dictionary:
 				{"f": 0, "b": [0, 1], "hip": [0, 1], "hm": [-2, -2], "ho": [2, -2], "fm": [3, -1], "fo": [-3, -1], "km": 1, "ko": -1},
 			],
 		}},
+		# Afloat (pass 12, Boating.gd): seated in the rowboat, paddling on one
+		# side: catch forward, pull back along the hull, lift and reach again.
+		# Legs as in "ride" (the hull hides them). The paddle is drawn by
+		# BoatRide at these hands and angles. Played while the boat moves; held
+		# on frame 0 when it rests.
+		"row": {"frames": 8, "duration": 0.9, "loop": true, "hold": "boat_paddle", "views": {
+			"side": [
+				{"f": 0, "b": [1, 1], "hip": [0, 1], "hd": [0, 0], "hm": [5, -3], "ho": [5, 1], "ta": 80, "tl": "front", "fm": [2, 0], "fo": [2, 0], "km": 1, "ko": 1},
+				{"f": 1, "b": [1, 1], "hm": [4, -3], "ho": [3, 1], "ta": 90},
+				{"f": 2, "b": [0, 1], "hm": [2, -3], "ho": [1, 1], "ta": 100},
+				{"f": 3, "b": [0, 1], "hm": [0, -3], "ho": [-1, 1], "ta": 110},
+				{"f": 4, "b": [-1, 1], "hm": [-2, -3], "ho": [-3, 0], "ta": 122},
+				{"f": 5, "b": [-1, 1], "hm": [-1, -5], "ho": [-2, -2], "ta": 165},
+				{"f": 6, "b": [0, 1], "hm": [2, -6], "ho": [2, -3], "ta": -12},
+				{"f": 7, "b": [1, 1], "hm": [4, -5], "ho": [4, -1], "ta": 40},
+			],
+			"down": [
+				{"f": 0, "b": [0, 1], "hip": [0, 1], "hd": [0, 0], "hm": [4, -3], "ho": [2, -1], "ta": 72, "tl": "front", "fm": [3, -1], "fo": [-3, -1], "km": -1, "ko": 1},
+				{"f": 1, "hm": [5, -2], "ho": [3, -1], "ta": 58},
+				{"f": 2, "hm": [5, -3], "ho": [3, -2], "ta": 42},
+				{"f": 3, "hm": [5, -4], "ho": [3, -3], "ta": 24},
+				{"f": 4, "hm": [4, -5], "ho": [2, -4], "ta": 8},
+				{"f": 5, "hm": [4, -5], "ho": [2, -3], "ta": 30},
+				{"f": 6, "hm": [4, -4], "ho": [2, -2], "ta": 52},
+				{"f": 7, "hm": [4, -3], "ho": [2, -1], "ta": 66},
+			],
+			"up": [
+				{"f": 0, "b": [0, 1], "hip": [0, 1], "hd": [0, 0], "hm": [4, -3], "ho": [2, -1], "ta": -76, "tl": "back", "fm": [3, -1], "fo": [-3, -1], "km": 1, "ko": -1},
+				{"f": 1, "hm": [5, -3], "ho": [3, -2], "ta": -58},
+				{"f": 2, "hm": [5, -2], "ho": [3, -1], "ta": -38},
+				{"f": 3, "hm": [5, -1], "ho": [3, 0], "ta": -18},
+				{"f": 4, "hm": [4, -2], "ho": [2, -1], "ta": -4},
+				{"f": 5, "hm": [4, -3], "ho": [2, -2], "ta": -30},
+				{"f": 6, "hm": [4, -4], "ho": [2, -3], "ta": -54},
+				{"f": 7, "hm": [4, -4], "ho": [2, -2], "ta": -70},
+			],
+		}},
 		# Legacy name used by the old Attack state's fallback.
 		"swing": {"frames": 8, "duration": 0.32, "hold": "held", "alias": "weapon", "views": {}},
 	}

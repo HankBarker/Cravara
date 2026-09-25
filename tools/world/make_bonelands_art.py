@@ -71,11 +71,28 @@ def recolour(name: str) -> Image.Image:
     return out
 
 
+# The Pale Hills (pass 11): the same stone as white chalk under pale sage turf.
+CHALK = {
+    "2a3320": "4a5248", "2a3d33": "56615a", "3f5128": "6e7a6c", "3f6b4e": "7f8c80",
+    "5e7a33": "9aa48e", "5c9461": "a8b39c", "86a84a": "c4ccb4", "8fc066": "d2d9c2",
+    "2e3640": "6c6e72", "4a5560": "a8aaa8", "74808c": "c8cac6", "a7b1ba": "e6e8e2",
+    "473f66": "6a6480", "6e5c8c": "9c94b0",
+    "1a1726": "242630", "2e241f": "34343a", "3a2a1e": "484650", "3b2b33": "4a4652",
+    "6b4a4a": "7a7078", "6e5a3e": "807a70", "9c8348": "b0aa98", "a88862": "c4bfae",
+}
+
+
 def main() -> None:
+    global MAP
     OUT.mkdir(parents=True, exist_ok=True)
     for name in ["wall", "wall_alt", "ore", "rock"]:
         recolour(name).save(OUT / f"sand_{name}.png")
         print("wrote", (OUT / f"sand_{name}.png").relative_to(ROOT))
+    sand, MAP = MAP, CHALK
+    for name in ["wall", "wall_alt", "ore", "rock"]:
+        recolour(name).save(OUT / f"chalk_{name}.png")
+        print("wrote", (OUT / f"chalk_{name}.png").relative_to(ROOT))
+    MAP = sand
 
 
 if __name__ == "__main__":

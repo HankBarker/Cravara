@@ -1,0 +1,11 @@
+925a647c-b831-4d0a-90fc-333213110b90
+status: completed
+id: 925a647c-b831-4d0a-90fc-333213110b90
+job_id: 925a647c-b831-4d0a-90fc-333213110b90
+frames: 1
+transparent: yes
+asset_id: acb98f30-ae98-520e-ac1c-626f43d876ff
+asset_type: image
+asset_status: saved
+gallery: saved to your PixelLab gallery (pixellab.ai/create)
+download: https://api.pixellab.ai/mcp/images/925a647c-b831-4d0a-90fc-333213110b90/download

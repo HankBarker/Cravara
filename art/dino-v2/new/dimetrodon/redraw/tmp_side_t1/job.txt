@@ -1,0 +1,11 @@
+32e0e9fb-a9fe-4680-bc39-9dc17a4edf03
+status: completed
+id: 32e0e9fb-a9fe-4680-bc39-9dc17a4edf03
+job_id: 32e0e9fb-a9fe-4680-bc39-9dc17a4edf03
+frames: 1
+transparent: yes
+asset_id: a39b0c9f-53e9-54f1-9bfb-3192c66175f5
+asset_type: image
+asset_status: saved
+gallery: saved to your PixelLab gallery (pixellab.ai/create)
+download: https://api.pixellab.ai/mcp/images/32e0e9fb-a9fe-4680-bc39-9dc17a4edf03/download

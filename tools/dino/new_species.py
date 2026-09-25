@@ -35,7 +35,9 @@ from PIL import Image  # noqa: E402
 ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
 ART = os.path.join(ROOT, "game", "Forest", "creatures", "art")
 NEW = os.path.join(ROOT, "art", "dino-v2", "new")
-FRAME = {"dodo": (20, 24), "longneck": (70, 60), "raptor": (42, 32), "rex": (76, 56), "stego": (60, 40), "trike": (54, 42)}
+FRAME = {"dodo": (20, 24), "longneck": (70, 60), "raptor": (42, 32), "rex": (76, 56), "stego": (60, 40), "trike": (54, 42),
+         "alpha": (84, 60), "allo": (64, 46), "lystro": (24, 20), "parasaur": (76, 52), "ossuar": (84, 64),
+         "dimetrodon": (60, 56), "carno": (68, 70), "yuty": (68, 68), "anky": (56, 52), "proto": (32, 30), "compy": (24, 20)}
 UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) CraveraDino/1.0"}
 
 
@@ -75,8 +77,12 @@ def restyle(key, species, scale, canvas, desc, keep, view="down", palette=None):
     reply = pl.text_of(client.call("create_image_pixflux", args))
     job = job_id(reply)
     print("restyle job", job, flush=True)
-    pl.cmd_wait(job, out)
-    os.replace(os.path.join(out, "000.png"), os.path.join(out, DIRECTION[view] + ".png"))
+    # Each view downloads into its own folder: views restyled at the same
+    # time must not trade files.
+    tmp = os.path.join(out, "tmp_" + view)
+    os.makedirs(tmp, exist_ok=True)
+    pl.cmd_wait(job, tmp)
+    os.replace(os.path.join(tmp, "000.png"), os.path.join(out, DIRECTION[view] + ".png"))
     print("wrote", os.path.join(out, DIRECTION[view] + ".png"))
 
 

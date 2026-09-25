@@ -35,7 +35,7 @@ GROUND = 6
 # lowest pixel (the tail tip) on the ground line, so the feet floated above
 # the creature's shadow. Measured by eye on first/KEY_up.png (feet row vs the
 # ground row), capped so the tail tip stays on the canvas.
-VIEW_DROP = {"up": {"rex": 6, "raptor": 4, "stego": 6, "stego_saddle": 6, "trike": 4, "trike_saddle": 4, "longneck": 4, "alpha": 2, "allo": 5, "lystro": 1}}
+VIEW_DROP = {"up": {"rex": 6, "raptor": 4, "stego": 6, "stego_saddle": 6, "trike": 4, "trike_saddle": 4, "longneck": 4, "alpha": 2, "allo": 5, "lystro": 1, "parasaur": 3, "ossuar": 3, "anky": 6}}
 ATTACKS = {"bite", "chomp", "slash", "pounce", "tail_swing", "tail_swing_far", "stomp", "gore", "peck"}
 
 
@@ -106,10 +106,11 @@ def frame_origin(key, view):
     """Top-left of the original drawing on the canvas (prepare.py placement)."""
     sys.path.insert(0, HERE)
     import prepare
-    sp = key.split("_")[0]
+    if not os.path.exists(os.path.join(SRC, "base", "%s_%s.png" % (key, view))):
+        view = "side"  # a side-on baby: every facing stands where the side does
     img = prepare.source(key, view)
     snapped = Image.open(os.path.join(SRC, "base", "%s_%s.png" % (key, view))).convert("RGBA")
-    cw, ch = prepare.CANVAS[sp]
+    cw, ch = prepare.CANVAS[prepare.frame_key(key)]
     box = snapped.getbbox()
     return [(cw - img.width) // 2, ch - prepare.GROUND - box[3]]
 
@@ -137,6 +138,8 @@ def main():
         for clip in info["clips"]:
             c = SPEC["clips"][clip]
             views = tuple(c.get("views", VIEWS))  # a few clips exist side-on only
+            # A key may exist in fewer facings (the side-on babies).
+            views = tuple(v for v in views if v in info.get("views", VIEWS))
             entry = {"fps": c["fps"], "loop": bool(c.get("loop"))}
             if views != VIEWS:
                 entry["views"] = list(views)

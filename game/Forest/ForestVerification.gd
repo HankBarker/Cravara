@@ -19,12 +19,13 @@ func run(game):
 		creature.set_physics_process(false)
 	await get_tree().physics_frame
 	check(not world.is_water_at(Vector2.ZERO) and not world.is_blocked_at(Vector2.ZERO), "Spawn is dry and clear")
-	# Pass 10: wildlife placed afresh per world: eight wild species, one rex,
-	# and the alpha in its den.
+	# Pass 10: wildlife placed afresh per world: eight wild species (nine with
+	# pass 11's parasaurs by Glassmere), one rex, and the alpha in its den.
 	var kinds := {}
 	for creature in get_tree().get_nodes_in_group("forest_creatures"):
 		kinds[creature.species] = int(kinds.get(creature.species, 0)) + 1
-	check(kinds.size() == 9 and int(kinds.get("rex", 0)) == 1 and int(kinds.get("alpha", 0)) == 1 and get_tree().get_nodes_in_group("forest_creatures").size() >= 20, "Wildlife across eight species, one rex, and the alpha (%s)" % [kinds])
+	# (Pass 12 adds the dunes' and the Pale Lands' beasts and the tribes' own.)
+	check(kinds.size() >= 10 and int(kinds.get("rex", 0)) == 1 and int(kinds.get("alpha", 0)) == 1 and not kinds.has("ossuar") and get_tree().get_nodes_in_group("forest_creatures").size() >= 20, "Wildlife across nine species or more, one rex, and the alpha (%s)" % [kinds])
 	check(InventoryManager.inventory[6].item.id == "bucket", "Bucket accessible in seventh hotbar slot")
 	check(InventoryManager.inventory[7].item.id == "torch", "Torches accessible in eighth hotbar slot")
 	var cell := Vector2i(-13, 5)

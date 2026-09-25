@@ -7,6 +7,9 @@ var recipes_panel: Panel
 var toast: Label
 var context_label: Label
 var bleed_label: Label
+var ash_label: Label
+var _ash_box: PanelContainer
+const ASH := Color("ddd6c6")
 var station_label: Label
 var detail: Label
 var recipe_list: VBoxContainer
@@ -179,10 +182,10 @@ func _build_status() -> void:
 		var amount := _label(frame,"",Vector2(131,y+4),8,PAPER)
 		amount.size = Vector2(17,9)
 		status_values[name] = amount
-	var region_plate := _backing(root,Vector4(7,1,7,2))
-	_label(region_plate,"The Skyfang Wilds",Vector2.ZERO,11,GOLD)
-	region_plate.reset_size()
-	region_plate.position = Vector2(475-region_plate.size.x,3)
+	_region_plate = _backing(root,Vector4(7,1,7,2))
+	_region_label = _label(_region_plate,"The Skyfang Wilds",Vector2.ZERO,11,GOLD)
+	_region_plate.reset_size()
+	_region_plate.position = Vector2(475-_region_plate.size.x,3)
 	# A bleeding cut (a stego's tail): a drop and the seconds left, under the plate.
 	_bleed_box = _backing(root,Vector4(3,1,6,1))
 	_bleed_box.position = Vector2(8,48)
@@ -194,6 +197,16 @@ func _build_status() -> void:
 	bleed_label = _label(bleed_row,"",Vector2.ZERO,8,UI.EMBER)
 	bleed_label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	_bleed_box.visible = false
+	# The ash (pass 12, the Pale Lands): how much the keeper has breathed, then CHOKING.
+	_ash_box = _backing(root,Vector4(3,1,6,1))
+	_ash_box.position = Vector2(8,61)
+	var ash_row := HBoxContainer.new()
+	ash_row.add_theme_constant_override("separation",2)
+	ash_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_ash_box.add_child(ash_row)
+	ash_label = _label(ash_row,"",Vector2.ZERO,8,ASH)
+	ash_label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	_ash_box.visible = false
 	context_label = _label(root,"",Vector2(10,218),8)
 	context_label.size = Vector2(460,12)
 	context_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -336,12 +349,20 @@ func _process(delta: float) -> void:
 		var bleeding: bool = player.get("bleed") != null and player.bleed.active()
 		_bleed_box.visible = bleeding
 		if bleeding: bleed_label.text = "BLEEDING  %ds" % ceili(player.bleed.time_left)
+		var ash: float = float(player.get("ash")) if player.get("ash") != null else 0.0
+		_ash_box.visible = ash > 0.04
+		if _ash_box.visible:
+			var choking := ash >= 1.0
+			ash_label.text = "CHOKING" if choking else "ASH  %d%%" % int(round(ash * 100.0))
+			ash_label.add_theme_color_override("font_color", UI.EMBER if choking else ASH)
+			_ash_box.position.y = 61.0 if bleeding else 48.0
 	if _last_selected != InventoryManager.selected_slot_index:
 		_last_selected = InventoryManager.selected_slot_index
 		update_inventory_display()
 	_toast_time = maxf(0,_toast_time-delta)
 	_toast_box.modulate.a = minf(1,_toast_time)
 	_toast_box.visible = _toast_time > 0 and toast.text != ""
+	if _toast_box.visible: _toast_box.position.y = _toast_top()
 	_roster_tick -= delta
 	if roster_panel.visible and _roster_tick <= 0 and not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 		_roster_tick = 1.0
@@ -426,6 +447,58 @@ func close_panels() -> void:
 	_command_target = null
 	DragController.end_drag()
 
+## The region plate (top right): where the keeper is.
+var _region_plate: Control
+var _region_label: Label
+func set_region(title: String) -> void:
+	if not is_instance_valid(_region_label): return
+	_region_label.text = title
+	_region_plate.reset_size()
+	_region_plate.position = Vector2(475-_region_plate.size.x,3)
+	_place_tasks()
+
+## The tasks being followed (QuestManager), under the region plate: the task,
+## then a line per goal. Refreshed when the tasks change.
+var _tasks_box: Control
+var _tasks_list: VBoxContainer
+func show_tasks(tasks: Array, lines_for: Callable) -> void:
+	if not is_instance_valid(_tasks_box):
+		_tasks_box = _backing(root,Vector4(5,2,5,3))
+		_tasks_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_tasks_list = VBoxContainer.new()
+		_tasks_list.add_theme_constant_override("separation",0)
+		_tasks_list.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_tasks_box.add_child(_tasks_list)
+	for child in _tasks_list.get_children(): child.queue_free()
+	_tasks_box.visible = not tasks.is_empty()
+	for q in tasks.slice(0, 3):
+		var head := _label(_tasks_list,str(q.title),Vector2.ZERO,8,GOLD)
+		head.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		for line in lines_for.call(q):
+			var row := _label(_tasks_list,str(line),Vector2.ZERO,8,MINT if str(line).ends_with("done") else PAPER)
+			row.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	_place_tasks()
+
+func _place_tasks() -> void:
+	if not is_instance_valid(_tasks_box): return
+	_tasks_box.reset_size()
+	var top := 3.0 + (_region_plate.size.y + 3.0 if is_instance_valid(_region_plate) else 16.0)
+	_tasks_box.position = Vector2(475-_tasks_box.size.x, top)
+
+## The companions' gifts (Buffs.gd), a line under the vitals plate.
+var _gifts_box: Control
+var _gifts_label: Label
+func show_gifts(names: Array) -> void:
+	if not is_instance_valid(_gifts_box):
+		_gifts_box = _backing(root,Vector4(4,1,5,1))
+		_gifts_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_gifts_label = _label(_gifts_box,"",Vector2.ZERO,8,MINT)
+	_gifts_box.visible = not names.is_empty()
+	_gifts_label.text = " · ".join(names)
+	_gifts_box.reset_size()
+	_gifts_box.position = Vector2(8,48)
+	if is_instance_valid(_bleed_box): _bleed_box.position = Vector2(8,62 if _gifts_box.visible else 48)
+
 ## A boss's name and health across the top of the screen while the fight
 ## lasts (AlphaBoss): fades in on the first call, then just follows the health.
 var _boss_plate: Control
@@ -504,8 +577,14 @@ func show_toast(text: String) -> void:
 			toast.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 			toast.custom_minimum_size.x = 290
 			_toast_box.reset_size()
-		_toast_box.position = Vector2(474-_toast_box.size.x,22)
+		_toast_box.position = Vector2(474-_toast_box.size.x,_toast_top())
 	_toast_time = 3.0
+
+## News goes under the region name, or under the tasks being tracked.
+func _toast_top() -> float:
+	if is_instance_valid(_tasks_box) and _tasks_box.visible:
+		return _tasks_box.position.y + _tasks_box.size.y + 2.0
+	return 22.0
 
 func set_context(text: String) -> void:
 	if context_label: context_label.text = text

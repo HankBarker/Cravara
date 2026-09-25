@@ -179,17 +179,19 @@ func _loot_and_items() -> void:
 
 func _placement(world) -> void:
 	var sites: Array = WORLD.SITES
-	check(world.pois.size() == sites.size(), "every site finds room (%d of %d)" % [world.pois.size(), sites.size()])
+	# The forest's own sites (the wilds beyond have theirs: wilds_suite).
+	var pois: Array = world.pois.filter(func(poi): return not world.has_method("region_of") or world.region_of(poi.cell) == "forest")
+	check(pois.size() == sites.size(), "every site finds room (%d of %d)" % [pois.size(), sites.size()])
 	var names := {}
-	for poi in world.pois:
+	for poi in pois:
 		names[poi.name] = true
 		var p = world.props.get(poi.cell)
 		check(is_instance_valid(p) and p.kind == poi.kind, poi.name + " stands at its recorded cell")
 		check(Vector2(poi.cell).length() >= 18.0, poi.name + " keeps well away from the camp")
-		for other in world.pois:
+		for other in pois:
 			if other.name != poi.name:
 				check(Vector2(poi.cell - other.cell).length() >= 14.0, poi.name + " keeps its distance from " + other.name)
-	check(names.size() == world.pois.size(), "site names are distinct")
+	check(names.size() == pois.size(), "site names are distinct")
 	# Each carving of the lore is placed once, on a ruin or idol.
 	var seen := {}
 	for c in world.lore_at:
@@ -198,6 +200,7 @@ func _placement(world) -> void:
 		var p = world.props.get(c)
 		check(is_instance_valid(p) and p.kind in Prop.LANDMARKS, "carving '%s' is on a landmark" % id)
 	for id in Lore.ENTRIES:
+		if id in Lore.NOT_CARVED: continue
 		check(int(seen.get(id, 0)) == 1, "carving '%s' is in the forest exactly once" % id)
 	var caches := _cells_of(world, ["cache"])
 	var relics := _cells_of(world, ["relic"])
@@ -245,6 +248,9 @@ func _legacy_intact(world, legacy) -> void:
 	for c in legacy.props:
 		var old = legacy.props[c]
 		var now = world.props.get(c)
+		# Nests (pass 11) go on free ground after everything else, and only
+		# where no ruin stands, so they differ in a world without ruins.
+		if old.kind == "nest" or (is_instance_valid(now) and now.kind == "nest"): continue
 		if is_instance_valid(now) and now.kind == old.kind and now.variant == old.variant:
 			continue
 		if old.kind in BRUSH and not is_instance_valid(now) and world.poi_cleared.get(c, "") == old.kind:
@@ -359,7 +365,7 @@ func _ground_and_flora(world) -> void:
 		if bool(world.flora._shown.get(c, false)):
 			through += 1
 	check(through == 0, "no grass grows through props, ruins, caches or mounds (%d cells)" % through)
-	world.surface._fill_map()
+	world.surface._fill_map(Rect2i(world.surface.origin, world.surface.cells))
 	for site in WORLD.SITES:
 		var poi = _poi_named(world, site.name)
 		if poi == null:
@@ -370,7 +376,7 @@ func _ground_and_flora(world) -> void:
 			if world.ground_style.get(c, "") != "stone":
 				continue
 			stone += 1
-			var texel: Color = world.surface.map_image.get_pixel(c.x + world.surface.extent, c.y + world.surface.extent)
+			var texel: Color = world.surface.map_image.get_pixel(c.x - world.surface.origin.x, c.y - world.surface.origin.y)
 			if int(round(texel.r * 255.0)) == world.surface.K_STONE:
 				shown += 1
 		if site.paved:

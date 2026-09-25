@@ -1,0 +1,11 @@
+f39162cc-de05-4921-8017-283ca65b9806
+status: completed
+id: f39162cc-de05-4921-8017-283ca65b9806
+job_id: f39162cc-de05-4921-8017-283ca65b9806
+frames: 1
+transparent: yes
+asset_id: 712ca05a-6607-5d35-afa5-3af1316b17ec
+asset_type: image
+asset_status: saved
+gallery: saved to your PixelLab gallery (pixellab.ai/create)
+download: https://api.pixellab.ai/mcp/images/f39162cc-de05-4921-8017-283ca65b9806/download

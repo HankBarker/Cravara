@@ -29,7 +29,7 @@ var _props_seen := -1
 ## Stale shapes rebuilt per frame after the sun moves on (the rest wait a
 ## frame or two, a 512th of a day behind), so no one frame pays for them all.
 const REBUILDS_PER_FRAME := 6
-const LIT_KINDS := ["campfire", "shrine", "torch"]
+const LIT_KINDS := ["campfire", "shrine", "torch", "sun_sail"]
 const SHADOW_COLORS := [Color(0.08,0.17,0.15)]
 
 func _ready():
@@ -81,8 +81,16 @@ func _refresh_nearby():
 	_props_seen=world.props.size()
 	var here: Vector2=player.global_position
 	var found: Array[Node2D]=[]
-	for prop in world.props.values():
-		if is_instance_valid(prop) and prop.global_position.distance_squared_to(here)<=150000: found.append(prop)
+	# Only the cells round the keeper (the wilds hold thousands of props):
+	# 387 px is 25 cells, and a landmark's anchor may sit a few cells off.
+	var centre: Vector2i = world.to_cell(here)
+	var seen := {}
+	for y in range(centre.y - 28, centre.y + 29):
+		for x in range(centre.x - 28, centre.x + 29):
+			var prop = world.props.get(Vector2i(x, y))
+			if is_instance_valid(prop) and not seen.has(prop) and prop.global_position.distance_squared_to(here)<=150000:
+				seen[prop] = true
+				found.append(prop)
 	var kept := {}
 	for prop in found: kept[prop]=true
 	for prop in nearby:
@@ -99,7 +107,7 @@ func _refresh_nearby():
 			var footprint: PackedVector2Array = _occlusion_shape(prop)
 			# These emitters sit visually above their own hearth/stake/base. A 2D
 			# footprint beneath them would incorrectly shadow half their own light.
-			if footprint.size()>=3 and prop.kind not in ["campfire","torch","shrine"]:
+			if footprint.size()>=3 and prop.kind not in ["campfire","torch","shrine","sun_sail"]:
 				var occluder: LightOccluder2D = prop.get_node_or_null("LightOcclusion")
 				if not occluder:
 					occluder=LightOccluder2D.new()
@@ -109,20 +117,21 @@ func _refresh_nearby():
 					prop.add_child(occluder)
 				if occluder.occluder.polygon!=footprint: occluder.occluder.polygon=footprint
 				if occluder.visible!=GameSettings.shadows_enabled: occluder.visible=GameSettings.shadows_enabled
-		if prop.kind in ["campfire","shrine"] and not prop.has_node("EmberLight"):
+		if prop.kind in ["campfire","shrine","sun_sail"] and not prop.has_node("EmberLight"):
 			var light := PointLight2D.new()
 			light.name="EmberLight"
 			light.texture=_gradient
-			light.position=Vector2(0,-8)
-			light.color=Color("ffbc6d") if prop.kind=="campfire" else Color("79d9d5")
-			light.energy=0.75
-			light.texture_scale=1.05 if prop.kind=="campfire" else 0.65
+			light.position=Vector2(0,-8) if prop.kind!="sun_sail" else Vector2(0,-14)
+			# The Sun Sail gives back the day's sun as a low golden glow.
+			light.color={"campfire":Color("ffbc6d"),"shrine":Color("79d9d5"),"sun_sail":Color("ffd27a")}[prop.kind]
+			light.energy=0.75 if prop.kind!="sun_sail" else 0.55
+			light.texture_scale={"campfire":1.05,"shrine":0.65,"sun_sail":0.85}[prop.kind]
 			prop.add_child(light)
 	if opened_sig!=_opened_sig:
 		_opened_sig=opened_sig
 		_shadows_dirty=true
 	var lights: Array[PointLight2D] = []
-	for prop in world.props.values():
+	for prop in _lit_props():
 		if not is_instance_valid(prop) or not prop.kind in LIT_KINDS: continue
 		var light: PointLight2D = prop.get_node_or_null("EmberLight")
 		if prop.kind=="torch": light=prop.get_node_or_null("PlacedObject/PointLight2D")
@@ -142,6 +151,18 @@ func _refresh_nearby():
 	if player.get("_armor_glow"):
 		_configure_light(player._armor_glow)
 		_active_lights.append(player._armor_glow)
+
+## Every campfire, shrine and torch (a lit prop far off must still be turned
+## off): kept as a list, refreshed when the world's props change.
+var _lit: Array = []
+var _lit_seen := -1
+func _lit_props() -> Array:
+	if world.props.size() != _lit_seen or Engine.get_process_frames() % 600 == 0:
+		_lit_seen = world.props.size()
+		_lit = []
+		for prop in world.props.values():
+			if is_instance_valid(prop) and prop.kind in LIT_KINDS: _lit.append(prop)
+	return _lit
 
 func _configure_light(light: PointLight2D):
 	if not light.has_meta("forest_base_energy"):
@@ -360,6 +381,7 @@ func _sun_silhouette(prop: Node2D) -> Dictionary:
 		var constants: Dictionary=prop.get_script().get_script_constant_map()
 		var art: Dictionary=constants.get("ART",{})
 		var texture: Texture2D=art.get(prop.kind)
+		if texture == null and prop.has_method("art_texture"): texture = prop.art_texture()
 		if prop.kind=="wood_door": texture=constants.get("DOOR")
 		if prop.kind=="stone_door": texture=constants.get("STONE_DOOR")
 		if texture: source=texture.get_image()

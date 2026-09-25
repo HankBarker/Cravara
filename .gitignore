@@ -25,3 +25,6 @@ art/dino-v2/raw/
 art/dino-v2/trials*/
 art/dino-v2/peek-*.png
 art/dino-v2/run*.log
+# Blender dinosaur factory: the 4x renders (tools/blender/dino_factory.py makes
+# them again in about 40 s); the pixelized frames and look-books are tracked
+art/blender/*/raw/

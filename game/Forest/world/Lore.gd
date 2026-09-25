@@ -18,9 +18,22 @@ const ENTRIES := {
 		"text": "Living trees bent into an arch around a single shard. The tribe believed the forest was healing the sky's wound.\nBerries lie at its feet, still fresh. Someone has been here recently."},
 	"deer": {"title": "The Deer Idol",
 		"text": "It watches over the grazing herds. The tribe tamed the gentle beasts first: feed them from your hand, earn their trust, and they will carry you."},
+	"glass_isle": {"title": "The Fishers' Shrine",
+		"text": "The fishers of the Mirefen left their catch here for the mere. A carved fin runs round the base, longer than a longneck.\nBelow it: 'The Maw rises for the boats that stay out after dark.'"},
+	"buried_king": {"title": "The Kingstone",
+		"text": "Here they buried the old king, a beast so great his ribs still stand. The crystal went into his bones, and he does not rest.\n'Wake him only with his own: twelve of his bones, bound with the sky's crystal into a horn. Blow it at his ring, and end him.'"},
+	"keeper_journal": {"title": "The Last Keeper's Journal",
+		"text": "The pages are water-stained. 'The crystal grows thicker north of the hills, white instead of blue. The beasts there don't sleep at all. I've found the pass, but it's choked with crystal.'\nThe last entry: 'Something falls from the sky every hundred years. It must be kept. I'm going on.'"},
+	"pale_road": {"title": "The Pale Waystone",
+		"text": "A worn stone at the start of the old road north. The tribe marked the hills with a Keeper's sign: an eye over a falling star.\n'North of here, the Keepers walked alone.'"},
 	"wolf": {"title": "The Wolf Idol",
 		"text": "A guardian carved into a living trunk, facing the raptor lands. The tribe asked it to keep the pack-hunters away.\nThe claw marks on its bark say it did not always work."},
 }
+
+
+## Pages read from something other than a carving (the Last Keeper's journal,
+## found at their camp in the Pale Hills): never placed in `lore_at`.
+const NOT_CARVED := ["keeper_journal"]
 
 
 static func title(id: String) -> String:

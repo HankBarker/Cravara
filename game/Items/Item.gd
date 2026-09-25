@@ -28,6 +28,10 @@ extends Resource
 @export var stamina_bonus: float = 0.0
 @export var damage_bonus: int = 0
 @export var wading_bonus: float = 0.0
+# Pass 12: a weapon whose blows bleed (per second, for 4 s): the Plate Maul.
+@export var bleed_dps: float = 0.0
+# Pass 12: how much of the Pale Lands' ash a trinket keeps out (1 = all).
+@export var ash_guard: float = 0.0
 
 # Consumables
 @export var consumable: bool = false

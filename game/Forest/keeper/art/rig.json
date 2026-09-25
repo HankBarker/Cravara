@@ -353,6 +353,104 @@
     0
    ]
   },
+  "sets/ashen/head_down": {
+   "origin": [
+    24,
+    13
+   ]
+  },
+  "sets/ashen/head_down_blink": {
+   "origin": [
+    24,
+    13
+   ]
+  },
+  "sets/ashen/torso_down": {
+   "origin": [
+    27,
+    29
+   ]
+  },
+  "sets/ashen/boot_m_down": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/ashen/boot_o_down": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/ashen/head_up": {
+   "origin": [
+    24,
+    13
+   ]
+  },
+  "sets/ashen/torso_up": {
+   "origin": [
+    27,
+    28
+   ]
+  },
+  "sets/ashen/boot_m_up": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/ashen/boot_o_up": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/ashen/head_side": {
+   "origin": [
+    22,
+    13
+   ]
+  },
+  "sets/ashen/head_side_blink": {
+   "origin": [
+    22,
+    13
+   ]
+  },
+  "sets/ashen/torso_side": {
+   "origin": [
+    25,
+    29
+   ]
+  },
+  "sets/ashen/boot_m_side": {
+   "pivot": [
+    2.2,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
   "sets/bone/head_down": {
    "origin": [
     25,
@@ -642,6 +740,104 @@
   "sets/crystal/boot_m_side": {
    "pivot": [
     3.2,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/horn/head_down": {
+   "origin": [
+    22,
+    13
+   ]
+  },
+  "sets/horn/head_down_blink": {
+   "origin": [
+    22,
+    13
+   ]
+  },
+  "sets/horn/torso_down": {
+   "origin": [
+    26,
+    29
+   ]
+  },
+  "sets/horn/boot_m_down": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/horn/boot_o_down": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/horn/head_up": {
+   "origin": [
+    22,
+    13
+   ]
+  },
+  "sets/horn/torso_up": {
+   "origin": [
+    27,
+    28
+   ]
+  },
+  "sets/horn/boot_m_up": {
+   "pivot": [
+    3.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/horn/boot_o_up": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/horn/head_side": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "sets/horn/head_side_blink": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "sets/horn/torso_side": {
+   "origin": [
+    26,
+    29
+   ]
+  },
+  "sets/horn/boot_m_side": {
+   "pivot": [
+    2.2,
     0.0
    ],
    "origin": [
@@ -945,6 +1141,104 @@
     0
    ]
   },
+  "sets/plate/head_down": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "sets/plate/head_down_blink": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "sets/plate/torso_down": {
+   "origin": [
+    26,
+    29
+   ]
+  },
+  "sets/plate/boot_m_down": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/plate/boot_o_down": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/plate/head_up": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "sets/plate/torso_up": {
+   "origin": [
+    27,
+    28
+   ]
+  },
+  "sets/plate/boot_m_up": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/plate/boot_o_up": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/plate/head_side": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "sets/plate/head_side_blink": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "sets/plate/torso_side": {
+   "origin": [
+    26,
+    29
+   ]
+  },
+  "sets/plate/boot_m_side": {
+   "pivot": [
+    2.2,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
   "sets/rex/head_down": {
    "origin": [
     24,
@@ -1084,6 +1378,202 @@
    ]
   },
   "sets/rex/boot_m_side": {
+   "pivot": [
+    2.2,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/rust/head_down": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "sets/rust/head_down_blink": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "sets/rust/torso_down": {
+   "origin": [
+    26,
+    29
+   ]
+  },
+  "sets/rust/boot_m_down": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/rust/boot_o_down": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/rust/head_up": {
+   "origin": [
+    24,
+    14
+   ]
+  },
+  "sets/rust/torso_up": {
+   "origin": [
+    27,
+    28
+   ]
+  },
+  "sets/rust/boot_m_up": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/rust/boot_o_up": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/rust/head_side": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "sets/rust/head_side_blink": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "sets/rust/torso_side": {
+   "origin": [
+    26,
+    29
+   ]
+  },
+  "sets/rust/boot_m_side": {
+   "pivot": [
+    2.2,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/sunward/head_down": {
+   "origin": [
+    23,
+    14
+   ]
+  },
+  "sets/sunward/head_down_blink": {
+   "origin": [
+    23,
+    14
+   ]
+  },
+  "sets/sunward/torso_down": {
+   "origin": [
+    26,
+    29
+   ]
+  },
+  "sets/sunward/boot_m_down": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/sunward/boot_o_down": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/sunward/head_up": {
+   "origin": [
+    24,
+    14
+   ]
+  },
+  "sets/sunward/torso_up": {
+   "origin": [
+    27,
+    28
+   ]
+  },
+  "sets/sunward/boot_m_up": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/sunward/boot_o_up": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/sunward/head_side": {
+   "origin": [
+    23,
+    14
+   ]
+  },
+  "sets/sunward/head_side_blink": {
+   "origin": [
+    23,
+    14
+   ]
+  },
+  "sets/sunward/torso_side": {
+   "origin": [
+    23,
+    29
+   ]
+  },
+  "sets/sunward/boot_m_side": {
    "pivot": [
     2.2,
     0.0
@@ -1393,6 +1883,36 @@
   }
  },
  "sets": {
+  "ashen": {
+   "arm_upper": [
+    "1f1410",
+    "32251b",
+    "42372c",
+    "6a5b4e",
+    "867563"
+   ],
+   "arm_lower": [
+    "1f1410",
+    "32251b",
+    "574130",
+    "6a5b4e",
+    "867563"
+   ],
+   "leg_upper": [
+    "1f1410",
+    "32251b",
+    "574130",
+    "6a5b4e",
+    "867563"
+   ],
+   "leg_lower": [
+    "1f1410",
+    "32251b",
+    "574130",
+    "6a5b4e",
+    "867563"
+   ]
+  },
   "bone": {
    "arm_lower": [
     "33090d",
@@ -1444,6 +1964,36 @@
     "1c8e8f",
     "29bfb2",
     "21dfc1"
+   ]
+  },
+  "horn": {
+   "arm_upper": [
+    "a93d2a",
+    "d05231",
+    "ea6d3a",
+    "ec9868",
+    "efbd93"
+   ],
+   "arm_lower": [
+    "1c0b07",
+    "2b160d",
+    "452b17",
+    "6c482f",
+    "c0482e"
+   ],
+   "leg_upper": [
+    "452b17",
+    "8a3122",
+    "c0482e",
+    "ea6d3a",
+    "eb9362"
+   ],
+   "leg_lower": [
+    "452b17",
+    "8a3122",
+    "c0482e",
+    "ea6d3a",
+    "eb9362"
    ]
   },
   "leather": {
@@ -1506,6 +2056,36 @@
     "5e8737"
    ]
   },
+  "plate": {
+   "arm_upper": [
+    "262312",
+    "3e3e20",
+    "56552b",
+    "848041",
+    "a29c52"
+   ],
+   "arm_lower": [
+    "3e3e20",
+    "56552b",
+    "848041",
+    "a69f54",
+    "bdb881"
+   ],
+   "leg_upper": [
+    "3e3e20",
+    "56552b",
+    "848041",
+    "a69f54",
+    "bdb881"
+   ],
+   "leg_lower": [
+    "3e3e20",
+    "56552b",
+    "848041",
+    "a69f54",
+    "bdb881"
+   ]
+  },
   "rex": {
    "arm_upper": [
     "352817",
@@ -1534,6 +2114,66 @@
     "249251",
     "31b463",
     "51cc78"
+   ]
+  },
+  "rust": {
+   "arm_upper": [
+    "330f0d",
+    "4d2017",
+    "8a3b28",
+    "ac5338",
+    "c26542"
+   ],
+   "arm_lower": [
+    "21100f",
+    "341f19",
+    "54392b",
+    "70533b",
+    "896d56"
+   ],
+   "leg_upper": [
+    "330f0d",
+    "4d2017",
+    "8a3b28",
+    "ac5338",
+    "c26542"
+   ],
+   "leg_lower": [
+    "330f0d",
+    "4d2017",
+    "8a3b28",
+    "ac5338",
+    "c26542"
+   ]
+  },
+  "sunward": {
+   "arm_upper": [
+    "8e6539",
+    "9b8455",
+    "b79e68",
+    "d8c389",
+    "e6e0ba"
+   ],
+   "arm_lower": [
+    "2c1208",
+    "43240f",
+    "50381e",
+    "6f5632",
+    "8d7448"
+   ],
+   "leg_upper": [
+    "8e6539",
+    "9b8455",
+    "b79e68",
+    "d8c389",
+    "e6e0ba"
+   ],
+   "leg_lower": [
+    "8e6539",
+    "9b8455",
+    "b79e68",
+    "d8c389",
+    "e6e0ba"
    ]
   },
   "tide": {

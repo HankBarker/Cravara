@@ -37,6 +37,10 @@ RIG = {
     "stego_saddle": {"legs": [(46, 60, 54, 69), (60, 60, 67, 69)], "tail": (51, 58, 64, 74), "hip": 60},
     "trike": {"legs": [(37, 56, 46, 62), (52, 56, 61, 62)], "tail": (45, 57, 54, 66), "hip": 57},
     "trike_saddle": {"legs": [(38, 57, 46, 62), (52, 57, 61, 62)], "tail": (46, 58, 53, 66), "hip": 58},
+    # The Ashmane (pass 12, a biped): its model run away from the viewer
+    # turned the whole animal round. Its tail curls up over its back, so it
+    # rides with the body (an empty tail box).
+    "yuty": {"legs": [(46, 90, 60, 108), (66, 90, 82, 108)], "tail": (0, 0, 0, 0), "hip": 90},
 }
 GAIT = {
     "walk": {"lift": 2.0, "bob": 1.0, "tail": 2.0},

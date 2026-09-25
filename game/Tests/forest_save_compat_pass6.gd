@@ -27,12 +27,19 @@ func run():
 		var item: Item=stage.player.equipped_armor[slot]
 		equipped[slot]=item.id if item else ""
 	check(equipped==saved.armor,"existing armor remains equipped")
-	# The journey's own creatures (pass 10 adds the alpha, raised fresh by its
-	# den, and the Bonelands' wildlife, which a journey from before arrives to).
-	var live:=0
-	for creature in get_tree().get_nodes_in_group("forest_creatures"):
-		if not creature.is_queued_for_deletion() and creature.species != "alpha" and creature.global_position.x < 56 * 16: live+=1
-	check(live==saved.creatures.size(),"existing wildlife and companions survive load")
+	# The journey's own creatures, each where it was saved. (Loading also
+	# brings what a journey from before meets for the first time: the alpha in
+	# its den, the Bonelands' and the wilds' wildlife, nest guardians.)
+	var missing:=0
+	for entry in saved.creatures:
+		var found:=false
+		for creature in get_tree().get_nodes_in_group("forest_creatures"):
+			if creature.is_queued_for_deletion() or creature.species!=str(entry.species): continue
+			if creature.global_position.distance_to(Vector2(float(entry.x),float(entry.y)))<6.0:
+				found=true
+				break
+		if not found: missing+=1
+	check(missing==0,"existing wildlife and companions survive load (%d missing)" % missing)
 	check(stage.player.appearance.size()==5,"legacy journey receives complete cosmetic defaults")
 	check(stage.gardening.plots.is_empty(),"legacy journey does not invent garden crops")
 	stage.player.apply_appearance({"skin":"rose","hair":"charcoal","hair_style":"cropped","cloth":"clay"})

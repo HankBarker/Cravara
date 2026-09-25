@@ -10,6 +10,10 @@ uniform ivec2 canvas_px = ivec2(1792, 1792);
 uniform ivec2 world_offset = ivec2(-896, -896);
 uniform int world_seed = 726151;
 uniform float frames_per_second = 10.0;
+// The Mirefen Bog (pass 12): cells (x0, y0, x1, y1) where the water is black
+// and murky, fading in over its easternmost bog_fade columns (toward the forest).
+uniform ivec4 bog_area = ivec4(0, 0, 0, 0);
+uniform float bog_fade = 12.0;
 
 const vec3 W_DEEP = vec3(0.106, 0.290, 0.431);
 const vec3 W_MID = vec3(0.137, 0.365, 0.525);
@@ -85,6 +89,14 @@ void fragment() {
 	// A rare sparkle out in the open water.
 	if (d > 1.5 && rnd(p, uint(floor(TIME * 3.0)) * 7u + 91u) > 0.9985) {
 		col = W_FOAM;
+	}
+	// The bog: the same water, dark and peaty (glints dull, foam a scum).
+	ivec2 cell = ivec2(floor(vec2(p) / 16.0));
+	if (cell.x >= bog_area.x && cell.x < bog_area.z && cell.y >= bog_area.y && cell.y < bog_area.w) {
+		float f = clamp(float(bog_area.z - 1 - cell.x) / bog_fade, 0.0, 1.0);
+		float l = dot(col, vec3(0.3, 0.59, 0.11));
+		vec3 murk = mix(vec3(0.16, 0.2, 0.12), vec3(0.46, 0.47, 0.3), smoothstep(0.15, 0.9, l));
+		col = mix(col, murk, 0.88 * f);
 	}
 	COLOR = vec4(col, 1.0);
 }

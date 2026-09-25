@@ -22,6 +22,10 @@ const SPEC := {
 const ALIAS := {
 	"crystal_flask": "",
 	"water_flask": "",
+	# The rowboat's paddle is drawn by Forest/fx/BoatRide.gd from held/paddle.png
+	# at the "row" clip's hand and angle, over the hull's near rim (a cel can't
+	# put it both over the boat and under the keeper's legs).
+	"boat_paddle": "",
 }
 
 var _src := {}

@@ -1,0 +1,11 @@
+b87dd6c6-9fcf-4093-b6b0-c51ddc61d47c
+status: completed
+id: b87dd6c6-9fcf-4093-b6b0-c51ddc61d47c
+job_id: b87dd6c6-9fcf-4093-b6b0-c51ddc61d47c
+frames: 1
+transparent: yes
+asset_id: 87cb1ada-7890-5fae-9923-9b39d81a9940
+asset_type: image
+asset_status: saved
+gallery: saved to your PixelLab gallery (pixellab.ai/create)
+download: https://api.pixellab.ai/mcp/images/b87dd6c6-9fcf-4093-b6b0-c51ddc61d47c/download

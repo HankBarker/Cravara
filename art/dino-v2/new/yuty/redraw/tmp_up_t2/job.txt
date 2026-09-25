@@ -1,0 +1,11 @@
+be598d00-75ac-4201-bf30-e73fc0d63d45
+status: completed
+id: be598d00-75ac-4201-bf30-e73fc0d63d45
+job_id: be598d00-75ac-4201-bf30-e73fc0d63d45
+frames: 1
+transparent: yes
+asset_id: c7c30b98-9cdb-5e1b-8b3e-7f9e2e13d3e5
+asset_type: image
+asset_status: saved
+gallery: saved to your PixelLab gallery (pixellab.ai/create)
+download: https://api.pixellab.ai/mcp/images/be598d00-75ac-4201-bf30-e73fc0d63d45/download

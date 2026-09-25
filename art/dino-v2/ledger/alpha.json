@@ -577,14 +577,15 @@
   "status": "done",
   "cost": 2.0,
   "prompt": "Walks in place: its legs step one after the other, its body bobs gently with each step and its tail sways. It stays in place, facing the viewer the whole time.",
-  "frames": 9,
+  "frames": 8,
   "submitted": 1790292830.278677,
   "finished": 1790292968.397847,
   "score": {
    "bright": 2,
    "area": 1.02,
    "wide": 1.0
-  }
+  },
+  "method": "walk_front.py (walk gait from the down drawing)"
  },
  "run_down": {
   "job": "1d723cea-11f9-48e9-9c40-c760bf7392f8",
@@ -593,7 +594,7 @@
   "status": "done",
   "cost": 1.0,
   "prompt": "Runs in place with long fast strides, its body leaning forward and its tail held straight out behind. It stays in place, facing the viewer the whole time.",
-  "frames": 9,
+  "frames": 8,
   "submitted": 1790293396.6721723,
   "finished": 1790293595.7119257,
   "score": {
@@ -601,7 +602,8 @@
    "area": 1.47,
    "wide": 1.0
   },
-  "kept_attempt": "C:\\Cravera\\art\\dino-v2\\raw\\alpha\\run_down@2"
+  "kept_attempt": "C:\\Cravera\\art\\dino-v2\\raw\\alpha\\run_down@2",
+  "method": "walk_front.py (run gait from the down drawing)"
  },
  "hurt_side": {
   "job": "8cd1cf94-19d2-4d35-8df3-b9a442d69ade",

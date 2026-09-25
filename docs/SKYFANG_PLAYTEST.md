@@ -1,5 +1,207 @@
 # Cravera: The Skyfang Wilds
 
+## Twelfth pass: tougher wilds, tribes, new beasts, the bog and the ashen Pale Lands
+
+**Fixed first**
+1. **The boat** is a one-seat rowboat. It turns to face all 8 ways, and the keeper sits and rows
+   with a paddle, splashing as it goes. It's moored the way you left it.
+2. **The parasaur** reads as a parasaur walking toward the camera.
+3. **Old Maw's shadow** turns with its heading.
+4. **Stuck beasts** (the old trike between two rocks) sidestep and path round.
+
+**Harder and fairer**
+5. **Beasts are much tougher and faster.**
+   - Stegos, trikes and the rest take real fights; only raptors, lystros and dodos fall to a few
+     sword swings.
+   - Raptors, allosaurs, the rex and the Scarhorn outrun you. A long chase winds them and they give
+     up.
+   - Two wild beasts fighting break it off before a death; against you they fight on.
+6. **Eggs are a risk.**
+   - Nests are much rarer and better guarded, and hunters notice you from further off.
+   - Babies stay with their kin: the kin must be driven off or killed before you can take one.
+   - The incubator is learned only after Skarn falls, and costs crystal, fossils and fangs.
+7. **Apex hunters live further out.** None roam the green round camp. The Bonelands are deadly early
+   (allosaurs, raptor packs): grow strong in the green first.
+8. **Things sit in the ground** (no floating rocks), with more undergrowth: shrubs, ferns and desert
+   scrub.
+9. **Smoother.** The bigger world, with about 240 beasts, had slowed frames to 25-39 ms at the
+   villages and the camp. Beasts out of sight now think less often (fights still play out in
+   full), and frames are back to 10-19 ms (the camp about 11).
+
+**The grind: gear from every beast**
+10. **Every beast drops its own materials**: fangs and hide, horns, plates, crests, teeth.
+11. **A weapon ladder:**
+    - Fang Sabre 12, Horn Spear 16;
+    - Plate Maul 21 (its blows bleed);
+    - Allosaur Cleaver 27, Sandclub Maul 30, Tyrant Fang 36, Scarhorn Lance 40.
+12. **New armour sets**, and **set bonuses** for wearing a whole set:
+    - Hornguard (trike): blows barely move you, 10% less harm.
+    - Plateback (stego): your blows and spikes bleed attackers.
+    - Rustback (allo): blows 20% harder.
+    - The older sets have bonuses too.
+    - Two tribal sets, below.
+
+**Your world, as you described it** (the lake, the desert and the Pale Lands)
+13. **Glassmere is now the Mirefen Bog.**
+    - A dark mere at its heart (the boat and Old Maw are still there), ringed by black pools, mud,
+      reeds, cattails, dead trees and lily pads.
+    - A green mist hangs over it, with fireflies at night.
+14. **The Sunscar Dunes are barren**: bare hardpan flats, rock, dead trees and bone, and only a few
+    green oases. **Sandstorms** roll in now and then: a tan haze, blowing sand and a roaring wind.
+15. **The Pale Lands** (the old Pale Hills) are pale with **ash** falling from a mountain that
+    smoulders beyond them.
+    - The ground and grass are ash-grey, the trees dead and dusted, the crystal breaking through.
+      The world goes grey as you walk in.
+    - Ash drifts down with embers, the insects and the music fall silent, and far off the mountain
+      rumbles. At night the northern sky glows orange.
+    - The first time in, something tolls, and a roar comes out of the grey.
+    - **The ash chokes you** (the ASH meter). Cover your face or find shelter under a roof or by a
+      tent. When it fills you're CHOKING. Protection:
+      - the Sail-skin Veil (dimetrodon sail) keeps out much of it;
+      - Sunward head wraps keep out half;
+      - the Ashmane Mantle, or a tamed Ashmane, keeps it all out.
+
+**New beasts**
+16. In the dunes:
+    - **The Sunsail Dimetrodon** basks side-on in the sun. It's sluggish in the cold of night and
+      quick at noon, and bites if you come too close. Its sail-scales make the **Sun Sail** (crops
+      within three tiles grow half again as fast, and it glows at night) and the Sail-skin Veil.
+      Tamed, crops grow faster by day.
+    - **Protoceratops** herds are skittish. Tamed, one digs up bones, fossils and coins on sand.
+    - **The Sandclub Ankylosaur**'s plates shrug off light blows (bring a heavy weapon), and its tail
+      club hits like nothing else. Tamed, it mines for you (your vision's "anky = mining"): an extra
+      stone, crystal or ore from every rock you break, and +3 defence.
+    - **Compy swarms** are harmless alone and dangerous in numbers.
+17. **Two new apex hunters.** Apex hunters dispute their ground: the loser runs and the winner lets
+    it go with a roar.
+    - **The Scarhorn** (a Carnotaurus) is the dunes' fastest hunter, with a horned charge.
+    - **The Ashmane** (a shaggy grey Yutyrannus, a pair in the Pale Lands) roars a blast of ash.
+18. **Kinds of raptor:** sand-striped **Dune raptors** in the desert, and soot-dark, shaggy
+    **Ashfang raptors** with ash-pale fur tips and ember-glowing veins in the Pale Lands (dark,
+    so they stand out against the ash).
+
+**The tribes**
+19. **The Sunward**, desert nomads, live at an oasis in the dunes. Their trader Ishka barters, buying
+    hides, horns and scales and selling their wraps (a wearable set) and supplies. Strike one and
+    their band turns on you, and they won't trade for a while.
+20. **The Ashen**, raiders in raptor-skull masks, have a war camp in the Pale Lands' east with a war
+    chief. They come for you on sight and cry out to their band. Some ride with tamed raptors.
+    Their dress drops now and then; wear the whole set and they take you for one of their own.
+21. **Bands wander:** Sunward hunting parties (some with a tamed trike) and Ashen war bands. They
+    hunt small game and fight what attacks them. The green round camp stays safe early on.
+22. **New tasks** from Orrin, Tamsin and Kaya about the Sunward, the Ashen, sail-scale and the
+    beasts of the sand.
+
+**The Blender dinosaur test**
+23. **The Scarhorn was made in Blender**, not drawn frame by frame: modelled, rigged, animated and
+    rendered to pixel sprites from Cravera's camera. Every frame of every clip, facing every way,
+    is the same animal. Try `tools/playtest_forest.ps1 -BlenderPreview` (no save):
+    - one Scarhorn follows you (walk and run to see its gaits);
+    - one stands beside a PixelLab allosaur north of camp, to compare;
+    - a wild one hunts east of camp.
+
+    The kit is the Scarhorn Lance and Tyrant armour. Tell me whether it looks right for Cravera: if
+    so, it can make every dinosaur from now on.
+
+To try it all: `tools/playtest_forest.ps1 -WildsPreview` (no save). The kit adds a Sail-skin Veil,
+a Sun Sail, the Plate Maul and coins for the Sunward.
+
+**Code**
+- `game/Forest/tribes/`
+- `game/Forest/fx/{RegionAir,BoatRide}.gd`, `region_grade.gdshader`, `ashen.gdshader`
+- `game/Forest/equipment/SetBonus.gd`
+- `tools/blender/`
+- `tools/dino/{coats,pick12,lunge_front,walk_front}.py`
+
+Look-books: `art/pass12/`, `art/blender/carno/`. Tests: the hunt, gear, tribes and wilds12 suites.
+
+## Eleventh pass: nests and babies, tasks, the wilds, the Buried King and Old Maw
+
+1. **Walking toward the camera.** Every dinosaur that looked wonky walking down the screen (stego,
+   longneck, allosaur, alpha, raptor, the saddled stego) has a new front walk: legs stepping in
+   turn, the body bobbing, no sliding.
+2. **Nests and eggs.** Each kind keeps nests in its own ground (the map shows them in cream), with
+   two or three guardians close by. E takes an egg, and every guardian comes for you. A nest lays
+   again after a while.
+3. **The incubator** (workbench: planks, fibre, stone). Hold an egg and click it in. It hatches in
+   two to six minutes with a campfire or torch within three tiles, and much slower in the cold. A
+   tamed dodo nearby speeds it up. The hatchling is yours and follows you.
+4. **Babies.** Every kind has a small, big-headed baby. Some wild herds and nests have young; the
+   young keep close to their mothers, and the whole herd defends them fiercely. A baby takes a
+   quarter of the feeds to tame, then grows up over ten minutes or so. Two tamed adults of a kind,
+   kept at home together, lay an egg now and then.
+5. **Beasts with lives.** Wild dinosaurs get hungry and thirsty. They graze, go to water, rest,
+   and move on together to new ground. Hunters hunt, and parents guard their young and their
+   nests. When hunters have thinned a kind out round one of its nests, the nest hatches a wild
+   baby now and then (never while you're watching), so the wilds don't empty over a long journey.
+6. **Companion gifts.** A tamed beast near you gives a gift, listed on the HUD:
+   - lystro: crops grow 30% faster;
+   - dodo: eggs hatch 30% faster;
+   - stego: +4 defence;
+   - trike: trees and stone break a blow sooner;
+   - longneck: an extra berry from every bush;
+   - raptor: you move 10% faster;
+   - allosaur: your blows land 15% harder;
+   - parasaur: it trumpets when a hunter comes near, and wounds mend 25% faster;
+   - rex: raptors and allosaurs won't come for you.
+7. **Tasks.** Orrin, Tamsin and Kaya each have a Tasks page (and a mark over their heads when a
+   task is waiting). Orrin sends you exploring and toward the bosses. Tamsin wants things from the
+   new lands: pearls, cactus fruit, pale crystal, a tooth from the deep. Kaya wants eggs, hatchlings
+   and new beasts tamed. The HUD tracks the tasks you've taken.
+8. **The world is nearly four times bigger.** The old forest and the Bonelands are untouched, and
+   now:
+   - **Glassmere** lies to the west: a great clear lake with islands, parasaur herds, lily pads,
+     reeds, clam beds (pearls), the Fishers' Shrine, a piranha bay and deep water.
+   - **The Sunscar Dunes** lie to the south: sand, oases, mesas, cacti (their fruit is food and
+     water), bone heaps, relics, the Kingstone and the Ossuary.
+   - **The Pale Hills** lie to the north: chalk, pines and birches, white Sky-Fang crystal (it needs
+     the Shardbound Pickaxe), the Last Keeper's Camp and the Pale Waystone. This is the dangerous
+     ground: Crystalback raptors and allosaurs, and Greyhorn.
+
+   Each region's name comes up the first time you enter it.
+9. **Bone heaps have a purpose now.** E searches one: old bones, sometimes a fossil or crystal.
+   Old bones are what the Grave Horn is made of.
+10. **The boat** (workbench: planks, fibre, logs). Set it on Glassmere's water and press E to climb
+    in. The deep water can only be crossed by boat. E again steps ashore; strike the boat to pick
+    it up. A journey saved afloat loads afloat.
+11. **Ossuar, the Buried King** (the second boss) has to be found and called:
+    - The Ossuary in the far south is a ring of giant ribs round an altar, and it says only that
+      something is buried there.
+    - The Kingstone to its west tells what lies there and how to wake it. Reading it teaches the
+      Grave Horn: 12 old bones, 6 crystal shards and a prism crystal.
+    - Blow the horn at the Ossuary (use it, or E there twice). The dunes shake, and the king
+      claws up out of the sand.
+
+    The fight:
+    - Bone spikes burst from the sand under you and along the ground; the sand cracks first, so
+      step off.
+    - It sinks and the sand heaves after you; when the sand stops, get clear before it bursts up.
+    - At 60% three bone raptors claw their way up; at 30% it rages.
+    - Leave or fall and it sinks back to sleep, and the horn is spent.
+    - Beating it drops the Crown of the Buried King (+6 defence, +2 damage) and a heap of bone and
+      crystal.
+12. **Roaming mini-bosses wear their names:**
+    - The Emerald Tyrant (the rex).
+    - The Dunestalker (an allosaur of the dunes).
+    - Greyhorn, the Old Trike (in the Pale Hills).
+    - **Old Maw**, the Megalodon of Glassmere's deep water. Take a boat onto the deep and its fin
+      circles closer, then it charges and leaps out of the water onto you. Strike it while it's in
+      the air; under water nothing reaches it. Its teeth make the Maw Charm (+3 damage, faster
+      wading).
+13. **The piranha bay.** The shallows of one bay in Glassmere's south-east are full of piranhas.
+    Wade in and they bite until you're out; a boat is safe.
+14. **Performance.** The world holds about 11,000 props and 180 beasts. Far props and beasts are
+    hidden, far beasts think less often, and the ground and flora are baked in chunks. A frame
+    takes about 11 ms at camp and in the new regions.
+
+To try it all straight away: `tools/playtest_forest.ps1 -WildsPreview` (no save). You get a
+boat, the Grave Horn, an incubator and two eggs, a sword, a bow and crystal armour.
+
+Code: `game/Forest/life/`, `game/Forest/quests/`, `game/Forest/world/{WildsGen,Nesting,Regions,Boating}.gd`,
+`game/Forest/creatures/{Life,CreatureLife,Nameplate,OssuarBoss,OldMaw,Piranhas}.gd`,
+`game/Forest/fx/{BoneSpikes,SandMound,BoatRide}.gd`. Look-books: `art/pass11/`. Tests: life and
+wilds suites.
+
 ## Tenth pass: the opening, the first boss, new beasts and the Bonelands
 
 1. **The opening.** Start a new expedition from the menu: eight painted plates tell how the green

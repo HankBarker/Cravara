@@ -85,7 +85,8 @@ func _legacy() -> void:
 	var fixture: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(LegacySignature.FIXTURE))
 	for s in LegacySignature.SEEDS:
 		var w = _fresh(s)
-		check(LegacySignature.signature(w) == str(fixture.get(str(s), "")), "seed %d: the forest's original square is cell for cell what old saves expect" % s)
+		check(LegacySignature.signature(w) == str(fixture.forest.get(str(s), "")), "seed %d: the forest's original square is cell for cell what old saves expect" % s)
+		check(LegacySignature.bonelands_signature(w) == str(fixture.bonelands.get(str(s), "")), "seed %d: so are the Bonelands" % s)
 		w.free()
 
 
@@ -105,7 +106,8 @@ func _determinism() -> void:
 
 func _shape() -> void:
 	var b: Rect2i = world.bounds()
-	check(b == Rect2i(-56, -56, 224, 112), "the world is twice as wide as the forest (%s)" % b)
+	# Pass 10's world (the forest and the Bonelands), now inside pass 11's wilds.
+	check(world.OLD_BOUNDS == Rect2i(-56, -56, 224, 112) and b.encloses(world.OLD_BOUNDS), "the forest and the Bonelands are twice as wide as the forest (%s)" % b)
 	check(world.BONELANDS == Rect2i(56, -56, 112, 112), "the Bonelands are the eastern half")
 	check(world.terrain.size() == b.size.x * b.size.y, "every cell of the world has ground (%d)" % world.terrain.size())
 	check(world.region_of(Vector2i(0, 0)) == "forest" and world.region_of(Vector2i(55, 0)) == "forest", "camp and the old east wall's line are forest")
@@ -156,7 +158,7 @@ func _edge() -> void:
 			var p = world.props.get(c)
 			if not (is_instance_valid(p) and p.kind in ["wall", "ore"]): gaps.append(c)
 	check(gaps.is_empty(), "the Bonelands' edge is walled all round (gaps: %s)" % [gaps.slice(0, 5)])
-	check(world.on_edge(Vector2i(167, 0)) and world.on_edge(Vector2i(100, -55)) and world.on_edge(Vector2i(100, 55)), "the east, north and south rims are the world's edge")
+	check(world.on_edge(Vector2i(167, 0)) and not world.on_edge(Vector2i(100, -55)) and not world.on_edge(Vector2i(100, 55)), "the east rim is the world's edge; the hills and the dunes open north and south")
 	var rim := Vector2i(167, 3)
 	check(not world.mine_at(_at(rim), "pickaxe", 9), "the world's east rim can't be mined")
 	check(world.last_feedback == "The wilds go on beyond here, one day.", "and the keeper is told why")
@@ -211,7 +213,7 @@ func _look() -> void:
 		if world.BONELANDS.has_point(c):
 			if p.sandstone: sandstone += 1
 			else: mossy += 1
-		elif p.sandstone:
+		elif p.sandstone and world.region_of(c) == "forest":
 			forest_sandstone += 1
 	check(sandstone > 100 and mossy == 0, "stone out there is sandstone (%d, %d mossy)" % [sandstone, mossy])
 	check(forest_sandstone == 0, "the forest keeps its mossy stone")
@@ -267,12 +269,13 @@ func _old_journey() -> void:
 	check(stage.save_journey(path), "a journey saves")
 	var saved: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(path))
 	check("bonelands" in saved.get("regions", []), "a save notes that it knows the Bonelands")
-	var forest_count := 0
+	# A journey from before pass 10 had only the forest's own beasts: none of
+	# pass 11's nest guardians or young, nothing in the lands round it.
 	var old_creatures: Array = []
 	for entry in saved.get("creatures", []):
-		if float(entry.get("x", 0.0)) < 56 * 16:
+		var at := Vector2(float(entry.get("x", 0.0)), float(entry.get("y", 0.0)))
+		if world.region_of(world.to_cell(at)) == "forest" and not entry.has("nest") and not bool(entry.get("baby", false)):
 			old_creatures.append(entry)
-			forest_count += 1
 	saved.erase("regions")
 	saved.creatures = old_creatures
 	var f := FileAccess.open(path, FileAccess.WRITE)
@@ -282,7 +285,7 @@ func _old_journey() -> void:
 	await frames(2)
 	var first := _count_out_there()
 	check(first >= 8, "the Bonelands' wildlife arrives for it (%d)" % first)
-	check(_count_in_forest() == forest_count, "its forest creatures are just as they were")
+	check(_saved_present(old_creatures) == old_creatures.size(), "its forest creatures are just as they were")
 	check(stage.save_journey(path), "and saves again")
 	check(stage._load_journey(path), "and loads again")
 	await frames(2)
@@ -295,13 +298,17 @@ func _count_out_there() -> int:
 	var n := 0
 	for creature in get_tree().get_nodes_in_group("forest_creatures"):
 		if creature.is_queued_for_deletion() or creature.species == "alpha": continue
-		if creature.global_position.x >= 56 * 16: n += 1
+		if world.region_of(world.to_cell(creature.global_position)) == "bonelands": n += 1
 	return n
 
 
-func _count_in_forest() -> int:
+## How many of a save's creatures are alive where it saved them.
+func _saved_present(entries: Array) -> int:
 	var n := 0
-	for creature in get_tree().get_nodes_in_group("forest_creatures"):
-		if creature.is_queued_for_deletion() or creature.species == "alpha": continue
-		if creature.global_position.x < 56 * 16: n += 1
+	for entry in entries:
+		for creature in get_tree().get_nodes_in_group("forest_creatures"):
+			if creature.is_queued_for_deletion() or creature.species != str(entry.species): continue
+			if creature.global_position.distance_to(Vector2(float(entry.x), float(entry.y))) < 6.0:
+				n += 1
+				break
 	return n

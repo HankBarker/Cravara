@@ -116,5 +116,68 @@
  },
  "lystro": {
   "peck": 3
+ },
+ "parasaur": {
+  "stomp": {
+   "side": 8,
+   "down": 8,
+   "up": 10
+  }
+ },
+ "ossuar": {
+  "bite": {
+   "side": 6,
+   "down": 5,
+   "up": 5
+  },
+  "chomp": {
+   "side": 7,
+   "down": 7,
+   "up": 7
+  }
+ },
+ "dimetrodon": {
+  "bite": {
+   "side": 6,
+   "down": 5,
+   "up": 5
+  },
+  "chomp": {
+   "side": 6,
+   "down": 6,
+   "up": 7
+  }
+ },
+ "compy": {
+  "bite": 5
+ },
+ "anky": {
+  "tail_swing_far": {
+   "side": 6
+  },
+  "tail_swing": {
+   "side": 6,
+   "down": 5,
+   "up": 5
+  }
+ },
+ "yuty": {
+  "bite": {
+   "side": 6,
+   "down": 6,
+   "up": 6
+  },
+  "chomp": {
+   "side": 6,
+   "down": 5,
+   "up": 7
+  }
+ },
+ "proto": {
+  "peck": {
+   "side": 6,
+   "down": 5,
+   "up": 5
+  }
  }
 }

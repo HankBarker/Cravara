@@ -1,0 +1,11 @@
+b6eea83f-e16c-453a-85ff-7371fb63777d
+status: completed
+id: b6eea83f-e16c-453a-85ff-7371fb63777d
+job_id: b6eea83f-e16c-453a-85ff-7371fb63777d
+frames: 1
+transparent: yes
+asset_id: a3d7b1c8-61e2-5b05-ac4e-3121876f61df
+asset_type: image
+asset_status: saved
+gallery: saved to your PixelLab gallery (pixellab.ai/create)
+download: https://api.pixellab.ai/mcp/images/b6eea83f-e16c-453a-85ff-7371fb63777d/download

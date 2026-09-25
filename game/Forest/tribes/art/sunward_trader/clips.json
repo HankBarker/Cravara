@@ -1,0 +1,47 @@
+{
+ "cheer": {
+  "durations": [],
+  "fps": 10.0,
+  "frames": 8,
+  "loop": false
+ },
+ "death": {
+  "durations": [
+   1.0,
+   1.0,
+   1.0,
+   1.2,
+   0.8,
+   1.0,
+   1.5,
+   3.0
+  ],
+  "fps": 8.0,
+  "frames": 8,
+  "loop": false
+ },
+ "hurt": {
+  "durations": [],
+  "fps": 12.5,
+  "frames": 4,
+  "loop": false
+ },
+ "idle": {
+  "durations": [],
+  "fps": 6.0,
+  "frames": 24,
+  "loop": true
+ },
+ "interact": {
+  "durations": [],
+  "fps": 20.0,
+  "frames": 6,
+  "loop": false
+ },
+ "walk": {
+  "durations": [],
+  "fps": 12.0,
+  "frames": 8,
+  "loop": true
+ }
+}

@@ -69,6 +69,7 @@ func mount(subject: Node2D) -> bool:
 	creature.stop()
 	refresh_appearance()
 	sync_rider()
+	set_process(true)
 	return true
 
 func riding_offset() -> Vector2:
@@ -197,6 +198,12 @@ func dismount(force := false) -> bool:
 	return true
 
 func _process(_delta):
+	# Nothing to keep in step until someone rides (saddles and growing up
+	# refresh the clips themselves): unridden, it sleeps until mount() (the
+	# world's ~240 beasts each carry one).
+	if not is_mounted():
+		set_process(false)
+		return
 	refresh_appearance()
 	sync_rider()
 	queue_redraw()
@@ -289,7 +296,9 @@ func feed_mount() -> bool:
 
 func on_rider_damaged(actual_damage: int, attacker = null) -> void:
 	if not is_mounted() or actual_damage <= 0: return
-	if actual_damage >= 10:
+	# A heavy blow (an allosaur's bite, the rex) knocks the rider out of the
+	# saddle; a raptor's slash doesn't (pass 12's tougher beasts: 11 a slash).
+	if actual_damage >= 16:
 		var subject = rider
 		dismount(true)
 		if is_instance_valid(subject) and not subject.respawning:

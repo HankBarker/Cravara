@@ -1,0 +1,133 @@
+{
+ "parts": {
+  "head_down": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "head_down_blink": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "torso_down": {
+   "origin": [
+    26,
+    29
+   ]
+  },
+  "boot_m_down": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "boot_o_down": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "head_up": {
+   "origin": [
+    24,
+    14
+   ]
+  },
+  "torso_up": {
+   "origin": [
+    27,
+    28
+   ]
+  },
+  "boot_m_up": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "boot_o_up": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "head_side": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "head_side_blink": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "torso_side": {
+   "origin": [
+    26,
+    29
+   ]
+  },
+  "boot_m_side": {
+   "pivot": [
+    2.2,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  }
+ },
+ "materials": {
+  "arm_upper": [
+   "330f0d",
+   "4d2017",
+   "8a3b28",
+   "ac5338",
+   "c26542"
+  ],
+  "arm_lower": [
+   "21100f",
+   "341f19",
+   "54392b",
+   "70533b",
+   "896d56"
+  ],
+  "leg_upper": [
+   "330f0d",
+   "4d2017",
+   "8a3b28",
+   "ac5338",
+   "c26542"
+  ],
+  "leg_lower": [
+   "330f0d",
+   "4d2017",
+   "8a3b28",
+   "ac5338",
+   "c26542"
+  ]
+ },
+ "name": "Rustback"
+}

@@ -26,6 +26,9 @@ var talking := false
 var facing := "down"
 var sprite: AnimatedSprite2D
 var nameplate: Label
+## "!" a task to take, "?" one to hand in (QuestManager.marker), over the head.
+var task_mark: Label
+var _mark_clock := 0.0
 var shadow: Node2D
 var _target := Vector2.INF
 var _wait := 1.0
@@ -77,6 +80,18 @@ func _ready() -> void:
 	nameplate.z_index = 5
 	nameplate.visible = false
 	add_child(nameplate)
+	task_mark = Label.new()
+	task_mark.add_theme_font_override("font", UI.PIXEL)
+	task_mark.add_theme_font_size_override("font_size", 16)
+	task_mark.add_theme_color_override("font_shadow_color", UI.SHADOW)
+	task_mark.add_theme_constant_override("shadow_offset_x", 1)
+	task_mark.add_theme_constant_override("shadow_offset_y", 1)
+	task_mark.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	task_mark.size = Vector2(16, 16)
+	task_mark.position = Vector2(-8, -60)
+	task_mark.z_index = 5
+	task_mark.visible = false
+	add_child(task_mark)
 	_rng.seed = hash(id)
 	_play("idle")
 
@@ -110,6 +125,8 @@ static func frames_for(folk_id: String) -> SpriteFrames:
 
 ## Their portrait: the first idle frame facing down.
 static func portrait(folk_id: String) -> Texture2D:
+	if folk_id.begins_with("tribe_"):
+		return preload("res://Forest/tribes/TribeArt.gd").portrait(str(preload("res://Forest/tribes/Tribes.gd").CAST.get(folk_id, {}).get("look", "")))
 	var frames := frames_for(folk_id)
 	return frames.get_frame_texture("idle_down", 0) if frames.has_animation("idle_down") else null
 
@@ -118,6 +135,12 @@ func _physics_process(delta: float) -> void:
 	var keeper := get_tree().get_first_node_in_group("player") as Node2D
 	if is_instance_valid(keeper):
 		nameplate.visible = keeper.global_position.distance_to(global_position) < NEAR
+	_mark_clock -= delta
+	if _mark_clock <= 0.0:
+		_mark_clock = 0.5
+		_update_mark()
+	if task_mark.visible:
+		task_mark.position.y = -60.0 + roundf(sin(Time.get_ticks_msec() / 260.0) * 1.5)
 	if caged or talking:
 		velocity = Vector2.ZERO
 		# Whoever they're talking to, they keep an eye on.
@@ -167,6 +190,15 @@ func _pick_target() -> Vector2:
 		if is_instance_valid(world) and (world.is_blocked_at(point) or world.is_water_at(point)): continue
 		return point
 	return Vector2.INF
+
+
+func _update_mark() -> void:
+	var session := get_tree().get_first_node_in_group("forest_session")
+	var quests = session.get("quests") if session else null
+	var mark: String = quests.marker(id) if quests and not caged else ""
+	task_mark.visible = mark != ""
+	task_mark.text = mark
+	task_mark.add_theme_color_override("font_color", UI.GOLD if mark == "!" else UI.MINT)
 
 
 ## The keeper's contact shadow under the soles: two pixel-row ellipses.

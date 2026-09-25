@@ -2,15 +2,25 @@ extends Node2D
 ## The forest ground, drawn by shaders from the cell grid (ForestWorld.terrain,
 ## plus its visual-only shore sand and the gardens' tilled soil).
 ##
-## - ground_bake.gdshader bakes the land once into `ground_cache`: organic
-##   terrain edges, grass lips over paths, earth banks above water, dithered
-##   moss seams, tilled beds, and detail marks from art/stamps.png.
+## - ground_bake.gdshader bakes the land into textures: organic terrain
+##   edges, grass lips over paths, earth banks above water, dithered moss
+##   seams, tilled beds, and detail marks from art/stamps.png.
 ## - water_field.gdshader bakes, per world pixel, the shore distance and depth
 ##   that water.gdshader animates live every frame (shallows, glints, foam).
 ##
-## The cell grid stays the gameplay truth; this is only the picture. After an
-## edit, call rebuild(): it re-bakes once, on the next frame.
+## The world is baked in CHUNK x CHUNK-cell chunks (pass 11: the wilds grew
+## too big for one texture), and only the chunks round the view exist: they
+## are baked as they come near (BAKES_PER_FRAME at most) and freed when far.
+## Every shader reads the one whole-world cell map, so chunks meet without a
+## seam. The cell grid stays the gameplay truth; this is only the picture.
+## After an edit call rebuild_cells(cells) (or rebuild() for everything): the
+## map is updated and the chunks it touches bake again next frame.
 const CELL := 16
+const CHUNK := 32
+const BAKES_PER_FRAME := 2
+## Chunks are kept within this many px of the view, made within MARGIN.
+const MARGIN := 320.0
+const KEEP := 900.0
 const STAMPS := preload("res://Forest/ground/art/stamps.png")
 const BAKE := preload("res://Forest/ground/ground_bake.gdshader")
 const FIELD := preload("res://Forest/ground/water_field.gdshader")
@@ -27,19 +37,22 @@ const F_WET := 2
 
 var world
 var extent := 56
-## The drawn area: its top-left cell and its size in cells (the world's
-## bounds: the forest and the Bonelands).
+## The drawn area: its top-left cell and its size in cells (the world's bounds).
 var origin := Vector2i(-56, -56)
 var cells := Vector2i(112, 112)
 var map_image: Image
 var map_texture: ImageTexture
-var ground_cache: SubViewport
-var water_field: SubViewport
-var ground_sprite: Sprite2D
-var water_sprite: Sprite2D
 ## Bumped by every bake (tests and tools can wait for it).
 var revision := 0
-var _dirty := true
+## Water cells -> steps to the nearest land (kept for rebuild_cells).
+var depth := {}
+var _bake_material: ShaderMaterial
+var _field_material: ShaderMaterial
+## chunk index -> {"ground": SubViewport, "field": SubViewport, "sprite", "water", "fresh": bool}
+var _chunks := {}
+var _dirty_all := false
+var _dirty_cells := {}
+var _stamp_meta: Dictionary
 
 
 func setup(owner_world) -> void:
@@ -48,40 +61,25 @@ func setup(owner_world) -> void:
 	var b: Rect2i = world.bounds() if world.has_method("bounds") else Rect2i(-extent, -extent, extent * 2, extent * 2)
 	origin = b.position
 	cells = b.size
-	var px: Vector2i = cells * CELL
 	map_image = Image.create(cells.x, cells.y, false, Image.FORMAT_RGBA8)
-	_fill_map()
+	depth = _water_depth()
+	_fill_map(Rect2i(origin, cells))
 	map_texture = ImageTexture.create_from_image(map_image)
-	var stamp_meta: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://Forest/ground/art/stamps.json"))
-	var bake := _material(BAKE)
-	bake.set_shader_parameter("stamps", STAMPS)
-	bake.set_shader_parameter("stamp_columns", int(stamp_meta.get("columns", 16)))
+	_stamp_meta = JSON.parse_string(FileAccess.get_file_as_string("res://Forest/ground/art/stamps.json"))
+	_bake_material = _material(BAKE)
+	_bake_material.set_shader_parameter("stamps", STAMPS)
+	_bake_material.set_shader_parameter("stamp_columns", int(_stamp_meta.get("columns", 16)))
 	for kind in ["blades", "clover", "flowers", "specks", "pebbles", "twigs"]:
-		var entry: Dictionary = stamp_meta.kinds.get(kind, {"first": 0, "count": 0})
-		bake.set_shader_parameter("st_" + kind, Vector2i(int(entry.first), int(entry.count)))
-	ground_cache = _cache("GroundCache", px, bake)
-	water_field = _cache("WaterField", px, _material(FIELD))
-	ground_sprite = Sprite2D.new()
-	ground_sprite.name = "GroundSurface"
-	ground_sprite.z_index = -20
-	ground_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	ground_sprite.texture = ground_cache.get_texture()
-	ground_sprite.position = Vector2(origin * CELL) + Vector2(px) / 2.0
-	add_child(ground_sprite)
-	water_sprite = Sprite2D.new()
-	water_sprite.name = "WaterSurface"
-	water_sprite.z_index = -19
-	water_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	water_sprite.texture = water_field.get_texture()
-	water_sprite.position = ground_sprite.position
-	var water := ShaderMaterial.new()
-	water.shader = WATER
-	water.set_shader_parameter("canvas_px", px)
-	water.set_shader_parameter("world_offset", origin * CELL)
-	water.set_shader_parameter("world_seed", int(world.world_seed))
-	water_sprite.material = water
-	add_child(water_sprite)
-	_bake()
+		var entry: Dictionary = _stamp_meta.kinds.get(kind, {"first": 0, "count": 0})
+		_bake_material.set_shader_parameter("st_" + kind, Vector2i(int(entry.first), int(entry.count)))
+	if world.get("PALE_HILLS") != null:
+		var hills: Rect2i = world.PALE_HILLS
+		_bake_material.set_shader_parameter("pale_area", Vector4i(hills.position.x, hills.position.y, hills.end.x, hills.end.y))
+	if world.get("GLASSMERE") != null:
+		var bog: Rect2i = world.GLASSMERE
+		_bake_material.set_shader_parameter("bog_area", Vector4i(bog.position.x, bog.position.y, bog.end.x, bog.end.y))
+	_field_material = _material(FIELD)
+	_update_chunks(true)
 
 
 func _material(shader: Shader) -> ShaderMaterial:
@@ -91,9 +89,95 @@ func _material(shader: Shader) -> ShaderMaterial:
 	m.set_shader_parameter("map_size", cells)
 	m.set_shader_parameter("map_origin", origin)
 	m.set_shader_parameter("world_seed", int(world.world_seed))
-	m.set_shader_parameter("canvas_px", cells * CELL)
-	m.set_shader_parameter("world_offset", origin * CELL)
 	return m
+
+
+# --- chunks ----------------------------------------------------------------------------
+
+func _chunk_rect(index: Vector2i) -> Rect2i:
+	var top_left := origin + index * CHUNK
+	var size := Vector2i(mini(CHUNK, origin.x + cells.x - top_left.x), mini(CHUNK, origin.y + cells.y - top_left.y))
+	return Rect2i(top_left, size)
+
+
+func _chunk_of(c: Vector2i) -> Vector2i:
+	return Vector2i(floori(float(c.x - origin.x) / CHUNK), floori(float(c.y - origin.y) / CHUNK))
+
+
+func _chunk_count() -> Vector2i:
+	return Vector2i(int(ceil(float(cells.x) / CHUNK)), int(ceil(float(cells.y) / CHUNK)))
+
+
+## Where the view is: the camera's centre, else the keeper, else the camp.
+func _eye() -> Vector2:
+	var cam := get_viewport().get_camera_2d() if is_inside_tree() else null
+	if cam: return cam.get_screen_center_position()
+	var keeper := get_tree().get_first_node_in_group("player") as Node2D if is_inside_tree() else null
+	return keeper.global_position if keeper else Vector2.ZERO
+
+
+func _update_chunks(all_now := false) -> void:
+	var eye := _eye()
+	var half := Vector2(240, 135)
+	var near := Rect2(eye - half - Vector2(MARGIN, MARGIN), half * 2.0 + Vector2(MARGIN, MARGIN) * 2.0)
+	var keep := Rect2(eye - half - Vector2(KEEP, KEEP), half * 2.0 + Vector2(KEEP, KEEP) * 2.0)
+	var count := _chunk_count()
+	var bakes := 0
+	for j in count.y:
+		for i in count.x:
+			var index := Vector2i(i, j)
+			var r := _chunk_rect(index)
+			var px := Rect2(Vector2(r.position * CELL), Vector2(r.size * CELL))
+			if _chunks.has(index):
+				if not px.intersects(keep): _free_chunk(index)
+				continue
+			if px.intersects(near) and (all_now or bakes < BAKES_PER_FRAME):
+				_make_chunk(index)
+				bakes += 1
+
+
+func _make_chunk(index: Vector2i) -> void:
+	var r := _chunk_rect(index)
+	var px: Vector2i = r.size * CELL
+	var offset: Vector2i = r.position * CELL
+	var bake: ShaderMaterial = _bake_material.duplicate()
+	bake.set_shader_parameter("canvas_px", px)
+	bake.set_shader_parameter("world_offset", offset)
+	var field: ShaderMaterial = _field_material.duplicate()
+	field.set_shader_parameter("canvas_px", px)
+	field.set_shader_parameter("world_offset", offset)
+	var ground_view := _cache("Ground_%d_%d" % [index.x, index.y], px, bake)
+	var field_view := _cache("Field_%d_%d" % [index.x, index.y], px, field)
+	var sprite := Sprite2D.new()
+	sprite.z_index = -20
+	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	sprite.texture = ground_view.get_texture()
+	sprite.position = Vector2(offset) + Vector2(px) / 2.0
+	add_child(sprite)
+	var water := Sprite2D.new()
+	water.z_index = -19
+	water.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	water.texture = field_view.get_texture()
+	water.position = sprite.position
+	var wm := ShaderMaterial.new()
+	wm.shader = WATER
+	wm.set_shader_parameter("canvas_px", px)
+	wm.set_shader_parameter("world_offset", offset)
+	wm.set_shader_parameter("world_seed", int(world.world_seed))
+	if world.get("GLASSMERE") != null:
+		var bog: Rect2i = world.GLASSMERE
+		wm.set_shader_parameter("bog_area", Vector4i(bog.position.x, bog.position.y, bog.end.x, bog.end.y))
+	water.material = wm
+	add_child(water)
+	_chunks[index] = {"ground": ground_view, "field": field_view, "sprite": sprite, "water": water}
+	_bake_chunk(index)
+
+
+func _free_chunk(index: Vector2i) -> void:
+	var chunk: Dictionary = _chunks[index]
+	for key in ["ground", "field", "sprite", "water"]:
+		if is_instance_valid(chunk[key]): chunk[key].queue_free()
+	_chunks.erase(index)
 
 
 func _cache(cache_name: String, px: Vector2i, material: ShaderMaterial) -> SubViewport:
@@ -112,30 +196,67 @@ func _cache(cache_name: String, px: Vector2i, material: ShaderMaterial) -> SubVi
 	return view
 
 
-## Re-bake the ground (next frame): call after any terrain, water or soil edit.
-func rebuild() -> void:
-	_dirty = true
-
-
-func _process(_delta: float) -> void:
-	if _dirty:
-		_fill_map()
-		map_texture.update(map_image)
-		_bake()
-
-
-func _bake() -> void:
-	_dirty = false
-	ground_cache.render_target_update_mode = SubViewport.UPDATE_ONCE
-	water_field.render_target_update_mode = SubViewport.UPDATE_ONCE
+func _bake_chunk(index: Vector2i) -> void:
+	var chunk: Dictionary = _chunks[index]
+	chunk.ground.render_target_update_mode = SubViewport.UPDATE_ONCE
+	chunk.field.render_target_update_mode = SubViewport.UPDATE_ONCE
 	revision += 1
 
 
+## The chunks standing (for tests and tools).
+func chunk_count() -> int:
+	return _chunks.size()
+
+
+# --- edits -----------------------------------------------------------------------------
+
+## Re-draw everything (next frame): after loading a journey or a big change.
+func rebuild() -> void:
+	_dirty_all = true
+
+
+## Re-draw round some cells (next frame): after a small edit (a bucket of
+## water, a tilled bed, a cleared den).
+func rebuild_cells(changed: Array) -> void:
+	for c in changed: _dirty_cells[c] = true
+
+
+func _process(_delta: float) -> void:
+	if _dirty_all:
+		_dirty_all = false
+		_dirty_cells.clear()
+		depth = _water_depth()
+		_fill_map(Rect2i(origin, cells))
+		map_texture.update(map_image)
+		for index in _chunks: _bake_chunk(index)
+	elif not _dirty_cells.is_empty():
+		var touched := {}
+		var box := Rect2i()
+		var water_changed := false
+		for c in _dirty_cells:
+			box = Rect2i(c, Vector2i.ONE) if not box.has_area() else box.expand(c).expand(c + Vector2i.ONE)
+			water_changed = water_changed or world.water.has(c) or depth.has(c)
+		_dirty_cells.clear()
+		if water_changed: depth = _water_depth()
+		# Shores and depths reach a few cells round a change.
+		box = box.grow(9 if water_changed else 2).intersection(Rect2i(origin, cells))
+		_fill_map(box)
+		map_texture.update(map_image)
+		for y in range(box.position.y, box.end.y, CHUNK / 2):
+			for x in range(box.position.x, box.end.x, CHUNK / 2):
+				touched[_chunk_of(Vector2i(x, y))] = true
+		touched[_chunk_of(box.end - Vector2i.ONE)] = true
+		touched[_chunk_of(Vector2i(box.position.x, box.end.y - 1))] = true
+		touched[_chunk_of(Vector2i(box.end.x - 1, box.position.y))] = true
+		for index in touched:
+			if _chunks.has(index): _bake_chunk(index)
+	_update_chunks()
+
+
 ## One texel per cell: kind, water depth (cells to land) and flags.
-func _fill_map() -> void:
-	var depth := _water_depth()
-	for y in range(origin.y, origin.y + cells.y):
-		for x in range(origin.x, origin.x + cells.x):
+func _fill_map(area: Rect2i) -> void:
+	for y in range(area.position.y, area.end.y):
+		for x in range(area.position.x, area.end.x):
 			var c := Vector2i(x, y)
 			var kind := int(world.terrain.get(c, K_GRASS))
 			var flags := 0
@@ -148,21 +269,22 @@ func _fill_map() -> void:
 					match str(world.ground_style.get(c, "")):
 						"sand": kind = K_SAND
 						"stone": kind = K_STONE
+						"mud": kind = K_DIRT
+						"hardpan": kind = K_DIRT
 			elif world.is_river_cell(c):
 				flags |= F_RIVER
 			var d: float = clampf(float(depth.get(c, 0)) / 8.0, 0.0, 1.0)
 			map_image.set_pixel(x - origin.x, y - origin.y, Color8(kind, int(round(d * 255.0)), flags, 255))
-	assert(map_image.get_width() == cells.x)
 
 
 ## Cells from each water cell to the nearest land cell (8-way steps).
 func _water_depth() -> Dictionary:
-	var depth := {}
+	var out := {}
 	var frontier: Array[Vector2i] = []
 	for c in world.water:
 		for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1), Vector2i(1, 1), Vector2i(-1, 1), Vector2i(1, -1), Vector2i(-1, -1)]:
 			if not world.water.has(c + d) and world.terrain.has(c + d):
-				depth[c] = 1
+				out[c] = 1
 				frontier.append(c)
 				break
 	while not frontier.is_empty():
@@ -170,8 +292,8 @@ func _water_depth() -> Dictionary:
 		for c in frontier:
 			for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1), Vector2i(1, 1), Vector2i(-1, 1), Vector2i(1, -1), Vector2i(-1, -1)]:
 				var n: Vector2i = c + d
-				if world.water.has(n) and not depth.has(n):
-					depth[n] = int(depth[c]) + 1
+				if world.water.has(n) and not out.has(n):
+					out[n] = int(out[c]) + 1
 					next.append(n)
 		frontier = next
-	return depth
+	return out

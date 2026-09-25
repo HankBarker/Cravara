@@ -62,9 +62,12 @@ def jobs(only=None):
     out = []
     for key, info in SPEC["keys"].items():
         for clip in info["clips"]:
-            if SPEC["clips"][clip].get("procedural"):
-                continue  # built by its own tool, never generated
+            if SPEC["clips"][clip].get("procedural") or clip in info.get("stand_in", []):
+                continue  # built by its own tool (or a resting stand-in), never generated
             for view in SPEC["clips"][clip].get("views", VIEWS):
+                # A key may exist in fewer facings (the side-on babies).
+                if view not in info.get("views", VIEWS):
+                    continue
                 if selected("%s/%s_%s" % (key, clip, view), only):
                     out.append((key, clip, view))
     return out
@@ -172,9 +175,10 @@ def _lum(c):
 def effect_score(key, clip, view, raw_dir=None):
     """How much a generated clip looks like the model painted effects or
     changed the view: {"bright": most extra bright pixels in any frame,
-    "area": largest silhouette area ratio, "wide": largest width ratio}.
-    Painted sparkles, flashes and slashes add many near-white pixels; flames
-    and view changes swell the silhouette."""
+    "area": largest silhouette area ratio, "wide": largest width ratio,
+    "base": the first frame's own bright pixels}. Painted sparkles, flashes
+    and slashes add many near-white pixels; flames and view changes swell
+    the silhouette."""
     d = raw_dir or os.path.join(OUT, "raw", key, "%s_%s" % (clip, view))
     names = sorted(n for n in os.listdir(d) if n.endswith(".png") and n[:3].isdigit())
     if len(names) < 2:
@@ -184,7 +188,7 @@ def effect_score(key, clip, view, raw_dir=None):
         box = img.getbbox()
         return len(px), sum(1 for p in px if _lum(p) > 0.78), (box[2] - box[0]) if box else 1
     n0, b0, w0 = stats(Image.open(os.path.join(d, names[0])).convert("RGBA"))
-    worst = {"bright": 0, "area": 1.0, "wide": 1.0}
+    worst = {"bright": 0, "area": 1.0, "wide": 1.0, "base": b0}
     for n in names[1:]:
         n1, b1, w1 = stats(Image.open(os.path.join(d, n)).convert("RGBA"))
         worst["bright"] = max(worst["bright"], b1 - b0)
@@ -195,7 +199,10 @@ def effect_score(key, clip, view, raw_dir=None):
 
 def flagged(clip, view, sc):
     """True when a clip should be regenerated."""
-    if sc["bright"] > 30:
+    # A pale beast's own coat shows more or less white as it moves (the
+    # Ashmane is white all over, 200-560 bright pixels a drawing, and every
+    # clip of it was flagged): allow for the drawing's own bright pixels.
+    if sc["bright"] > 30 + 0.25 * sc.get("base", 0):
         return True
     if SPEC["clips"][clip].get("loop") and sc["area"] > 1.15:
         return True

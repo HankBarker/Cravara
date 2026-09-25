@@ -4,6 +4,8 @@ extends "res://Player/Scripts/player.gd"
 var controls_locked := false
 var forest_world: Node2D
 var in_water := false
+## Afloat in a boat on Glassmere (Forest/world/Boating.gd).
+var boating := false
 var _swing_time := 0.0
 var _swing_item: Item
 var _attack_target := Vector2.ZERO
@@ -22,6 +24,19 @@ var _food_healing: Array[Dictionary] = []
 var _hazard_clock := 0.0
 ## A bleeding cut (a stego's spiked tail): damage over time that armour does not stop.
 var bleed = preload("res://Forest/combat/Bleed.gd").new()
+## The ash (pass 12). The Pale Lands are pale with ash falling from the
+## mountain beyond; out there `ash` climbs from 0 to 1 over ASH_TIME seconds
+## (a covered face slows it: the Sail-skin Veil, the Sunward head wraps; the
+## Ashmane Mantle, or a tamed Ashmane, keeps it off), and under a roof or in a
+## tent's shelter it clears fast. Breathed full of it, the keeper chokes
+## (CHOKING: health drains) and slows. An Ashmane's roar blasts ash in the
+## keeper's face (apply_ash).
+const ASH_TIME := 70.0
+var ash := 0.0
+var _ash_slow := 0.0
+var _choke := 0.0
+var _shelter_check := 0.0
+var _sheltered := false
 var food_satiation_left := 0.0
 var _meal_cooldown := 0.0
 const Appearance = preload("res://Forest/equipment/Appearance.gd")
@@ -133,15 +148,31 @@ func take_damage(amount: int, attacker = null, knockback := 200.0):
 	if session and is_instance_valid(session.get("fishing")) and session.fishing.is_active(): session.fishing.cancel()
 	if session and is_instance_valid(session.get("bow")): session.bow.cancel()
 	var controller = mounted_creature._mount_controller if is_instance_valid(mounted_creature) else null
+	var gifts = _gifts()
+	var guard: int = gifts.defense_bonus() if gifts else 0
+	# A worn trinket can guard too (the Buried King's crown).
+	for trinket in equipped_trinkets:
+		if trinket: guard += trinket.defense
+	guard += SetBonus.defense_bonus(self)
+	# Hornguard: a tenth less harm, and blows barely shove.
+	amount = maxi(1, int(round(float(amount) * SetBonus.harm_mult(self))))
+	knockback *= SetBonus.knockback_mult(self)
+	# Plateback: whatever strikes the keeper up close is cut by the spikes.
+	if SetBonus.bleeds(self) and attacker is Node2D and is_instance_valid(attacker) and attacker.has_method("apply_bleed") and attacker.global_position.distance_to(global_position) < 56.0:
+		attacker.apply_bleed(2.5, 3.0, self)
+	defense += guard
 	var actual_damage := CombatMath.mitigate(amount, defense)
 	var health_before := current_health
 	super.take_damage(amount, attacker, knockback)
+	defense -= guard
 	_feel_hurt(health_before - current_health, attacker)
 	if is_instance_valid(controller) and is_instance_valid(mounted_creature):
 		controller.on_rider_damaged(actual_damage, attacker)
 
 func _ready():
 	super._ready()
+	# Deep water (layer 32, Glassmere) stops a keeper on foot; a boat lifts it.
+	collision_mask |= 32
 	animated_sprite.scale = Vector2.ONE
 	forest_world = get_tree().get_first_node_in_group("forest_world")
 	walk_speed = 76
@@ -202,6 +233,7 @@ func _ready():
 
 func _physics_process(delta):
 	_tick_recovery(delta)
+	_tick_ash(delta)
 	_tick_roll(delta)
 	if action_time>0:
 		action_time=maxf(0,action_time-delta)
@@ -217,11 +249,27 @@ func _physics_process(delta):
 	_swing_time = maxf(0.0, _swing_time - delta)
 	if forest_world:
 		in_water = forest_world.is_water_at(global_position)
-	var wade_boost := 0.0
+	var wade_boost := SetBonus.wading_bonus(self)
 	for trinket in equipped_trinkets:
 		if trinket: wade_boost += trinket.wading_bonus
 	walk_speed = int(40 + 76 * wade_boost) if in_water else 76
 	sprint_speed = int(52 + 125 * wade_boost) if in_water else 125
+	if boating:
+		# Paddling, not wading.
+		in_water = false
+		walk_speed = 84
+		sprint_speed = 110
+	var gifts = _gifts()
+	if gifts:
+		walk_speed = int(round(walk_speed * gifts.speed_mult()))
+		sprint_speed = int(round(sprint_speed * gifts.speed_mult() * gifts.sprint_mult()))
+	var set_speed := SetBonus.speed_mult(self)
+	if SetBonus.active(self) == "sunward" and forest_world and forest_world.ground_style.get(forest_world.to_cell(global_position), "") == "sand":
+		set_speed *= SetBonus.sand_speed_mult(self)
+	# Choking on ash (or struck by an Ashmane's roar): slower.
+	set_speed *= ash_speed_mult()
+	walk_speed = int(round(walk_speed * set_speed))
+	sprint_speed = int(round(sprint_speed * set_speed))
 	move_accel_scale = WATER_ACCEL_SCALE if in_water else 1.0
 	if controls_locked and state != "dead":
 		_tick_hunger(delta)
@@ -233,7 +281,25 @@ func _physics_process(delta):
 		return
 	_try_start_roll()
 	super._physics_process(delta)
+	if boating: _boat_pose()
 	queue_redraw()
+
+
+## Afloat (Boating.gd): seated in the rowboat at the paddle, not walking.
+## The rig's "row" clip plays while the boat moves (faster as it goes) and
+## rests on its first frame when it stops; blows and hurts play as ever.
+func _boat_pose() -> void:
+	if state not in ["idle", "walk", "run"] or action_time > 0.0: return
+	var clip := "row_" + last_facing
+	if not animated_sprite.sprite_frames or not animated_sprite.sprite_frames.has_animation(clip): return
+	if animated_sprite.animation != clip:
+		animated_sprite.play(clip)
+	if velocity.length() > 8.0:
+		if not animated_sprite.is_playing(): animated_sprite.play(clip)
+		animated_sprite.speed_scale = clampf(velocity.length() / 70.0, 0.7, 1.4)
+	else:
+		animated_sprite.pause()
+		animated_sprite.frame = 0
 
 func switch_state(state_name: String):
 	if respawning and state_name != "dead": return
@@ -283,17 +349,39 @@ func _forest_hit():
 		if ui: ui.show_toast(forest_world.last_feedback)
 	# An explicit overlap check also hits a creature already inside the sword area.
 	# Forest creatures receive one hit here; the legacy enter signal is filtered below.
+	var damage: int = _swing_item.damage if _swing_item else 1
+	for trinket in equipped_trinkets:
+		if trinket: damage += trinket.damage_bonus
+	var gifts = _gifts()
+	if gifts: damage = int(round(float(damage) * gifts.damage_mult()))
+	damage = int(round(float(damage) * SetBonus.damage_mult(self)))
+	# Blows that bleed: the Plate Maul, or any blade in the Plateback set.
+	var bleed_dps: float = _swing_item.bleed_dps if _swing_item else 0.0
+	if SetBonus.bleeds(self): bleed_dps = maxf(bleed_dps, 2.5)
 	for creature in get_tree().get_nodes_in_group("forest_creatures"):
+		if creature.untouchable: continue
 		if creature.global_position.distance_to(_attack_target) < (28 if tool=="sword" else 22) and creature.global_position.distance_to(global_position) < 52:
 			var ray := PhysicsRayQueryParameters2D.create(global_position, creature.global_position, 16)
 			if not get_world_2d().direct_space_state.intersect_ray(ray).is_empty():
 				continue
-			var damage: int = _swing_item.damage if _swing_item else 1
-			for trinket in equipped_trinkets:
-				if trinket: damage += trinket.damage_bonus
 			creature.take_damage(damage, self)
+			if bleed_dps > 0.0 and not creature.is_dead: creature.apply_bleed(bleed_dps, 4.0, self)
 			_feel_creature_hit(creature, damage, tool)
-			break
+			return
+	# The tribes' folk (pass 12).
+	for folk in get_tree().get_nodes_in_group("tribesmen"):
+		if folk.is_dead or folk.global_position.distance_to(_attack_target) >= (28 if tool=="sword" else 22) or folk.global_position.distance_to(global_position) >= 52: continue
+		var ray := PhysicsRayQueryParameters2D.create(global_position, folk.global_position, 16)
+		if not get_world_2d().direct_space_state.intersect_ray(ray).is_empty(): continue
+		folk.take_damage(damage, self)
+		_feel_creature_hit(folk, damage, tool)
+		return
+	# Old Maw, while it is out of the water (OldMaw.gd).
+	for beast in get_tree().get_nodes_in_group("sea_beasts"):
+		if beast.can_be_hit() and beast.global_position.distance_to(_attack_target) < 36 and beast.global_position.distance_to(global_position) < 60:
+			beast.take_damage(damage, self)
+			_feel_creature_hit(beast, damage, tool)
+			return
 
 func _on_SwordHitbox_area_entered(area):
 	if area.get_parent().is_in_group("forest_creatures"):
@@ -430,6 +518,12 @@ func _refresh_equipment():
 	equipment_changed.emit()
 	SignalBus.player_stamina_changed.emit(current_stamina, max_stamina)
 
+const SetBonus = preload("res://Forest/equipment/SetBonus.gd")
+
+## The companions' gifts (Forest/life/Buffs.gd), if the session has them.
+func _gifts():
+	return get_tree().get_first_node_in_group("companion_buffs") if is_inside_tree() else null
+
 func get_active_weapon_damage() -> int:
 	var amount: int = super.get_active_weapon_damage()
 	for trinket in equipped_trinkets:
@@ -437,7 +531,9 @@ func get_active_weapon_damage() -> int:
 	return amount
 
 func get_equipment_summary() -> String:
-	return "Defense %d  |  Damage %d" % [defense, get_active_weapon_damage()]
+	var line := "Defense %d  |  Damage %d" % [defense + SetBonus.defense_bonus(self), int(round(get_active_weapon_damage() * SetBonus.damage_mult(self)))]
+	var bonus := SetBonus.summary(self)
+	return line + ("  |  " + bonus if bonus != "" else "")
 
 func create_portrait() -> Control:
 	var portrait = preload("res://Forest/equipment/CharacterPortrait.gd").new()
@@ -557,6 +653,54 @@ func consume_slot(source: Node, index: int) -> bool:
 	source.inventory_changed.emit()
 	return true
 
+## How much of the ash the keeper's things keep out (0..1).
+func ash_guard() -> float:
+	var g := SetBonus.ash_guard(self)
+	for trinket in equipped_trinkets:
+		if trinket: g = maxf(g, float(trinket.ash_guard))
+	var gifts = _gifts()
+	if gifts and gifts.has_method("ash_guard"): g = maxf(g, gifts.ash_guard())
+	return clampf(g, 0.0, 1.0)
+
+
+## The Pale Lands' ash: see `ash`.
+func _tick_ash(delta: float) -> void:
+	_ash_slow = maxf(0.0, _ash_slow - delta)
+	if state == "dead" or respawning: return
+	_shelter_check -= delta
+	if _shelter_check <= 0.0:
+		_shelter_check = 0.5
+		_sheltered = forest_world != null and forest_world.has_method("sheltered_at") and forest_world.sheltered_at(global_position)
+	var ashen: bool = forest_world != null and forest_world.has_method("is_ashen_at") and forest_world.is_ashen_at(global_position)
+	if ashen and not _sheltered:
+		ash = minf(1.0, ash + delta / ASH_TIME * (1.0 - ash_guard()))
+	else:
+		ash = maxf(0.0, ash - delta / (5.0 if _sheltered else 20.0))
+	if ash >= 1.0:
+		_choke += delta
+		if _choke >= 1.25:
+			_choke = 0.0
+			current_health = maxi(0, current_health - 2)
+			SignalBus.player_health_changed.emit(current_health, max_health)
+			if current_health <= 0: die()
+	else:
+		_choke = 0.0
+
+
+## An Ashmane's roar: a blast of ash, slowed for `seconds`.
+func apply_ash(seconds: float) -> void:
+	_ash_slow = maxf(_ash_slow, seconds)
+	ash = minf(1.0, ash + 0.1 * (1.0 - ash_guard()))
+
+
+## The ash's toll on the keeper's pace.
+func ash_speed_mult() -> float:
+	var m := 1.0
+	if ash > 0.6: m *= lerpf(1.0, 0.72, (ash - 0.6) / 0.4)
+	if _ash_slow > 0.0: m *= 0.7
+	return m
+
+
 func _tick_recovery(delta: float):
 	if state=="dead" or respawning: return
 	var bled: int = bleed.tick(delta)
@@ -577,7 +721,7 @@ func _tick_recovery(delta: float):
 		var recovery := 0.6
 		for trinket in equipped_trinkets:
 			if trinket: recovery += trinket.recovery_bonus
-		if current_hunger>0: _regen_accum += recovery*delta
+		if current_hunger>0: _regen_accum += recovery*delta*(_gifts().recovery_mult() if _gifts() else 1.0)*SetBonus.recovery_mult(self)
 		if _regen_accum>=1:
 			var healing := int(_regen_accum)
 			_regen_accum -= healing
@@ -656,6 +800,7 @@ func _tick_roll(delta: float) -> void:
 	_roll_buffer = maxf(0.0, _roll_buffer - delta)
 
 func _try_start_roll() -> void:
+	if boating: return
 	if _roll_buffer > 0.0 and can_roll():
 		_roll_buffer = 0.0
 		switch_state("roll")

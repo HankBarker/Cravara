@@ -62,6 +62,7 @@ func release(target: Vector2) -> bool:
 	var damage: int=maxi(1,roundi(item.damage*lerpf(0.65,1.35,charge)))
 	for charm in player.equipped_trinkets:
 		if charm: damage+=charm.damage_bonus
+	damage=int(round(float(damage)*preload("res://Forest/equipment/SetBonus.gd").damage_mult(player)))
 	arrows.append({"position":player.global_position+Vector2(0,1),"direction":_aim,"damage":damage,"left":310.0,"speed":lerpf(190,290,charge)})
 	shots_fired+=1
 	cooldown=0.32
@@ -101,9 +102,21 @@ func _physics_process(delta: float):
 		if is_instance_valid(player.mounted_creature): excluded.append(player.mounted_creature.get_rid())
 		ray.exclude=excluded
 		var hit:=get_world_2d().direct_space_state.intersect_ray(ray)
+		# Old Maw out of the water (it has no body to hit under it).
+		var beast_hit := false
+		for beast in get_tree().get_nodes_in_group("sea_beasts"):
+			var body: Vector2 = beast.global_position + Vector2(0, -16)
+			if beast.can_be_hit() and Geometry2D.get_closest_point_to_segment(body, start, end).distance_to(body) < 18.0:
+				beast.take_damage(int(arrow.damage), player)
+				beast_hit = true
+				break
+		if beast_hit:
+			arrows.remove_at(i)
+			continue
 		if not hit.is_empty():
 			var target: Node=hit.collider
 			if target.is_in_group("forest_creatures") and not target.is_dead and not target.tamed: target.take_damage(int(arrow.damage),player)
+			elif target.is_in_group("tribesmen") and not target.is_dead: target.take_damage(int(arrow.damage),player)
 			arrows.remove_at(i)
 			continue
 		arrow.position=end

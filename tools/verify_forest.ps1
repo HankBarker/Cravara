@@ -72,7 +72,32 @@ $suites = @(
     # Pass 10 map: the Bonelands east of the forest. The forest's original
     # square is unchanged (the legacy signature), the seam is open, the new
     # edge is walled, and older journeys gain the new wildlife once.
-    @{Name='bonelands'; Args=@('res://Tests/BonelandsSuite.tscn')}
+    @{Name='bonelands'; Args=@('res://Tests/BonelandsSuite.tscn')},
+    # Pass 11 life: babies and their kin, nests and guardians, eggs, the
+    # incubator, breeding, needs, companion gifts, the folk's tasks, regions,
+    # bone heaps, nameplates, and all of it through a save.
+    @{Name='life'; Args=@('res://Tests/LifeSuite.tscn')},
+    # Pass 11 wilds: Glassmere, the Pale Hills and the Sunscar Dunes round the
+    # old map, the seams open, deep water and the boat (saved afloat), the
+    # wilds' harvests and beasts, the Buried King called with the Grave Horn
+    # and fought, Old Maw in the deep, the piranha bay, and old journeys.
+    @{Name='wilds'; Args=@('res://Tests/WildsSuite.tscn')},
+    # Pass 12 hunting and hardship: hunters notice from further off and run
+    # the keeper down, tire and give up, rivals break off, wedged beasts work
+    # free, babies need their kin gone, rare guarded nests, the incubator
+    # after Skarn, apex hunters out beyond the green, tough beasts.
+    @{Name='hunt'; Args=@('res://Tests/HuntSuite.tscn')},
+    # Pass 12 gear: each beast's materials, the weapon ladder, the Hornguard,
+    # Plateback and Rustback sets on the rig, and whole-set bonuses.
+    @{Name='gear'; Args=@('res://Tests/GearSuite.tscn')},
+    # Pass 12 tribes: the Sunward oasis and the Ashen war camp, raiders on
+    # sight (not in Ashen dress), trade and grudges, bands with tamed beasts,
+    # archers, wild hunters taking tribesmen, the tribes' memory.
+    @{Name='tribes'; Args=@('res://Tests/TribeSuite.tscn')},
+    # Pass 12 wilds: the Blender Scarhorn's clips, the raptor coats, the bog,
+    # barren dunes and ashen Pale Lands, territory, plates, swarms, the
+    # dimetrodon's sun, the ash in the air, the Sun Sail.
+    @{Name='wilds12'; Args=@('res://Tests/Wilds12Suite.tscn')}
 )
 if ($FromSuite -ne '' -and $FromSuite -notin $suites.Name) { throw ('Unknown suite: ' + $FromSuite) }
 $started = $FromSuite -eq ''

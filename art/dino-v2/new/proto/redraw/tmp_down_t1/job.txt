@@ -1,0 +1,11 @@
+55ea5904-8d83-46b9-977d-d30cbf4ffd27
+status: completed
+id: 55ea5904-8d83-46b9-977d-d30cbf4ffd27
+job_id: 55ea5904-8d83-46b9-977d-d30cbf4ffd27
+frames: 1
+transparent: yes
+asset_id: 2c4efcbd-6f33-5aa3-a9bf-ee11aaff8e37
+asset_type: image
+asset_status: saved
+gallery: saved to your PixelLab gallery (pixellab.ai/create)
+download: https://api.pixellab.ai/mcp/images/55ea5904-8d83-46b9-977d-d30cbf4ffd27/download

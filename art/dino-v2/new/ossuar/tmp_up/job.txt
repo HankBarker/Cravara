@@ -1,0 +1,11 @@
+f77cb1b8-3aed-4766-aac6-e2dc741d99e7
+status: completed
+id: f77cb1b8-3aed-4766-aac6-e2dc741d99e7
+job_id: f77cb1b8-3aed-4766-aac6-e2dc741d99e7
+frames: 1
+transparent: yes
+asset_id: 42389299-f59b-52a5-840a-eadd208fa00d
+asset_type: image
+asset_status: saved
+gallery: saved to your PixelLab gallery (pixellab.ai/create)
+download: https://api.pixellab.ai/mcp/images/f77cb1b8-3aed-4766-aac6-e2dc741d99e7/download

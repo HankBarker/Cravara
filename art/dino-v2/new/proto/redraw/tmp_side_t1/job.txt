@@ -1,0 +1,11 @@
+b667caa9-9405-4501-89a1-92fe385526a6
+status: completed
+id: b667caa9-9405-4501-89a1-92fe385526a6
+job_id: b667caa9-9405-4501-89a1-92fe385526a6
+frames: 1
+transparent: yes
+asset_id: b465758d-46e4-564c-87de-22e4b4a1ec8f
+asset_type: image
+asset_status: saved
+gallery: saved to your PixelLab gallery (pixellab.ai/create)
+download: https://api.pixellab.ai/mcp/images/b667caa9-9405-4501-89a1-92fe385526a6/download

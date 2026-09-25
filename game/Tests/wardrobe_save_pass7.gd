@@ -27,10 +27,17 @@ func inventory_matches(saved: Array) -> bool:
 
 ## The journey's own creatures (pass 10 adds the alpha, raised fresh by its
 ## den, and the Bonelands' wildlife, which a journey from before arrives to).
-func living_creatures() -> int:
+## How many of a save's creatures are alive where it saved them. (A load
+## also brings what an older journey meets for the first time: the alpha, the
+## Bonelands' and the wilds' wildlife, nest guardians.)
+func saved_present(entries: Array) -> int:
 	var count:=0
-	for creature in get_tree().get_nodes_in_group("forest_creatures"):
-		if not creature.is_queued_for_deletion() and creature.species != "alpha" and creature.global_position.x < 56 * 16: count+=1
+	for entry in entries:
+		for creature in get_tree().get_nodes_in_group("forest_creatures"):
+			if creature.is_queued_for_deletion() or creature.species!=str(entry.species): continue
+			if creature.global_position.distance_to(Vector2(float(entry.x),float(entry.y)))<6.0:
+				count+=1
+				break
 	return count
 
 func run():
@@ -50,7 +57,7 @@ func run():
 	check(inventory_matches(saved.inventory),"all current inventory IDs and quantities are preserved")
 	check(armor_ids(stage.player)==saved.armor,"all current equipped armor IDs are preserved")
 	check(stage.player.appearance==Appearance.normalize(saved.get("appearance",{})),"saved appearance or legacy defaults load correctly")
-	check(living_creatures()==saved.creatures.size(),"current creatures and companions remain present")
+	check(saved_present(saved.creatures)==saved.creatures.size(),"current creatures and companions remain present")
 	var expected_armor := {"head":"bone_helmet","chest":"crystal_chestplate","legs":"bone_leggings"}
 	for slot in expected_armor: stage.player.equip_armor(slot,ItemDB.make(expected_armor[slot]))
 	var expected_appearance := Appearance.normalize({"skin":"umber","hair":"silver","hair_style":"braid","cloth":"river","trousers":"slate"})
@@ -64,7 +71,7 @@ func run():
 	check(armor_ids(stage.player)==expected_armor,"new mixed armor survives a complete save/load")
 	check(stage.player.appearance==expected_appearance,"new hairstyle and all five appearance choices survive save/load")
 	check(inventory_matches(saved.inventory),"appearance and gear changes do not alter existing satchel contents")
-	check(living_creatures()==saved.creatures.size(),"isolated wardrobe roundtrip preserves creature count")
+	check(saved_present(written.creatures)==written.creatures.size() and saved_present(saved.creatures)==saved.creatures.size(),"isolated wardrobe roundtrip preserves creature count")
 	check(FileAccess.get_sha256(actual_save)==original_hash,"real user journey remains byte-identical")
 	check(FileAccess.get_sha256(SNAPSHOT)==snapshot_hash,"source journey snapshot remains byte-identical")
 	DirAccess.remove_absolute(temp)

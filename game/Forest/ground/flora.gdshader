@@ -9,6 +9,11 @@ shader_type canvas_item;
 
 uniform vec2 atlas_cells = vec2(16.0, 3.0);
 uniform float frames_per_second = 8.0;
+// The Pale Lands (pass 12): cells (x0, y0, x1, y1) where the grass is dead
+// and grey under the ash, fading in over the southernmost pale_fade rows.
+uniform ivec4 pale_area = ivec4(0, 0, 0, 0);
+uniform float pale_fade = 10.0;
+varying vec2 v_root;
 // xy: a body's feet in world px, z: reach, w: 1 when in use.
 uniform vec4 pushers[8];
 
@@ -19,6 +24,7 @@ void vertex() {
 	float lean = 1.0 - UV.y;
 	UV = (cell + UV) / atlas_cells;
 	vec2 root = INSTANCE_CUSTOM.ba;
+	v_root = root;
 	float t = floor(TIME * frames_per_second) / frames_per_second;
 	// A slow breeze plus gusts that roll across the field west to east.
 	float gust = sin(t * 0.9 - root.x * 0.018 + root.y * 0.004);
@@ -36,4 +42,16 @@ void vertex() {
 		}
 	}
 	VERTEX.x += floor(dx * lean + 0.5);
+}
+
+void fragment() {
+	vec4 c = texture(TEXTURE, UV) * COLOR;
+	ivec2 cell = ivec2(floor(v_root / 16.0));
+	if (cell.x >= pale_area.x && cell.x < pale_area.z && cell.y >= pale_area.y && cell.y < pale_area.w) {
+		float f = clamp(float(pale_area.w - 1 - cell.y) / pale_fade, 0.0, 1.0);
+		float luma = dot(c.rgb, vec3(0.3, 0.59, 0.11));
+		vec3 dead = mix(vec3(0.36, 0.33, 0.31), vec3(0.86, 0.83, 0.78), smoothstep(0.1, 0.7, luma));
+		c.rgb = mix(c.rgb, dead, 0.85 * f);
+	}
+	COLOR = c;
 }

@@ -38,7 +38,7 @@ import gen  # noqa: E402
 
 OUT = gen.OUT
 # Column where the tail meets the hips on each side drawing (facing right).
-CUT = {"stego": 48, "stego_saddle": 48, "longneck": 52}
+CUT = {"stego": 48, "stego_saddle": 48, "longneck": 52, "anky": 39}
 CONTACT = 6
 # Per frame: (share of the full swing, stretch along the tail). Cock back,
 # whip, hold on contact, ease back. The tail keeps (and at the whip slightly
