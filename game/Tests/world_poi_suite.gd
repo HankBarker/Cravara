@@ -80,8 +80,10 @@ func _cells_of(world, kinds: Array) -> Array:
 	return out
 
 
+## The forest's own points of interest (the Bonelands' scattered relic mounds
+## and bones are bonelands_suite's).
 func _poi_cells(world) -> Array:
-	return _cells_of(world, Prop.LANDMARKS + FINDS)
+	return _cells_of(world, Prop.LANDMARKS + FINDS).filter(func(c): return not world.has_method("region_of") or world.region_of(c) == "forest")
 
 
 func _poi_named(world, site_name: String):

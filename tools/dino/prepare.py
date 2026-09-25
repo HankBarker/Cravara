@@ -25,10 +25,12 @@ OUT = os.path.join(ROOT, "art", "dino-v2")
 
 # Original frame size per species (first cel of each 17-frame strip).
 FRAME = {"dodo": (20, 24), "longneck": (70, 60), "raptor": (42, 32), "rex": (76, 56),
-         "stego": (60, 40), "trike": (54, 42)}
+         "stego": (60, 40), "trike": (54, 42), "alpha": (84, 60),
+         "allo": (64, 46), "lystro": (24, 20)}
 # Animation canvas: room for tail sweeps, rearing, lunges and leaps.
 CANVAS = {"dodo": (48, 48), "longneck": (128, 112), "raptor": (96, 72), "rex": (128, 96),
-          "stego": (112, 80), "trike": (96, 72)}
+          "stego": (112, 80), "trike": (96, 72), "alpha": (128, 96),
+          "allo": (112, 84), "lystro": (48, 48)}
 GROUND = 6  # feet sit this many rows above the canvas bottom
 VIEWS = ("side", "down", "up")
 
@@ -79,13 +81,17 @@ def build_palette(images, colours=64):
 
 
 def keys():
-    return ["dodo", "longneck", "raptor", "rex", "stego", "trike", "stego_saddle", "trike_saddle"]
+    return ["dodo", "longneck", "raptor", "rex", "stego", "trike", "stego_saddle", "trike_saddle", "alpha", "allo", "lystro"]
 
 
 def main():
     for d in ("palettes", "base", "first"):
         os.makedirs(os.path.join(OUT, d), exist_ok=True)
+    # `python prepare.py alpha` redoes one species (the rest are left alone).
+    only = set(sys.argv[1:])
     for sp in FRAME:
+        if only and sp not in only:
+            continue
         drawings = {(k, v): source(k, v) for k in keys() if species_of(k) == sp for v in VIEWS}
         pal = build_palette(list(drawings.values()), 72 if sp in ("stego", "trike") else 64)
         with open(os.path.join(OUT, "palettes", sp + ".hex"), "w") as f:

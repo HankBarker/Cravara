@@ -86,6 +86,18 @@ func _try_pickup(body: Node) -> bool:
 	if body.get("respawning")==true: return false
 	if InventoryManager.add_item(item,quantity):
 		_picked_up = true
+		_pop()
 		queue_free()
 		return true
 	return false
+
+## A soft bloop for each pickup; several in a row climb a step each (up to
+## five), so sweeping up a pile sounds like a little run of notes.
+static var _last_pop := -10.0
+static var _run := 0
+func _pop() -> void:
+	var now := Time.get_ticks_msec() / 1000.0
+	if now - _last_pop < 0.045: return
+	_run = mini(_run + 1, 5) if now - _last_pop < 0.6 else 0
+	_last_pop = now
+	AudioManager.play_foley("pop", -15.0, pow(2.0, _run / 12.0 * 2.0))

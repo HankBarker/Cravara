@@ -136,6 +136,47 @@
         "hurt",
         "death"
       ]
+    },
+    "alpha": {
+      "species": "alpha",
+      "body": "a huge dark raptor with a crest of glowing crystal spikes",
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "slash",
+        "pounce",
+        "roar",
+        "hurt",
+        "death"
+      ]
+    },
+    "allo": {
+      "species": "allo",
+      "body": "a lean rust-orange allosaurus with dark stripes and red brow horns",
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "bite",
+        "chomp",
+        "roar",
+        "hurt",
+        "death"
+      ]
+    },
+    "lystro": {
+      "species": "lystro",
+      "body": "a small stout olive lystrosaurus with a beak and two tusks",
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "peck",
+        "eat",
+        "hurt",
+        "death"
+      ]
     }
   },
   "clips": {
@@ -181,7 +222,9 @@
       "motion": {
         "biped": "Runs in place with long fast strides, its body leaning forward and its tail held straight out behind.",
         "trike": "Gallops in place with its head lowered and its horns pointing forward, legs moving fast.",
-        "dodo": "Runs in place on its short legs, flapping its little wings."
+        "dodo": "Runs in place on its short legs, flapping its little wings.",
+        "lystro": "Scurries in place on its four short stubby legs with quick little steps, its stout body bobbing and its head held low and forward.",
+        "quadruped": "Trots in place on four legs with quick steps, its body bobbing."
       }
     },
     "eat": {
@@ -358,7 +401,9 @@
   "bipeds": [
     "rex",
     "raptor",
-    "dodo"
+    "dodo",
+    "alpha",
+    "allo"
   ],
   "overrides": {
     "rex/walk_down": {

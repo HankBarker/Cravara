@@ -12,7 +12,7 @@ const DinoArt = preload("res://Forest/creatures/DinoArt.gd")
 const QuietExit = preload("res://Tests/quiet_exit.gd")
 const CW := 150
 const CH := 120
-const SPECIES := ["rex", "raptor", "stego", "trike", "longneck", "dodo"]
+const SPECIES := ["rex", "raptor", "stego", "trike", "longneck", "dodo", "allo", "lystro", "alpha"]
 var scene
 var player
 var cells: Array = []   # [label, Image]
@@ -99,12 +99,20 @@ func run() -> void:
 	player.position = scene.world.get_spawnable_position(Vector2(40, 30))
 	player.visible = false
 	var spot: Vector2 = player.global_position
+	# The folk step off the stage (Orrin keeps camp right here).
+	if scene.get("folk") != null:
+		for person in scene.folk.actors.values():
+			if is_instance_valid(person): person.visible = false
 	# Nothing tall near the stage.
 	for prop in scene.world.props.values():
 		if prop.global_position.distance_to(spot) < 120.0:
 			prop.visible = false
 	await frames(10)
 	for sp in SPECIES:
+		# The last one's loot off the stage first.
+		for drop in get_tree().get_nodes_in_group("dropped_items"):
+			drop.queue_free()
+		await frames(1)
 		await species_row(sp, spot)
 	build_sheet()
 	print("DINO_CAPTURE cells=%d checks=%d failures=%d" % [cells.size(), checks, failures.size()])

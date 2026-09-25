@@ -1,11 +1,11 @@
 ﻿Godot Engine v4.6.1.stable.official.14d19694e - https://godotengine.org
 OpenGL API 3.3.0 Core Profile Context 24.10.36.04.250109 - Compatibility - Using Device: ATI Technologies Inc. - AMD Radeon RX 7700S
 
-≡ƒôª ItemDB loaded 80 items: ancient_coin, baked_tuber, basic_axe, basic_pickaxe, berry, berry_compote, berry_seed, bone_arrow, bone_chestplate, bone_dagger, bone_helmet, bone_leggings, bucket, campfire, chest, cooked_fish, cooked_meat, crystal_axe, crystal_chestplate, crystal_flask, crystal_helmet, crystal_leggings, crystal_pendant, crystal_pickaxe, crystal_shard, dodo_egg, fishing_rod, forest_omelet, fossil_bone, garden_hoe, hide_bed, hunter_charm, lantern, leather_chestplate, leather_helmet, leather_leggings, log, moonscale, moss_chestplate, moss_helmet, moss_leggings, mushroom, mushroom_potion, mushroom_spore, net, plank, plant_fiber, prism_crystal, raptor_fang, reed_bow, reed_perch, rex_chestplate, rex_helmet, rex_leggings, river_totem, shardfin, shard_sword, sky_idol, slate_roof, stego_saddle, stone, stone_door, stone_floor, stone_wall, tent, thatch_roof, tide_chestplate, tide_helmet, tide_leggings, torch, trex_meat, trex_scale, trike_saddle, water_bucket, water_flask, wild_tuber, wood_door, wood_floor, wood_wall, workbench
+📦 ItemDB loaded 81 items: alpha_crest, ancient_coin, baked_tuber, basic_axe, basic_pickaxe, berry, berry_compote, berry_seed, bone_arrow, bone_chestplate, bone_dagger, bone_helmet, bone_leggings, bucket, campfire, chest, cooked_fish, cooked_meat, crystal_axe, crystal_chestplate, crystal_flask, crystal_helmet, crystal_leggings, crystal_pendant, crystal_pickaxe, crystal_shard, dodo_egg, fishing_rod, forest_omelet, fossil_bone, garden_hoe, hide_bed, hunter_charm, lantern, leather_chestplate, leather_helmet, leather_leggings, log, moonscale, moss_chestplate, moss_helmet, moss_leggings, mushroom, mushroom_potion, mushroom_spore, net, plank, plant_fiber, prism_crystal, raptor_fang, reed_bow, reed_perch, rex_chestplate, rex_helmet, rex_leggings, river_totem, shardfin, shard_sword, sky_idol, slate_roof, stego_saddle, stone, stone_door, stone_floor, stone_wall, tent, thatch_roof, tide_chestplate, tide_helmet, tide_leggings, torch, trex_meat, trex_scale, trike_saddle, water_bucket, water_flask, wild_tuber, wood_door, wood_floor, wood_wall, workbench
 PASS captured in-game-action-axe.png
 PASS captured in-game-action-axe.png
 PASS axe actual running player advances through five or more distinct animation frames
-TIMELINE axe frames=[0, 1, 2, 3, 4]
+TIMELINE axe frames=[0, 1, 2, 3, 4, 5]
 PASS captured in-game-action-pickaxe.png
 PASS captured in-game-action-pickaxe.png
 PASS pickaxe actual running player advances through five or more distinct animation frames
@@ -17,9 +17,9 @@ TIMELINE sword frames=[0, 1, 2, 3, 4, 5, 6, 7]
 PASS captured in-game-action-bow_draw.png
 PASS captured in-game-action-bow_draw.png
 PASS bow_draw actual running player advances through five or more distinct animation frames
-TIMELINE bow_draw frames=[0, 1, 2, 3, 4]
+TIMELINE bow_draw frames=[0, 1, 2, 3, 4, 6]
 PASS bow_release actual running player advances through five or more distinct animation frames
-TIMELINE bow_release frames=[0, 1, 2, 3, 4, 5, 6]
+TIMELINE bow_release frames=[0, 1, 2, 3, 4, 5, 6, 7]
 PASS fishing_cast actual running player advances through five or more distinct animation frames
 TIMELINE fishing_cast frames=[0, 1, 2, 3, 4, 5, 6, 7]
 PASS fishing_reel actual running player advances through five or more distinct animation frames
@@ -27,7 +27,7 @@ TIMELINE fishing_reel frames=[0, 1, 2, 3, 4, 5, 6, 7]
 PASS captured in-game-action-hoe.png
 PASS captured in-game-action-hoe.png
 PASS hoe actual running player advances through five or more distinct animation frames
-TIMELINE hoe frames=[0, 1, 2, 3, 4, 5, 7]
+TIMELINE hoe frames=[0, 1, 2, 3, 4, 5, 6, 7]
 PASS net actual running player advances through five or more distinct animation frames
 TIMELINE net frames=[0, 1, 2, 3, 4, 5, 6, 7]
 PASS bucket actual running player advances through five or more distinct animation frames

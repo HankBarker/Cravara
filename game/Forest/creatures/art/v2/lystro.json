@@ -1,0 +1,66 @@
+{
+ "key": "lystro",
+ "species": "lystro",
+ "canvas": [
+  48,
+  48
+ ],
+ "ground": 41,
+ "origin": {
+  "side": [
+   12,
+   22
+  ],
+  "down": [
+   12,
+   22
+  ],
+  "up": [
+   12,
+   23
+  ]
+ },
+ "clips": {
+  "idle": {
+   "fps": 6,
+   "loop": true,
+   "frames": 8
+  },
+  "walk": {
+   "fps": 9,
+   "loop": true,
+   "frames": 8
+  },
+  "run": {
+   "fps": 13,
+   "loop": true,
+   "frames": 8
+  },
+  "peck": {
+   "fps": 14,
+   "loop": false,
+   "frames": 9,
+   "hit": 3,
+   "hit_view": {
+    "side": 3,
+    "down": 3,
+    "up": 3
+   }
+  },
+  "eat": {
+   "fps": 8,
+   "loop": false,
+   "frames": 13
+  },
+  "hurt": {
+   "fps": 12,
+   "loop": false,
+   "frames": 5
+  },
+  "death": {
+   "fps": 10,
+   "loop": false,
+   "frames": 13
+  }
+ }
+}

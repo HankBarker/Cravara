@@ -1,4 +1,4 @@
-# Dinosaurs v2 — animation, moves and behaviour (pass 9)
+# Dinosaurs v2 — animation, moves and behaviour (passes 9–10)
 
 The forest dinosaurs (rex, raptor, stego, trike, longneck, dodo) keep their original drawings but
 every clip is new: PixelLab animated each species' own drawing per facing, a cleaning pipeline
@@ -100,3 +100,83 @@ tree and fells it with the tail; the trike gores bushes).
 - Older suites updated for v2: creatures (clip catalogue), ai-pass2 (telegraphed pacing),
   workers-pass6 (tail-first felling), mount-pass4 / render QA (composite size, strike clips, tail arc;
   a ridden far-side sweep baked with the rider, side-on only).
+
+## Pass 10: new beasts, patient taming, hunting, the first boss
+**Species** (`ForestCreature.SPECIES`/`BODY`, `DinoMoves.MOVES`/`MASS`, art keys of the same name):
+- `allo`, Rustback Allosaurus: the mid predator between raptor and rex (hp 170, speed 47, dmg 15,
+  bite + chomp, roars as it locks on). Its drops (`trex_scale` ×3) are the armour material; it
+  roams the south and west of the forest alone and hunts the Bonelands.
+- `lystro`, Mossback Lystrosaurus: a small easy tame like the dodo (feeds 2, pecks when cornered,
+  flees hunters and rushing keepers).
+- `alpha`, "Skarn, the Shardback Alpha": the first boss (hp 560, speed 56, slash + a 40–150 px
+  pounce, `feeds 0`, `boss: true`). See `AlphaBoss.gd` below.
+- `rex`: only **one** per world, and a mini-boss (hp 650, dmg 30, 40 feeds): not meant to be killed
+  on foot in the first region without companions and a bow.
+
+**Patient taming** (`_tick_patience`, `interact`): dodo and lystro (`EASY`) take 2 feeds. The rest
+take `stats.feeds` (15–40) and need patience: after each feed the beast won't eat again until
+the keeper has backed off to `SPACE × 1.5` (46 px) and `settle` (6 s) has run down. Standing within
+`SPACE` of an unsettled beast builds `unease`; after `UNEASE` (3.5 s) it lashes out, loses 2 trust
+and is provoked for 4 s. `FEED_WAIT` spaces the feeds. **Nets** (`net`): raptor, allo, rex are
+knocked **down** for `NET_TIME` s (the death clip held as a downed pose; getting up plays it
+backwards at speed 2.4, `_action "rise"`); only a netted predator eats from the hand.
+
+**Hunting** (`_wild_target`): the keeper and companions within reach (105 px; rex and alpha
+145), prey (`PREY`) out to the hunting range (160 px). Raptors take stego and trike (`PACK_PREY`)
+only as a pack of 3+ (`_pack_size` within 150 px). After a kill (`on_kill`) a hunter is `sated`
+for 90–150 s; the rex never is. Dodos and lystros run from any hunter coming for them
+(`_hunter_near`). Predators don't herd. Tests call `_wild_target()` and `_hunter_near()` directly,
+so those stay pure; the per-tick code uses the throttled `_current_target()`/`_hunter_nearby()`.
+
+**Wildlife placement** (`ForestPlaytest.WILDLIFE`, `BONELANDS_LIFE`): each new world places its
+groups from its own seed (arcs and distances from camp: flocks close, herds further, raptor packs
+north-east, allosaurs south and west, the rex far south-east). The Bonelands get allosaurs,
+lystros, a raptor pack and stegos; a journey saved before them gains them once (`regions`).
+
+**The boss** (`creatures/AlphaBoss.gd`, a node in the session, group `alpha_boss`): `prepare()`
+finds a dry den away from ruins in the north-east (`DEN_NEAR`), clears brush into `world.mined`,
+lays a dirt floor and bone piles, and raises Skarn dormant. Stepping within `WAKE` (7 cells) or
+hitting it: roar, screen shake, the boss music (`audio/boss-echoes.mp3`, a stand-in: Hank's own
+"Travel Music (Cave)"), `hud.show_boss(name, fraction)`. Below 60% it howls for two raptors; below
+30% it enrages (`haste 1.3`: speed and move cooldowns). Past `LEASH` (17 cells) or if the keeper
+falls it goes back to sleep, healed. Beaten: milestone `alpha`, a banner and `alpha_crest`
+("Skarn's Crest", trinket, +3 damage) plus 6 raptor fangs. Saves skip the alpha; the den raises
+it again on load (`prepare()` at the end of `_load_journey`).
+
+**Audio**: roars (`<species>-roar.ogg`, rex/allo/alpha, from `tools/build_creature_audio.py`) play
+through `play_action("roar")`; a species without one roars with its attack call. Footsteps come
+from `STEPS` (`[volume, pitch, shake, shake_max, range]`): the rex shakes the camera a little.
+
+**New-species art** (`tools/dino/new_species.py`): `restyle KEY --from SP --view down|side|up`
+(pixflux img2img from an existing species' drawing, `--palette` locks colours: the allo came out
+green like the rex until a rust palette was forced), `rotate`, `drawings KEY --frame W H`. Build
+each facing from its own restyle: `create_character` v3 rotation turned the alpha into an iguana.
+`prepare.py [species]` takes a filter. Every clip's motion text must resolve for the species'
+kind: gen.py stops at "no motion for KEY/CLIP" (the lystro's `run` needed its own quadruped line).
+A facing whose clip fails QA after `MAX_ATTEMPTS` is exported from the resting pose and listed in
+the catalogue as `stand_in` (the allo's back-view roar); `placeholder` now means no generated art
+in any facing. Hit/take-off frames for the new moves are in `hits.json` (allo bite/chomp 5 in all
+facings; alpha pounce take-off 4 → landing 8 side-on).
+
+## Performance (pass 10: 12 → 54 creatures)
+Measured with `Tests/PerfProbe.tscn` (rendered; splits each frame into physics, scripts and
+render). Before the fixes the camp ran at ~105 ms a frame: every creature scanned every other one
+several times a tick (a raptor's `_pack_side` even re-ran each mate's full target scan), and once a
+frame ran long Godot ran up to 8 physics ticks per frame to catch up, which made it longer still.
+Now about 14 ms everywhere once settled:
+- `ForestCreature.roster(tree)`: the creature list gathered once per physics tick (static;
+  invalidated in `_enter_tree`/`_exit_tree`). Use it instead of `get_nodes_in_group`.
+- Looks round are throttled and staggered: `_current_target()` and `_hunter_nearby()` rescan every
+  0.2–0.28 s (a fresh threat is answered at once; a kill rescans at once).
+- `_avoid_obstacles` keeps the way it found for 3 ticks while the heading holds (dot > 0.96).
+- `_separation` skips bodies more than 40 px away on either axis before measuring.
+- Only creatures within 420 px of the view redraw (`_on_view`).
+- **Lazy far beasts**: wild, not mid-move and over `LAZY_RANGE` (640 px) from the keeper, a creature
+  runs its whole update every 4th tick with the summed delta, and `move_and_slide` gets its velocity
+  stretched by the same factor so it covers the same ground.
+- The sun-shadow pass (`ForestLighting`) was ~12 ms a frame on its own before pass 10:
+  it re-triangulated every nearby prop's shadow every frame. Shadows are now triangulated once
+  per sun step (`_sun_meshes`, drawn with `canvas_item_add_triangle_array`), redrawn only when
+  something changes (who's near, a door or lid, the sun's step, shadows toggled), and at most 6
+  stale shapes are rebuilt per frame when the sun moves on. Occluder polygons are set only when they
+  change, and lights are looked for only on campfires, shrines and torches.

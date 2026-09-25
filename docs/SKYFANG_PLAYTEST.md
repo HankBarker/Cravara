@@ -1,5 +1,42 @@
 # Cravera: The Skyfang Wilds
 
+## Tenth pass: the opening, the first boss, new beasts and the Bonelands
+
+1. **The opening.** Start a new expedition from the menu: eight painted plates tell how the green
+   world was, the star that fell, the first builders and their carving, WHAT FALLS FROM THE SKY
+   MUST BE KEPT. Space, Enter, E or a click moves on; hold Esc to skip. You wake in the first
+   tent and walk out to Orrin: "Easy, easy. You're awake." E goes on, Esc skips. Walk off and he
+   picks up where he left off.
+2. **Talking never stops the world.** The talk panel is small, on the left, and the game keeps
+   running: walk, fight or use the hotbar while it's open. Walk away and it closes.
+3. **Building.** Clicks hit the frontmost thing: a bed before the floor under it, and from
+   inside a house never the roof overhead. Roofs are drawn whole, with eaves over the walls.
+4. **Skarn, the Shardback Alpha** (the first boss) sleeps in a den of bones in the north-east
+   (red on the map). Step close: it roars, the screen shakes, the music turns and its bar shows at
+   the top. Below 60% it calls two raptors; below 30% it rages. Walk away and it goes back to
+   sleep, healed. Beating it drops Skarn's Crest.
+5. **New beasts.** The Rustback Allosaurus hunts alone in the south, the west and the
+   Bonelands (its scales make armour). The little Mossback Lystrosaurus is as easy to tame as a
+   dodo. There is one rex now, far to the south-east, and it is a terror: bring companions and a
+   bow.
+6. **Taming takes patience.** Dodos and lystros take two berries. Stegos, trikes and longnecks
+   take around twenty: feed, back off, let it settle, come back. Crowd it and it lashes out.
+   A netted raptor or allosaur is knocked down and eats from your hand while it's down.
+7. **Hunters hunt.** Raptors go for dodos and lystros, and a pack of three takes on stegos and
+   trikes. The rex goes for anything. Small beasts run from hunters.
+8. **The Bonelands.** Walk east past the forest's old edge: sand, a dry river bed, waterholes,
+   sandstone outcrops with crystal, old bones and fossil beds to dig. Allosaurs, lystros, a
+   raptor pack and stegos live there. An older journey finds them waiting.
+9. **Sound.** Wind and insects (crickets at night), bugs chirping nearby, raptor calls, roars,
+   heavy footsteps (the rex's shake the screen), and a soft pop when you pick things up.
+
+To watch the opening without touching your journey, run `tools/playtest_forest.ps1 -IntroPreview`
+(no save). A new expedition from the menu plays it too, but replaces your journey when it saves.
+
+Code: `game/Forest/intro/`, `game/Forest/creatures/AlphaBoss.gd`, `game/Forest/ForestRoofs.gd`,
+`game/Forest/fx/Ambience.gd`, `ForestWorld._generate_bonelands`. Look-books: `art/intro/`,
+`art/pass10/`, `art/world-v2/bonelands-*.png`. Tests: intro, beasts, bonelands suites.
+
 ## Ninth pass: the folk, their houses and stone building
 
 The wilds now have people in them, found one at a time, Terraria-style. There is no village.

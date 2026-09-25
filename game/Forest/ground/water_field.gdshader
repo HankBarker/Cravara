@@ -9,8 +9,8 @@ render_mode unshaded, blend_disabled;
 
 #include "res://Forest/ground/terrain.gdshaderinc"
 
-uniform int canvas_px = 1792;
-uniform int world_offset = -896;
+uniform ivec2 canvas_px = ivec2(1792, 1792);
+uniform ivec2 world_offset = ivec2(-896, -896);
 
 float depth_at(ivec2 p) {
 	vec2 cp = (vec2(p) + 0.5) / 16.0 - 0.5;
@@ -25,7 +25,7 @@ float depth_at(ivec2 p) {
 }
 
 void fragment() {
-	ivec2 p = ivec2(floor(UV * float(canvas_px))) + ivec2(world_offset);
+	ivec2 p = ivec2(floor(UV * vec2(canvas_px))) + world_offset;
 	if (region(p) != K_WATER) {
 		COLOR = vec4(0.0);
 	} else {

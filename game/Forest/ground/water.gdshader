@@ -6,8 +6,8 @@
 // like hand-drawn frames.
 shader_type canvas_item;
 
-uniform int canvas_px = 1792;
-uniform int world_offset = -896;
+uniform ivec2 canvas_px = ivec2(1792, 1792);
+uniform ivec2 world_offset = ivec2(-896, -896);
 uniform int world_seed = 726151;
 uniform float frames_per_second = 10.0;
 
@@ -52,7 +52,7 @@ void fragment() {
 	if (f.a < 0.5) {
 		discard;
 	}
-	ivec2 p = ivec2(floor(UV * float(canvas_px))) + ivec2(world_offset);
+	ivec2 p = ivec2(floor(UV * vec2(canvas_px))) + world_offset;
 	float t = floor(TIME * frames_per_second) / frames_per_second;
 	bool river = f.r < 0.75;
 	float shore = f.g * 4.0;

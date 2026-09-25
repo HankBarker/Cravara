@@ -15,14 +15,37 @@ const Puff = preload("res://Forest/fx/Puff.gd")
 const Surface = preload("res://Forest/fx/Surface.gd")
 const Bleed = preload("res://Forest/combat/Bleed.gd")
 
+## The rex is the wilds' terror (one in the world, near unkillable on foot:
+## bring companions and arrows); the allosaurus is the big hunter a keeper can
+## take, and its scales make the finest armour; the alpha is the first boss
+## (AlphaBoss.gd), never tamed. feeds: trust a beast needs (see taming below).
 const SPECIES := {
-	"raptor": {"name":"Shardback Raptor", "hp":24, "speed":53.0, "damage":7, "radius":7.0, "feeds":3, "predator":true, "food":"trex_meat", "width":42, "height":32},
-	"rex": {"name":"Emerald Tyrant", "hp":110, "speed":44.0, "damage":18, "radius":14.0, "feeds":6, "predator":true, "food":"trex_meat", "width":76, "height":56},
-	"stego": {"name":"Amberplate Stegosaurus", "hp":65, "speed":23.0, "damage":10, "radius":12.0, "feeds":4, "predator":false, "food":"berry", "width":60, "height":40},
-	"trike": {"name":"Jadehorn Triceratops", "hp":70, "speed":29.0, "damage":12, "radius":12.0, "feeds":4, "predator":false, "food":"berry", "width":54, "height":42},
-	"longneck": {"name":"Moonstone Longneck", "hp":95, "speed":20.0, "damage":14, "radius":14.0, "feeds":5, "predator":false, "food":"berry", "width":70, "height":60},
-	"dodo": {"name":"Sunplume Dodo", "hp":12, "speed":18.0, "damage":2, "radius":5.0, "feeds":2, "predator":false, "food":"berry", "width":20, "height":24}
+	"raptor": {"name":"Shardback Raptor", "hp":34, "speed":53.0, "damage":8, "radius":7.0, "feeds":15, "predator":true, "food":"trex_meat", "width":42, "height":32},
+	"rex": {"name":"Emerald Tyrant", "hp":650, "speed":46.0, "damage":30, "radius":14.0, "feeds":40, "predator":true, "food":"trex_meat", "width":76, "height":56},
+	"stego": {"name":"Amberplate Stegosaurus", "hp":90, "speed":23.0, "damage":11, "radius":12.0, "feeds":20, "predator":false, "food":"berry", "width":60, "height":40},
+	"trike": {"name":"Jadehorn Triceratops", "hp":100, "speed":29.0, "damage":13, "radius":12.0, "feeds":20, "predator":false, "food":"berry", "width":54, "height":42},
+	"longneck": {"name":"Moonstone Longneck", "hp":140, "speed":20.0, "damage":15, "radius":14.0, "feeds":24, "predator":false, "food":"berry", "width":70, "height":60},
+	"dodo": {"name":"Sunplume Dodo", "hp":12, "speed":18.0, "damage":2, "radius":5.0, "feeds":2, "predator":false, "food":"berry", "width":20, "height":24},
+	"lystro": {"name":"Mossback Lystrosaurus", "hp":14, "speed":20.0, "damage":2, "radius":5.0, "feeds":2, "predator":false, "food":"berry", "width":24, "height":20},
+	"allo": {"name":"Rustback Allosaurus", "hp":170, "speed":47.0, "damage":15, "radius":11.0, "feeds":25, "predator":true, "food":"trex_meat", "width":64, "height":46},
+	"alpha": {"name":"Skarn, the Shardback Alpha", "hp":560, "speed":56.0, "damage":17, "radius":13.0, "feeds":0, "predator":true, "food":"trex_meat", "width":84, "height":60, "boss":true},
 }
+## Taming. The dodo and the lystrosaurus eat from any hand. Everything else
+## needs patience: after each feed (once it has eaten, FEED_WAIT) it must SETTLE
+## with the keeper at a distance before it will take another; a keeper who
+## hangs about within SPACE px while it isn't eating makes it uneasy, and
+## UNEASE seconds of that and it lashes out and forgets two feeds. Predators
+## are netted first (NET_TIME), which knocks them down to the ground.
+const EASY := ["dodo", "lystro"]
+const FEED_WAIT := {"dodo": 1.6, "lystro": 1.6, "raptor": 2.2, "allo": 2.4, "rex": 2.6}
+const SETTLE := 6.0
+const SPACE := 46.0
+const UNEASE := 3.5
+const NET_TIME := {"raptor": 15.0, "allo": 12.0, "rex": 8.0}
+## What each predator hunts when nothing else calls it (raptors take the big
+## herbivores only as a pack of three or more; the rex takes anything).
+const PREY := {"raptor": ["dodo", "lystro"], "allo": ["dodo", "lystro", "stego", "trike", "raptor"], "rex": ["dodo", "lystro", "stego", "trike", "longneck", "raptor", "allo"]}
+const PACK_PREY := ["stego", "trike"]
 ## How each body moves and animates. accel: px/s^2 (heavy bodies build up and
 ## shed speed slowly). walk/run: ground speed at which the clip's feet do not
 ## slide (speed_scale follows the real speed). run_at: speed that switches to
@@ -35,6 +58,9 @@ const BODY := {
 	"trike": {"accel": 170.0, "walk": 18.0, "run": 60.0, "run_at": 40.0, "armour": true, "idle": "eat", "idle_every": 6.5},
 	"longneck": {"accel": 90.0, "walk": 14.0, "run": 14.0, "run_at": 999.0, "armour": true, "idle": "eat", "idle_every": 7.0, "heavy_steps": true},
 	"dodo": {"accel": 360.0, "walk": 11.0, "run": 30.0, "run_at": 22.0, "armour": false, "idle": "eat", "idle_every": 4.0},
+	"lystro": {"accel": 320.0, "walk": 10.0, "run": 26.0, "run_at": 20.0, "armour": false, "idle": "eat", "idle_every": 4.5},
+	"allo": {"accel": 260.0, "walk": 24.0, "run": 62.0, "run_at": 40.0, "armour": true, "idle": "roar", "idle_every": 24.0, "heavy_steps": true},
+	"alpha": {"accel": 400.0, "walk": 30.0, "run": 66.0, "run_at": 38.0, "armour": true, "idle": "idle", "idle_every": 9.0, "heavy_steps": true},
 }
 @export var species: String = "raptor"
 var stats: Dictionary
@@ -54,6 +80,17 @@ var _threat: Node2D
 var net_time := 0.0
 var feed_cooldown := 0.0
 var provoked_time := 0.0
+## Taming patience: settle counts down only while the keeper keeps away;
+## unease builds while they crowd a beast that isn't eating.
+var settle := 0.0
+var unease := 0.0
+## After a kill a predator leaves prey alone for a while.
+var sated := 0.0
+## A boss resting in its den ignores everything until woken (AlphaBoss), or
+## until something strikes it.
+var dormant := false
+## Enraged (bosses): moves come round faster and the body runs harder.
+var haste := 1.0
 var is_dead := false
 var state := "wander"
 var home := Vector2.ZERO
@@ -104,11 +141,41 @@ var _flinch_ready := 0.0
 ## The body's own steering velocity; knockback (_knock) is layered on top of
 ## it each frame, never folded into it.
 var _move_velocity := Vector2.ZERO
+## Looks round a few times a second (staggered across the herd), not every
+## tick: the wild target, a hunter bearing down, and the way round rocks.
+var _hunt_target: Node2D
+var _hunt_none := false
+var _hunt_scan := 0.0
+var _hunter: Node2D
+var _hunter_scan := 0.0
+var _avoid_angle := 0.0
+var _avoid_for := 0
+var _avoid_last := Vector2.ZERO
+var body_radius := 8.0
+## Every creature, gathered once a physics tick (the group query copies the
+## list each time, and each creature looks round several times a tick).
+## A creature arriving or leaving starts a fresh list.
+static var _roster: Array = []
+static var _roster_tick := -1
+
+static func roster(tree: SceneTree) -> Array:
+	var tick := Engine.get_physics_frames()
+	if tick != _roster_tick:
+		_roster_tick = tick
+		_roster = tree.get_nodes_in_group("forest_creatures")
+	return _roster
+
+func _enter_tree() -> void:
+	_roster_tick = -1
+
+func _exit_tree() -> void:
+	_roster_tick = -1
 
 func _ready() -> void:
 	if not SPECIES.has(species): species = "raptor"
 	stats = SPECIES[species]
 	body = BODY[species]
+	body_radius = float(stats.radius)
 	health = int(stats.hp) if health <= 0 else health
 	home = position
 	if not _anchor_restored: _order_anchor = global_position
@@ -191,11 +258,29 @@ func _apply_art() -> void:
 		_sprite.play("idle_" + _facing)
 		_clip = "idle"
 
+## Far from the keeper (well off screen) and not mid-move, a wild beast lives
+## at a quarter of the rate: it thinks and moves every fourth tick, as far as
+## four ticks would take it. Close by, tamed, or striking: every tick.
+const LAZY_RANGE := 640.0
+var _lazy_delta := 0.0
+
+func _lazy() -> bool:
+	return not tamed and not moves.busy() and is_instance_valid(_player) and global_position.distance_squared_to(_player.global_position) > LAZY_RANGE * LAZY_RANGE
+
 func _physics_process(delta: float) -> void:
 	if is_dead: return
+	if _lazy():
+		_lazy_delta += delta
+		if (Engine.get_physics_frames() + get_instance_id()) % 4 != 0: return
+		delta = _lazy_delta
+	_lazy_delta = 0.0
 	_clock += delta
 	feed_cooldown = maxf(0.0, feed_cooldown - delta)
 	provoked_time = maxf(0.0, provoked_time - delta)
+	sated = maxf(0.0, sated - delta)
+	_hunt_scan -= delta
+	_hunter_scan -= delta
+	_tick_patience(delta)
 	_hurt_time = maxf(0.0, _hurt_time - delta)
 	_bleed_flash = maxf(0.0, _bleed_flash - delta)
 	var bled: int = bleed.tick(delta)
@@ -254,7 +339,7 @@ func _physics_process(delta: float) -> void:
 			wanted = _wander_velocity(delta, _order_anchor, 65.0)
 		if state in ["follow", "stay", "guard", "roam"]: _resting_behaviour(delta, wanted)
 	else:
-		wanted = _wild_behaviour(delta)
+		wanted = _wild_behaviour(delta) * haste
 	if moves.busy():
 		# The move owns the body: planted strikes, lunges, the charge lane, the leap.
 		_move_velocity = Vector2.ZERO
@@ -266,7 +351,7 @@ func _physics_process(delta: float) -> void:
 		if wanted.length() > 0 and net_time <= 0:
 			wanted += _separation() * 12.0
 		if _world and wanted.length() > 0: wanted = _avoid_obstacles(wanted)
-		if (absf(global_position.x) > 865 or absf(global_position.y) > 865) and not (tamed and order == "stay"):
+		if _outside_world() and not (tamed and order == "stay"):
 			wanted = global_position.direction_to(home) * float(stats.speed)
 		in_water = is_instance_valid(_world) and _world.is_water_at(global_position)
 		if in_water: wanted *= WATER_SPEED_MULTIPLIER
@@ -278,11 +363,19 @@ func _physics_process(delta: float) -> void:
 		if net_time > 0 or _work_swing_time>0 or (tamed and order == "stay"): _move_velocity = Vector2.ZERO
 		velocity = _move_velocity + _knock
 	_knock = _knock.move_toward(Vector2.ZERO, 520.0 * delta)
+	# A lazy tick covers several ticks' ground in one step.
+	var stretch := delta * float(Engine.physics_ticks_per_second)
+	if stretch > 1.01: velocity *= stretch
 	move_and_slide()
+	if stretch > 1.01: velocity /= stretch
 	if is_on_wall(): _wander = _wander.rotated(PI / 2.0)
 	_update_animation()
 	_heavy_footsteps()
-	queue_redraw()
+	if _on_view(): queue_redraw()
+
+## Near enough the keeper to be on screen, or about to be.
+func _on_view() -> bool:
+	return not is_instance_valid(_player) or global_position.distance_squared_to(_player.global_position) < 176400.0
 
 # ------------------------------------------------------------------ behaviour
 ## Idle life while not fighting: graze, sniff or roar now and then.
@@ -302,12 +395,22 @@ func play_action(clip: String, speed := 1.0) -> bool:
 	_action_time = DinoArt.duration(art_key, clip) / speed
 	stop()
 	_play_clip(clip, true, speed)
-	if clip == "roar" and is_instance_valid(voice): voice.play_cue("attack")
+	if clip == "roar" and is_instance_valid(voice): voice.play_cue("roar")
 	return true
 
 func _wild_behaviour(delta: float) -> Vector2:
-	# Dodos bolt from a threat: anything that hurt them, or a keeper rushing in.
-	if species == "dodo":
+	if dormant and provoked_time <= 0.0:
+		state = "wander"
+		var rest := _wander_velocity(delta, home, 36.0) * 0.6
+		_resting_behaviour(delta, rest)
+		return rest
+	# Dodos and lystrosaurs bolt from a threat: anything that hurt them, a
+	# hunter closing in, or a keeper rushing in.
+	if species in EASY:
+		var hunter := _hunter_nearby()
+		if hunter and not (provoked_time > 0 and _valid_target(_threat)):
+			_threat = hunter
+			provoked_time = 2.5
 		if provoked_time > 0 and _valid_target(_threat):
 			if global_position.distance_to(_threat.global_position) < float(stats.radius) + 20.0 and _can_attack(_threat):
 				# Cornered: peck the attacker, then run.
@@ -325,10 +428,10 @@ func _wild_behaviour(delta: float) -> Vector2:
 			_action = ""
 			if is_instance_valid(voice): voice.play_cue("hurt")
 			# One startled dodo sets the whole flock running.
-			for other in get_tree().get_nodes_in_group("forest_creatures"):
-				if other != self and other.species == "dodo" and not other.tamed and not other.is_dead and other.global_position.distance_to(global_position) < 90.0:
+			for other in roster(get_tree()):
+				if other != self and other.species == species and not other.tamed and not other.is_dead and other.global_position.distance_to(global_position) < 90.0:
 					other._flee_time = maxf(other._flee_time, 1.4)
-	var target := _wild_target()
+	var target := _current_target()
 	if target:
 		state = "hunt"
 		# A hunt interrupts grazing or sniffing, never a roar it just began.
@@ -349,7 +452,7 @@ func _wild_behaviour(delta: float) -> Vector2:
 ## Herbivores look up at a keeper who comes close; a trike paws the ground
 ## at one who charges in (a warning: it only attacks when struck).
 func _alert(_delta: float) -> void:
-	if species in ["dodo", "raptor", "rex"] or not is_instance_valid(_player) or _action_time > 0.0: return
+	if species in EASY or bool(stats.predator) or not is_instance_valid(_player) or _action_time > 0.0: return
 	var d := global_position.distance_to(_player.global_position)
 	if d > 52.0: return
 	if species == "trike" and _warned <= 0.0 and _player.velocity.length() > 100.0 and d < 46.0:
@@ -367,6 +470,14 @@ func _hunt(target: Node2D, _delta: float) -> Vector2:
 	var to := target.global_position - global_position
 	var g := moves.gap(target)
 	match species:
+		"allo":
+			# A short roar as it locks on, then a fast, low stalk.
+			if not _roared and g < 120.0:
+				_roared = true
+				_face(to.normalized(), true)
+				play_action("roar", 1.4)
+				return Vector2.ZERO
+			return wanted
 		"rex":
 			# A roar when it first locks on, then a heavy stalk until a move is ready.
 			if not _roared and g < 150.0:
@@ -399,7 +510,7 @@ func _hunt(target: Node2D, _delta: float) -> Vector2:
 ## hunting the same target so they come at it from both flanks.
 func _pack_side(target: Node2D) -> float:
 	var mates: Array = []
-	for other in get_tree().get_nodes_in_group("forest_creatures"):
+	for other in roster(get_tree()):
 		if other.species == "raptor" and not other.is_dead and other.tamed == tamed and other._attack_target_or_threat() == target:
 			mates.append(other)
 	mates.sort_custom(func(a, b): return a.get_instance_id() < b.get_instance_id())
@@ -409,12 +520,12 @@ func _pack_side(target: Node2D) -> float:
 func _attack_target_or_threat() -> Node2D:
 	if moves.busy() and is_instance_valid(moves.target): return moves.target
 	if provoked_time > 0 and _valid_target(_threat): return _threat
-	return _wild_target() if not tamed else _companion_target()
+	return _current_target() if not tamed else _companion_target()
 
 ## Push away from pack-mates that are too close (never stack on one spot).
 func _pack_spread() -> Vector2:
 	var push := Vector2.ZERO
-	for other in get_tree().get_nodes_in_group("forest_creatures"):
+	for other in roster(get_tree()):
 		if other == self or other.is_dead or other.species != species: continue
 		var off: Vector2 = global_position - other.global_position
 		if off.length() < 22.0 and off.length() > 0.01: push += off.normalized() * (1.0 - off.length() / 22.0)
@@ -422,6 +533,21 @@ func _pack_spread() -> Vector2:
 
 func _update_animation():
 	if _sprite.sprite_frames == null: return
+	# Netted: knocked down onto its side (its fall, held on the last frame),
+	# then, when the net gives, it scrambles back up (the fall, backwards).
+	if net_time > 0.0 and DinoArt.has_clip(art_key, "death"):
+		if _clip != "death": _play_clip("death", true, 1.6)
+		return
+	if _clip == "death" and not is_dead:
+		var fall := "death_" + _facing
+		if _sprite.sprite_frames.has_animation(fall):
+			_sprite.speed_scale = 2.4
+			_sprite.play_backwards(fall)
+			_clip = "rise"
+			_action = "rise"
+			_action_time = DinoArt.duration(art_key, "death") / 2.4
+			return
+	if _action == "rise" and _action_time > 0.0: return
 	# Facing and stride follow the body's own motion, not a shove it takes.
 	var facing_vector := velocity - _knock
 	if _work_swing_time>0: facing_vector=_work_aim*10
@@ -500,20 +626,34 @@ func facing_vector() -> Vector2:
 	return Vector2.LEFT if _sprite.flip_h else Vector2.RIGHT
 
 ## Heavy walkers shake the ground a little when the keeper is close.
+## Footfalls: [volume dB (walk), pitch, shake walking, shake running, how far
+## the shake reaches]. Light thumps for the plated herbivores; the rex stomps,
+## and the ground (the camera) shakes with every step as it comes.
+const STEPS := {
+	"rex": [-14.0, 0.8, 0.1, 0.2, 230.0],
+	"alpha": [-18.0, 0.95, 0.04, 0.09, 150.0],
+	"allo": [-20.0, 1.0, 0.03, 0.06, 130.0],
+	"longneck": [-22.0, 0.9, 0.05, 0.08, 120.0],
+	"stego": [-27.0, 1.05, 0.0, 0.0, 0.0],
+	"trike": [-27.0, 1.12, 0.0, 0.0, 0.0],
+}
 func _heavy_footsteps() -> void:
-	if not body.get("heavy_steps", false) or not _clip in ["walk", "run"]: return
+	if not STEPS.has(species) or not _clip in ["walk", "run"] or is_mounted(): return
 	var count := _sprite.sprite_frames.get_frame_count(_sprite.animation)
 	var f := _sprite.frame
 	if f == _step_frame: return
 	_step_frame = f
 	if f != 0 and f != count / 2: return
+	var step: Array = STEPS[species]
 	var feet := global_position + Vector2(0, 2)
-	_shake_near(0.07 if _clip == "walk" else 0.12, 110.0)
-	if is_instance_valid(_player) and feet.distance_to(_player.global_position) < 170.0:
-		_play_fx("thud", -24.0 if _clip == "walk" else -19.0, 1.25 if species == "rex" else 1.0)
-		var puff := Puff.new()
-		puff.dust(Vector2.ZERO, velocity, moves._dust_palette(feet), 2, 2, 0.9)
-		puff.spawn(_world if is_instance_valid(_world) else get_parent(), feet, -1.0)
+	var running := _clip == "run"
+	if float(step[2]) > 0.0: _shake_near(float(step[3]) if running else float(step[2]), float(step[4]))
+	if is_instance_valid(_player) and feet.distance_to(_player.global_position) < 170.0 + float(step[4]) * 0.5:
+		_play_fx("thud", float(step[0]) + (4.0 if running else 0.0), float(step[1]))
+		if float(step[2]) > 0.0:
+			var puff := Puff.new()
+			puff.dust(Vector2.ZERO, velocity, moves._dust_palette(feet), 2, 2, 0.9)
+			puff.spawn(_world if is_instance_valid(_world) else get_parent(), feet, -1.0)
 
 ## Camera trauma for the keeper, fading with distance.
 func _shake_near(trauma: float, radius: float) -> void:
@@ -590,6 +730,12 @@ func _has_line_of_sight(target_position: Vector2) -> bool:
 
 func _avoid_obstacles(desired: Vector2) -> Vector2:
 	# Multi-ray local steering handles freshly built walls without a stale navmesh.
+	# The way found is kept for a few ticks while the heading holds.
+	var heading := desired.normalized()
+	if _avoid_for > 0 and heading.dot(_avoid_last) > 0.96:
+		_avoid_for -= 1
+		return desired.rotated(_avoid_angle)
+	_avoid_last = heading
 	var probe := float(stats.radius) + 14.0
 	for angle in [0.0, 0.55, -0.55, 1.05, -1.05, 1.57, -1.57, 2.2, -2.2]:
 		var candidate := desired.rotated(angle)
@@ -600,7 +746,11 @@ func _avoid_obstacles(desired: Vector2) -> Vector2:
 			if _world.has_method("is_blocked_at") and _world.is_blocked_at(point):
 				blocked = true
 				break
-		if not blocked: return candidate
+		if not blocked:
+			_avoid_angle = angle
+			_avoid_for = 3
+			return candidate
+	_avoid_for = 0
 	return Vector2.ZERO
 
 func _is_hostile() -> bool:
@@ -621,19 +771,79 @@ func _contact_range(target: Node2D) -> float:
 func _wild_target() -> Node2D:
 	if provoked_time > 0 and _valid_target(_threat):
 		return _threat
-	if not _is_hostile(): return null
+	if dormant or not _is_hostile(): return null
+	# The keeper and companions within its reach; prey (whatever this hunter
+	# takes, wild or tamed) out to its hunting range: the rex never stops, the
+	# others rest after a kill. The nearest of them all.
+	var reach := 145.0 if species in ["rex", "alpha"] else 105.0
+	var prey: Array = PREY.get(species, [])
+	var hunting := 160.0 if (species == "rex" or sated <= 0.0) else 0.0
+	var pack := _pack_size() if species == "raptor" else 0
 	var closest: Node2D
-	var distance := 145.0 if species == "rex" else 105.0
-	if _valid_target(_player) and global_position.distance_to(_player.global_position) < distance:
+	var distance := INF
+	if _valid_target(_player) and global_position.distance_to(_player.global_position) < reach:
 		closest = _player
 		distance = global_position.distance_to(_player.global_position)
-	for other in get_tree().get_nodes_in_group("forest_creatures"):
-		if other == self or not other.tamed or not _valid_target(other): continue
+	for other in roster(get_tree()):
+		if other == self or not _valid_target(other): continue
 		var d := global_position.distance_to(other.global_position)
-		if d < distance:
+		if d >= distance: continue
+		if other.tamed:
+			if d < reach:
+				closest = other
+				distance = d
+		elif d < hunting and (other.species in prey or (pack >= 3 and other.species in PACK_PREY)):
 			closest = other
 			distance = d
 	return closest
+
+
+## The target this one is after, looked for afresh a few times a second
+## rather than every tick (a threat that just struck is answered at once).
+func _current_target() -> Node2D:
+	if provoked_time > 0 and _valid_target(_threat): return _threat
+	if dormant or not _is_hostile(): return null
+	if _hunt_scan > 0.0:
+		if _hunt_none: return null
+		if _valid_target(_hunt_target): return _hunt_target
+	_hunt_scan = 0.2 + float(get_instance_id() % 5) * 0.02
+	_hunt_target = _wild_target()
+	_hunt_none = _hunt_target == null
+	return _hunt_target
+
+
+## _hunter_near, a few times a second.
+func _hunter_nearby() -> Node2D:
+	if _hunter_scan <= 0.0:
+		_hunter_scan = 0.2 + float(get_instance_id() % 5) * 0.02
+		_hunter = _hunter_near()
+	return _hunter if is_instance_valid(_hunter) and not _hunter.is_dead else null
+
+
+## Raptors near this one (itself included): a pack takes bigger prey.
+func _pack_size() -> int:
+	var n := 0
+	for other in roster(get_tree()):
+		if other.species == species and not other.is_dead and other.tamed == tamed and other.global_position.distance_to(global_position) < 150.0: n += 1
+	return n
+
+
+## A wild hunter coming for this one (for the small ones, who run).
+func _hunter_near() -> Node2D:
+	for other in roster(get_tree()):
+		if other == self or other.is_dead or other.tamed or not bool(other.stats.predator): continue
+		if other.global_position.distance_to(global_position) > 110.0: continue
+		if other.get("_attack_target") == self or (other.state == "hunt" and other.global_position.distance_to(global_position) < 70.0): return other
+	return null
+
+
+## A kill: a wild hunter rests from hunting for a while.
+func on_kill(_victim: Node) -> void:
+	if tamed: return
+	sated = _rng.randf_range(90.0, 150.0)
+	_threat = null
+	provoked_time = 0.0
+	_hunt_scan = 0.0
 
 func _companion_target() -> Node2D:
 	if stance == "passive": return null
@@ -644,18 +854,27 @@ func _companion_target() -> Node2D:
 func _find_hostile() -> Node2D:
 	var closest: Node2D
 	var distance := 100.0
-	for other in get_tree().get_nodes_in_group("forest_creatures"):
+	for other in roster(get_tree()):
 		if other == self or other.tamed or not _can_attack(other): continue
 		if order == "guard" and _order_anchor.distance_to(other.global_position) > 110.0: continue
 		# Neutral follows defend against an active threat. Guard intercepts predators
 		# in the guarded clearing; aggressive seeks nearby hostile creatures.
-		var targeting_friend: bool = other.state == "hunt" or (other._attack_time > 0 and _valid_target(other._attack_target) and (other._attack_target == _player or other._attack_target.get("tamed") == true))
+		var its: Node2D = other._attack_target if other._attack_time > 0 and _valid_target(other._attack_target) else (other._threat if other.provoked_time > 0 and _valid_target(other._threat) else null)
+		if its == null and other.state == "hunt": its = other._current_target()
+		var targeting_friend: bool = its != null and (its == _player or its.get("tamed") == true)
 		if not (other._is_hostile() and (stance == "aggressive" or order == "guard" or targeting_friend)): continue
 		var d := global_position.distance_to(other.global_position)
 		if d < distance:
 			distance = d
 			closest = other
 	return closest
+
+## Past the world's walls (a shove through a gap): steer home.
+func _outside_world() -> bool:
+	if not is_instance_valid(_world) or not _world.has_method("bounds"): return absf(global_position.x) > 865 or absf(global_position.y) > 865
+	var b: Rect2i = _world.bounds()
+	return not Rect2(Vector2(b.position * 16) + Vector2(31, 31), Vector2(b.size * 16) - Vector2(62, 62)).has_point(global_position)
+
 
 ## Wander around a centre; herds drift back toward their own kind.
 func _wander_velocity(delta: float, center: Vector2, radius: float) -> Vector2:
@@ -671,10 +890,10 @@ func _wander_velocity(delta: float, center: Vector2, radius: float) -> Vector2:
 
 ## Mean position of wild same-species creatures nearby (INF when alone).
 func _herd_centre() -> Vector2:
-	if tamed or species in ["raptor", "rex"]: return Vector2.INF
+	if tamed or bool(stats.predator): return Vector2.INF
 	var sum := Vector2.ZERO
 	var n := 0
-	for other in get_tree().get_nodes_in_group("forest_creatures"):
+	for other in roster(get_tree()):
 		if other == self or other.is_dead or other.tamed or other.species != species: continue
 		if other.global_position.distance_to(global_position) < 150.0:
 			sum += other.global_position
@@ -707,7 +926,7 @@ func assign_nearest_work_chest() -> bool:
 
 func _follow_position() -> Vector2:
 	var followers: Array=[]
-	for other in get_tree().get_nodes_in_group("forest_creatures"):
+	for other in roster(get_tree()):
 		if other.tamed and not other.is_dead and other.order=="follow": followers.append(other)
 	var index:=maxi(0,followers.find(self))
 	var angle:=TAU*float(index)/maxi(1,followers.size())+PI*0.5
@@ -811,14 +1030,20 @@ func get_role_description() -> String:
 		"stego": return "Timber worker. Its spiked tail sweeps foes aside and fells wild trees."
 		"trike": return "Vegetation worker. Gores up close and rams anything in its lane."
 		"longneck": return "Gentle giant. Stomps the ground and sweeps its long tail."
+		"allo": return "Big hunter. Fast bites and a crushing chomp; its scales make the finest armour."
+		"lystro": return "Burrowing grazer. Small, stout and loyal; quick to trust."
+		"alpha": return "The pack's alpha. Leaps from afar, rakes up close, and calls its pack."
 		_: return "Nest worker. Produces an egg each active minute; carries up to 12."
 
 func _separation() -> Vector2:
 	var result := Vector2.ZERO
-	for other in get_tree().get_nodes_in_group("forest_creatures"):
+	var here := global_position
+	for other in roster(get_tree()):
 		if other == self or other.is_dead: continue
-		var offset: Vector2 = global_position - other.global_position
-		if offset.length() < float(stats.radius) + float(other.stats.radius) + 5.0: result += offset.normalized()
+		var offset: Vector2 = here - other.global_position
+		# No two bodies touch from further than 40 (radii are 14 at most).
+		if absf(offset.x) > 40.0 or absf(offset.y) > 40.0: continue
+		if offset.length() < body_radius + float(other.body_radius) + 5.0: result += offset.normalized()
 	return result.limit_length(1.0)
 
 func interact(item_id: String = "") -> Dictionary:
@@ -826,19 +1051,24 @@ func interact(item_id: String = "") -> Dictionary:
 	if tamed:
 		set_order({"follow":"stay", "stay":"guard", "guard":"roam", "roam":"follow"}.get(order, "follow"))
 		return _result(true, false, "%s: %s" % [stats.name, order.capitalize()])
+	if int(stats.feeds) <= 0: return _result(false, false, "%s will never eat from your hand." % stats.name)
 	if item_id == "net":
 		if not bool(stats.predator): return _result(false, false, "Gentle feeding is enough for this herbivore.")
 		if net_time > 1.0: return _result(false, false, "The net is still holding.")
-		net_time = 7.0 if species == "rex" else 9.0
+		net_time = float(NET_TIME.get(species, 12.0))
 		moves.cancel()
 		_attack_time = 0.0
 		stop()
-		return _result(true, true, "Restrained! Offer raw meat before the net breaks.")
+		return _result(true, true, "Netted and down! Offer raw meat before it tears free.")
 	if item_id != str(stats.food): return _result(false, false, get_interaction_hint())
-	if bool(stats.predator) and net_time <= 0: return _result(false, false, "Restrain this predator with a net first.")
+	if bool(stats.predator) and net_time <= 0: return _result(false, false, "Net this predator first.")
 	if feed_cooldown > 0: return _result(false, false, "Let it eat. Feed again in %.0fs." % ceilf(feed_cooldown))
+	if settle > 0.0 and net_time <= 0.0:
+		return _result(false, false, "It's watching you. Step back and give it room for a while.")
 	trust += 1
-	feed_cooldown = 3.2
+	feed_cooldown = float(FEED_WAIT.get(species, 5.0))
+	settle = 0.0 if species in EASY or net_time > 0.0 else SETTLE
+	unease = 0.0
 	provoked_time = 0
 	if not bool(stats.predator): play_action("eat")
 	if trust >= int(stats.feeds):
@@ -860,8 +1090,31 @@ func _result(ok: bool, consume: bool, message: String) -> Dictionary:
 
 func get_interaction_hint() -> String:
 	if tamed: return "%s · %s · E: next order" % [stats.name, order.capitalize()]
+	if int(stats.feeds) <= 0: return "%s · Untameable" % stats.name
 	if bool(stats.predator): return "%s · Net, then raw meat · Trust %d/%d" % [stats.name, trust, int(stats.feeds)]
+	if settle > 0.0: return "%s · Back off and let it settle · Trust %d/%d" % [stats.name, trust, int(stats.feeds)]
 	return "%s · Hand-feed berries · Trust %d/%d" % [stats.name, trust, int(stats.feeds)]
+
+
+## Taming patience (see SETTLE/UNEASE): a beast that has started to trust the
+## keeper settles only while they keep their distance, and one crowded while it
+## isn't eating grows uneasy and at last lashes out, forgetting two feeds.
+func _tick_patience(delta: float) -> void:
+	if tamed or species in EASY or trust <= 0 or net_time > 0.0 or not is_instance_valid(_player):
+		unease = 0.0
+		return
+	var d := global_position.distance_to(_player.global_position) - float(stats.radius)
+	if d > SPACE * 1.5: settle = maxf(0.0, settle - delta)
+	if d < SPACE and feed_cooldown <= 0.0 and settle > 0.0:
+		unease += delta
+		if unease >= UNEASE:
+			unease = 0.0
+			trust = maxi(0, trust - 2)
+			_threat = _player
+			provoked_time = 4.0
+			notice.emit("%s lashes out: you crowded it. Trust %d/%d" % [stats.name, trust, int(stats.feeds)])
+	else:
+		unease = maxf(0.0, unease - delta * 2.0)
 
 ## knockback: shove in px/s away from the source (-1 = the default nudge).
 func take_damage(amount: int, source: Variant = null, knockback := -1.0) -> void:
@@ -879,7 +1132,7 @@ func take_damage(amount: int, source: Variant = null, knockback := -1.0) -> void
 		# Compatibility for legacy position-only attacks: resolve the nearest
 		# actual attacker, not always the player.
 		var nearest := 12.0
-		for candidate in get_tree().get_nodes_in_group("forest_creatures"):
+		for candidate in roster(get_tree()):
 			if candidate == self or not _valid_target(candidate): continue
 			var d: float = candidate.global_position.distance_to(source_position)
 			if d < nearest:
@@ -927,7 +1180,7 @@ func _bleed_hurt(amount: int) -> void:
 ## scatters the flock.
 func _rally(source: Variant) -> void:
 	if tamed or not (source is Node2D) or not is_instance_valid(source): return
-	for other in get_tree().get_nodes_in_group("forest_creatures"):
+	for other in roster(get_tree()):
 		if other == self or other.is_dead or other.tamed or other.species != species: continue
 		if other.global_position.distance_to(global_position) > 160.0: continue
 		if species == "dodo":
@@ -957,7 +1210,13 @@ func _die() -> void:
 	# docs/ARMOR_PROGRESSION.md): one raptor covers the Fangbound set (1 fang per
 	# piece) even if the other is tamed; the rex covers the Tyrant set plus a bed.
 	if species == "raptor": loot["raptor_fang"] = 3
-	if species == "rex": loot["trex_scale"] = 5
+	# The allosaurus is where a keeper gets crystal scale for the finest
+	# armour; the rex (all but unkillable) drops a hoard of it.
+	if species == "allo": loot["trex_scale"] = 3
+	if species == "rex": loot["trex_scale"] = 8
+	if species == "alpha":
+		loot["raptor_fang"] = 6
+		loot["alpha_crest"] = 1
 	for id in loot:
 		var item = ItemDB.make(id)
 		if item:

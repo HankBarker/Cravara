@@ -16,6 +16,16 @@ const CAST := {
 	"guide": {
 		"name": "Orrin", "title": "The Wayfinder", "arrives": "start", "found": [],
 		"services": ["help", "recipes", "lore"],
+		# The first meeting, when the keeper walks out of the tent on a new
+		# journey (after the opening): he saw them fall.
+		"intro": [
+			"Easy, easy. You're awake. You slept the whole day through.",
+			"I saw you come down last night. A light fell past the ridge, bright as a Sky-Fang, and when I got there you were lying by the old shrine north of camp. The crystal was humming like a struck bell.",
+			"The old carvings say what falls from the sky must be kept. Maybe that means you. Or maybe you're the one meant to do the keeping. A Keeper.",
+			"There's not been a Keeper since the last one went north, past the Pale Hills. The wilds have waited a long while.",
+			"I'm Orrin. I find the way; it's all I've ever been good for. This was the old tribe's first camp. It's yours now, if you want it.",
+			"Timber first: take your axe to a tree, then build yourself a workbench. And come and find me whenever you're lost.",
+		],
 		"greet": [
 			"Ah, you're awake. The wilds have waited a long while for a new Keeper.",
 			"Mind the long grass after dusk. Raptors hunt by the rustle.",
@@ -85,11 +95,14 @@ const CAST := {
 ## What the warden knows of each beast ([food, how to earn trust, riding]).
 const BEASTS := {
 	"dodo": ["Berries", "Offer berries from your hand. Dodos trust quickly and lay eggs at home.", "Too small to ride. Set them to work and they'll gather for you."],
-	"stego": ["Berries", "Offer berries, slowly. It startles at loud noises and swings that tail.", "Fit a stego saddle (workbench). Steady, strong, and its tail swing bleeds foes."],
-	"trike": ["Berries", "Offer berries. It charges when threatened, so approach from the side.", "Fit a trike saddle. Click to gore; hold to charge a ram that bowls foes over."],
-	"longneck": ["Berries", "Patient feeding, many berries. It spooks easily but never forgets a friend.", "Too tall for any saddle yet made."],
-	"raptor": ["Raw meat", "Net it first so it can't bolt, then feed raw meat while it's restrained.", "No saddle fits a raptor. It fights beside you instead."],
-	"rex": ["Raw meat", "Nobody tames a rex. Nobody sane, anyway. Net it, feed it, and pray.", "Rex saddles are the stuff of legend."],
+	"lystro": ["Berries", "A berry or two and it's yours. Lystrosaurs are the friendliest things in the wilds.", "Too small to ride, but it'll follow you anywhere."],
+	"stego": ["Berries", "Twenty berries and a lot of patience. Feed it, then step well back and let it settle before the next. Crowd it and that tail comes round.", "Fit a stego saddle (workbench). Steady, strong, and its tail swing bleeds foes."],
+	"trike": ["Berries", "Twenty berries, one at a time, with room between. Hang about and it charges, so feed and step away.", "Fit a trike saddle. Click to gore; hold to charge a ram that bowls foes over."],
+	"longneck": ["Berries", "Two dozen berries and the patience of stone. It spooks easily but never forgets a friend.", "Too tall for any saddle yet made."],
+	"raptor": ["Raw meat", "Net it and it goes down. Feed it raw meat before it tears free: about fifteen bites, so bring nets. Net the leader and the pack scatters.", "No saddle fits a raptor. It fights beside you instead."],
+	"allo": ["Raw meat", "A big hunter, and it tears nets fast. Net it, feed it, net it again. Its crystal scales make the finest armour, if you'd rather fight it.", "No saddle for an allosaurus. Yet."],
+	"rex": ["Raw meat", "Nobody tames a rex. It'd take forty bites and every net you own. Don't fight it alone either: bring beasts and arrows.", "Rex saddles are the stuff of legend."],
+	"alpha": ["Nothing", "Skarn leads the Shardback pack from its den in the north-east. It won't take food. It takes keepers.", "Beat it and the pack loses its nerve."],
 }
 
 ## The trader's goods: id -> [price in ancient coins, how many per purchase].

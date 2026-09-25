@@ -9,7 +9,9 @@ the game reads (DinoArt.gd):
 
   {"key", "species", "canvas": [w, h], "ground": row the feet stand on,
    "clips": {CLIP: {"frames", "fps", "loop", "hit": frame the blow lands,
-                    "placeholder": true when no generated art exists yet}}}
+                    "placeholder": true when no generated art exists yet,
+                    "stand_in": [views drawn from the resting pose while the
+                    others are generated]}}}
 
 A clip without generated art is exported as a placeholder (the resting drawing
 repeated), so the game always has every clip. Hit frames come from
@@ -33,7 +35,7 @@ GROUND = 6
 # lowest pixel (the tail tip) on the ground line, so the feet floated above
 # the creature's shadow. Measured by eye on first/KEY_up.png (feet row vs the
 # ground row), capped so the tail tip stays on the canvas.
-VIEW_DROP = {"up": {"rex": 6, "raptor": 4, "stego": 6, "stego_saddle": 6, "trike": 4, "trike_saddle": 4, "longneck": 4}}
+VIEW_DROP = {"up": {"rex": 6, "raptor": 4, "stego": 6, "stego_saddle": 6, "trike": 4, "trike_saddle": 4, "longneck": 4, "alpha": 2, "allo": 5, "lystro": 1}}
 ATTACKS = {"bite", "chomp", "slash", "pounce", "tail_swing", "tail_swing_far", "stomp", "gore", "peck"}
 
 
@@ -139,12 +141,12 @@ def main():
             if views != VIEWS:
                 entry["views"] = list(views)
             counts = []
-            placeholder = False
+            stand_in = []
             per_view = {}
             for view in views:
                 fr = frames_of(key, clip, view)
                 if not fr:
-                    placeholder = True
+                    stand_in.append(view)
                     base = Image.open(os.path.join(SRC, "first", "%s_%s.png" % (key, view))).convert("RGBA")
                     n = int(c["frames"]) if c.get("loop") else int(c["frames"]) + 1
                     fr = [base] * n
@@ -158,8 +160,13 @@ def main():
                     strip.alpha_composite(f.crop((0, 0, w, h - drop)), (i * w, drop))
                 strip.save(os.path.join(out_dir, "%s_%s.png" % (clip, view)))
             entry["frames"] = n
+            # A clip is a placeholder only with no generated art at all; one
+            # facing that failed generation stands in with the resting pose.
+            placeholder = len(stand_in) == len(views)
             if placeholder:
                 entry["placeholder"] = True
+            elif stand_in:
+                entry["stand_in"] = stand_in
             if saddled:
                 # Where the saddle (and so the rider's seat) moved in each frame.
                 entry["seat"] = {v: [list(track(f, templates[v])) for f in per_view[v][:n]] for v in views}

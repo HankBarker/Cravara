@@ -120,6 +120,8 @@ func _physics_process(delta: float) -> void:
 		nameplate.visible = keeper.global_position.distance_to(global_position) < NEAR
 	if caged or talking:
 		velocity = Vector2.ZERO
+		# Whoever they're talking to, they keep an eye on.
+		if talking and is_instance_valid(keeper): _face(keeper.global_position - global_position)
 		_play("idle")
 		return
 	_wait -= delta

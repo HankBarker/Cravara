@@ -3,7 +3,7 @@ extends Node2D
 func _ready() -> void:
 	await get_tree().process_frame
 	var world=$World
-	assert(world.terrain.size()==112*112)
+	assert(world.terrain.size()==world.BOUNDS.size.x*world.BOUNDS.size.y)
 	assert(not world.is_water_at(Vector2.ZERO))
 	assert(not world.is_blocked_at(Vector2.ZERO))
 	# Placement uses the actual physics shapes, including creature bodies.

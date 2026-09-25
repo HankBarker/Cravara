@@ -43,9 +43,14 @@ func verify():
 		if not c.stats.predator:
 			check(c.interact("berry").consume, kind+" accepts hand feeding")
 			check(not c.interact("berry").consume, kind+" feeding cooldown enforced")
-			while not c.tamed:
+			# (Each feed now wants the keeper to back off while it settles:
+			# forest_creatures pass 10; the loop skips the wait like the chewing.)
+			var feeds := 0
+			while not c.tamed and feeds < 100:
 				c.feed_cooldown = 0
+				c.settle = 0.0
 				c.interact("berry")
+				feeds += 1
 			check(c.order=="follow",kind+" starts following")
 			c.interact("")
 			check(c.order=="stay",kind+" stay order")
@@ -68,9 +73,11 @@ func verify():
 	raptor.net_time=0
 	check(not raptor.interact("trex_meat").consume,"expired net blocks further feeding")
 	raptor.interact("net")
-	while not raptor.tamed:
+	var bites := 0
+	while not raptor.tamed and bites < 100:
 		raptor.feed_cooldown=0
 		raptor.interact("trex_meat")
+		bites += 1
 	check(raptor.tamed and raptor.net_time==0,"predator finishes tame and releases net")
 	for entry in [[Vector2(100,0),"side"],[Vector2(0,100),"down"],[Vector2(0,-100),"up"]]:
 		player.position=raptor.position+entry[0]

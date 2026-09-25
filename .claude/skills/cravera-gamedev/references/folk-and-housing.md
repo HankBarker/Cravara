@@ -76,6 +76,19 @@ stone, centre}`. `survey(world)` finds every room. `describe(room)` gives
 - Roofs fade only over the room the keeper stands in:
   `ForestWorld.is_roof_open(cell)`, a roof-to-roof flood from the keeper's
   cell, cached per frame and keeper cell.
+- **Roofs are drawn whole** (pass 10, `Forest/ForestRoofs.gd`, z 8,
+  `light_mask 0` so torch shadows never blotch them): each patch of joined
+  roof tiles is one roof sitting on the wall tops, with overhangs that know
+  the walls beside it (`WALL_SIDE`, `WALL_BACK`, `WALL_FRONT`, lips), a
+  back slope, ridge, front slope and eave of uneven slates or straw. The
+  tiles keep their durability and fade; `_draw` uses the patch's lowest
+  alpha. Placing the last wall of a closed room with a roof item fills its
+  whole roof (`interact_at`). Look: `Tests/RoofLookCapture.tscn`.
+- **What a click hits** (`ForestWorld._target_cell`, pass 10): a roof that
+  isn't open (from outside), then the frontmost placed prop whose target
+  rect holds the point (a bed before the floor or wall behind it), then the
+  prop on the cell, the canopy search, then the floor. Inside a house the
+  keeper breaks the bed, then the floor below; never the roof overhead.
 
 ## Stone building
 
@@ -90,22 +103,45 @@ stone floor 6, stone door 8, slate roof 5.
 - Code that builds for the keeper must also set `world.placed[c]` and
   `props[c].is_placed`, or the build vanishes on load.
 
-## Talking (`UI/FolkDialogue.gd`, CanvasLayer 28, pauses the tree)
+## Talking (`UI/FolkDialogue.gd`, CanvasLayer 28)
 
-A plate at the foot of the screen that grows with its page (`_fit`), so the
-world stays in view. It holds:
+Pass 10: **a compact panel that never pauses** (Hank: never be stuck in a
+talk screen while something attacks). It sits in the left column
+(`ORIGIN (6,48)`, `WIDTH 176`); the keeper moves, fights and uses the
+hotbar while it is open. It closes itself when the keeper walks more than
+`REACH` (76 px) from the speaker, and when the satchel, map or any other
+overlay opens. `panel_rect()` is its area. It holds:
 
 - the portrait (the first idle-down frame)
 - the name in IM Fell, the title in mint caps
 - typewriter words at 70 chars/s
-- the page: talk, recipes (satchel icon grid), trade (buy list and sell
-  column), advice, house
+- the page: talk (two columns of buttons: Chat, What next?, Recipes, A
+  story, Trade, The beasts, Tend beasts, Home, Goodbye), recipes (7-column
+  icon grid), trade (Buy / Sell tabs), advice, house (Move in here / Swap
+  with X / Leave house)
+- **script mode** (`open_script(folk_id, manager, lines, from_step,
+  on_done)`): Orrin's first words after the opening story. E goes on, Esc
+  skips; walking off keeps the place (`script_step`, saved as the guide's
+  `intro_step`) and talking again resumes it. The context hint reads
+  "E  Go on   Esc  Skip".
 
 E goes to whichever is nearest: a folk member (within 40 px of the feet), a
 companion or a camp object (`ForestPlaytest._folk_first`). A camp object the
 keeper aims at comes first. Nothing happens while mounted. The context hint
-reads "E  Talk to X" or "E  Free X". E or Esc closes the plate; Esc steps
-back to the talk page first.
+reads "E  Talk to X" or "E  Free X" (and "E  Goodbye" while talking). E or
+Esc closes the panel; Esc steps back to the talk page first.
+
+**The opening** (pass 10, `Forest/intro/IntroCutscene.gd`, CanvasLayer 60):
+a new expedition started from the menu (meta `forest_intro`) plays eight
+painted plates (`intro/art/0N-*.png`, PixelLab Pro) with narration over the
+title theme: the green world, the star that fell, the first builders, their
+carving WHAT FALLS FROM THE SKY MUST BE KEPT, the Keepers, the last one
+going north past the Pale Hills. Space/Enter/E/click reveals then moves on;
+hold Esc 1 s to skip; it swallows all input. Then `_awaken` fades in, the
+keeper walks out of the first tent (`FIRST_TENT`), and Orrin, waiting
+outside, starts his `CAST.guide.intro` lines ("Easy, easy. You're awake…
+I saw you come down last night… what falls from the sky must be kept… A
+Keeper."). Suite: `Tests/IntroSuite.tscn`.
 
 ## Folk & houses panel (`UI/FolkHousesPanel.gd`, H or the pause menu)
 

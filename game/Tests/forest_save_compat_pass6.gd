@@ -27,9 +27,11 @@ func run():
 		var item: Item=stage.player.equipped_armor[slot]
 		equipped[slot]=item.id if item else ""
 	check(equipped==saved.armor,"existing armor remains equipped")
+	# The journey's own creatures (pass 10 adds the alpha, raised fresh by its
+	# den, and the Bonelands' wildlife, which a journey from before arrives to).
 	var live:=0
 	for creature in get_tree().get_nodes_in_group("forest_creatures"):
-		if not creature.is_queued_for_deletion(): live+=1
+		if not creature.is_queued_for_deletion() and creature.species != "alpha" and creature.global_position.x < 56 * 16: live+=1
 	check(live==saved.creatures.size(),"existing wildlife and companions survive load")
 	check(stage.player.appearance.size()==5,"legacy journey receives complete cosmetic defaults")
 	check(stage.gardening.plots.is_empty(),"legacy journey does not invent garden crops")

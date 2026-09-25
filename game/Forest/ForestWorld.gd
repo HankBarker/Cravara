@@ -2,9 +2,15 @@ extends Node2D
 ## Seeded forest vertical slice. All edits persist as diffs against the seed.
 const CELL := 16
 const EXTENT := 56
+## Pass 10: the world is the forest (the original EXTENT square, generated
+## exactly as before) plus the Bonelands east of it. BOUNDS covers both.
+const BONELANDS := Rect2i(56, -56, 112, 112)
+const BOUNDS := Rect2i(-56, -56, 224, 112)
 const Prop = preload("res://Forest/ForestProp.gd")
 const GROUND = preload("res://Forest/ground/ForestGround.gd")
 const FLORA = preload("res://Forest/ground/ForestFlora.gd")
+const ROOFS = preload("res://Forest/ForestRoofs.gd")
+const Housing = preload("res://Forest/folk/Housing.gd")
 const Loot = preload("res://Forest/world/Loot.gd")
 ## A cache was opened (cell, {item id: count}): the session notes what turned up.
 signal cache_opened(cell: Vector2i, loot: Dictionary)
@@ -38,6 +44,8 @@ var noise := FastNoiseLite.new()
 var surface: Node2D
 ## Swaying grass and flowers (ForestFlora), refreshed once a frame after edits.
 var flora: MultiMeshInstance2D
+## Draws each patch of joined roof tiles as one roof on the wall tops.
+var roof_layer: Node2D
 var _flora_dirty := false
 var ground_style: Dictionary = {}
 var tilled: Dictionary = {}
@@ -69,6 +77,9 @@ func _ready() -> void:
 	flora.name = "Flora"
 	add_child(flora)
 	flora.setup(self)
+	roof_layer = ROOFS.new()
+	roof_layer.world = self
+	add_child(roof_layer)
 
 func _process(delta: float) -> void:
 	if _flora_dirty and flora:
@@ -137,6 +148,89 @@ func _generate() -> void:
 		if h%37==0: _spawn_prop(c,"cattail")
 	_style_shores()
 	_place_points_of_interest()
+	# Last of all, from its own noise and random numbers, so the forest keeps
+	# every seeded prop where old saves expect it.
+	_generate_bonelands()
+
+## The world, in cells (the forest and the Bonelands).
+func bounds() -> Rect2i:
+	return BOUNDS
+
+
+func region_of(c: Vector2i) -> String:
+	return "bonelands" if BONELANDS.has_point(c) else "forest"
+
+
+## The world's outer wall (two cells deep west and north, one east and south,
+## as the forest always had): never mined or built on.
+func on_edge(c: Vector2i) -> bool:
+	return c.x <= BOUNDS.position.x + 1 or c.x >= BOUNDS.end.x - 1 or c.y <= BOUNDS.position.y + 1 or c.y >= BOUNDS.end.y - 1
+
+
+## The Bonelands: dry badlands east of the forest, the second region (and the
+## allosaurus's hunting ground). A dry wash winds east through it (the old
+## river's bed) past waterholes rimmed with the last of the green; the rest is
+## sand and bare earth, rock outcrops shot through with crystal, boulders, old
+## bones and fossil beds to dig. It greens back into the forest over its first
+## columns, where the forest's east wall has come down.
+func _generate_bonelands() -> void:
+	var r := RandomNumberGenerator.new()
+	r.seed = world_seed ^ 0x5B0E
+	# Its props' art variants come from numbers of their own as well, so the
+	# forest's generator is left exactly where it was (things built later get
+	# the variants they always did) and the Bonelands come out the same
+	# whatever the forest drew before them.
+	var forest_rng := rng
+	rng = RandomNumberGenerator.new()
+	rng.seed = world_seed ^ 0x5B0F
+	var dry := FastNoiseLite.new()
+	dry.seed = world_seed ^ 0x5B0E
+	dry.frequency = 0.045
+	dry.fractal_octaves = 3
+	for y in range(-EXTENT + 2, EXTENT - 1):
+		var gate := Vector2i(EXTENT - 1, y)
+		if props.has(gate) and props[gate].kind == "wall": _remove_prop(gate)
+	var cells: Array[Vector2i] = []
+	for y in range(BONELANDS.position.y, BONELANDS.end.y):
+		for x in range(BONELANDS.position.x, BONELANDS.end.x):
+			var c := Vector2i(x, y)
+			cells.append(c)
+			var n := dry.get_noise_2d(x, y)
+			var wash_y := sin(x * 0.06) * 10.0 + sin(x * 0.021 + 1.3) * 7.0
+			var wash := absf(y - wash_y) < 1.5 + n * 0.8
+			var hole := n < -0.45 and absi(y) < 48 and x > BONELANDS.position.x + 6
+			terrain[c] = 2 if hole else (1 if wash else 0)
+			if hole: water[c] = true
+			if on_edge(c):
+				_spawn_prop(c, "wall")
+			elif not hole and not wash and n > 0.3 and x > BONELANDS.position.x + 4:
+				_spawn_prop(c, "ore" if r.randf() < 0.28 else "wall")
+	# Sand and bare earth, greener near the forest and round the waterholes.
+	for c in cells:
+		if terrain[c] != 0: continue
+		var green := false
+		for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1), Vector2i(2, 0), Vector2i(-2, 0), Vector2i(0, 2), Vector2i(0, -2)]:
+			green = green or water.has(c + d)
+		var fade := clampf(float(c.x - BONELANDS.position.x) / 10.0, 0.0, 1.0)
+		var roll := float(posmod(hash(c + Vector2i(world_seed, 7)), 1000)) / 1000.0
+		if not green and roll < fade: ground_style[c] = "sand"
+	# Scatter: trees and bushes on the green, boulders, bones and fossil beds on the sand.
+	for gy in range(BONELANDS.position.y + 3, BONELANDS.end.y - 3, 5):
+		for gx in range(BONELANDS.position.x + 1, BONELANDS.end.x - 3, 5):
+			var c := Vector2i(gx + r.randi_range(0, 2), gy + r.randi_range(0, 2))
+			var roll := r.randf()
+			if not _clear_for_prop(c): continue
+			var kind := ""
+			if ground_style.get(c, "") != "sand":
+				kind = "tree" if roll < 0.5 else ("bush" if roll < 0.72 else ("fern" if roll < 0.86 else ""))
+			else:
+				kind = "rock" if roll < 0.26 else ("bone_pile" if roll < 0.33 else ("relic" if roll < 0.39 else ""))
+			if kind != "": _spawn_prop(c, kind)
+	for c in cells:
+		if terrain.get(c, -1) == 0 and not props.has(c) and ground_style.get(c, "") != "sand" and posmod(hash(c + Vector2i(world_seed, 3)), 101) % 41 == 0:
+			_spawn_prop(c, "cattail")
+	rng = forest_rng
+
 
 ## Sandy shores (a look only; the cells stay grass for play): land beside
 ## water, in stretches where a slow noise says the bank is a beach. Uses no
@@ -407,6 +501,7 @@ func _spawn_prop(c: Vector2i, kind: String) -> void:
 	p.max_hp=STRUCTURE_HP.get(kind,1)
 	p.hp=p.max_hp
 	p.cell=c
+	p.sandstone=kind in Prop.SANDSTONE and BONELANDS.has_point(c)
 	p.position=Vector2(c*CELL)+Vector2(8,8)
 	props[c]=p
 	add_child(p)
@@ -462,12 +557,14 @@ func _spawn_roof(c: Vector2i, kind := "thatch_roof") -> void:
 	p.z_index=8
 	roofs[c]=p
 	add_child(p)
+	if roof_layer: roof_layer.dirty=true
 
 func _remove_roof(c: Vector2i) -> void:
 	if not roofs.has(c): return
 	var p=roofs[c]
 	roofs.erase(c)
 	if is_instance_valid(p): p.queue_free()
+	if roof_layer: roof_layer.dirty=true
 
 func _remove_prop(c: Vector2i) -> void:
 	_flora_dirty = true
@@ -558,11 +655,27 @@ func get_spawnable_position(preferred: Vector2) -> Vector2:
 			if not is_water_at(p) and not is_blocked_at(p) and not is_blocked_at(p+Vector2(12,0)) and not is_blocked_at(p-Vector2(12,0)): return p
 	return Vector2.ZERO
 
+## What a swing or E at `pos` reaches, in the order things are drawn:
+## - a roof seen from outside covers everything under it; the roof over the
+##   keeper's own head has faded away and can't be struck from below;
+## - the keeper's own things stand in front of the walls behind them (the
+##   frontmost built piece whose drawing is under the cursor: a bed before the
+##   wall it stands against);
+## - then the wild thing in that cell, or the tree whose canopy is there;
+## - floors lie under everything, so they come last.
 func _target_cell(pos: Vector2) -> Vector2i:
 	var c:=to_cell(pos)
+	if roofs.has(c) and not is_roof_open(c): return c
+	var built:=Vector2i(9999,9999)
+	for y in range(0,6):
+		for x in range(-2,3):
+			var key:=c+Vector2i(x,y)
+			var p=props.get(key)
+			if not is_instance_valid(p) or not p.is_placed: continue
+			if key!=c and not p.get_target_rect().has_point(p.to_local(pos)): continue
+			if built==Vector2i(9999,9999) or key.y>built.y: built=key
+	if built!=Vector2i(9999,9999): return built
 	if props.has(c): return c
-	if roofs.has(c): return c
-	if floors.has(c): return c
 	# Aiming at the tree canopy still resolves its grounded trunk.
 	for y in range(0,6):
 		for x in range(-2,3):
@@ -595,11 +708,12 @@ func get_interaction_hint(pos: Vector2) -> String:
 			"folk_camp": return "A cold camp"
 			"folk_cage": return "E · Break the trap open"
 			"folk_cage_open": return "A broken beast-trap"
+			"bone_pile": return "Old bones. Something big dens here."
 			"relic": return "HOE · Dig up the buried find"
 			"roots": return "HOE · Dig up wild tubers"
 		if props[c].kind in Prop.LANDMARKS:
 			return "E · Read the carving" if lore_at.has(c) else "Ruins of the first builders"
-	if roofs.has(c): return ("Slate roof" if roofs[c].kind == "slate_roof" else "Thatch shelter") + " · Strike to reclaim roof"
+	if roofs.has(c) and not is_roof_open(c): return ("Slate roof" if roofs[c].kind == "slate_roof" else "Thatch shelter") + " · Strike to reclaim roof"
 	if floors.has(c): return ("Stone floor" if floors[c].kind == "stone_floor" else "Timber floor") + " · Strike to reclaim"
 	if water.has(to_cell(pos)): return "BUCKET · Collect water / wade to cross"
 	return ""
@@ -607,15 +721,19 @@ func get_interaction_hint(pos: Vector2) -> String:
 func mine_at(pos: Vector2, tool_type: String, power: int = 1) -> bool:
 	last_feedback=""
 	var c:=_target_cell(pos)
-	var roof: bool=roofs.has(c)
+	# The roof over the keeper's own head can't be struck from below.
+	var roof: bool=roofs.has(c) and not is_roof_open(c)
 	var floor_tile: bool=not roof and not props.has(c) and floors.has(c)
 	if not props.has(c) and not roof and not floor_tile: return false
 	var p=roofs[c] if roof else (floors[c] if floor_tile else props[c])
-	if abs(c.x)>=EXTENT-1 or abs(c.y)>=EXTENT-1:
-		last_feedback="The forest continues beyond this playtest."
+	if on_edge(c):
+		last_feedback="The wilds go on beyond here, one day."
 		return false
 	if p.kind=="shrine" or p.kind in Prop.LANDMARKS or p.kind=="cache":
 		last_feedback="This ancient landmark cannot be dismantled."
+		return false
+	if p.kind in Prop.DECOR:
+		last_feedback="Old bones, picked clean long ago."
 		return false
 	if p.kind in Prop.FOLK_SITES:
 		last_feedback="This belongs to someone."
@@ -679,7 +797,7 @@ func worker_harvest_at(pos: Vector2, role: String) -> Dictionary:
 func interact_at(pos: Vector2, item_id: String) -> bool:
 	last_feedback=""
 	var c:=to_cell(pos)
-	if not terrain.has(c) or abs(c.x)>=EXTENT-1 or abs(c.y)>=EXTENT-1: return false
+	if not terrain.has(c) or on_edge(c): return false
 	if item_id=="":
 		var target:=_target_cell(pos)
 		if props.has(target):
@@ -745,6 +863,14 @@ func interact_at(pos: Vector2, item_id: String) -> bool:
 	if item_id in Prop.ROOFS and not water.has(c) and not roofs.has(c):
 		if not InventoryManager.remove_item(item_id,1): return false
 		_spawn_roof(c, item_id)
+		# Inside a walled room the whole room is roofed in one go, as far as
+		# the stack lasts.
+		var room: Dictionary = Housing.room_at(self, c)
+		if not room.is_empty() and Housing.closed(room):
+			for cell in room.cells:
+				if roofs.has(cell): continue
+				if not InventoryManager.remove_item(item_id,1): break
+				_spawn_roof(cell, item_id)
 		return true
 	if item_id in Prop.FLOORS and not water.has(c) and not floors.has(c):
 		if not InventoryManager.remove_item(item_id,1): return false

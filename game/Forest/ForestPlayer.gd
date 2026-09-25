@@ -612,6 +612,33 @@ func _setup_feel() -> void:
 
 ## Dodge input (Space / Ctrl, routed by ForestPlaytest). Buffered briefly, so a
 ## press in the tail of a swing or of the cooldown rolls the moment it can.
+## A short walk the story takes the keeper on (out of the tent when a journey
+## begins): their own keys do nothing until they arrive, and nothing blocks the
+## way (they start inside the tent's footing).
+signal arrived
+var _walk_target := Vector2.INF
+var _walk_mask := -1
+
+func walk_to(target: Vector2) -> void:
+	_walk_target = target
+	if _walk_mask < 0: _walk_mask = collision_mask
+	collision_mask = 0
+
+func is_walking_scripted() -> bool:
+	return _walk_target != Vector2.INF
+
+func get_movement_input() -> Vector2:
+	if _walk_target == Vector2.INF: return super.get_movement_input()
+	var to := _walk_target - global_position
+	if to.length() > 2.5:
+		last_facing = facing_for(to, last_facing)
+		return to.normalized()
+	_walk_target = Vector2.INF
+	if _walk_mask >= 0: collision_mask = _walk_mask
+	_walk_mask = -1
+	arrived.emit()
+	return Vector2.ZERO
+
 func request_roll() -> void:
 	_roll_buffer = ROLL_BUFFER
 

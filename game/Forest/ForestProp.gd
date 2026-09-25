@@ -16,6 +16,9 @@ var _chest_frame := 0
 var cell := Vector2i.ZERO
 var harvested := false
 var rich_vein := false
+## Out in the Bonelands, stone is sun-baked sandstone (ForestWorld sets this
+## when it places a wall, vein or boulder there).
+var sandstone := false
 
 func required_power() -> int:
 	return 2 if kind=="ore" and rich_vein else 1
@@ -57,8 +60,16 @@ const ART = {
 	"folk_camp": preload("res://Forest/folk/art/folk_camp.png"),
 	"folk_cage": preload("res://Forest/folk/art/folk_cage.png"),
 	"folk_cage_open": preload("res://Forest/folk/art/folk_cage_open.png"),
+	"bone_pile": preload("res://Forest/art/poi/bone_pile.png"),
 	"relic": preload("res://Forest/art/poi/relic_mound.png"),
 	"roots": preload("res://Forest/art/poi/wild_roots.png"),
+}
+## The Bonelands' stone (tools/world/make_bonelands_art.py).
+const SANDSTONE = {
+	"wall": preload("res://Forest/art/bonelands/sand_wall.png"),
+	"wall_alt": preload("res://Forest/art/bonelands/sand_wall_alt.png"),
+	"ore": preload("res://Forest/art/bonelands/sand_ore.png"),
+	"rock": preload("res://Forest/art/bonelands/sand_rock.png"),
 }
 ## Points of interest (ForestWorld._place_points_of_interest). Ruins of the
 ## first builders and the old tribe's idols are landmarks, never dismantled. A
@@ -72,12 +83,14 @@ const DIG_SPOTS := ["relic","roots"]
 ## under the arch, and can never walk through a stone.
 const PARTS_FILE := "res://Forest/art/poi/pieces.json"
 const PARTS_DIR := "res://Forest/art/poi/pieces/"
-const POI_SOLID := {"cache": Rect2(-8,-4,16,11), "folk_hut": Rect2(-22,-10,44,17), "folk_camp": Rect2(-15,-9,36,11), "folk_cage": Rect2(-14,-7,28,14)}
+const POI_SOLID := {"cache": Rect2(-8,-4,16,11), "folk_hut": Rect2(-22,-10,44,17), "folk_camp": Rect2(-15,-9,36,11), "folk_cage": Rect2(-14,-7,28,14), "bone_pile": Rect2(-16,-6,32,12)}
 ## Small finds sit on the ground and still cast a small shadow.
 const POI_SHADOW := {"relic": Rect2(-7,3,14,4), "roots": Rect2(-4,4,8,3), "folk_cage_open": Rect2(-14,-4,28,11)}
-const POI_HEIGHT := {"cache":12.0,"relic":6.0,"roots":7.0,"folk_hut":72.0,"folk_camp":34.0,"folk_cage":30.0,"folk_cage_open":14.0}
+const POI_HEIGHT := {"cache":12.0,"relic":6.0,"roots":7.0,"folk_hut":72.0,"folk_camp":34.0,"folk_cage":30.0,"folk_cage_open":14.0,"bone_pile":22.0}
 ## The folk's own places: someone's hut, a cold camp, an old beast-trap.
 const FOLK_SITES := ["folk_hut","folk_camp","folk_cage","folk_cage_open"]
+## The alpha's den dressing (AlphaBoss): raised with the world, never mined.
+const DECOR := ["bone_pile"]
 static var _parts := {}
 static var _part_rects := {}
 
@@ -275,8 +288,9 @@ func _draw() -> void:
 		var stone := kind in ["wall","rock","ore"]
 		if stone:
 			var top := -18.0 if kind == "rock" else -10.0
-			draw_polyline(PackedVector2Array([Vector2(-4,top-4),Vector2(0,top),Vector2(-2,top+4),Vector2(3,top+7)]),Color("2e3640"),1)
-			if hp < max_hp/2.0: draw_line(Vector2(0,top),Vector2(5,top-3),Color("2e3640"),1)
+			var crack := Color("4a2e1e") if sandstone else Color("2e3640")
+			draw_polyline(PackedVector2Array([Vector2(-4,top-4),Vector2(0,top),Vector2(-2,top+4),Vector2(3,top+7)]),crack,1)
+			if hp < max_hp/2.0: draw_line(Vector2(0,top),Vector2(5,top-3),crack,1)
 		if _hit_timer > 0:
 			var y := -get_shadow_height()-5
 			draw_rect(Rect2(-10,y,20,3),Color("2e241f"))
@@ -287,12 +301,9 @@ func _draw_visual() -> void:
 		var texture: Texture2D = (STONE_DOOR_OPEN if opened else STONE_DOOR) if kind == "stone_door" else (DOOR_OPEN if opened else DOOR)
 		draw_texture(texture,Vector2(-8,-20))
 		return
-	if kind == "thatch_roof":
-		# A roof occupies the exact cell the player aims at, unlike a tall wall.
-		draw_texture_rect(ROOF,Rect2(-8,-8,16,16),false)
-		return
-	if kind == "slate_roof":
-		draw_texture(SLATE,Vector2(-8,-8))
+	if kind in ROOFS:
+		# Roof tiles keep their durability and fade; ForestRoofs draws each
+		# patch of them as one roof on the wall tops.
 		return
 	if kind == "cache" and opened:
 		draw_texture(CACHE_OPEN, Vector2(-CACHE_OPEN.get_width()/2, 7-CACHE_OPEN.get_height()))
@@ -303,7 +314,7 @@ func _draw_visual() -> void:
 		# Landmarks draw as their part sprites.
 		if has_parts(): return
 		var key := "wall_alt" if kind == "wall" and variant % 3 == 1 else kind
-		var texture: Texture2D = ART[key]
+		var texture: Texture2D = SANDSTONE[key] if sandstone and SANDSTONE.has(key) else ART[key]
 		var bottom := 8 if kind in ["wall", "ore", "wood_wall", "wood_floor", "stone_wall", "stone_floor"] else 7
 		draw_texture(texture, Vector2(-texture.get_width()/2, bottom-texture.get_height()), Color("b99be8") if rich_vein else Color.WHITE)
 		return
@@ -359,7 +370,7 @@ func get_shadow_footprint() -> Rect2:
 	return get_collision_rect()
 
 func get_target_rect() -> Rect2:
-	if kind in LANDMARKS or kind in DIG_SPOTS or kind == "cache" or kind in FOLK_SITES:
+	if kind in LANDMARKS or kind in DIG_SPOTS or kind == "cache" or kind in FOLK_SITES or kind in DECOR:
 		# The whole drawing, bottom-anchored like _draw_visual draws it.
 		var art: Texture2D = ART[kind]
 		return Rect2(-art.get_width()/2.0, 7.0-art.get_height(), art.get_width(), art.get_height()).grow(2)

@@ -16,6 +16,21 @@ var _active_lights: Array[PointLight2D] = []
 var _silhouettes: Dictionary = {}
 var _sun_projections: Dictionary = {}
 var _sun_phase := -1
+## Each shadow shape triangulated once per step of the sun (kind:variant:open
+## -> {phase, points, indices}), drawn straight from its triangles.
+var _sun_meshes: Dictionary = {}
+## The shadows are drawn again only when something changes: who's near, a
+## door or lid, the sun moving on a step, shadows switched on or off.
+var _shadows_dirty := true
+var _shadows_showing := false
+var _drawn_phase := -1
+var _opened_sig := 0
+var _props_seen := -1
+## Stale shapes rebuilt per frame after the sun moves on (the rest wait a
+## frame or two, a 512th of a day behind), so no one frame pays for them all.
+const REBUILDS_PER_FRAME := 6
+const LIT_KINDS := ["campfire", "shrine", "torch"]
+const SHADOW_COLORS := [Color(0.08,0.17,0.15)]
 
 func _ready():
 	_gradient = GradientTexture2D.new()
@@ -39,21 +54,47 @@ func _ready():
 
 func _process(delta):
 	_refresh -= delta
-	if _refresh<=0:
+	# A prop chopped or built: look again at once (its shadow goes or comes).
+	if _refresh<=0 or (is_instance_valid(world) and world.props.size()!=_props_seen):
 		_refresh=0.2
 		_refresh_nearby()
 	_update_light_energy()
-	_pass.queue_redraw()
+	_update_shade()
+
+## The shadows' strength follows the light every frame; their shapes are
+## drawn again only when something has changed.
+func _update_shade() -> void:
+	var daylight := maxf(0,sin((TimeCycle.time_of_day-0.25)*TAU))
+	# Full strength once the sun is up (a low sun throws long, dark shadows);
+	# they fade only as it rises and sets.
+	_shade.self_modulate=Color(1,1,1,SHADOW_STRENGTH*clampf(daylight/0.3,0.0,1.0))
+	var showing: bool = GameSettings.shadows_enabled and daylight>=0.03
+	var phase := floori(TimeCycle.time_of_day*512)
+	if _shadows_dirty or showing!=_shadows_showing or (showing and phase!=_drawn_phase):
+		_shadows_dirty=false
+		_shadows_showing=showing
+		_drawn_phase=phase
+		_pass.queue_redraw()
 
 func _refresh_nearby():
 	if not is_instance_valid(player) or not is_instance_valid(world): return
-	for prop in nearby:
-		if is_instance_valid(prop) and prop.has_node("LightOcclusion"): prop.get_node("LightOcclusion").visible=false
-	nearby.clear()
+	_props_seen=world.props.size()
+	var here: Vector2=player.global_position
+	var found: Array[Node2D]=[]
 	for prop in world.props.values():
-		if not is_instance_valid(prop) or prop.global_position.distance_squared_to(player.global_position)>150000: continue
-		nearby.append(prop)
-		_set_prop_light_mask(prop)
+		if is_instance_valid(prop) and prop.global_position.distance_squared_to(here)<=150000: found.append(prop)
+	var kept := {}
+	for prop in found: kept[prop]=true
+	for prop in nearby:
+		if is_instance_valid(prop) and not kept.has(prop) and prop.has_node("LightOcclusion"): prop.get_node("LightOcclusion").visible=false
+	if found!=nearby: _shadows_dirty=true
+	nearby=found
+	var opened_sig := 0
+	for prop in nearby:
+		if prop.get("opened")==true: opened_sig+=prop.get_instance_id()
+		if prop.get_meta("lit_mask",-1)!=prop.get_child_count():
+			_set_prop_light_mask(prop)
+			prop.set_meta("lit_mask",prop.get_child_count())
 		if prop.has_method("get_shadow_footprint"):
 			var footprint: PackedVector2Array = _occlusion_shape(prop)
 			# These emitters sit visually above their own hearth/stake/base. A 2D
@@ -66,8 +107,8 @@ func _refresh_nearby():
 					occluder.show_behind_parent=true
 					occluder.occluder=OccluderPolygon2D.new()
 					prop.add_child(occluder)
-				occluder.occluder.polygon=footprint
-				occluder.visible=GameSettings.shadows_enabled
+				if occluder.occluder.polygon!=footprint: occluder.occluder.polygon=footprint
+				if occluder.visible!=GameSettings.shadows_enabled: occluder.visible=GameSettings.shadows_enabled
 		if prop.kind in ["campfire","shrine"] and not prop.has_node("EmberLight"):
 			var light := PointLight2D.new()
 			light.name="EmberLight"
@@ -77,9 +118,12 @@ func _refresh_nearby():
 			light.energy=0.75
 			light.texture_scale=1.05 if prop.kind=="campfire" else 0.65
 			prop.add_child(light)
+	if opened_sig!=_opened_sig:
+		_opened_sig=opened_sig
+		_shadows_dirty=true
 	var lights: Array[PointLight2D] = []
 	for prop in world.props.values():
-		if not is_instance_valid(prop): continue
+		if not is_instance_valid(prop) or not prop.kind in LIT_KINDS: continue
 		var light: PointLight2D = prop.get_node_or_null("EmberLight")
 		if prop.kind=="torch": light=prop.get_node_or_null("PlacedObject/PointLight2D")
 		if light:
@@ -149,19 +193,40 @@ func sun_offset(height: float, time: float) -> Vector2:
 	return Vector2(cos((time-0.25)*TAU),0.48).normalized()*height*(0.3+(1-elevation)*0.9)
 
 func _draw_shadows():
-	var daylight := maxf(0,sin((TimeCycle.time_of_day-0.25)*TAU))
-	# Full strength once the sun is up (a low sun throws long, dark shadows);
-	# they fade only as it rises and sets.
-	_shade.self_modulate=Color(1,1,1,SHADOW_STRENGTH*clampf(daylight/0.3,0.0,1.0))
-	if not GameSettings.shadows_enabled or daylight<0.03: return
+	if not _shadows_showing: return
+	var item := _pass.get_canvas_item()
+	var colors := PackedColorArray(SHADOW_COLORS)
+	var budget := REBUILDS_PER_FRAME
 	for prop in nearby:
 		if not is_instance_valid(prop) or not prop.has_method("get_shadow_footprint"): continue
-		var shape: PackedVector2Array=_corners(prop.get_shadow_footprint())
-		if shape.size()<3: continue
-		_pass.draw_set_transform(prop.global_position)
-		for polygon in _get_local_sun_shadow_polygons(prop,TimeCycle.time_of_day):
-			_pass.draw_colored_polygon(polygon,SHADOW_COLOR)
-	_pass.draw_set_transform(Vector2.ZERO)
+		if not prop.get_shadow_footprint().has_area(): continue
+		var mesh: Dictionary=_shadow_mesh(prop,budget>0)
+		if mesh.get("built",false): budget-=1
+		if int(mesh.phase)!=_drawn_phase: _shadows_dirty=true
+		if mesh.points.is_empty(): continue
+		RenderingServer.canvas_item_add_set_transform(item,Transform2D(0.0,prop.global_position))
+		RenderingServer.canvas_item_add_triangle_array(item,mesh.indices,mesh.points,colors)
+	RenderingServer.canvas_item_add_set_transform(item,Transform2D())
+
+## A prop's sun shadow as triangles, for the sun's current step (built on
+## first sight, or when the sun has moved on and this frame has rebuilds to
+## spare; otherwise last step's).
+func _shadow_mesh(prop: Node2D, may_build: bool) -> Dictionary:
+	var key: String=prop.kind+":"+str(prop.variant%5)+":"+str(prop.opened)
+	var phase:=floori(TimeCycle.time_of_day*512)
+	var mesh: Dictionary=_sun_meshes.get(key,{})
+	if not mesh.is_empty():
+		mesh.built=false
+		if int(mesh.phase)==phase or not may_build: return mesh
+	var points:=PackedVector2Array()
+	var indices:=PackedInt32Array()
+	for polygon in _get_local_sun_shadow_polygons(prop,TimeCycle.time_of_day):
+		var start:=points.size()
+		points.append_array(polygon)
+		for i in Geometry2D.triangulate_polygon(polygon): indices.append(start+i)
+	mesh={"phase":phase,"points":points,"indices":indices,"built":true}
+	_sun_meshes[key]=mesh
+	return mesh
 
 func get_sun_shadow_polygons(prop: Node2D, time: float) -> Array[PackedVector2Array]:
 	var result: Array[PackedVector2Array]=[]

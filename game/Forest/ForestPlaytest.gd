@@ -10,6 +10,15 @@ const UI = preload("res://UI/SkyfangUI.gd")
 const FOLK = preload("res://Forest/folk/FolkManager.gd")
 const TALK = preload("res://UI/FolkDialogue.gd")
 const HOUSES = preload("res://UI/FolkHousesPanel.gd")
+## The opening story, played once at the start of a new expedition.
+const INTRO = preload("res://Forest/intro/IntroCutscene.gd")
+const FOREST_MUSIC := "res://Forest/audio/forest-plains.mp3"
+## The first boss (Skarn, the Shardback Alpha) and its den.
+const BOSS = preload("res://Forest/creatures/AlphaBoss.gd")
+## Wind, insects by day and crickets by night.
+const AMBIENCE = preload("res://Forest/fx/Ambience.gd")
+## Where the keeper wakes: the first camp's tent (its cell).
+const FIRST_TENT := Vector2i(-1, -7)
 var world: Node2D
 var player: CharacterBody2D
 var hud: CanvasLayer
@@ -38,6 +47,8 @@ var gardening: Node2D
 var bow: Node2D
 var folk: Node
 var talk: CanvasLayer
+var boss: Node
+var _intro: CanvasLayer
 var _dodge_guard := 0.0
 
 func _enter_tree():
@@ -89,12 +100,20 @@ func _ready():
 	add_child(bow)
 	bow.setup(self,player)
 	bow.notice.connect(_toast)
+	boss = BOSS.new()
+	add_child(boss)
+	boss.setup(self)
+	var ambience := AMBIENCE.new()
+	add_child(ambience)
+	ambience.setup(player)
 	folk = FOLK.new()
 	add_child(folk)
 	folk.setup(self)
 	talk = TALK.new()
 	add_child(talk)
 	talk.closed.connect(func():
+		# Walked off in the middle of Orrin's first words: he'll pick up there.
+		if talk.page == "script" and folk.folk.has(talk.id): folk.folk[talk.id].intro_step = talk.script_step
 		for person in get_tree().get_nodes_in_group("folk"): person.talking = false)
 	_overlay = CanvasLayer.new()
 	_overlay.layer = 30
@@ -117,10 +136,17 @@ func _ready():
 		else:
 			_spawn_wildlife()
 			_toast("A new beginning. Press J for your field journal.")
+		boss.prepare()
 		folk.begin_journey()
 		if _folk_playtest(): _set_up_folk_playtest()
+		# A new expedition from the menu opens with the story of the wilds (and
+		# so does --intro-playtest, a no-save run to watch it again).
+		var intro_preview := "--intro-playtest" in OS.get_cmdline_user_args() and "--no-save-playtest" in OS.get_cmdline_user_args()
+		if get_tree().get_meta("forest_intro", false) or intro_preview:
+			get_tree().set_meta("forest_intro", false)
+			_play_intro()
 	_ready_to_save = true
-	AudioManager.play_music("res://Forest/audio/forest-plains.mp3")
+	if not is_instance_valid(_intro): AudioManager.play_music(FOREST_MUSIC)
 	world.cache_opened.connect(_on_cache_opened)
 	SignalBus.item_crafted.connect(_on_crafted)
 	SignalBus.creature_tamed.connect(_on_tamed)
@@ -165,17 +191,60 @@ func _update_ambient(_time: float, color: Color):
 func _on_player_died():
 	_command_key = 0
 
+## A new journey's wildlife, placed afresh for each world (from its seed):
+## species, groups, [smallest, largest] group, [nearest, farthest] cells from
+## camp, and the arc they keep to in degrees (0 east, 90 south; empty: any).
+## Flocks graze near camp, herds further out, raptor packs in the north-east
+## raptor lands, allosaurs roam the south and west alone, and there is one rex,
+## in the far south-east. (The alpha keeps its own den: AlphaBoss.)
+const WILDLIFE := [
+	["dodo", 3, [2, 3], [7, 24], []],
+	["lystro", 2, [2, 3], [8, 26], []],
+	["stego", 2, [2, 2], [16, 40], []],
+	["trike", 2, [1, 2], [16, 40], []],
+	["longneck", 2, [1, 2], [20, 44], []],
+	["raptor", 2, [3, 3], [26, 46], [-85, -5]],
+	["allo", 2, [1, 1], [30, 46], [95, 265]],
+	["rex", 1, [1, 1], [38, 46], [25, 65]],
+]
+
+## The Bonelands' own wildlife (the allosaurus's hunting ground): species,
+## groups, [smallest, largest] group, and the area (cells) they're placed in.
+const BONELANDS_LIFE := [
+	["allo", 3, [1, 1], Rect2i(76, -44, 80, 88)],
+	["lystro", 3, [3, 4], Rect2i(62, -46, 90, 92)],
+	["raptor", 1, [3, 3], Rect2i(90, -48, 60, 40)],
+	["stego", 2, [2, 3], Rect2i(64, -40, 80, 80)],
+]
+
+func _spawn_bonelands_life():
+	var rng := RandomNumberGenerator.new()
+	rng.seed = hash(world.world_seed) ^ 0xB0E5
+	for entry in BONELANDS_LIFE:
+		var area: Rect2i = entry[3]
+		for group in int(entry[1]):
+			var centre := Vector2(rng.randi_range(area.position.x, area.end.x), rng.randi_range(area.position.y, area.end.y)) * 16.0
+			for i in rng.randi_range(int(entry[2][0]), int(entry[2][1])):
+				var wanted := centre + Vector2(rng.randf_range(-30.0, 30.0), rng.randf_range(-22.0, 22.0))
+				var at: Vector2 = world.get_spawnable_position(wanted)
+				if at.distance_to(wanted) > 220.0: continue
+				_spawn_creature(str(entry[0]), at)
+
 func _spawn_wildlife():
-	var spawns := [
-		["dodo", Vector2(70, 50)], ["dodo", Vector2(105, 80)],
-		["trike", Vector2(-175, 110)], ["stego", Vector2(230, 145)],
-		["longneck", Vector2(-320, -210)], ["stego", Vector2(-410, 280)],
-		["raptor", Vector2(340, -220)], ["raptor", Vector2(420, -265)],
-		["rex", Vector2(640, 430)], ["trike", Vector2(-550, -420)],
-		["dodo", Vector2(130, -120)], ["longneck", Vector2(-600, 430)]
-	]
-	for entry in spawns:
-		_spawn_creature(entry[0], world.get_spawnable_position(entry[1]))
+	_spawn_bonelands_life()
+	var rng := RandomNumberGenerator.new()
+	rng.seed = hash(world.world_seed) ^ 0x51a7
+	for entry in WILDLIFE:
+		for group in int(entry[1]):
+			var arc: Array = entry[4]
+			var angle := deg_to_rad(rng.randf_range(float(arc[0]), float(arc[1]))) if not arc.is_empty() else rng.randf_range(0.0, TAU)
+			var centre := Vector2.from_angle(angle) * rng.randf_range(float(entry[3][0]), float(entry[3][1])) * 16.0
+			for i in rng.randi_range(int(entry[2][0]), int(entry[2][1])):
+				var wanted := centre + Vector2(rng.randf_range(-30.0, 30.0), rng.randf_range(-22.0, 22.0))
+				var at: Vector2 = world.get_spawnable_position(wanted)
+				# No free ground out there: skip it rather than spawn it at camp.
+				if at.length() < 40.0 and wanted.length() > 120.0: continue
+				_spawn_creature(str(entry[0]), at)
 
 ## --dino-playtest (no-save runs only): every dinosaur close to the start, with
 ## a saddled stego and trike already tamed beside the keeper, ready to ride.
@@ -250,7 +319,9 @@ func _spawn_creature(species: String, pos: Vector2, saved: Dictionary = {}):
 func _process(delta):
 	if not is_instance_valid(player):
 		return
-	var menu_open: bool = get_tree().paused or hud.is_open() or _overlay_kind != "" or talk.is_open() or is_instance_valid(DragController.dragged_slot)
+	var menu_open: bool = get_tree().paused or hud.is_open() or _overlay_kind != "" or is_instance_valid(DragController.dragged_slot)
+	# Talking never holds the keeper still; a menu opening ends the talk.
+	if talk.is_open() and (hud.is_open() or _overlay_kind != ""): talk.close()
 	if fishing.is_active() and (menu_open or player.respawning): fishing.cancel()
 	player.controls_locked = player.respawning or menu_open or fishing.is_active()
 	# Space reels the line: a press landing as the catch resolves is not a dodge.
@@ -302,6 +373,9 @@ func _update_context():
 		return
 	if selected and selected.id == "fishing_rod":
 		hud.set_context("Aim at silver water ripples   Right-click  Cast")
+		return
+	if talk.is_open():
+		hud.set_context("E  Go on   Esc  Skip" if talk.page == "script" else "E  Goodbye")
 		return
 	if is_instance_valid(player.mounted_creature):
 		hud.set_context("E  Dismount   Hold E  Commands   Click  Attack   F  Feed" if player.mounted_creature.species != "trike" else "E  Dismount   Click  Gore   Hold click  Charge a ram   F  Feed")
@@ -374,7 +448,8 @@ func _unhandled_input(event):
 			KEY_H:
 				if _overlay_kind == "houses":
 					_close_overlay()
-				elif _overlay_kind == "" and not talk.is_open():
+				elif _overlay_kind == "":
+					talk.close()
 					HOUSES.open(self)
 			KEY_F5:
 				_toast("Journey saved." if save_journey() else "Could not save the journey.")
@@ -448,7 +523,57 @@ func _talk_to(person) -> void:
 	person.face_toward(player.global_position)
 	person.talking = true
 	player.play_gesture("interact", person.global_position)
-	talk.open(person.id, folk)
+	# Orrin's first words, until he's said them all.
+	var state: Dictionary = folk.folk.get(person.id, {})
+	if int(state.get("intro_step", -1)) >= 0:
+		var who: String = person.id
+		talk.open_script(who, folk, folk.Folk.info(who).get("intro", []), int(state.intro_step), func(): folk.folk[who].erase("intro_step"))
+	else:
+		talk.open(person.id, folk)
+
+
+## The opening story over a paused world; the keeper waits in the first
+## camp's tent, with Orrin outside.
+func _play_intro() -> void:
+	_intro = INTRO.new()
+	add_child(_intro)
+	get_tree().paused = true
+	var tent := Vector2(FIRST_TENT * 16) + Vector2(8, 8)
+	player.global_position = tent + Vector2(0, -8)
+	player.last_facing = "down"
+	var orrin = folk.actors.get("guide")
+	if is_instance_valid(orrin):
+		orrin.place_at(tent + Vector2(30, 42))
+		orrin.talking = true
+	_intro.finished.connect(func():
+		_intro.queue_free()
+		get_tree().paused = false
+		AudioManager.play_music(FOREST_MUSIC)
+		_awaken(tent), CONNECT_ONE_SHOT)
+
+
+## Out of the dark: the keeper stirs, walks out of the tent, and Orrin, who
+## saw them fall, has his say.
+func _awaken(tent: Vector2) -> void:
+	var dawn := CanvasLayer.new()
+	dawn.layer = 59
+	var black := ColorRect.new()
+	black.color = Color("07090d")
+	black.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	black.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	dawn.add_child(black)
+	add_child(dawn)
+	var fade := dawn.create_tween()
+	fade.tween_interval(0.5)
+	fade.tween_property(black, "modulate:a", 0.0, 1.8)
+	fade.tween_callback(dawn.queue_free)
+	await get_tree().create_timer(1.1).timeout
+	player.walk_to(tent + Vector2(0, 30))
+	await player.arrived
+	var orrin = folk.actors.get("guide")
+	if not is_instance_valid(orrin) or not folk.folk.has("guide"): return
+	folk.folk.guide.intro_step = 0
+	_talk_to(orrin)
 
 func _nearest_creature():
 	var nearest = null
@@ -681,6 +806,7 @@ func _toast(text: String):
 
 func _make_overlay(title: String, kind: String) -> VBoxContainer:
 	if fishing: fishing.cancel()
+	if talk: talk.close()
 	_close_overlay()
 	_overlay_kind = kind
 	get_tree().paused = true
@@ -846,7 +972,7 @@ func _show_map():
 	_map.player = player
 	_map.custom_minimum_size = Vector2(288, 138)
 	column.add_child(_map)
-	_overlay_text(column, "Yellow: you   Gold: ruins   Violet: folk   Cyan: water\nNorth-east: raptors   Far south-east: the shard-crowned Rex", 8)
+	_overlay_text(column, "Yellow: you   Gold: ruins   Violet: folk   Red: the alpha's den\nNorth-east: raptors   Far south-east: the shard-crowned Rex", 8)
 	_overlay_button(column, "RETURN  [M / ESC]", _close_overlay)
 
 func save_journey(path: String = SAVE_FILE) -> bool:
@@ -858,7 +984,8 @@ func save_journey(path: String = SAVE_FILE) -> bool:
 	if is_instance_valid(player.mounted_creature):
 		save_position=world.get_spawnable_position(player.mounted_creature.position+Vector2(0,float(player.mounted_creature.stats.radius)+24))
 	for creature in get_tree().get_nodes_in_group("forest_creatures"):
-		if not creature.is_dead:
+		# The alpha wakes fresh each load until it's beaten (AlphaBoss).
+		if not creature.is_dead and creature.species != "alpha":
 			creatures.append(creature.serialize())
 	var drops: Array = []
 	for drop in get_tree().get_nodes_in_group("dropped_items"):
@@ -879,6 +1006,7 @@ func save_journey(path: String = SAVE_FILE) -> bool:
 		"spawn_bed": [_spawn_bed_cell.x,_spawn_bed_cell.y] if _has_spawn_bed else [],
 		"equipment": {},
 		"time": TimeCycle.time_of_day, "milestones": _milestones, "seconds": _session_seconds,
+		"regions": ["bonelands"],
 		"folk": folk.serialize()
 	}
 	for slot in player.equipped_armor:
@@ -956,6 +1084,8 @@ func _load_journey(path: String = SAVE_FILE) -> bool:
 		creature.queue_free()
 	for entry in parsed.get("creatures", []):
 		_spawn_creature(str(entry.get("species", "dodo")), Vector2.ZERO, entry)
+	# A journey from before the Bonelands: its wildlife arrives once.
+	if not "bonelands" in parsed.get("regions", []): _spawn_bonelands_life()
 	for entry in parsed.get("drops", []):
 		if not entry is Dictionary: continue
 		var item: Item = ItemDB.make(str(entry.get("id","")))
@@ -968,6 +1098,7 @@ func _load_journey(path: String = SAVE_FILE) -> bool:
 	SignalBus.player_health_changed.emit(player.current_health,player.max_health)
 	SignalBus.player_hunger_changed.emit(player.current_hunger,player.max_hunger)
 	SignalBus.player_stamina_changed.emit(player.current_stamina,player.max_stamina)
+	boss.prepare()
 	return true
 
 func _quit_game():

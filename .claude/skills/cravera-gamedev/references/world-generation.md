@@ -434,7 +434,7 @@ func rng_for_chunk(world_seed: int, c: Vector2i) -> RandomNumberGenerator:
 
 ## 8. The forest as it ships (2026-09)
 
-The forest is a finite, seeded 112x112-cell map (`Forest/ForestWorld.gd`, `EXTENT = 56`, 16px cells,
+The forest is a finite, seeded 112x112-cell map (now the western half of a 224x112 world: see the Bonelands below) (`Forest/ForestWorld.gd`, `EXTENT = 56`, 16px cells,
 seed 726151). `_generate()` draws terrain from one FastNoiseLite plus a seeded RNG (river, lake,
 paths, moss, outcrops, a jittered 4-cell grid of trees/rocks/bushes/ferns, the authored camp), and
 saves are **diffs against the seed** (`mined`, `placed`, `water_edits`, `floors`, `roofs`, `doors`,
@@ -476,6 +476,30 @@ merchant's cue). Rules that keep old saves safe, enforced by `Tests/world_poi_su
 - New items: `tools/world/make_items.py` (Raven icons) writes `ancient_coin`, `sky_idol`,
   `fossil_bone`, `wild_tuber`, `baked_tuber` (.tres; campfire recipe in `CraftingManager`). POI art:
   `tools/world/make_poi_art.py` -> `Forest/art/poi/`.
+
+**The Bonelands (pass 10): the world doubled east.** `BOUNDS = Rect2i(-56,-56,224,112)`,
+`BONELANDS = Rect2i(56,-56,112,112)`; ask `world.bounds()`, `region_of(c)` ("forest"/"bonelands")
+and `on_edge(c)` (the outer wall ring: never mined or built on, "The wilds go on beyond here, one
+day.") instead of `EXTENT`. `_generate_bonelands()` runs **after everything else, from its own RNG
+and noise** (`world_seed ^ 0x5B0E`; even its props' art variants, which `_spawn_prop` draws from
+`rng`, come from a swapped-in stream, `^ 0x5B0F`, so the forest's generator ends where it always
+did and the Bonelands don't shift when the forest's ruins change: world_poi_suite's pre-POI world
+caught that), so the forest's original square stays cell for cell what old saves expect: `Tests/legacy_world_signature.gd` hashes it for three seeds against
+`Tests/fixtures/legacy_world_signature.json` (the bonelands suite checks it every run). It takes
+down the forest's east wall (x = 55), lays a dry wash (terrain 1) winding east, waterholes
+(terrain 2) where the noise is low, outcrops of wall and crystal (`ore` 28%) where it's high, sand
+`ground_style` fading in over the first 10 columns (green stays round the water), then scatters on a
+5-cell grid: trees, bushes and ferns on the green; boulders, `bone_pile` (decor) and `relic` mounds
+on the sand; cattails by the water. Stone there is **sandstone**: `ForestProp.sandstone` (set in
+`_spawn_prop` for wall/ore/rock inside `BONELANDS`) swaps in `art/bonelands/sand_*.png`, recoloured
+from the mossy originals by `tools/world/make_bonelands_art.py` (exact colour map; crystal blues
+kept so a vein still reads as a vein). Everything sized to the world uses the bounds: the ground
+bake (`ForestGround.origin/cells`, shaders take `ivec2 canvas_px/world_offset`, the terrain include
+`ivec2 map_size/map_origin`), the map overlay, the creature leash (`_outside_world`). Hand-authored
+for now; once there are three or four regions they can be generated outward (Hank's plan). Suite:
+`Tests/BonelandsSuite.tscn` (legacy signature, determinism, bounds, open seam and walkable reach,
+edge ring, sandstone, wash/waterholes/fade, scatter, wildlife, an old journey gaining the new
+wildlife once). Look: `Tests/BonelandsLookCapture.tscn` -> `art/world-v2/bonelands-*.png`.
 
 **Review tools.** `res://Tests/WorldLookCapture.tscn` (rendered) shoots the camp, trail, ford, river,
 lake, shore, moss, tribe camp, every POI and every carved companion piece to

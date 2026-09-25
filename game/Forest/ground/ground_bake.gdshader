@@ -16,8 +16,8 @@ uniform ivec2 st_flowers;
 uniform ivec2 st_specks;
 uniform ivec2 st_pebbles;
 uniform ivec2 st_twigs;
-uniform int canvas_px = 1792;
-uniform int world_offset = -896;
+uniform ivec2 canvas_px = ivec2(1792, 1792);
+uniform ivec2 world_offset = ivec2(-896, -896);
 
 const vec3 GRASS[5] = {vec3(0.243, 0.420, 0.247), vec3(0.357, 0.573, 0.322), vec3(0.478, 0.678, 0.333), vec3(0.588, 0.773, 0.373), vec3(0.729, 0.827, 0.384)};
 const vec3 MEADOW[5] = {vec3(0.369, 0.498, 0.227), vec3(0.498, 0.612, 0.275), vec3(0.627, 0.702, 0.353), vec3(0.722, 0.765, 0.373), vec3(0.816, 0.839, 0.431)};
@@ -135,7 +135,7 @@ vec4 stamp_at(ivec2 p, int k, out bool tinted) {
 }
 
 void fragment() {
-	ivec2 p = ivec2(floor(UV * float(canvas_px))) + ivec2(world_offset);
+	ivec2 p = ivec2(floor(UV * vec2(canvas_px))) + world_offset;
 	int k = region(p);
 	if (k == K_WATER) {
 		// ForestGround's live water layer paints over this every frame.

@@ -461,6 +461,8 @@ func help() -> String:
 		if str(key).begins_with("lore_"): read += 1
 	if read < 3:
 		return "The old ones carved their story into the ruins. Read the carvings (E) and your journal keeps them."
+	if not bool(m.get("alpha", false)):
+		return "The raptors have a leader: Skarn, the Shardback Alpha. It dens in the north-east (your map marks it red). Go with armour, arrows and beasts at your side."
 	return "You're doing well. The crystal grows thickest to the north, and the rex keeps to the far south-east."
 
 
@@ -502,6 +504,8 @@ func restore(data) -> void:
 		if Folk.info(id).is_empty(): continue
 		var state: Dictionary = data.folk[id]
 		folk[id] = {"stage": str(state.get("stage", "camp")), "home": str(state.get("home", "")), "freed": bool(state.get("freed", true))}
+		# Orrin's first words, if the keeper walked off before he'd finished.
+		if state.has("intro_step"): folk[id].intro_step = int(state.intro_step)
 		if state.has("site"): folk[id].site = state.site
 		_raise_site(id)
 	_rooms = Housing.survey(world)

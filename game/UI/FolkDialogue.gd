@@ -1,42 +1,49 @@
 extends CanvasLayer
-## Talking with the folk (Forest/folk): a portrait, their words, and what they
-## can do for the keeper, drawn with the interface kit. Pages:
+## Talking with the folk (Forest/folk): a small panel in the left column, under
+## the vitals, with their portrait, their words and what they can do for the
+## keeper, drawn with the interface kit. It never pauses the world or covers
+## the middle of the screen: the keeper can walk, fight or run while talking,
+## and walking away ends the talk. Pages:
 ##   talk     greeting and chat, and a button for each service
-##   help     the guide's next step            recipes  "what can I make with...?"
-##   lore     the guide's stories              trade    buy and sell for ancient coins
-##   advice   the warden's beasts              tend     heal hurt companions
-##   house    where they live, the houses they could move to, what a house needs
-## The plate sits at the foot of the screen and grows with its page, so the
-## world (and whoever is talking) stays in view above it. The world pauses
-## while it is open; E or Esc closes it.
+##   recipes  "what can I make with...?"      trade    buy and sell for ancient coins
+##   advice   the warden's beasts              house    homes, and what a house needs
+## E says goodbye; Esc steps back to the talk page first.
 const UI = preload("res://UI/SkyfangUI.gd")
 const FRAME = preload("res://UI/CrystalFrame.gd")
 const Folk = preload("res://Forest/folk/Folk.gd")
 const Actor = preload("res://Forest/folk/FolkActor.gd")
 const Housing = preload("res://Forest/folk/Housing.gd")
-const PANEL := Rect2(36, 16, 408, 238)
-const BOTTOM := 262.0
-const MIN_HEIGHT := 148.0
+## Where the panel starts (top left) and how wide it is; it grows down with
+## its page, clear of the keeper in the middle of the screen.
+const ORIGIN := Vector2(6, 48)
+const WIDTH := 176.0
+## Further than this from the person (keeper to them) and the talk ends.
+const REACH := 76.0
 
 signal closed
 var manager: Node
 var id := ""
 var page := ""
 var root: Control
-var _box: Control
+var _box: PanelContainer
 var _frame: Control
 var _words: Label
-var _title: Label
-var _content: Control
+var _content: VBoxContainer
 var _reveal := 0.0
 var _chat := 0
+## A scripted talk (Orrin's first words): the lines, where it's up to, and
+## what to do when it's through.
+var _script: Array = []
+var script_step := 0
+var _script_done := Callable()
 
 
 func _ready() -> void:
 	layer = 28
-	process_mode = Node.PROCESS_MODE_ALWAYS
 	root = Control.new()
 	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	# Only the panel itself takes the mouse; clicks elsewhere reach the world.
+	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.theme = UI.theme()
 	root.visible = false
 	add_child(root)
@@ -46,65 +53,72 @@ func is_open() -> bool:
 	return root != null and root.visible
 
 
+## The panel on screen (an empty rect when closed).
+func panel_rect() -> Rect2:
+	return Rect2(_box.position, _box.size) if is_open() and is_instance_valid(_box) else Rect2()
+
+
 ## Talk to one of the folk (the manager answers for services and housing).
 func open(folk_id: String, folk_manager: Node) -> void:
 	manager = folk_manager
 	id = folk_id
 	_chat = randi()
-	for child in root.get_children(): child.queue_free()
-	var shade := ColorRect.new()
-	shade.color = Color(0.02, 0.07, 0.07, 0.45)
-	shade.size = Vector2(480, 270)
-	root.add_child(shade)
-	_box = Control.new()
-	_box.position = PANEL.position
-	_box.size = PANEL.size
-	root.add_child(_box)
+	for child in root.get_children():
+		root.remove_child(child)
+		child.queue_free()
 	_frame = FRAME.new()
-	_frame.size = PANEL.size
-	_box.add_child(_frame)
-	var portrait_frame := FRAME.new()
-	portrait_frame.inset = true
-	portrait_frame.position = Vector2(12, 12)
-	portrait_frame.size = Vector2(76, 76)
-	_box.add_child(portrait_frame)
+	_frame.compact = true
+	root.add_child(_frame)
+	_box = PanelContainer.new()
+	_box.position = ORIGIN
+	_box.custom_minimum_size.x = WIDTH
+	var margins := StyleBoxEmpty.new()
+	margins.set_content_margin_all(7)
+	_box.add_theme_stylebox_override("panel", margins)
+	_box.resized.connect(_fit_frame)
+	root.add_child(_box)
+	var column := VBoxContainer.new()
+	column.add_theme_constant_override("separation", 4)
+	_box.add_child(column)
+	var header := HBoxContainer.new()
+	header.add_theme_constant_override("separation", 5)
+	column.add_child(header)
+	var face := FRAME.new()
+	face.inset = true
+	face.custom_minimum_size = Vector2(36, 36)
+	header.add_child(face)
 	var portrait := TextureRect.new()
 	portrait.texture = Actor.portrait(folk_id)
-	portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	portrait.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	portrait.position = Vector2(18, 16)
-	portrait.size = Vector2(64, 64)
-	_box.add_child(portrait)
+	portrait.position = Vector2(2, 2)
+	portrait.size = Vector2(32, 32)
+	face.add_child(portrait)
+	var names := VBoxContainer.new()
+	names.add_theme_constant_override("separation", 1)
+	header.add_child(names)
 	var who := Folk.info(folk_id)
 	var name_label := Label.new()
 	name_label.text = str(who.name)
-	UI.style_title(name_label, 13)
-	name_label.position = Vector2(98, 8)
-	_box.add_child(name_label)
-	_title = Label.new()
-	_title.text = str(who.title).to_upper()
-	_title.add_theme_color_override("font_color", UI.MINT)
-	_title.position = Vector2(100, 27)
-	_box.add_child(_title)
+	UI.style_title(name_label, 11)
+	names.add_child(name_label)
+	var title := Label.new()
+	title.text = str(who.title).to_upper()
+	title.add_theme_color_override("font_color", UI.MINT)
+	names.add_child(title)
 	_words = Label.new()
 	_words.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_words.position = Vector2(98, 40)
-	_words.size = Vector2(PANEL.size.x - 112, 50)
-	_box.add_child(_words)
-	_content = Control.new()
-	_content.position = Vector2(12, 96)
-	_content.size = Vector2(PANEL.size.x - 24, PANEL.size.y - 106)
-	_box.add_child(_content)
+	_words.custom_minimum_size.x = WIDTH - 14
+	column.add_child(_words)
+	_content = VBoxContainer.new()
+	_content.add_theme_constant_override("separation", 3)
+	column.add_child(_content)
 	root.visible = true
-	get_tree().paused = true
 	show_talk(_opening_words())
 
 
 func close() -> void:
 	if not is_open(): return
 	root.visible = false
-	get_tree().paused = false
 	closed.emit()
 
 
@@ -112,13 +126,23 @@ func _input(event: InputEvent) -> void:
 	if not is_open() or not event is InputEventKey or not event.pressed or event.echo: return
 	var key: int = event.keycode if event.keycode != 0 else event.physical_keycode
 	if key in [KEY_E, KEY_ESCAPE]:
-		if page != "talk" and key == KEY_ESCAPE: show_talk("")
+		if page == "script":
+			# E goes on; Esc skips to the end of what they have to say.
+			if key == KEY_ESCAPE: script_step = _script.size() - 1
+			_advance_script()
+		elif page != "talk" and key == KEY_ESCAPE: show_talk("")
 		else: close()
 		get_viewport().set_input_as_handled()
 
 
 func _process(delta: float) -> void:
-	if not is_open() or _words == null: return
+	if not is_open(): return
+	# Walking off (or anything happening to them) ends the talk.
+	var person: Node2D = manager.actors.get(id) if is_instance_valid(manager) else null
+	var keeper := get_tree().get_first_node_in_group("player") as Node2D
+	if not is_instance_valid(person) or not is_instance_valid(keeper) or person.global_position.distance_to(keeper.global_position) > REACH:
+		close()
+		return
 	if _words.visible_ratio < 1.0:
 		_reveal += delta * 70.0
 		_words.visible_characters = int(_reveal)
@@ -130,6 +154,7 @@ func say(text: String) -> void:
 	_words.text = text
 	_words.visible_characters = 0
 	_reveal = 0.0
+	_refit()
 
 
 func _opening_words() -> String:
@@ -147,29 +172,32 @@ func _pick(lines: Array) -> String:
 	return str(lines[posmod(_chat, lines.size())]) if not lines.is_empty() else ""
 
 
-# --- pages ------------------------------------------------------------------------
+# --- layout -----------------------------------------------------------------------
+
+func _fit_frame() -> void:
+	if not is_instance_valid(_frame) or not is_instance_valid(_box): return
+	_frame.position = _box.position
+	_frame.size = _box.size
+
+
+## Shrink or grow the panel to its page once the new rows have their sizes.
+func _refit() -> void:
+	if is_instance_valid(_box): _box.call_deferred("reset_size")
+
 
 func _clear() -> void:
-	for child in _content.get_children(): child.queue_free()
+	for child in _content.get_children():
+		_content.remove_child(child)
+		child.queue_free()
 
 
-## Size the plate to a page: rows of buttons (19 high, 3 apart) below the
-## portrait, or the whole plate.
-func _fit_rows(rows: int) -> void:
-	_fit(rows * 19.0 + maxf(rows - 1, 0) * 3.0)
-
-
-func _fit(content_height: float) -> void:
-	var h := clampf(96.0 + content_height + 12.0, MIN_HEIGHT, PANEL.size.y)
-	_frame.size = Vector2(PANEL.size.x, h)
-	_box.position = Vector2(PANEL.position.x, BOTTOM - h)
-
-
-func _button(parent: Control, text: String, callback: Callable, width := 0) -> Button:
+func _button(parent: Control, text: String, callback: Callable) -> Button:
 	var b := Button.new()
 	b.text = text
 	b.focus_mode = Control.FOCUS_NONE
-	b.custom_minimum_size = Vector2(width, 19)
+	b.custom_minimum_size = Vector2(0, 17)
+	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	b.clip_text = true
 	b.pressed.connect(callback)
 	parent.add_child(b)
 	return b
@@ -178,43 +206,97 @@ func _button(parent: Control, text: String, callback: Callable, width := 0) -> B
 func _grid(columns: int) -> GridContainer:
 	var grid := GridContainer.new()
 	grid.columns = columns
-	grid.add_theme_constant_override("h_separation", 4)
+	grid.add_theme_constant_override("h_separation", 3)
 	grid.add_theme_constant_override("v_separation", 3)
-	grid.size = _content.size
 	_content.add_child(grid)
 	return grid
 
+
+## A list that scrolls once it's taller than `height`.
+func _list(height: float) -> VBoxContainer:
+	var scroll := ScrollContainer.new()
+	scroll.custom_minimum_size = Vector2(WIDTH - 14, height)
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	_content.add_child(scroll)
+	var list := VBoxContainer.new()
+	list.add_theme_constant_override("separation", 2)
+	list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.add_child(list)
+	return list
+
+
+func _item_button(parent: Control, item: Item, text: String, callback: Callable) -> Button:
+	var b := _button(parent, text, callback)
+	b.icon = item.icon
+	b.expand_icon = true
+	b.add_theme_constant_override("icon_max_width", 12)
+	b.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	return b
+
+
+# --- pages ------------------------------------------------------------------------
+
+## Lines said one after another ("Go on", or E), from `from_step`; then
+## `on_done` and the usual talk page. Walking away leaves it at script_step.
+func open_script(folk_id: String, folk_manager: Node, lines: Array, from_step := 0, on_done := Callable()) -> void:
+	open(folk_id, folk_manager)
+	_script = lines
+	script_step = clampi(from_step, 0, maxi(lines.size() - 1, 0))
+	_script_done = on_done
+	_show_script_line()
+
+
+func _show_script_line() -> void:
+	page = "script"
+	_clear()
+	say(str(_script[script_step]))
+	var grid := _grid(2)
+	_button(grid, "Go on" if script_step < _script.size() - 1 else "Thank you", _advance_script)
+	_refit()
+
+
+func _advance_script() -> void:
+	# A tap while the words are still coming shows them all first.
+	if _words.visible_ratio < 1.0:
+		_words.visible_ratio = 1.0
+		_reveal = _words.text.length()
+		return
+	script_step += 1
+	if script_step < _script.size():
+		_show_script_line()
+		return
+	_script = []
+	if _script_done.is_valid(): _script_done.call()
+	show_talk("")
 
 func show_talk(words: String) -> void:
 	page = "talk"
 	_clear()
 	say(words)
 	var state: Dictionary = manager.folk.get(id, {})
-	var grid := _grid(3)
-	var width := int((_content.size.x - 8) / 3)
+	var grid := _grid(2)
 	if state.get("stage", "") == "wild" and not bool(state.get("freed", true)):
-		_button(grid, "Break the trap open", func():
+		_button(grid, "Break the trap", func():
 			if manager.release(id):
 				manager.meet(id)
-				show_talk("")
-				say("Free at last. %s" % str(Folk.info(id).get("ready_line", ""))), width)
-		_button(grid, "Goodbye  [E]", close, width)
-		_fit_rows(1)
+				show_talk("Free at last. %s" % str(Folk.info(id).get("ready_line", ""))))
+		_button(grid, "Goodbye", close)
+		_refit()
 		return
 	if state.get("stage", "") == "wild":
 		manager.meet(id)
-	_button(grid, "Chat", func(): say(_pick(Folk.info(id).chat)), width)
+	_button(grid, "Chat", func(): say(_pick(Folk.info(id).chat)))
 	for service in Folk.info(id).get("services", []):
 		match service:
-			"help": _button(grid, "What should I do?", func(): say(manager.help()), width)
-			"recipes": _button(grid, "What can I make?", show_recipes, width)
-			"lore": _button(grid, "Tell me a story", func(): say(_pick(Folk.info(id).lore)), width)
-			"trade": _button(grid, "Trade", show_trade, width)
-			"advice": _button(grid, "About the beasts", show_advice, width)
-			"tend": _button(grid, "Tend my companions", func(): say(manager.tend()), width)
-	_button(grid, "Your home", show_house, width)
-	_button(grid, "Goodbye  [E]", close, width)
-	_fit_rows(ceili(grid.get_child_count() / 3.0))
+			"help": _button(grid, "What next?", func(): say(manager.help()))
+			"recipes": _button(grid, "Recipes", show_recipes)
+			"lore": _button(grid, "A story", func(): say(_pick(Folk.info(id).lore)))
+			"trade": _button(grid, "Trade", show_trade)
+			"advice": _button(grid, "The beasts", show_advice)
+			"tend": _button(grid, "Tend beasts", func(): say(manager.tend()))
+	_button(grid, "Home", show_house)
+	_button(grid, "Goodbye", close)
+	_refit()
 
 
 ## "What can I make with...?": the satchel's things; pick one, hear its uses.
@@ -223,7 +305,7 @@ func show_recipes() -> void:
 	_clear()
 	say("Show me something from your satchel and I'll tell you what it makes.")
 	var seen := {}
-	var grid := _grid(9)
+	var grid := _grid(7)
 	for slot in InventoryManager.inventory:
 		var item: Item = slot.item
 		if item == null or seen.has(item.id): continue
@@ -232,16 +314,15 @@ func show_recipes() -> void:
 		b.icon = item.icon
 		b.expand_icon = true
 		b.focus_mode = Control.FOCUS_NONE
-		b.custom_minimum_size = Vector2(40, 22)
+		b.custom_minimum_size = Vector2(20, 18)
 		b.tooltip_text = item.name
-		b.add_theme_constant_override("icon_max_width", 16)
+		b.add_theme_constant_override("icon_max_width", 14)
 		var chosen := item
 		b.pressed.connect(func(): say(_uses_of(chosen)))
 		grid.add_child(b)
-		if seen.size() >= 27: break
-	_button(grid, "Back", func(): show_talk(""), 40)
-	var rows := ceili(grid.get_child_count() / 9.0)
-	_fit(rows * 22.0 + (rows - 1) * 3.0)
+		if seen.size() >= 20: break
+	_button(_content, "Back", func(): show_talk(""))
+	_refit()
 
 
 func _uses_of(item: Item) -> String:
@@ -249,76 +330,56 @@ func _uses_of(item: Item) -> String:
 	if recipes.is_empty():
 		return "%s? Nothing I know is made from it. Some things are for eating, trading or taming." % item.name
 	var parts: Array = []
-	for recipe in recipes.slice(0, 5):
+	for recipe in recipes.slice(0, 4):
 		var station: String = recipe.get("station", "")
-		parts.append("%s%s" % [recipe.name, " (at a %s)" % station if station != "" else ""])
-	var more := "" if recipes.size() <= 5 else ", and %d more" % (recipes.size() - 5)
+		parts.append("%s%s" % [recipe.name, " (%s)" % station if station != "" else ""])
+	var more := "" if recipes.size() <= 4 else ", and %d more" % (recipes.size() - 4)
 	return "With %s you can make: %s%s." % [item.name, ", ".join(parts), more]
 
 
-func show_trade() -> void:
+## Buying (everyone who trades) and selling (the trader), a list at a time.
+func show_trade(side := "buy") -> void:
 	page = "trade"
 	_clear()
-	say("You have %d ancient coins. What'll it be?" % manager.coins())
-	var columns := HBoxContainer.new()
-	columns.add_theme_constant_override("separation", 8)
-	columns.size = _content.size
-	_content.add_child(columns)
-	var buy := VBoxContainer.new()
-	buy.add_theme_constant_override("separation", 2)
-	buy.custom_minimum_size.x = 220
-	columns.add_child(buy)
-	var heading := Label.new()
-	heading.text = "BUY"
-	heading.add_theme_color_override("font_color", UI.GOLD)
-	buy.add_child(heading)
-	var scroll := ScrollContainer.new()
-	scroll.custom_minimum_size = Vector2(220, 104)
-	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	buy.add_child(scroll)
-	var list := VBoxContainer.new()
-	list.add_theme_constant_override("separation", 2)
-	list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	scroll.add_child(list)
-	var wares: Dictionary = manager.wares(id)
-	for item_id in wares:
-		var item: Item = ItemDB.make(item_id)
-		if item == null: continue
-		var offer: Array = wares[item_id]
-		var b := _button(list, "%s%s  %d c" % [item.name, " x%d" % int(offer[1]) if int(offer[1]) > 1 else "", int(offer[0])], func():
-			say(manager.buy(id, item_id)), 208)
-		b.icon = item.icon
-		b.expand_icon = true
-		b.add_theme_constant_override("icon_max_width", 14)
-		b.alignment = HORIZONTAL_ALIGNMENT_LEFT
-	var sell := VBoxContainer.new()
-	sell.add_theme_constant_override("separation", 2)
-	columns.add_child(sell)
-	var sell_heading := Label.new()
-	sell_heading.text = "SELL (one at a time)" if id == "merchant" else "BACK"
-	sell_heading.add_theme_color_override("font_color", UI.GOLD)
-	sell.add_child(sell_heading)
+	if id != "merchant": side = "buy"
+	say("You have %d ancient coins. What'll it be?" % manager.coins() if side == "buy" else "Show me what you've found. One at a time.")
 	if id == "merchant":
-		var any := false
+		var tabs := _grid(2)
+		var buy_tab := _button(tabs, "Buy", func(): show_trade("buy"))
+		var sell_tab := _button(tabs, "Sell", func(): show_trade("sell"))
+		buy_tab.toggle_mode = true
+		sell_tab.toggle_mode = true
+		buy_tab.button_pressed = side == "buy"
+		sell_tab.button_pressed = side == "sell"
+	var list := _list(78)
+	if side == "buy":
+		var wares: Dictionary = manager.wares(id)
+		for item_id in wares:
+			var item: Item = ItemDB.make(item_id)
+			if item == null: continue
+			var offer: Array = wares[item_id]
+			var ware: String = item_id
+			_item_button(list, item, "%s%s  %dc" % [item.name, " x%d" % int(offer[1]) if int(offer[1]) > 1 else "", int(offer[0])], func():
+				say(manager.buy(id, ware)))
+	else:
 		for item_id in Folk.BUYS:
 			var count := InventoryManager.get_item_count(item_id)
 			if count <= 0: continue
-			any = true
 			var item: Item = ItemDB.make(item_id)
-			var b := _button(sell, "%s (%d)  +%d c" % [item.name, count, int(Folk.BUYS[item_id])], func():
-				say(manager.sell(item_id))
-				show_trade(), 140)
-			b.icon = item.icon
-			b.expand_icon = true
-			b.add_theme_constant_override("icon_max_width", 14)
-			b.alignment = HORIZONTAL_ALIGNMENT_LEFT
-		if not any:
+			var find: String = item_id
+			_item_button(list, item, "%s (%d)  +%dc" % [item.name, count, int(Folk.BUYS[item_id])], func():
+				var said: String = manager.sell(find)
+				show_trade("sell")
+				say(said))
+		if list.get_child_count() == 0:
 			var none := Label.new()
-			none.text = "Bring fossils, idols,\ncrystal, scales, fangs."
+			none.text = "Nothing she wants yet. Bring fossils, idols, crystal, scales or fangs."
+			none.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			none.custom_minimum_size.x = WIDTH - 20
 			none.add_theme_color_override("font_color", UI.DIM)
-			sell.add_child(none)
-	_button(sell, "Back", func(): show_talk(""), 140)
-	_fit(PANEL.size.y)
+			list.add_child(none)
+	_button(_content, "Back", func(): show_talk(""))
+	_refit()
 
 
 func show_advice() -> void:
@@ -326,16 +387,16 @@ func show_advice() -> void:
 	_clear()
 	say("Pick a beast. I'll tell you what it eats, how to earn its trust, and whether you can ride it.")
 	var grid := _grid(3)
-	var width := int((_content.size.x - 8) / 3)
 	for species in Folk.BEASTS:
 		var facts: Array = Folk.BEASTS[species]
 		_button(grid, species.capitalize(), func():
-			say("%s. Eats: %s. %s %s" % [species.capitalize(), facts[0], facts[1], facts[2]]), width)
-	_button(grid, "Back", func(): show_talk(""), width)
-	_fit_rows(ceili(grid.get_child_count() / 3.0))
+			say("%s. Eats: %s. %s %s" % [species.capitalize(), facts[0], facts[1], facts[2]]))
+	_button(_content, "Back", func(): show_talk(""))
+	_refit()
 
 
-## Where they live, and the houses standing: move in, or see what one lacks.
+## Where they live, and the houses standing: move in, swap, or see what one
+## lacks. (H shows every house and everyone at once.)
 func show_house() -> void:
 	page = "house"
 	_clear()
@@ -345,55 +406,43 @@ func show_house() -> void:
 	match state.get("stage", ""):
 		"home": say("I live in the %s. Suits me fine." % Housing.describe(home).to_lower())
 		"camp": say("I'm camped by the fire for now. Build me a house and I'll move in.")
-		_: say("I'd live by your camp if there were a house for me. %s" % str(Folk.info(id).get("ready_line", "")))
-	var scroll := ScrollContainer.new()
-	scroll.size = Vector2(_content.size.x, _content.size.y - 24)
-	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	_content.add_child(scroll)
-	var list := VBoxContainer.new()
-	list.add_theme_constant_override("separation", 3)
-	list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	scroll.add_child(list)
+		_: say("I'd live by your camp if there were a house for me.")
+	var list := _list(74)
 	if rooms.is_empty():
 		var none := Label.new()
-		none.text = "No houses yet. A house: walls all round, a door, a floor, a roof over every tile, a torch and a bed."
+		none.text = "No houses yet: walls all round, a door, a floor, a roof over every tile, a torch and a bed."
 		none.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		none.custom_minimum_size.x = _content.size.x - 12
+		none.custom_minimum_size.x = WIDTH - 20
 		none.add_theme_color_override("font_color", UI.DIM)
 		list.add_child(none)
 	for key in rooms:
 		var room: Dictionary = rooms[key]
-		var row := HBoxContainer.new()
-		row.add_theme_constant_override("separation", 4)
-		list.add_child(row)
-		var label := Label.new()
 		var lives: String = manager.who_lives_in(key)
 		var missing: Array = []
 		for check in room.checks:
 			if not check.ok: missing.append(str(check.label).to_lower())
-		label.text = Housing.describe(room) + ("  (%s lives here)" % Folk.info(lives).name if lives != "" else "") + ("" if room.valid else "\n  Needs: " + ", ".join(missing))
-		label.custom_minimum_size.x = 290
+		var label := Label.new()
+		label.text = Housing.describe(room) + (": " + str(Folk.info(lives).name) if lives != "" else "") + ("" if room.valid else ". Needs " + ", ".join(missing))
 		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		label.add_theme_color_override("font_color", UI.PAPER if room.valid else UI.EMBER)
-		row.add_child(label)
+		label.custom_minimum_size.x = WIDTH - 20
+		label.add_theme_color_override("font_color", UI.GOLD if lives == id else (UI.PAPER if room.valid else UI.EMBER))
+		list.add_child(label)
 		# A free house: move in. Someone else's: trade houses with them (nobody
 		# is put out into the cold).
 		if room.valid and lives == "":
 			var target_key: String = key
-			_button(row, "Move here", func():
+			_button(list, "Move in here", func():
 				if manager.move_in(id, target_key): show_house()
-				else: say("I can't live there."), 80)
+				else: say("I can't live there."))
 		elif room.valid and lives != id and state.get("stage", "") == "home":
 			var other: String = lives
-			_button(row, "Swap with " + str(Folk.info(other).name), func():
+			_button(list, "Swap with " + str(Folk.info(other).name), func():
 				manager.swap(id, other)
-				show_house(), 96)
-	var back := HBoxContainer.new()
-	back.position = Vector2(0, _content.size.y - 20)
-	_content.add_child(back)
+				show_house())
+	var row := _grid(2)
 	if state.get("stage", "") == "home":
-		_button(back, "Leave the house", func():
+		_button(row, "Leave house", func():
 			manager.leave_home(id)
-			show_house(), 120)
-	_button(back, "Back", func(): show_talk(""), 80)
-	_fit(PANEL.size.y)
+			show_house())
+	_button(row, "Back", func(): show_talk(""))
+	_refit()

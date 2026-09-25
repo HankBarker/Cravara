@@ -25,10 +25,12 @@ func inventory_matches(saved: Array) -> bool:
 		if str(actual[i].id)!=str(saved[i].id) or int(actual[i].qty)!=int(saved[i].qty): return false
 	return true
 
+## The journey's own creatures (pass 10 adds the alpha, raised fresh by its
+## den, and the Bonelands' wildlife, which a journey from before arrives to).
 func living_creatures() -> int:
 	var count:=0
 	for creature in get_tree().get_nodes_in_group("forest_creatures"):
-		if not creature.is_queued_for_deletion(): count+=1
+		if not creature.is_queued_for_deletion() and creature.species != "alpha" and creature.global_position.x < 56 * 16: count+=1
 	return count
 
 func run():

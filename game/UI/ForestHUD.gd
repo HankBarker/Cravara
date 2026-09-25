@@ -426,6 +426,36 @@ func close_panels() -> void:
 	_command_target = null
 	DragController.end_drag()
 
+## A boss's name and health across the top of the screen while the fight
+## lasts (AlphaBoss): fades in on the first call, then just follows the health.
+var _boss_plate: Control
+var _boss_name: Label
+var _boss_bar: Control
+func show_boss(title: String, fraction: float) -> void:
+	if not is_instance_valid(_boss_plate):
+		_boss_plate = _panel(root,Vector2(170,4),Vector2(170,31))
+		_boss_plate.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_boss_name = _label(_boss_plate,title,Vector2(6,1),11,GOLD)
+		_boss_name.size.x = 158
+		_boss_name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		_boss_bar = METER.new()
+		_boss_bar.position = Vector2(8,18)
+		_boss_bar.size = Vector2(154,8)
+		_boss_bar.tint = UI.VITALITY
+		_boss_plate.add_child(_boss_bar)
+		_boss_plate.modulate.a = 0.0
+		_boss_plate.create_tween().tween_property(_boss_plate,"modulate:a",1.0,0.5)
+	_boss_name.text = title
+	_boss_bar.value = clampf(fraction,0.0,1.0)*100.0
+
+func hide_boss() -> void:
+	if not is_instance_valid(_boss_plate): return
+	var plate := _boss_plate
+	_boss_plate = null
+	var fade := plate.create_tween()
+	fade.tween_property(plate,"modulate:a",0.0,0.6)
+	fade.tween_callback(plate.queue_free)
+
 func show_banner(title: String, text: String, icon: Texture2D = null) -> void:
 	_banners.append([title, text, icon])
 	if not is_instance_valid(_banner): _next_banner()

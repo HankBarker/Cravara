@@ -11,6 +11,11 @@ Writes 16-bit mono 44.1 kHz WAVs next to this script:
   rustle_N      soft cloth / armour rustle (roll, gear)
   hit_N         tool striking a creature (crack + body thump + slap)
   hurt_N        the Keeper taking a hit (dull thud + soft falling tone)
+  pop_N         picking something up: a small round bloop, very soft
+  amb_wind_0    ambience bed (seamless 16 s loop): soft wind, slow gusts, leaves
+  amb_day_0     ambience bed (loop): a far, gentle haze of buzzing insects
+  amb_night_0   ambience bed (loop): a chorus of crickets
+  chirp_N       a single bug nearby (a cricket's trill, a beetle's click-buzz)
 
 Every file is levelled to a per-family short-term K-weighted loudness (steps
 -17, splash/whoosh -14, hit/hurt -10; peaks soft-limited at -1 dBFS), so
@@ -304,6 +309,110 @@ def thud(rng):
     return finish(low(x, 5000), 60, -12.0)
 
 
+def pop(rng, i):
+    """Picking something up: a small, round bloop, like a bubble. A soft sine
+    that glides up nearly an octave, a quieter lower partner, a breath of air
+    and no click. Levelled low: it should sit under everything else."""
+    n = n_of(0.09)
+    f0 = 540 * (1 + 0.05 * (i - 1.5))
+    tone = sweep_sine(n, f0, f0 * 1.85, "exp") * env(n, 0.003, 0.03)
+    body = sweep_sine(n, f0 * 0.5, f0 * 0.9, "exp") * env(n, 0.003, 0.022) * 0.3
+    air = band(rng.standard_normal(n), 2500, 7000) * env(n, 0.001, 0.008) * 0.04
+    return finish(low(tone + body + air, 6000), 30, -19.0)
+
+
+def seamless(x, overlap_s=2.0):
+    """A loop that joins without a click: the last `overlap_s` crossfades
+    (equal power) into the start, then is cut off."""
+    k = n_of(overlap_s)
+    head = x[:k].copy()
+    tail = x[-k:]
+    t = np.linspace(0.0, np.pi / 2, k)
+    x = x[:-k].copy()
+    x[:k] = head * np.sin(t) + tail * np.cos(t)
+    return x
+
+
+def loudness_long(x, window=0.4):
+    """loudness() for long beds: the same K-weighting, the moving average by a
+    running sum (the direct convolution is far too slow on 18 s of audio)."""
+    b, a = _biquad("shelf", 4.0, 1 / np.sqrt(2), 1500.0)
+    y = signal.lfilter(b, a, x)
+    b, a = _biquad("highpass", 0.0, 0.5, 38.0)
+    y = signal.lfilter(b, a, y)
+    w = n_of(window)
+    c = np.concatenate(([0.0], np.cumsum(y ** 2)))
+    energy = (c[w:] - c[:-w]) / w
+    return -0.691 + 10 * np.log10(energy.max() + 1e-12)
+
+
+def level(x, target):
+    """Loudness only (no fades: loops must stay seamless)."""
+    x = x - np.mean(x)
+    for _ in range(3):
+        x = x * 10 ** ((target - loudness_long(x)) / 20)
+    return np.clip(x, -0.89, 0.89)
+
+
+def amb_wind(rng):
+    n = n_of(18.0)
+    t = np.arange(n) / SR
+    base = low(band(rng.standard_normal(n), 60, 900), 700)
+    gust = 0.55 + 0.45 * np.sin(2 * np.pi * t / 7.3 + 0.8) * np.sin(2 * np.pi * t / 4.1)
+    whistle = band(rng.standard_normal(n), 900, 1600) * (0.08 + 0.06 * np.sin(2 * np.pi * t / 5.3))
+    leaves = band(rng.standard_normal(n), 2500, 7000) * (np.clip(np.sin(2 * np.pi * t / 6.1 + 1.3), 0, 1) ** 3) * 0.12
+    return level(seamless(base * gust + whistle * gust + leaves), -30.0)
+
+
+def amb_day(rng):
+    n = n_of(18.0)
+    t = np.arange(n) / SR
+    x = np.zeros(n)
+    for i in range(5):
+        f = rng.uniform(3800, 6200)
+        buzz = band(rng.standard_normal(n), f - 150, f + 150)
+        trem = 0.5 + 0.5 * np.sin(2 * np.pi * rng.uniform(28, 55) * t)
+        swell = np.clip(np.sin(2 * np.pi * t / rng.uniform(5.0, 9.0) + rng.uniform(0, 6.28)), 0, 1) ** 2
+        x += buzz * trem * swell * rng.uniform(0.5, 1.0)
+    hum = low(rng.standard_normal(n), 300) * 0.15
+    return level(seamless(x + hum), -34.0)
+
+
+def cricket(rng, n, f, rate, every, gain):
+    x = np.zeros(n)
+    t = 0.0
+    while t < n / SR:
+        for p in range(int(rng.integers(3, 5))):
+            at = int((t + p / rate) * SR)
+            k = n_of(0.014)
+            if at + k >= n:
+                break
+            tone = np.sin(2 * np.pi * f * np.arange(k) / SR) * np.sin(np.linspace(0, np.pi, k))
+            x[at:at + k] += tone * gain
+        t += every * rng.uniform(0.85, 1.15)
+    return x
+
+
+def amb_night(rng):
+    n = n_of(18.0)
+    x = np.zeros(n)
+    for i in range(6):
+        x += cricket(rng, n, rng.uniform(3900, 4900), rng.uniform(22, 30), rng.uniform(0.55, 1.1), rng.uniform(0.3, 1.0))
+    bed = low(rng.standard_normal(n), 400) * 0.05
+    return level(seamless(x + bed), -32.0)
+
+
+def chirp(rng, i):
+    if i % 2 == 0:
+        n = n_of(0.5)
+        return finish(cricket(rng, n, rng.uniform(4200, 5200), 26, 0.6, 1.0), 20, -26.0)
+    # A beetle's click, then a short buzz.
+    n = n_of(0.35)
+    click = band(rng.standard_normal(n), 2000, 6000) * env(n, 0.0005, 0.004)
+    buzz = band(rng.standard_normal(n), 900, 1800) * np.sin(2 * np.pi * 70 * np.arange(n) / SR) * bump(n, 0.18, 0.06)
+    return finish(click + buzz * 0.6, 30, -26.0)
+
+
 def main():
     plan = [
         ("step_grass", 5, lambda r, i: step_grass(r)),
@@ -317,6 +426,11 @@ def main():
         ("hit", 4, lambda r, i: hit(r)),
         ("hurt", 3, lambda r, i: hurt(r)),
         ("thud", 4, lambda r, i: thud(r)),
+        ("pop", 4, lambda r, i: pop(r, i)),
+        ("amb_wind", 1, lambda r, i: amb_wind(r)),
+        ("amb_day", 1, lambda r, i: amb_day(r)),
+        ("amb_night", 1, lambda r, i: amb_night(r)),
+        ("chirp", 4, lambda r, i: chirp(r, i)),
     ]
     for family_index, (family, count, make) in enumerate(plan):
         for i in range(count):

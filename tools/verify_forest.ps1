@@ -60,7 +60,19 @@ $suites = @(
     @{Name='world-poi'; Args=@('res://Tests/WorldPOISuite.tscn')},
     # The folk: stone building, the housing rules, who arrives when (and from
     # where), moving in and out, trade and tending, talking, saves.
-    @{Name='folk'; Args=@('res://Tests/FolkSuite.tscn')}
+    @{Name='folk'; Args=@('res://Tests/FolkSuite.tscn')},
+    # The opening: the story plays only for a menu-started expedition, can be
+    # clicked through or skipped, the keeper walks out of the tent, and
+    # Orrin's first words run once (resumed if the keeper walks off).
+    @{Name='intro'; Args=@('res://Tests/IntroSuite.tscn')},
+    # Pass 10 beasts: allosaurus, lystrosaurus, the alpha boss and its den,
+    # patient taming, nets that knock predators down, hunting, wildlife
+    # placed per world with one rex, voices and roars.
+    @{Name='beasts'; Args=@('res://Tests/BeastsSuite.tscn')},
+    # Pass 10 map: the Bonelands east of the forest. The forest's original
+    # square is unchanged (the legacy signature), the seam is open, the new
+    # edge is walled, and older journeys gain the new wildlife once.
+    @{Name='bonelands'; Args=@('res://Tests/BonelandsSuite.tscn')}
 )
 if ($FromSuite -ne '' -and $FromSuite -notin $suites.Name) { throw ('Unknown suite: ' + $FromSuite) }
 $started = $FromSuite -eq ''

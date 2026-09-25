@@ -27,6 +27,10 @@ const F_WET := 2
 
 var world
 var extent := 56
+## The drawn area: its top-left cell and its size in cells (the world's
+## bounds: the forest and the Bonelands).
+var origin := Vector2i(-56, -56)
+var cells := Vector2i(112, 112)
 var map_image: Image
 var map_texture: ImageTexture
 var ground_cache: SubViewport
@@ -41,9 +45,11 @@ var _dirty := true
 func setup(owner_world) -> void:
 	world = owner_world
 	extent = int(world.EXTENT)
-	var side: int = extent * 2
-	var px: int = side * CELL
-	map_image = Image.create(side, side, false, Image.FORMAT_RGBA8)
+	var b: Rect2i = world.bounds() if world.has_method("bounds") else Rect2i(-extent, -extent, extent * 2, extent * 2)
+	origin = b.position
+	cells = b.size
+	var px: Vector2i = cells * CELL
+	map_image = Image.create(cells.x, cells.y, false, Image.FORMAT_RGBA8)
 	_fill_map()
 	map_texture = ImageTexture.create_from_image(map_image)
 	var stamp_meta: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://Forest/ground/art/stamps.json"))
@@ -60,16 +66,18 @@ func setup(owner_world) -> void:
 	ground_sprite.z_index = -20
 	ground_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	ground_sprite.texture = ground_cache.get_texture()
+	ground_sprite.position = Vector2(origin * CELL) + Vector2(px) / 2.0
 	add_child(ground_sprite)
 	water_sprite = Sprite2D.new()
 	water_sprite.name = "WaterSurface"
 	water_sprite.z_index = -19
 	water_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	water_sprite.texture = water_field.get_texture()
+	water_sprite.position = ground_sprite.position
 	var water := ShaderMaterial.new()
 	water.shader = WATER
 	water.set_shader_parameter("canvas_px", px)
-	water.set_shader_parameter("world_offset", -extent * CELL)
+	water.set_shader_parameter("world_offset", origin * CELL)
 	water.set_shader_parameter("world_seed", int(world.world_seed))
 	water_sprite.material = water
 	add_child(water_sprite)
@@ -80,25 +88,25 @@ func _material(shader: Shader) -> ShaderMaterial:
 	var m := ShaderMaterial.new()
 	m.shader = shader
 	m.set_shader_parameter("terrain_map", map_texture)
-	m.set_shader_parameter("map_size", extent * 2)
-	m.set_shader_parameter("map_origin", -extent)
+	m.set_shader_parameter("map_size", cells)
+	m.set_shader_parameter("map_origin", origin)
 	m.set_shader_parameter("world_seed", int(world.world_seed))
-	m.set_shader_parameter("canvas_px", extent * 2 * CELL)
-	m.set_shader_parameter("world_offset", -extent * CELL)
+	m.set_shader_parameter("canvas_px", cells * CELL)
+	m.set_shader_parameter("world_offset", origin * CELL)
 	return m
 
 
-func _cache(cache_name: String, px: int, material: ShaderMaterial) -> SubViewport:
+func _cache(cache_name: String, px: Vector2i, material: ShaderMaterial) -> SubViewport:
 	var view := SubViewport.new()
 	view.name = cache_name
-	view.size = Vector2i(px, px)
+	view.size = px
 	view.transparent_bg = true
 	view.disable_3d = true
 	view.world_2d = World2D.new()
 	view.render_target_update_mode = SubViewport.UPDATE_DISABLED
 	add_child(view)
 	var canvas := ColorRect.new()
-	canvas.size = Vector2(px, px)
+	canvas.size = Vector2(px)
 	canvas.material = material
 	view.add_child(canvas)
 	return view
@@ -125,10 +133,9 @@ func _bake() -> void:
 
 ## One texel per cell: kind, water depth (cells to land) and flags.
 func _fill_map() -> void:
-	var side: int = extent * 2
 	var depth := _water_depth()
-	for y in range(-extent, extent):
-		for x in range(-extent, extent):
+	for y in range(origin.y, origin.y + cells.y):
+		for x in range(origin.x, origin.x + cells.x):
 			var c := Vector2i(x, y)
 			var kind := int(world.terrain.get(c, K_GRASS))
 			var flags := 0
@@ -144,8 +151,8 @@ func _fill_map() -> void:
 			elif world.is_river_cell(c):
 				flags |= F_RIVER
 			var d: float = clampf(float(depth.get(c, 0)) / 8.0, 0.0, 1.0)
-			map_image.set_pixel(x + extent, y + extent, Color8(kind, int(round(d * 255.0)), flags, 255))
-	assert(map_image.get_width() == side)
+			map_image.set_pixel(x - origin.x, y - origin.y, Color8(kind, int(round(d * 255.0)), flags, 255))
+	assert(map_image.get_width() == cells.x)
 
 
 ## Cells from each water cell to the nearest land cell (8-way steps).

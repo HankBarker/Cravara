@@ -44,6 +44,17 @@ const MOVES := {
 	"dodo": [
 		{"id": "peck", "kind": "strike", "clip": "peck", "range": [0, 8], "cooldown": 1.0, "dmg": 1.0, "knock": 40, "shape": "jaws", "reach": 10, "arc": 110, "lunge": 4},
 	],
+	"lystro": [
+		{"id": "peck", "kind": "strike", "clip": "peck", "range": [0, 8], "cooldown": 1.1, "dmg": 1.0, "knock": 40, "shape": "jaws", "reach": 10, "arc": 110, "lunge": 4},
+	],
+	"allo": [
+		{"id": "chomp", "kind": "strike", "clip": "chomp", "range": [0, 12], "cooldown": 4.5, "dmg": 1.5, "knock": 230, "shape": "jaws", "reach": 18, "arc": 80, "lunge": 10, "chance": 0.5, "heavy": true},
+		{"id": "bite", "kind": "strike", "clip": "bite", "range": [0, 14], "cooldown": 1.1, "dmg": 1.0, "knock": 170, "shape": "jaws", "reach": 20, "arc": 90, "lunge": 9},
+	],
+	"alpha": [
+		{"id": "pounce", "kind": "pounce", "clip": "pounce", "range": [40, 150], "cooldown": 3.6, "dmg": 1.5, "knock": 260, "shape": "claws", "reach": 18, "takeoff": 0.3, "heavy": true},
+		{"id": "slash", "kind": "strike", "clip": "slash", "range": [0, 16], "cooldown": 1.0, "dmg": 1.0, "knock": 160, "shape": "jaws", "reach": 22, "arc": 110, "lunge": 10},
+	],
 }
 ## The move a rider's click triggers, and its damage (the pass-5 balance).
 const MOUNT_MOVE := {"stego": "tail", "trike": "gore"}
@@ -53,7 +64,7 @@ const MOUNT_DAMAGE := {"stego": 18, "trike": 22}
 const CHARGE_TIME := 1.0
 const MOUNT_RAM_DAMAGE := {"trike": 40}
 ## How far a shove moves each species (heavy bodies barely budge).
-const MASS := {"dodo": 1.0, "raptor": 0.8, "trike": 0.35, "stego": 0.35, "rex": 0.25, "longneck": 0.15}
+const MASS := {"dodo": 1.0, "lystro": 1.0, "raptor": 0.8, "trike": 0.35, "stego": 0.35, "allo": 0.4, "alpha": 0.3, "rex": 0.25, "longneck": 0.15}
 
 var c  # ForestCreature
 var move := {}
@@ -208,7 +219,7 @@ func start(m: Dictionary, to: Node2D, rider_aim := Vector2.ZERO, hold := false) 
 	strike_clip = _clip_for(m)
 	if mounted and m.kind == "strike":
 		_rate = clampf(DinoArt.hit_time(_art_key(), strike_clip, _view) / MOUNT_HIT_TIME, 1.0, 2.0)
-	_cooldowns[m.id] = float(m.cooldown)
+	_cooldowns[m.id] = float(m.cooldown) / maxf(0.1, float(c.get("haste") if c.get("haste") != null else 1.0))
 	# Turn first: a clip may exist in only some facings.
 	c._face(face, true)
 	c._play_clip(_clip_now(), true, _speed_now())
@@ -501,7 +512,7 @@ func _candidates() -> Array:
 	var out: Array = []
 	if not mounted and is_instance_valid(c._player) and _enemy(c._player):
 		out.append(c._player)
-	for other in c.get_tree().get_nodes_in_group("forest_creatures"):
+	for other in c.roster(c.get_tree()):
 		if other != c and not other.is_dead and _enemy(other):
 			out.append(other)
 	return out
@@ -582,6 +593,8 @@ func _hit(victim: Node2D, dir: Vector2, heavy: bool) -> void:
 	if victim.is_in_group("forest_creatures"):
 		knock *= float(MASS.get(victim.species, 0.5))
 	victim.take_damage(amount, c, knock)
+	# A wild hunter that makes a kill rests from hunting for a while.
+	if victim.get("is_dead") == true and c.has_method("on_kill"): c.on_kill(victim)
 	# A spiked tail leaves a cut that keeps bleeding: a share of the blow per second.
 	if move.has("bleed") and victim.has_method("apply_bleed"):
 		victim.apply_bleed(float(amount) * float(move.bleed), float(move.get("bleed_time", 4.0)), c)

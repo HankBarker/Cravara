@@ -65,7 +65,8 @@ substantive work in that area. **Keep it updated** — see "Continuous improveme
 | **Generating new sprites/creature art/tilesets with PixelLab AI** | `references/pixellab-sprites.md` |
 | **The player character (Keeper v2 rig): armour sets, animations, held items, rider** | `references/keeper-rig.md` |
 | **Dinosaur animation, attacks, behaviour, mounts (v2): PixelLab clip pipeline, DinoArt/DinoMoves** | `references/dinosaurs.md` |
-| **Townsfolk (guide, trader, warden), Terraria-style housing, stone building, talking** | `references/folk-and-housing.md` |
+| **Townsfolk (guide, trader, warden), Terraria-style housing, stone building, roofs, talking, the opening story** | `references/folk-and-housing.md` |
+| Frame time, creature update cost, the sun-shadow pass (`Tests/PerfProbe.tscn`) | `references/dinosaurs.md` → Performance |
 | The `godot_mcp` toolchain + build/test/debug loop | `references/mcp-workflow.md` |
 
 ## Cross-cutting principles (from the research)
@@ -108,12 +109,24 @@ DONE (implemented & verified booting in Godot 4.6.1 headless, 2026-06-28):
    tile, a light and a bed. You can talk with each of them (help, recipes, lore, trade, advice, tending,
    homes). Stone walls, floors, doors and slate roofs are built at the workbench.
    *(folk-and-housing.md)*
+8. ✅ **Pass 10 (2026-09): the opening, the first boss, new beasts, the Bonelands.** An eight-plate opening
+   story, then the keeper walks out of the first tent to Orrin. Talking no longer pauses (a compact
+   side panel). Whole roofs drawn on the wall tops; clicks hit the frontmost thing (bed before floor, never
+   the roof overhead from inside). Skarn, the Shardback Alpha, in a den with a roar, boss music and a
+   top bar. The allosaurus (armour drops) and the lystrosaurus; one mini-boss rex; patient taming (feed,
+   back off, come back); nets knock predators down; hunters take prey (raptors in packs). Wildlife placed
+   per world. Ambient wind, insects and chirps; roars, stomps (the rex shakes the screen), a soft pickup
+   pop. The world doubled east into the Bonelands (sand, a dry wash, waterholes, sandstone), with old
+   saves untouched. 54 creatures run at about 14 ms a frame. *(dinosaurs.md, world-generation.md,
+   folk-and-housing.md)*
 
 STILL OPEN:
-- **World scale:** biome JSON is still not wired into generation, and there is one forest region. A second region
-  (and a NavigationRegion2D bake for real pathfinding) is the next world step. *(world-generation.md)*
+- **World scale:** two hand-authored regions now (forest, Bonelands). Hank's plan: author three or four,
+  then generate outward procedurally (Core Keeper style). Biome JSON is still not wired in, and there is
+  no NavigationRegion2D bake yet. *(world-generation.md)*
 - **UI polish:** drag merge/drop semantics. *(ui-ux.md)*
-- **Hero art:** replace the Raptor's placeholder (tinted/scaled T-Rex sprites) with dedicated raptor pixel art via the hybrid pipeline.
+- **Boss music:** Skarn's fight uses Hank's "Travel Music (Cave)" as a stand-in; a battle track of his own
+  would replace `Forest/audio/boss-echoes.mp3`.
 
 ## Continuous improvement (this skill is a living document)
 This skill is meant to get better every time you use it. When you learn something durable about Cravera

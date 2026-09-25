@@ -79,7 +79,7 @@ func run():
 		await pause(0.36)
 		var damage := 18 if kind == "stego" else 22
 		check(target.health == health-damage,kind+" strike contact damages actual creature once")
-		check(behind.health == 110 and ally.health == 65,kind+" aim excludes rear target and friendly creature")
+		check(behind.health == int(behind.stats.hp) and ally.health == int(ally.stats.hp),kind+" aim excludes rear target and friendly creature")
 		if kind == "stego":
 			check(target.bleed.active() and not behind.bleed.active(),kind+" tail sweep leaves its target bleeding")
 		await pause(0.90)

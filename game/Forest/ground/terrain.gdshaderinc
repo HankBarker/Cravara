@@ -11,8 +11,8 @@
 // (ForestWorld.terrain) is untouched; only the picture changes.
 
 uniform sampler2D terrain_map : filter_nearest, repeat_disable;
-uniform int map_size = 112;
-uniform int map_origin = -56;
+uniform ivec2 map_size = ivec2(112, 112);
+uniform ivec2 map_origin = ivec2(-56, -56);
 uniform int world_seed = 726151;
 
 const int K_GRASS = 0;
@@ -68,7 +68,7 @@ float bayer4(ivec2 p) {
 }
 
 vec4 cell_data(ivec2 c) {
-	ivec2 t = clamp(c - ivec2(map_origin), ivec2(0), ivec2(map_size - 1));
+	ivec2 t = clamp(c - map_origin, ivec2(0), map_size - ivec2(1));
 	return texelFetch(terrain_map, t, 0);
 }
 

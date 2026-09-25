@@ -45,6 +45,7 @@ func run() -> void:
 	_start = stage.player.global_position
 	for creature in get_tree().get_nodes_in_group("forest_creatures"): creature.set_physics_process(false)
 	await _stone_building()
+	await _building_priority()
 	_housing_rules()
 	await _guide()
 	await _trader()
@@ -166,6 +167,59 @@ func _stone_building() -> void:
 	check(world.floors[c].kind == "wood_floor" and world.roofs[c].kind == "thatch_roof", "an older save's floors and roofs load as timber and thatch")
 	world.restore({"seed": world.world_seed})
 	await get_tree().process_frame
+
+
+# --- what a swing hits in a house ---------------------------------------------
+
+## Inside a house a swing reaches the bed before the wall behind it and the
+## floor last, never the roof over the keeper's head; from outside the roof is
+## what you strike. One roof piece roofs the whole walled room.
+func _building_priority() -> void:
+	var x0 := -40
+	var y0 := 24
+	_clear_area(x0 - 1, y0 - 1, x0 + 6, y0 + 5)
+	for x in range(x0, x0 + 6):
+		for y in [y0, y0 + 4]:
+			_put(Vector2i(x, y), "stone_door" if (x == x0 + 2 and y == y0 + 4) else "stone_wall")
+	for y in range(y0 + 1, y0 + 4):
+		_put(Vector2i(x0, y), "stone_wall")
+		_put(Vector2i(x0 + 5, y), "stone_wall")
+		for x in range(x0 + 1, x0 + 5): world._spawn_floor(Vector2i(x, y), "stone_floor")
+	var bed := Vector2i(x0 + 4, y0 + 1)
+	_put(bed, "hide_bed")
+	_put(Vector2i(x0 + 1, y0 + 1), "torch")
+	InventoryManager.inventory[0] = {"item": ItemDB.make("slate_roof"), "quantity": 30}
+	check(world.interact_at(Vector2(Vector2i(x0 + 2, y0 + 2) * 16) + Vector2(8, 8), "slate_roof"), "a roof piece goes up in a walled room")
+	var roofed := 0
+	for y in range(y0 + 1, y0 + 4):
+		for x in range(x0 + 1, x0 + 5): roofed += 1 if world.roofs.has(Vector2i(x, y)) else 0
+	check(roofed == 12 and InventoryManager.get_item_count("slate_roof") == 18, "and roofs the whole room in one go (12 tiles, 12 pieces)")
+	await get_tree().process_frame
+	check(world.roof_layer._patches.size() >= 1, "drawn as one roof")
+	# Inside: the bed first, even aimed where it stands against the wall.
+	var inside := Vector2(Vector2i(x0 + 2, y0 + 2) * 16) + Vector2(8, 8)
+	stage.player.global_position = inside
+	check(world.is_roof_open(Vector2i(x0 + 2, y0 + 2)), "the roof opens over the keeper inside")
+	var bed_top := Vector2(bed * 16) + Vector2(8, 8 - 20)
+	check(world.to_cell(bed_top) == Vector2i(x0 + 4, y0) and world._target_cell(bed_top) == bed, "aimed at the top of the bed, against the wall, the bed is what's struck")
+	# (The row just behind the front wall is under that wall's face, so aim at
+	# the middle of the room.)
+	var spot := Vector2i(x0 + 2, y0 + 2)
+	var empty := Vector2(spot * 16) + Vector2(8, 8)
+	check(world._target_cell(empty) == spot, "an empty spot inside aims at the floor")
+	var roof_hp: int = world.roofs[spot].hp
+	var floor_hp: int = world.floors[spot].hp
+	world.mine_at(empty, "pickaxe", 1)
+	check(world.roofs[spot].hp == roof_hp and world.floors[spot].hp < floor_hp, "inside, the floor takes the blow, not the roof overhead")
+	var behind_wall := Vector2(Vector2i(x0 + 3, y0 + 3) * 16) + Vector2(8, 10)
+	check(world._target_cell(behind_wall) == Vector2i(x0 + 3, y0 + 4), "the front wall, drawn over the tiles behind it, is struck there")
+	check(not world.get_interaction_hint(empty).contains("roof"), "and no roof hint from inside")
+	# Outside, the roof covers all under it.
+	stage.player.global_position = Vector2(Vector2i(x0 + 2, y0 + 8) * 16)
+	check(not world.is_roof_open(spot) and world._target_cell(empty) == spot and world.roofs.has(spot), "from outside, the roof is what you strike")
+	world.mine_at(empty, "pickaxe", 1)
+	check(world.roofs[spot].hp < roof_hp, "and it takes the blow")
+	_clear_area(x0 - 1, y0 - 1, x0 + 6, y0 + 5)
 
 
 # --- housing -------------------------------------------------------------------
@@ -445,25 +499,47 @@ func _dialogue() -> void:
 	stage.player.global_position = guide.global_position + Vector2(10, 0)
 	await get_tree().physics_frame
 	stage._talk_to(stage._nearest_folk())
-	check(talk.is_open() and get_tree().paused and guide.talking, "E opens a talk with Orrin and the world waits")
+	check(talk.is_open() and not get_tree().paused and guide.talking, "E opens a talk with Orrin and the world keeps going")
 	check(talk._words.text != "" and talk.page == "talk", "he greets the keeper")
-	var plate: Rect2 = Rect2(talk._box.position, talk._frame.size)
-	check(plate.end.y == talk.BOTTOM and plate.size.y < talk.PANEL.size.y, "the talk plate sits at the foot of the screen, sized to its buttons (%s)" % plate)
+	for i in 3: await get_tree().process_frame
+	check(not stage.player.controls_locked, "the keeper can still move and fight while talking")
+	var panel: Rect2 = talk.panel_rect()
+	check(panel.position.x < 12 and panel.end.x <= 190 and panel.end.y <= 216 and not panel.has_point(Vector2(240, 135)), "the talk panel keeps to the left column, clear of the keeper (%s)" % panel)
+	check(Rect2(talk._frame.position, talk._frame.size) == panel, "its frame fits it")
+	stage._update_context()
+	check(stage.hud.context_label.text == "E  Goodbye", "the hint says how to leave")
 	talk.show_recipes()
 	check(talk.page == "recipes" and talk._content.get_child_count() > 0, "he asks what to look at")
 	talk.show_house()
-	check(talk.page == "house" and talk._frame.size.y == talk.PANEL.size.y, "the house page opens, full height")
-	talk.close()
-	await get_tree().process_frame
-	check(not talk.is_open() and not get_tree().paused and not guide.talking, "goodbye lets the world go on")
+	for i in 2: await get_tree().process_frame
+	check(talk.page == "house" and talk.panel_rect().end.y <= 216, "the house page opens and still fits")
+	await _key(KEY_ESCAPE)
+	check(talk.is_open() and talk.page == "talk", "Esc steps back to the talk")
+	await _key(KEY_E)
+	check(not talk.is_open() and not guide.talking, "E says goodbye")
+	stage._talk_to(guide)
+	stage.player.global_position += Vector2(130, 0)
+	for i in 3: await get_tree().process_frame
+	check(not talk.is_open() and not guide.talking, "walking away ends the talk")
+	var tamsin: Node = stage.folk.actors.merchant
+	stage.player.global_position = tamsin.global_position + Vector2(0, 12)
+	await get_tree().physics_frame
 	talk.open("merchant", stage.folk)
 	talk.show_trade()
 	check(talk.page == "trade", "the trader's stall opens")
+	talk.show_trade("sell")
+	check(talk.page == "trade", "and she looks at what you've found")
 	talk.close()
+	var kaya: Node = stage.folk.actors.warden
+	stage.player.global_position = kaya.global_position + Vector2(0, 12)
+	await get_tree().physics_frame
 	talk.open("warden", stage.folk)
 	talk.show_advice()
 	check(talk.page == "advice", "the warden talks beasts")
-	talk.close()
+	stage._show_map()
+	await get_tree().process_frame
+	check(not talk.is_open(), "opening the map ends the talk")
+	stage._close_overlay()
 	await get_tree().process_frame
 
 

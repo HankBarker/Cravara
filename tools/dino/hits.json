@@ -88,5 +88,33 @@
    "down": 5,
    "up": 5
   }
+ },
+ "alpha": {
+  "slash": {
+   "side": 5,
+   "down": 6,
+   "up": 5
+  },
+  "pounce": {
+   "side": {
+    "hit": 8,
+    "takeoff": 4
+   },
+   "down": {
+    "hit": 7,
+    "takeoff": 3
+   },
+   "up": {
+    "hit": 8,
+    "takeoff": 5
+   }
+  }
+ },
+ "allo": {
+  "bite": 5,
+  "chomp": 5
+ },
+ "lystro": {
+  "peck": 3
  }
 }

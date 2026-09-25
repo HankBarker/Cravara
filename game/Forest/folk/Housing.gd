@@ -88,6 +88,13 @@ static func _room(world, start: Vector2i, seen: Dictionary) -> Dictionary:
 		"stone": walls.stone > walls.wood, "centre": _centre(cells)}
 
 
+## Walls all round with no gap (whatever else the room lacks).
+static func closed(room: Dictionary) -> bool:
+	for check in room.get("checks", []):
+		if check.id == "walls": return bool(check.ok)
+	return false
+
+
 static func _walled(world, c: Vector2i) -> bool:
 	var p = world.props.get(c)
 	return is_instance_valid(p) and p.kind in WALLS
