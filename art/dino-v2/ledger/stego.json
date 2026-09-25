@@ -321,6 +321,62 @@
     },
     "raw": "C:\\Cravera\\art\\dino-v2\\raw\\stego\\hurt_up@0"
    }
+  ],
+  "threat_up": [
+   {
+    "job": "994697e9-631b-42cb-9b62-973c8e8f71f8",
+    "tool": "animate_image_pixminimax",
+    "seed": 15295815,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Lowers its head and lifts its spiked tail high, swinging it from side to side as a warning, then lowers it again. It stays in place with its back to the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790367145.1239734,
+    "finished": 1790367257.724913,
+    "score": {
+     "bright": 11,
+     "area": 1.37,
+     "wide": 2.2,
+     "base": 22
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\stego\\threat_up@0"
+   },
+   {
+    "job": "71a07130-df8d-473d-add8-f8b3dc9285e8",
+    "tool": "animate_image_pixminimax",
+    "seed": 15296815,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Lowers its head and lifts its spiked tail high, swinging it from side to side as a warning, then lowers it again. It stays in place with its back to the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790367324.6324809,
+    "finished": 1790367422.4653478,
+    "score": {
+     "bright": 9,
+     "area": 1.47,
+     "wide": 2.3,
+     "base": 22
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\stego\\threat_up@1"
+   },
+   {
+    "job": "90f3148b-69af-4c5e-b35e-16169fe7f21d",
+    "tool": "animate_image_pixminimax",
+    "seed": 15297815,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Lowers its head and lifts its spiked tail high, swinging it from side to side as a warning, then lowers it again. It stays in place with its back to the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790367498.1995068,
+    "finished": 1790367895.356454,
+    "score": {
+     "bright": 17,
+     "area": 1.28,
+     "wide": 1.85,
+     "base": 22
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\stego\\threat_up@2"
+   }
   ]
  },
  "idle_down": {
@@ -479,5 +535,59 @@
   "status": "done",
   "method": "walk_front.py (run gait from the down drawing)",
   "frames": 8
+ },
+ "threat_side": {
+  "job": "f32f3272-f7e9-44d6-a718-b05d3ac6eaa6",
+  "tool": "animate_image_pixminimax",
+  "seed": 1213150,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Lowers its head and lifts its spiked tail high, swinging it from side to side as a warning, then lowers it again. It stays in place, facing right.",
+  "frames": 9,
+  "submitted": 1790367142.9836261,
+  "finished": 1790367246.748159,
+  "score": {
+   "bright": 18,
+   "area": 1.04,
+   "wide": 1.04,
+   "base": 111
+  }
+ },
+ "threat_down": {
+  "job": "dbcbf2aa-d2e0-46b7-9733-9d03d0a108e8",
+  "tool": "animate_image_pixminimax",
+  "seed": 13417456,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Lowers its head and lifts its spiked tail high, swinging it from side to side as a warning, then lowers it again. It stays in place, facing the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790367143.7520928,
+  "finished": 1790367311.2090747,
+  "score": {
+   "bright": 31,
+   "area": 1.77,
+   "wide": 1.52,
+   "base": 42
+  },
+  "method": "copied from tail_swing_down (pass 13: the AI's warning grew the tail into a column taller than the stego; the AI frames kept in threat_down_ai)"
+ },
+ "threat_up": {
+  "job": "a1ed2b1c-7ae3-47e3-8d02-f7431d9d496d",
+  "tool": "animate_image_pixminimax",
+  "seed": 15298815,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Lowers its head and lifts its spiked tail high, swinging it from side to side as a warning, then lowers it again. It stays in place with its back to the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790367946.9739654,
+  "finished": 1790368814.8943322,
+  "score": {
+   "bright": 14,
+   "area": 1.39,
+   "wide": 2.05,
+   "base": 22
+  },
+  "kept_attempt": "C:\\Cravera\\art\\dino-v2\\raw\\stego\\threat_up@2",
+  "method": "copied from tail_swing_up (pass 13: the AI's warning grew the tail into a column taller than the stego; the AI frames kept in threat_up_ai)"
  }
 }

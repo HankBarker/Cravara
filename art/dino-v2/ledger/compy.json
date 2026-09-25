@@ -94,5 +94,22 @@
    "area": 1.02,
    "wide": 1.19
   }
+ },
+ "threat_side": {
+  "job": "c769f474-21f3-43fc-b14a-4ba6a1b0edd6",
+  "tool": "animate_image_pixminimax",
+  "seed": 13454799,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Crouches, opens its jaws wide in a shrill screech and flicks its tail, then settles. It stays in place, facing right.",
+  "frames": 9,
+  "submitted": 1790369148.5698333,
+  "finished": 1790369611.2711573,
+  "score": {
+   "bright": 2,
+   "area": 1.21,
+   "wide": 1.05,
+   "base": 2
+  }
  }
 }

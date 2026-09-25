@@ -80,9 +80,12 @@ func _toughness() -> void:
 		check(int(FC.SPECIES[sp].hp) >= 240, "a %s takes real work to bring down (%d)" % [sp, int(FC.SPECIES[sp].hp)])
 	check(int(FC.SPECIES.rex.hp) >= 1500, "the rex is a mountain")
 	check(int(FC.SPECIES.raptor.hp) <= 90 and int(FC.SPECIES.dodo.hp) <= 30, "raptors, dodos and lystros stay within an early keeper's reach")
+	# Pass 13's slower pace: the keeper walks 54 and sprints 88 px/s.
+	const KEEPER := preload("res://Forest/ForestPlayer.gd")
 	for sp in ["raptor", "allo", "rex"]:
-		check(float(FC.BODY[sp].chase) > 76.0, "a %s runs faster than the keeper walks" % sp)
-	check(float(FC.BODY.raptor.chase) > 125.0, "and a raptor faster than the keeper sprints")
+		check(float(FC.BODY[sp].chase) > float(KEEPER.WALK), "a %s runs faster than the keeper walks" % sp)
+	check(float(FC.BODY.raptor.chase) > float(KEEPER.SPRINT), "and a raptor faster than the keeper sprints")
+	check(float(FC.BODY.stego.chase) < float(KEEPER.WALK) and float(FC.BODY.longneck.chase) < float(KEEPER.WALK), "a stego or a longneck can be walked away from")
 
 
 func _placement() -> void:
@@ -130,34 +133,55 @@ func _incubator() -> void:
 	check(not stage.quests.needs_met(hatch), "(not before)")
 
 
-## A raptor notices a keeper 180 px off (not 240), and runs them down.
+## Pass 13: a hungry raptor notices a keeper 140 px off (not 200); a fed one
+## lets them be unless they walk into its danger ring; it shows itself (the
+## alert) before it comes, then runs them down.
 func _chase() -> void:
 	var keeper = stage.player
 	_keeper_to(arena)
-	var r = stage._spawn_creature("raptor", arena + Vector2(180, 0))
+	var r = stage._spawn_creature("raptor", arena + Vector2(140, 0))
 	await frames(2)
+	# Pass 13 beasts are individuals (a calm one notices nearer, a slow one runs
+	# slower): measure a plain one of its kind.
+	r.set_genes({})
 	r._hunt_scan = 0.0
-	check(r._wild_target() == keeper, "a raptor notices the keeper 180 px off")
-	r.global_position = arena + Vector2(240, 0)
+	r.sated = 0.0
+	check(r._wild_target() == keeper, "a hungry raptor notices the keeper 140 px off")
+	r.global_position = arena + Vector2(200, 0)
 	r._hunt_scan = 0.0
-	check(r._wild_target() == null, "(not from 240)")
+	check(r._wild_target() == null, "(not from 200)")
+	r.global_position = arena + Vector2(100, 0)
+	r.sated = 30.0
+	check(r._wild_target() == null, "a fed raptor lets a keeper 100 px off be")
+	r.global_position = arena + Vector2(55, 0)
+	check(r._wild_target() == keeper, "(but not one who walks into it)")
+	r.sated = 0.0
+	# Going for the keeper, it shows itself first: the "!" and a display.
+	r.global_position = arena + Vector2(140, 0)
+	r._alerted_for = null
+	var alerted := false
+	for i in 20:
+		await frames(1)
+		if r.state == "alert" and r._alert_left > 0.0: alerted = true
+	check(alerted, "and it shows itself before it comes (the alert)")
 	# The keeper walks off; the raptor closes anyway.
 	r.global_position = arena + Vector2(150, 0)
 	r._threat = keeper
 	r.provoked_time = 20.0
 	var top := 0.0
 	var start: float = r.global_position.distance_to(keeper.global_position)
-	for i in 150:
-		keeper.global_position += Vector2(-76.0 / 60.0, 0)
+	for i in 180:
+		keeper.global_position += Vector2(-float(preload("res://Forest/ForestPlayer.gd").WALK) / 60.0, 0)
 		await get_tree().physics_frame
 		top = maxf(top, r.velocity.length())
-	check(top > 110.0, "a hunting raptor runs flat out (%.0f px/s)" % top)
+	check(top > 90.0, "a hunting raptor runs flat out (%.0f px/s)" % top)
 	check(r.global_position.distance_to(keeper.global_position) < start - 40.0, "and gains on a walking keeper (%.0f -> %.0f px)" % [start, r.global_position.distance_to(keeper.global_position)])
 	r.queue_free()
 	await frames(1)
 
 
 ## A quarry that keeps away winds the hunter; far off by then, it gives up.
+## (Pass 13: its own ground keeps it here, a chase that circles it.)
 func _tiring() -> void:
 	var keeper = stage.player
 	_keeper_to(arena)
@@ -165,18 +189,46 @@ func _tiring() -> void:
 	await frames(2)
 	a._threat = keeper
 	a.provoked_time = 60.0
-	a._roared = true
+	a._alerted_for = keeper
 	var gave_up := false
 	for i in 60 * 20:
-		# The keeper stays well ahead (faster than it can run).
+		# The keeper stays well ahead (faster than it can run), round and round
+		# the allosaur's own ground.
 		var away: Vector2 = a.global_position.direction_to(keeper.global_position)
 		keeper.global_position = a.global_position + away * 200.0
 		keeper.velocity = Vector2.ZERO
+		a.home = a.global_position
 		await get_tree().physics_frame
 		if a._winded > 0.0 and a.provoked_time <= 0.0 and a._threat == null:
 			gave_up = true
 			break
 	check(gave_up, "a long chase winds an allosaur and it lets the keeper go")
+	a.queue_free()
+	await frames(1)
+	# Pass 13: led off its own ground, it lets the keeper go long before it
+	# tires, and heads home.
+	_keeper_to(arena)
+	a = stage._spawn_creature("allo", arena + Vector2(120, 0))
+	await frames(2)
+	var home: Vector2 = a.home
+	a._threat = keeper
+	a.provoked_time = 60.0
+	a._alerted_for = keeper
+	var let_go := -1.0
+	var t := 0.0
+	for i in 60 * 14:
+		var away: Vector2 = a.global_position.direction_to(keeper.global_position)
+		if a._threat == keeper: keeper.global_position = a.global_position + away * 90.0
+		keeper.velocity = Vector2.ZERO
+		await get_tree().physics_frame
+		t += 1.0 / 60.0
+		if a._threat == null and a.provoked_time <= 0.0:
+			let_go = a.global_position.distance_to(home)
+			break
+	check(let_go > 0.0 and let_go < float(FC.TERRITORY.allo) + 160.0 and a._winded <= 0.0, "led off its ground, an allosaur lets the keeper go (%.0f px out, %.1f s)" % [let_go, t])
+	var out: float = a.global_position.distance_to(home)
+	for i in 180: await get_tree().physics_frame
+	check(a.global_position.distance_to(home) < out - 30.0, "and heads home (%.0f -> %.0f px)" % [out, a.global_position.distance_to(home)])
 	a.queue_free()
 	await frames(1)
 

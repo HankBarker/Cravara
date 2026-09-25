@@ -584,5 +584,23 @@
    "area": 1.0,
    "wide": 2.04
   }
+ },
+ "roar_up": {
+  "job": "a0d64efb-3a25-4364-9943-b97622e21793",
+  "tool": "animate_image_pixminimax",
+  "seed": 14263318,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Crouches and tenses, throws its head back and opens its jaws wide in a roar, then lowers its head, ready to charge. It stays in place with its back to the viewer the whole time.",
+  "frames": 13,
+  "submitted": 1790367145.8487716,
+  "finished": 1790367267.8823612,
+  "score": {
+   "bright": 60,
+   "area": 1.75,
+   "wide": 1.42,
+   "base": 37
+  },
+  "kept_attempt": "C:\\Cravera\\art\\dino-v2\\raw\\allo\\roar_up@1"
  }
 }

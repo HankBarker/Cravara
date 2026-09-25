@@ -48,9 +48,15 @@ func cancel():
 	if is_instance_valid(player) and player.action_kind=="bow_draw": player.stop_action()
 	queue_redraw()
 
+## Full draw takes this long (Archery shortens it, pass 13).
+func full_draw() -> float:
+	var sk = get_tree().get_first_node_in_group("skills")
+	return 0.65 / (1.0 + (sk.value("draw_speed") if sk else 0.0))
+
 func release(target: Vector2) -> bool:
 	if not drawing: return false
-	var charge:=clampf(draw_time/0.65,0,1)
+	var charge:=clampf(draw_time/full_draw(),0,1)
+	var sk = get_tree().get_first_node_in_group("skills")
 	drawing=false
 	if not selected() or player.respawning or player.controls_locked or draw_time<0.08:
 		player.stop_action()
@@ -63,9 +69,16 @@ func release(target: Vector2) -> bool:
 	for charm in player.equipped_trinkets:
 		if charm: damage+=charm.damage_bonus
 	damage=int(round(float(damage)*preload("res://Forest/equipment/SetBonus.gd").damage_mult(player)))
-	arrows.append({"position":player.global_position+Vector2(0,1),"direction":_aim,"damage":damage,"left":310.0,"speed":lerpf(190,290,charge)})
+	# Archery (pass 13): the skill's bite, a heavy full draw, a marksman's luck.
+	var full := charge >= 1.0
+	if sk:
+		var mult: float = 1.0 + sk.value("bow_damage") + (sk.value("full_draw_damage") if full else 0.0)
+		if full and randf() < sk.value("arrow_crit"): mult *= 2.0
+		damage = maxi(1, int(round(float(damage) * mult)))
+	var reach: float = 310.0 * (1.0 + (sk.value("arrow_range") if sk else 0.0))
+	arrows.append({"position":player.global_position+Vector2(0,1),"direction":_aim,"damage":damage,"left":reach,"speed":lerpf(190,290,charge),"pierce":(1 if full and sk and sk.value("arrow_pierce") > 0.0 else 0),"struck":[]})
 	shots_fired+=1
-	cooldown=0.32
+	cooldown=0.1 if sk and sk.value("quick_loose") > 0.0 else 0.32
 	_release_flash=0.16
 	player.play_action("bow_release",target)
 	player.spend_exertion(0.10)
@@ -115,8 +128,28 @@ func _physics_process(delta: float):
 			continue
 		if not hit.is_empty():
 			var target: Node=hit.collider
-			if target.is_in_group("forest_creatures") and not target.is_dead and not target.tamed: target.take_damage(int(arrow.damage),player)
-			elif target.is_in_group("tribesmen") and not target.is_dead: target.take_damage(int(arrow.damage),player)
+			var dealt := int(arrow.damage)
+			var sk = get_tree().get_first_node_in_group("skills")
+			var beast: bool = target.is_in_group("forest_creatures") and not target.is_dead and not target.tamed
+			if beast and sk: dealt = int(round(float(dealt) * (1.0 + sk.value("beast_arrows"))))
+			var alive := false
+			if beast:
+				alive = true
+				target.take_damage(dealt,player)
+			elif target.is_in_group("tribesmen") and not target.is_dead:
+				alive = true
+				target.take_damage(dealt,player)
+			# Archery: every arrow that lands teaches; a kill teaches more.
+			if alive and sk:
+				var xp := minf(float(dealt), 40.0) * 0.6
+				if target.is_dead: xp += clampf(float(target.get("stats").hp if target.get("stats") != null else 60) / 10.0, 4.0, 60.0)
+				sk.gain("archery", xp)
+			# A piercing shot goes on through the first beast.
+			if alive and beast and int(arrow.get("pierce", 0)) > 0:
+				arrow.pierce = int(arrow.pierce) - 1
+				arrow.position = end + Vector2(arrow.direction) * (float(target.stats.radius) + 4.0)
+				arrow.left = float(arrow.left) - step
+				continue
 			arrows.remove_at(i)
 			continue
 		arrow.position=end

@@ -6,6 +6,8 @@ var hp := 3
 var max_hp := 3
 var opened := false
 var is_placed := false
+## A beast's bashing, in fractions of a blow (pass 13, ForestWorld.siege_hit).
+var siege := 0.0
 var _hit_timer := 0.0
 var _hit_flash := 0.0
 var _roof_tick := 0.0
@@ -134,7 +136,19 @@ const WILD := {
 	"ossuary": {"solid": Rect2(-40, -10, 80, 16), "height": 60.0, "landmark": true},
 	"keeper_camp": {"solid": Rect2(-30, -12, 62, 18), "height": 50.0, "landmark": true},
 	"boat": {"solid": Rect2(), "height": 4.0, "float": true, "tool": "", "hp": 2, "drop": ["boat", 1]},
+	# Pass 13: each far land's ore (world/Minerals.gd), the dunes' great bones
+	# (rare now, and searchable), a Sky-Fang spire's crystal and a fallen star.
+	"rustiron_vein": {"solid": Rect2(-10, -5, 20, 10), "height": 24.0, "tool": "pickaxe", "hp": 6, "power": 2, "drop": ["rustiron", 2]},
+	"sunstone_vein": {"solid": Rect2(-10, -5, 20, 10), "height": 22.0, "tool": "pickaxe", "hp": 6, "power": 2, "drop": ["sunstone", 2]},
+	"ashglass_vein": {"solid": Rect2(-10, -5, 20, 10), "height": 28.0, "tool": "pickaxe", "hp": 6, "power": 2, "drop": ["ashglass", 2]},
+	"bogiron_vein": {"solid": Rect2(-10, -5, 20, 10), "height": 22.0, "tool": "pickaxe", "hp": 6, "power": 2, "drop": ["bog_iron", 2]},
+	"dune_ribs": {"solid": Rect2(-28, -6, 56, 12), "height": 30.0, "landmark": true},
+	"dune_skull": {"solid": Rect2(-17, -6, 34, 11), "height": 32.0, "landmark": true},
+	"skyfang_spire": {"solid": Rect2(-12, -6, 24, 12), "height": 76.0, "tool": "pickaxe", "hp": 14, "power": 2, "drop": ["prism_crystal", 3]},
+	"meteor_rock": {"solid": Rect2(-9, -4, 18, 9), "height": 16.0, "tool": "pickaxe", "hp": 5, "power": 1, "drop": ["prism_crystal", 1]},
 }
+## Pass 13: the great bones that can be searched through (like a bone pile).
+const BONES := ["bone_pile", "dune_ribs", "dune_skull"]
 static var _wild_art := {}
 const ROWBOAT := preload("res://Forest/art/pass12/rowboat.png")
 ## A moored boat's heading (0 east, clockwise in eighths), as it was left.
@@ -201,7 +215,12 @@ const SLATE = preload("res://Forest/art/v6/slate_roof.png")
 ## Building kinds, timber and stone: every wall, door, floor and roof behaves
 ## alike (housing counts them all).
 const WALLS := ["wood_wall","stone_wall"]
-const DOORS := ["wood_door","stone_door"]
+const DOORS := ["wood_door","stone_door","big_gate"]
+## Pass 13: the pen gate (three tiles wide; E swings it open like a door) and
+## the hitching post (a companion tied to it stays put).
+const GATE_ART := preload("res://Forest/art/pass11/big_gate.png")
+const GATE_OPEN_ART := preload("res://Forest/art/pass11/big_gate_open.png")
+const HITCH_ART := preload("res://Forest/art/pass11/hitching_post.png")
 const FLOORS := ["wood_floor","stone_floor"]
 const ROOFS := ["thatch_roof","slate_roof"]
 var _flicker := 0.0
@@ -392,6 +411,13 @@ func _draw() -> void:
 			draw_rect(Rect2(-9,y+1,18*float(hp)/max_hp,1),Color("8fd4d6"))
 
 func _draw_visual() -> void:
+	if kind == "big_gate":
+		var gate: Texture2D = GATE_OPEN_ART if opened else GATE_ART
+		draw_texture(gate, Vector2(-gate.get_width() / 2, 7 - gate.get_height()))
+		return
+	if kind == "hitching_post":
+		draw_texture(HITCH_ART, Vector2(-HITCH_ART.get_width() / 2, 7 - HITCH_ART.get_height()))
+		return
 	if kind in DOORS:
 		var texture: Texture2D = (STONE_DOOR_OPEN if opened else STONE_DOOR) if kind == "stone_door" else (DOOR_OPEN if opened else DOOR)
 		draw_texture(texture,Vector2(-8,-20))
@@ -469,6 +495,8 @@ func get_collision_rect() -> Rect2:
 	match kind:
 		"wall","ore","wood_wall","stone_wall": return Rect2(-8,-8,16,16)
 		"wood_door","stone_door": return Rect2() if opened else Rect2(-8,-8,16,16)
+		"big_gate": return Rect2() if opened else Rect2(-24,-6,48,10)
+		"hitching_post": return Rect2(-4,-1,8,6)
 		"tree": return Rect2(-6,-1,12,8)
 		"rock": return Rect2(-15,-10,30,17)
 		"tent": return Rect2(-23,-23,46,30)
@@ -519,6 +547,8 @@ func get_target_rect() -> Rect2:
 		"torch": return Rect2(-7,-25,14,32)
 		"incubator": return Rect2(-14,-15,28,22)
 		"sun_sail": return Rect2(-12,-23,24,30)
+		"big_gate": return Rect2(-25,-27,50,34)
+		"hitching_post": return Rect2(-12,-30,24,37)
 		"wood_wall","wood_door","stone_wall","stone_door": return Rect2(-8,-20,16,28)
 		"mushroom","bush","fern","cattail","flowers": return Rect2(-16,-20,32,28)
 	return Rect2(-8,-16,16,24)
@@ -528,6 +558,8 @@ func get_shadow_height() -> float:
 	if WILD.has(kind): return float(WILD[kind].height)
 	if kind == "incubator": return 12.0
 	if kind == "sun_sail": return 24.0
+	if kind == "big_gate": return 28.0
+	if kind == "hitching_post": return 30.0
 	return {"tree":65.0,"rock":31.0,"tent":43.0,"shrine":55.0,"workbench":12.0,"wood_wall":23.0,"wood_door":23.0,"stone_wall":23.0,"stone_door":23.0,"torch":22.0,"chest":13.0,"campfire":12.0,"thatch_roof":18.0,"slate_roof":18.0}.get(kind,18.0)
 
 ## A wild nest with its eggs, or the keeper's incubator with the egg it's

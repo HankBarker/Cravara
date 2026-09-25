@@ -1,4 +1,10 @@
 {
+ "cheer": {
+  "durations": [],
+  "fps": 10.0,
+  "frames": 8,
+  "loop": false
+ },
  "death": {
   "durations": [
    1.0,

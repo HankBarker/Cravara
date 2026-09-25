@@ -84,6 +84,25 @@ const MOVES := {
 	"compy": [
 		{"id": "slash", "kind": "strike", "clip": "bite", "range": [0, 8], "cooldown": 0.8, "dmg": 1.0, "knock": 30, "shape": "jaws", "reach": 9, "arc": 110, "lunge": 6},
 	],
+	# Pass 13. The Sandblade leaps from further than any raptor and slashes
+	# deep; the deinonychus hunt like raptors; the Suchomimus lunges from the
+	# water's edge and clamps on; the spinosaur bites and rakes with its claws.
+	"utah": [
+		{"id": "pounce", "kind": "pounce", "clip": "pounce", "range": [40, 120], "cooldown": 3.8, "dmg": 1.45, "knock": 240, "shape": "claws", "reach": 14, "takeoff": 0.32, "heavy": true},
+		{"id": "slash", "kind": "strike", "clip": "slash", "range": [0, 14], "cooldown": 1.3, "dmg": 1.0, "knock": 150, "shape": "jaws", "reach": 18, "arc": 110, "lunge": 8, "bleed": 0.2, "bleed_time": 4.0},
+	],
+	"deino": [
+		{"id": "pounce", "kind": "pounce", "clip": "pounce", "range": [34, 100], "cooldown": 3.4, "dmg": 1.4, "knock": 180, "shape": "claws", "reach": 12, "takeoff": 0.32},
+		{"id": "slash", "kind": "strike", "clip": "slash", "range": [0, 12], "cooldown": 1.4, "dmg": 1.0, "knock": 110, "shape": "jaws", "reach": 16, "arc": 100, "lunge": 6},
+	],
+	"sucho": [
+		{"id": "chomp", "kind": "strike", "clip": "chomp", "range": [0, 22], "cooldown": 4.0, "dmg": 1.6, "knock": 220, "shape": "jaws", "reach": 26, "arc": 70, "lunge": 18, "chance": 0.6, "heavy": true},
+		{"id": "bite", "kind": "strike", "clip": "bite", "range": [0, 16], "cooldown": 1.2, "dmg": 1.0, "knock": 160, "shape": "jaws", "reach": 22, "arc": 80, "lunge": 10},
+	],
+	"spino": [
+		{"id": "slash", "kind": "strike", "clip": "slash", "range": [0, 16], "cooldown": 3.2, "dmg": 1.3, "knock": 320, "shape": "jaws", "reach": 22, "arc": 120, "lunge": 8, "heavy": true, "bleed": 0.2, "bleed_time": 4.0},
+		{"id": "bite", "kind": "strike", "clip": "bite", "range": [0, 18], "cooldown": 1.4, "dmg": 1.0, "knock": 220, "shape": "jaws", "reach": 26, "arc": 90, "lunge": 12},
+	],
 	"alpha": [
 		{"id": "pounce", "kind": "pounce", "clip": "pounce", "range": [40, 150], "cooldown": 3.6, "dmg": 1.5, "knock": 260, "shape": "claws", "reach": 18, "takeoff": 0.3, "heavy": true},
 		{"id": "slash", "kind": "strike", "clip": "slash", "range": [0, 16], "cooldown": 1.0, "dmg": 1.0, "knock": 160, "shape": "jaws", "reach": 22, "arc": 110, "lunge": 10},
@@ -98,7 +117,8 @@ const CHARGE_TIME := 1.0
 const MOUNT_RAM_DAMAGE := {"trike": 40}
 ## How far a shove moves each species (heavy bodies barely budge).
 const MASS := {"dodo": 1.0, "lystro": 1.0, "raptor": 0.8, "trike": 0.35, "stego": 0.35, "allo": 0.4, "alpha": 0.3, "rex": 0.25, "longneck": 0.15, "parasaur": 0.4, "ossuar": 0.1,
-	"dimetrodon": 0.5, "proto": 0.8, "anky": 0.12, "carno": 0.3, "yuty": 0.22, "compy": 1.2}
+	"dimetrodon": 0.5, "proto": 0.8, "anky": 0.12, "carno": 0.3, "yuty": 0.22, "compy": 1.2,
+	"utah": 0.5, "deino": 0.7, "sucho": 0.3, "spino": 0.14}
 
 var c  # ForestCreature
 var move := {}
@@ -119,6 +139,14 @@ var _recover := 0.0
 var _bonked := false
 var _dust_t := 0.0
 var _rate := 1.0          # clip playback rate for this move (rider strikes run faster)
+## Pass 13: a leap is a leap. The flight lasts at most FLIGHT_MAX (a clip whose
+## airborne drawing lingers plays those frames faster: "it jumps and floats in
+## the air"), the body hops in an arc over its shadow (c.hop, HOP_PER_PX of the
+## leap, capped) and dust kicks up where it leaves and lands.
+const FLIGHT_MAX := 0.3
+const HOP_PER_PX := 0.16
+var _flight_boost := 1.0
+var _hop_height := 0.0
 var _view := "side"       # the facing the strike clip plays in (contact frames differ per facing)
 var strike_clip := ""     # the clip this move plays (a far-side tail sweep has its own)
 var _face_before := Vector2.ZERO  # a tail sweep hands the body back the facing it began in
@@ -264,6 +292,7 @@ func start(m: Dictionary, to: Node2D, rider_aim := Vector2.ZERO, hold := false) 
 
 func cancel() -> void:
 	_end_tail_turn()
+	_land()
 	holding = false
 	move = {}
 	phase = ""
@@ -277,7 +306,7 @@ func tick(delta: float) -> Vector2:
 		_cooldowns[id] = maxf(0.0, float(_cooldowns[id]) - delta)
 	if move.is_empty():
 		return Vector2.ZERO
-	t += delta * (_rate if phase == "strike" else 1.0)
+	t += delta * (_rate * _flight_boost if phase == "strike" else 1.0)
 	match phase:
 		"windup":
 			return _tick_hold(delta) if holding else _tick_windup()
@@ -377,6 +406,10 @@ func _tick_dash(delta: float) -> Vector2:
 			continue
 		if c.global_position.distance_to(victim.global_position) <= float(c.stats.radius) + _radius(victim) + 5.0:
 			_hits.append(victim)
+			# Rolled clear (pass 13: the Scarhorn's taming way).
+			if victim == c._player and victim.get("roll_invulnerable") == true:
+				if c.has_method("on_dodged"): c.on_dodged()
+				continue
 			var side := signf(aim.cross(victim.global_position - c.global_position))
 			var shove := (aim + aim.orthogonal() * -side * 0.7).normalized()
 			_hit(victim, shove, true)
@@ -416,12 +449,23 @@ func _tick_strike() -> Vector2:
 				aim = _land_from.direction_to(_land_at)
 				face = aim
 				c._face(face, true)
+			# The flight: quick, and an arc.
+			var air := (hit_at - takeoff) / maxf(0.01, _rate)
+			_flight_boost = maxf(1.0, air / FLIGHT_MAX) if hit_at > takeoff else 1.0
+			c._sprite.speed_scale = _rate * _flight_boost
+			_hop_height = clampf(_land_from.distance_to(_land_at) * HOP_PER_PX, 5.0, 16.0 if bool(move.get("heavy", false)) else 12.0)
+			_fx_dust(c.global_position, -aim, 2, 3, 1.0)
 		if _took_off and t <= hit_at and hit_at > takeoff:
-			vel = (_land_at - _land_from) / (hit_at - takeoff) * _rate
+			vel = (_land_at - _land_from) / (hit_at - takeoff) * _rate * _flight_boost
+			var u := clampf((t - takeoff) / (hit_at - takeoff), 0.0, 1.0)
+			c.hop = 4.0 * _hop_height * u * (1.0 - u)
+		elif _took_off and _flight_boost > 1.0:
+			_land()
 	elif move.has("lunge") and t >= hit_at - 0.14 and t <= hit_at:
 		vel = aim * float(move.lunge) / 0.14 * _rate
 	if not hit_done and t >= hit_at:
 		hit_done = true
+		if move.kind == "pounce": _land()
 		_resolve()
 	if t >= _strike_length():
 		phase = "recover"
@@ -429,6 +473,16 @@ func _tick_strike() -> Vector2:
 		_recover = 0.12
 		_end_tail_turn()
 	return vel
+
+
+## Down again: the flight's speed-up ends, the hop settles, dust where it lands.
+func _land() -> void:
+	if _flight_boost > 1.0 or c.hop > 0.0:
+		if c.hop > 0.0 or _flight_boost > 1.0:
+			_fx_dust(c.global_position, aim, 2, 4, 1.2)
+		_flight_boost = 1.0
+		c._sprite.speed_scale = _rate
+	c.hop = 0.0
 
 
 ## When the feet leave the ground: the catalogue's take-off frame, else 30% in,
@@ -632,7 +686,12 @@ func _hit(victim: Node2D, dir: Vector2, heavy: bool) -> void:
 			knock *= lerpf(0.75, 1.2, charge)
 	if victim.is_in_group("forest_creatures"):
 		knock *= float(MASS.get(victim.species, 0.5))
+	# A Packleader's companions strike harder (pass 13).
+	if c.tamed and c.has_method("skills"):
+		var sk = c.skills()
+		if sk: amount = int(round(float(amount) * (1.0 + sk.value("companion_damage"))))
 	victim.take_damage(amount, c, knock)
+	if victim == c._player and c.has_method("on_struck_keeper"): c.on_struck_keeper()
 	# A wild hunter that makes a kill rests from hunting for a while.
 	if victim.get("is_dead") == true and c.has_method("on_kill"): c.on_kill(victim)
 	# A spiked tail leaves a cut that keeps bleeding: a share of the blow per second.

@@ -8,4 +8,5 @@ description = "A broad crystal-edged blade. A sweeping slash with greater reach 
 icon_generator = "forest"
 tool_type = "sword"
 damage = 8
+weapon_class = "sweep"
 max_stack = 1

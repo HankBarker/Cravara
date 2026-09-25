@@ -341,11 +341,12 @@ func _run(p: Dictionary, r: Dictionary, view: String, f: int, o: int) -> void:
 		_square_hips(p, r)
 		p.knee_m = -1.0
 		p.knee_o = -1.0
-		# Bent arms pump against the legs; the near (tool) arm pumps less and the
-		# carried item trails further back with the lean, clear of the jaw.
+		# Bent arms pump against the legs; the near (tool) arm pumps less. Pass
+		# 13 (Hank): the carried item is held forward at the ready, not trailed.
 		var near: Array = [Vector2(-1, -1), Vector2(-1, -1), Vector2(0, -2), Vector2(1, -2),
 			Vector2(1, -2), Vector2(0, -2), Vector2(0, -1), Vector2(-1, -1)]
-		p.carry_angle = -150.0
+		p.carry_angle = -8.0
+		p.carry_layer = "front"
 		var far: Array = [Vector2(3, -4), Vector2(3, -4), Vector2(1, -3), Vector2(-1, -2),
 			Vector2(-2, -2), Vector2(-2, -2), Vector2(0, -2), Vector2(2, -3)]
 		p.hand_m = r.hand_m + p.body + near[f]
@@ -355,15 +356,24 @@ func _run(p: Dictionary, r: Dictionary, view: String, f: int, o: int) -> void:
 	else:
 		p.body = Vector2(0, bob)
 		var fy: Array = [1, 0, -1, -2, -3, -3, -1, 0] if view == "down" else [-1, 0, 1, 0, -2, -3, -2, -1]
-		p.foot_m = r.foot_m + Vector2(0, fy[f])
-		p.foot_o = r.foot_o + Vector2(0, fy[o])
+		# Pass 13 (Hank): running at or away from the camera the feet come in
+		# under the body (a pixel closer each) and the arms pump harder.
+		var mid: float = (r.foot_m.x + r.foot_o.x) * 0.5
+		var in_m := signf(mid - r.foot_m.x)
+		var in_o := signf(mid - r.foot_o.x)
+		p.foot_m = r.foot_m + Vector2(in_m, fy[f])
+		p.foot_o = r.foot_o + Vector2(in_o, fy[o])
 		# Pumping fists: forward rises to the chest, back drops out by the hip.
-		var pump: Array = [Vector2(1, 0), Vector2(1, 0), Vector2(0, -1), Vector2(-1, -2),
-			Vector2(-2, -3), Vector2(-2, -3), Vector2(-1, -2), Vector2(0, -1)]
+		var pump: Array = [Vector2(2, 1), Vector2(2, 0), Vector2(0, -1), Vector2(-1, -3),
+			Vector2(-3, -4), Vector2(-3, -4), Vector2(-1, -3), Vector2(1, -1)]
 		var m: Vector2 = pump[f]
 		var n: Vector2 = pump[o]
 		if view == "up":
-			m = Vector2(clampf(m.x, 0, 1), m.y)
-			n = Vector2(clampf(n.x, 0, 1), n.y)
+			m = Vector2(clampf(m.x, 0, 2), m.y)
+			n = Vector2(clampf(n.x, 0, 2), n.y)
+		elif view == "down":
+			# The tool at the ready, across the front of the body.
+			p.carry_angle = -62.0
+			p.carry_layer = "front"
 		p.hand_m = r.hand_m + p.body + m
 		p.hand_o = r.hand_o + p.body + Vector2(-n.x, n.y)

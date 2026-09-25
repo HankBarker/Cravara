@@ -10,14 +10,17 @@ func _ready():
 	creature=get_parent();_rng.seed=creature.get_instance_id()
 	emitter=AudioStreamPlayer2D.new();emitter.bus="SFX"
 	# The big hunters carry: a rex is heard well before it's seen.
-	emitter.max_distance={"rex":420,"alpha":400,"allo":330,"ossuar":460,"parasaur":330,"carno":400,"yuty":440}.get(creature.species,250)
+	emitter.max_distance={"rex":420,"alpha":400,"allo":330,"ossuar":460,"parasaur":330,"carno":400,"yuty":440,"spino":460,"sucho":330,"utah":330}.get(creature.species,250)
 	emitter.attenuation=1.6;emitter.add_to_group("creature_voices");add_child(emitter)
 	_ambient_left=_rng.randf_range(6,24)
 ## Pass 12's beasts borrow a kin's voice, pitched to suit: the Scarhorn a
 ## deeper allosaur, the Ashmane a rex dropped low, the dimetrodon a hissing
 ## allosaur, the ankylosaur a trike's bellow, the protoceratops a lystro's
 ## squawk, the compy a raptor's chirp pitched up.
-const VOICE:={"carno":["allo",0.84],"yuty":["rex",0.78],"dimetrodon":["allo",1.22],"anky":["trike",0.76],"proto":["lystro",0.88],"compy":["raptor",1.6]}
+const VOICE:={"carno":["allo",0.84],"yuty":["rex",0.78],"dimetrodon":["allo",1.22],"anky":["trike",0.76],"proto":["lystro",0.88],"compy":["raptor",1.6],
+	# Pass 13: the Sandblade a deep raptor's shriek, the deinonychus a raptor's
+	# call, the Suchomimus a hissing allosaur, the spinosaur a rex pitched up.
+	"utah":["raptor",0.74],"deino":["raptor",0.9],"sucho":["allo",1.12],"spino":["rex",0.9]}
 func cue_path(cue:String)->String:
 	var who:String=VOICE[creature.species][0] if VOICE.has(creature.species) else creature.species
 	return "res://Forest/audio/creatures/%s-%s.ogg"%[who,cue]

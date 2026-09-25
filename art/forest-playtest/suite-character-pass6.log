@@ -1,8 +1,8 @@
 ﻿Godot Engine v4.6.1.stable.official.14d19694e - https://godotengine.org
 
-≡ƒôª ItemDB loaded 137 items: allo_cleaver, allo_egg, allo_tooth, alpha_crest, ancient_coin, anky_plate, ashen_chestplate, ashen_helmet, ashen_leggings, ashmane_fur, ashmane_mantle, baked_tuber, basic_axe, basic_pickaxe, berry, berry_compote, berry_seed, boat, bone_arrow, bone_chestplate, bone_crown, bone_dagger, bone_helmet, bone_leggings, bucket, cactus_fruit, campfire, carno_horn, chest, club_maul, cooked_fish, cooked_meat, crest_horn, crystal_axe, crystal_chestplate, crystal_flask, crystal_helmet, crystal_leggings, crystal_pendant, crystal_pickaxe, crystal_shard, dodo_egg, fang_sabre, fishing_rod, forest_omelet, fossil_bone, garden_hoe, glass_pearl, grave_horn, hide_bed, horn_chestplate, horn_helmet, horn_leggings, horn_spear, hunter_charm, incubator, lantern, leather_chestplate, leather_helmet, leather_leggings, log, longneck_egg, longneck_hide, lystro_egg, maw_charm, maw_tooth, moonscale, moss_chestplate, moss_helmet, moss_leggings, mushroom, mushroom_potion, mushroom_spore, net, old_bone, pale_crystal, parasaur_crest, parasaur_egg, plank, plant_fiber, plate_chestplate, plate_helmet, plate_leggings, plate_maul, prism_crystal, proto_frill, raider_club, raptor_egg, raptor_fang, raptor_hide, reed_bow, reed_perch, rex_chestplate, rex_helmet, rex_leggings, river_totem, rust_chestplate, rust_helmet, rust_leggings, sail_scale, sail_veil, scarhorn_lance, shardfin, shard_sword, sky_idol, slate_roof, stego_egg, stego_plate, stego_saddle, stone, stone_door, stone_floor, stone_wall, sunward_chestplate, sunward_helmet, sunward_leggings, sun_sail, tent, thatch_roof, tide_chestplate, tide_helmet, tide_leggings, torch, trex_meat, trex_scale, trike_egg, trike_hide, trike_horn, trike_saddle, tyrant_fang, water_bucket, water_flask, wild_tuber, wood_door, wood_floor, wood_wall, workbench
-PERF default_skin_ms=427.629
-PERF custom_skin_ms=437.444
+≡ƒôª ItemDB loaded 154 items: allo_cleaver, allo_egg, allo_tooth, alpha_crest, ancient_coin, anky_plate, ashen_chestplate, ashen_helmet, ashen_leggings, ashglass, ashglass_knife, ashmane_fur, ashmane_mantle, baked_tuber, basic_axe, basic_pickaxe, berry, berry_compote, berry_seed, big_gate, boat, bogiron_harpoon, bog_iron, bone_arrow, bone_chestplate, bone_crown, bone_dagger, bone_helmet, bone_leggings, bucket, cactus_fruit, campfire, carno_horn, chest, club_maul, cooked_fish, cooked_meat, crest_horn, crystal_axe, crystal_chestplate, crystal_flask, crystal_helmet, crystal_leggings, crystal_pendant, crystal_pickaxe, crystal_shard, deino_claw, dodo_egg, fang_sabre, fishing_rod, forest_omelet, fossil_bone, garden_hoe, glass_pearl, grave_horn, hide_bed, hitching_post, horn_chestplate, horn_helmet, horn_leggings, horn_spear, hunter_charm, incubator, lantern, lead_rope, leather_chestplate, leather_helmet, leather_leggings, log, longneck_egg, longneck_hide, lystro_egg, maw_charm, maw_tooth, moonscale, moss_chestplate, moss_helmet, moss_leggings, mushroom, mushroom_potion, mushroom_spore, net, old_bone, pale_crystal, parasaur_crest, parasaur_egg, plank, plant_fiber, plate_chestplate, plate_helmet, plate_leggings, plate_maul, prism_crystal, proto_frill, raider_club, raptor_egg, raptor_fang, raptor_hide, reed_bow, reed_perch, rex_chestplate, rex_helmet, rex_leggings, river_totem, rustiron, rustjaw_sabre, rust_chestplate, rust_helmet, rust_leggings, saddlebag, sail_scale, sail_veil, scarhorn_lance, shardfin, shard_sword, sickle_claw, sky_idol, slate_roof, spinesail_glaive, spino_spine, stego_egg, stego_plate, stego_saddle, stone, stone_door, stone_floor, stone_wall, sucho_claw, sunstone, sunstone_maul, sunward_chestplate, sunward_helmet, sunward_leggings, sun_sail, tent, thatch_roof, tide_chestplate, tide_helmet, tide_leggings, torch, trex_meat, trex_scale, trike_egg, trike_hide, trike_horn, trike_saddle, tyrant_fang, water_bucket, water_flask, wild_tuber, wood_door, wood_floor, wood_wall, workbench
+PERF default_skin_ms=531.998
+PERF custom_skin_ms=664.172
 PASS invalid saved choices normalize to stable defaults
 PASS same appearance uses frame cache
 PASS customization keys isolate cached frames
@@ -47,6 +47,14 @@ PASS sword_down grip anchor lands on the drawn bare fist on every upright frame
 PASS sword_down armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS sword_down contains actual changed anatomy poses
 PASS sword_down is distinct from every other action sheet
+PASS thrust_down has its 8 authored frames (got 8)
+PASS thrust_down preserves real gameplay duration
+PASS thrust_down every frame has grip anchors inside the cel
+PASS thrust_down helmet follows the head on every frame
+PASS thrust_down grip anchor lands on the drawn bare fist on every upright frame
+PASS thrust_down armour keeps the fist visible at the grip anchor (8/8 frames)
+PASS thrust_down contains actual changed anatomy poses
+PASS thrust_down is distinct from every other action sheet
 PASS bow_draw_down has its 8 authored frames (got 8)
 PASS bow_draw_down preserves real gameplay duration
 PASS bow_draw_down every frame has grip anchors inside the cel
@@ -199,6 +207,14 @@ PASS sword_right grip anchor lands on the drawn bare fist on every upright frame
 PASS sword_right armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS sword_right contains actual changed anatomy poses
 PASS sword_right is distinct from every other action sheet
+PASS thrust_right has its 8 authored frames (got 8)
+PASS thrust_right preserves real gameplay duration
+PASS thrust_right every frame has grip anchors inside the cel
+PASS thrust_right helmet follows the head on every frame
+PASS thrust_right grip anchor lands on the drawn bare fist on every upright frame
+PASS thrust_right armour keeps the fist visible at the grip anchor (8/8 frames)
+PASS thrust_right contains actual changed anatomy poses
+PASS thrust_right is distinct from every other action sheet
 PASS bow_draw_right has its 8 authored frames (got 8)
 PASS bow_draw_right preserves real gameplay duration
 PASS bow_draw_right every frame has grip anchors inside the cel
@@ -351,6 +367,14 @@ PASS sword_left grip anchor lands on the drawn bare fist on every upright frame
 PASS sword_left armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS sword_left contains actual changed anatomy poses
 PASS sword_left is distinct from every other action sheet
+PASS thrust_left has its 8 authored frames (got 8)
+PASS thrust_left preserves real gameplay duration
+PASS thrust_left every frame has grip anchors inside the cel
+PASS thrust_left helmet follows the head on every frame
+PASS thrust_left grip anchor lands on the drawn bare fist on every upright frame
+PASS thrust_left armour keeps the fist visible at the grip anchor (8/8 frames)
+PASS thrust_left contains actual changed anatomy poses
+PASS thrust_left is distinct from every other action sheet
 PASS bow_draw_left has its 8 authored frames (got 8)
 PASS bow_draw_left preserves real gameplay duration
 PASS bow_draw_left every frame has grip anchors inside the cel
@@ -503,6 +527,14 @@ PASS sword_up grip anchor lands on the drawn bare fist on every upright frame
 PASS sword_up armour keeps the fist visible at the grip anchor (8/8 frames)
 PASS sword_up contains actual changed anatomy poses
 PASS sword_up is distinct from every other action sheet
+PASS thrust_up has its 8 authored frames (got 8)
+PASS thrust_up preserves real gameplay duration
+PASS thrust_up every frame has grip anchors inside the cel
+PASS thrust_up helmet follows the head on every frame
+PASS thrust_up grip anchor lands on the drawn bare fist on every upright frame
+PASS thrust_up armour keeps the fist visible at the grip anchor (8/8 frames)
+PASS thrust_up contains actual changed anatomy poses
+PASS thrust_up is distinct from every other action sheet
 PASS bow_draw_up has its 8 authored frames (got 8)
 PASS bow_draw_up preserves real gameplay duration
 PASS bow_draw_up every frame has grip anchors inside the cel
@@ -623,7 +655,7 @@ PASS roll_up grip anchor lands on the drawn bare fist on every upright frame
 PASS roll_up armour keeps the fist visible at the grip anchor (5/5 frames)
 PASS roll_up contains actual changed anatomy poses
 PASS roll_up is distinct from every other action sheet
-PASS armoured fists stay visible at their grip anchors on at least 90% of action frames (580/580)
+PASS armoured fists stay visible at their grip anchors on at least 90% of action frames (612/612)
 PASS axe_down helmet sits on the rendered head on every cel
 PASS axe_left helmet sits on the rendered head on every cel
 PASS axe_right helmet sits on the rendered head on every cel
@@ -724,6 +756,10 @@ PASS sword_down helmet sits on the rendered head on every cel
 PASS sword_left helmet sits on the rendered head on every cel
 PASS sword_right helmet sits on the rendered head on every cel
 PASS sword_up helmet sits on the rendered head on every cel
+PASS thrust_down helmet sits on the rendered head on every cel
+PASS thrust_left helmet sits on the rendered head on every cel
+PASS thrust_right helmet sits on the rendered head on every cel
+PASS thrust_up helmet sits on the rendered head on every cel
 PASS walk_down helmet sits on the rendered head on every cel
 PASS walk_left helmet sits on the rendered head on every cel
 PASS walk_right helmet sits on the rendered head on every cel
@@ -743,8 +779,8 @@ PASS tide helmet hides the hair colour in every cel (at most 12 fringe px, got 0
 PASS rex helmet hides the hair colour in every cel (at most 12 fringe px, got 1)
 PASS mounted rider reflects current saved appearance, with distinct cache entry
 PASS mounted cache distinguishes actual armor IDs and rendered set
-PERF mounted_action_build_ms=108.723
+PERF mounted_action_build_ms=170.934
 PASS mounted aiming uses actual custom hero action pose
 PASS skin preview cache is bounded after repeated customization
 PASS mounted action cache is bounded across repeated frames and appearances
-CHARACTER_PASS6 assertions=743 failures=0
+CHARACTER_PASS6 assertions=779 failures=0

@@ -19,7 +19,7 @@ func update_state(delta):
 		player.switch_state("idle")
 		return
 
-	if Input.is_action_pressed("Sprint"):
+	if Input.is_action_pressed("Sprint") and (not player.has_method("can_sprint") or player.can_sprint()):
 		player.switch_state("run")
 		return
 

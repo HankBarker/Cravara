@@ -43,16 +43,21 @@ func verify():
 			check(not c._sprite.sprite_frames.get_animation_loop("death_"+direction), kind+" death is one-shot "+direction)
 		check(not c.interact("wood").consume, kind+" rejects wrong food without consuming")
 		if not c.stats.predator:
-			check(c.interact("berry").consume, kind+" accepts hand feeding")
-			check(not c.interact("berry").consume, kind+" feeding cooldown enforced")
-			# (Each feed now wants the keeper to back off while it settles:
-			# forest_creatures pass 10; the loop skips the wait like the chewing.)
-			var feeds := 0
-			while not c.tamed and feeds < 100:
-				c.feed_cooldown = 0
-				c.settle = 0.0
-				c.interact("berry")
-				feeds += 1
+			# Pass 13: each beast has its own way (TamingWays); the hand-fed
+			# ones are fed here, the rest are won in the pass-13 suite.
+			if preload("res://Forest/creatures/TamingWays.gd").way(kind) in ["hand", "calm"]:
+				check(c.interact("berry").consume, kind+" accepts hand feeding")
+				check(not c.interact("berry").consume, kind+" feeding cooldown enforced")
+				# (Each feed now wants the keeper to back off while it settles:
+				# forest_creatures pass 10; the loop skips the wait like the chewing.)
+				var feeds := 0
+				while not c.tamed and feeds < 100:
+					c.feed_cooldown = 0
+					c.settle = 0.0
+					c.interact("berry")
+					feeds += 1
+			else:
+				c._become_tamed()
 			check(c.order=="follow",kind+" starts following")
 			c.interact("")
 			check(c.order=="stay",kind+" stay order")

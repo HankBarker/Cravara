@@ -63,6 +63,11 @@
     "side": 6
    }
   },
+  "threat": {
+   "fps": 10,
+   "loop": false,
+   "frames": 9
+  },
   "hurt": {
    "fps": 12,
    "loop": false,

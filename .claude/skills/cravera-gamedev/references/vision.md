@@ -48,13 +48,14 @@ beyond the Pale Lands) and a crystal/Sky-Fang region.
 - Allosaurus is the native desert apex.
 - The rex is a rare roaming world threat.
 
-**Species from the old plan, not yet all in:**
-- Carnotaurus (the Scarhorn, pass 12).
-- Suchomimus: the bog's "water is dangerous now" beast (a Quagmire Suchomimus).
+**Species from the old plan** (pass 13 put in the rest of the named ones):
+- Carnotaurus (the Scarhorn, pass 12; redrawn with PixelLab in pass 13).
+- Suchomimus (pass 13: the Mirefang, lurking in the Mirefen's shallows).
 - Ankylosaurus (pass 12; Thornback and crystal forms later).
-- Utahraptor (Sandblade).
-- Deinonychus (Deathjaw).
-- Spinosaurus (Infernospine, Embercrack's).
+- Utahraptor (pass 13: the Sandblade, Bonelands pairs).
+- Deinonychus (pass 13: the Reedstalker, bog packs; the plan's name was Deathjaw).
+- Spinosaurus (pass 13: the Sailking, the bog's apex, wading the deep mere; the plan's
+  Infernospine / Embercrack's ember look is still to come).
 
 **Other named ideas:** Brontoshade, Junglehorn Carnotaurus, Cracked Tyranno (mini-boss),
 Crystalback Raptor, Blazehorn Ceratops, Glowspine Raptor.
@@ -66,7 +67,7 @@ crystal growths. Pass 12's coats (the Dune and Ashfang raptors) are the start of
 - **Every dino has a utility:**
   - lystro: farming
   - anky: mining (done in pass 12: the tamed ankylosaur's Rockbreaker gift)
-  - parasaur: exploration and detection
+  - parasaur: exploration and detection (done in pass 13: it hears ore, caches and nests, `Buffs._sense`)
   - trike: hauling and harvesting
   - raptor: combat and scouting
   - bronto: carrying and resources
@@ -74,19 +75,24 @@ crystal growths. Pass 12's coats (the Dune and Ashfang raptors) are the start of
 - **Taming is trust:** feeding, following, protecting, healing, helping young, returning eggs,
   time together. The keeper's handling grows.
 - **Individuality:** markings, colours, speckles, mutations, traits, temperament and stats, then
-  inspectable genetics, breeding and DNA.
+  inspectable genetics, breeding and DNA. (Pass 13: `Genes.gd`, readable after two bosses; the
+  keeper's own pairs pass their genes on. DNA and fusion are still to come.)
 - **Eggs and babies:** dangerous to get (the parents defend), easier to tame.
 - **Fossils:** mined from caves, tar pits and bone fields. They lead to resurrection machines
   (some beasts exist only resurrected), then DNA fusion (40 hours in: "something that shouldn't
   exist").
-- **Towns and tribes:** trade, diplomacy, quests, migration. Pass 12's Sunward and Ashen are the
-  start.
+- **Towns and tribes:** trade, diplomacy, quests, migration. Pass 12's Sunward and Ashen were the
+  start. Pass 13 added named camps with standing, requests, totem offerings and moving camps.
 - **Dynamic world events that change the ecosystem:**
   - meteor showers, eruptions, acid rain, tremors;
   - "Sky-Fang activity detected": mutants, aggression, migrations, a rare boss.
+  - (Pass 13: quakes, snow, wildfire, meteors and the Sky-Fang surge, whose spire lets out crystal
+    beasts, are in `world/WorldEvents.gd`. Eruptions, acid rain and a surge boss are still to come.)
 - **Behavioural animation,** not just idle/walk/attack/die: grazing, sniffing, scanning,
   frill-shaking, threat displays, sleeping, nuzzling.
 
 ## Art pipeline direction
 Try Blender as the animation factory. The game stays 2D pixel art: "3D controls motion, pixel art
 controls appearance". See `blender-pipeline.md` for the pass-12 experiment and its playtest.
+**Verdict (pass 13): retired.** Hank: "doesn't look that great". Stay with PixelLab and the
+procedural fixers, and spend more care on each beast (redraws, QA by eye, hand fixes).

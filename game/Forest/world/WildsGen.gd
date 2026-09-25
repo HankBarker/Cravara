@@ -302,6 +302,15 @@ func _dunes() -> void:
 				kind = "rock" if roll < 0.24 else ("dead_tree" if roll < 0.3 else ("bone_pile" if roll < 0.36 else ("mesa" if roll < 0.41 else "")))
 			else:
 				kind = "cactus" if roll < 0.1 else ("dead_tree" if roll < 0.2 else ("rock" if roll < 0.36 else ("bone_pile" if roll < 0.44 else ("relic" if roll < 0.48 else ("mesa" if roll < 0.53 else "")))))
+			# Pass 13: the dunes' old bones are rare now, and great: a half-buried
+			# ribcage or skull (a cell hash, so the dunes' other props stay put).
+			if kind == "bone_pile":
+				var h := posmod(hash(Vector3i(c.x, c.y, 0xB0E13)), 100)
+				kind = ("dune_ribs" if h % 2 == 0 else "dune_skull") if h < 22 else ""
+				if kind != "":
+					for y in range(-2, 3):
+						for x in range(-3, 4):
+							if not _free(c + Vector2i(x, y)): kind = ""
 			if kind == "mesa":
 				var room := true
 				for y in range(-2, 3):

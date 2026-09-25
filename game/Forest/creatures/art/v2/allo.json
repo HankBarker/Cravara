@@ -61,10 +61,7 @@
   "roar": {
    "fps": 10,
    "loop": false,
-   "frames": 13,
-   "stand_in": [
-    "up"
-   ]
+   "frames": 13
   },
   "hurt": {
    "fps": 12,

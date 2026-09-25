@@ -17,7 +17,7 @@ const GIFTS := {
 	"longneck": {"id": "high_browse", "name": "High browse", "text": "An extra berry from every bush."},
 	"raptor": {"id": "pack_pace", "name": "Pack pace", "text": "You move 10% faster."},
 	"allo": {"id": "hunters_fury", "name": "Hunter's fury", "text": "Your blows land 15% harder."},
-	"parasaur": {"id": "alarm_call", "name": "Alarm call", "text": "It trumpets when a hunter comes near; wounds mend 25% faster."},
+	"parasaur": {"id": "alarm_call", "name": "Alarm call", "text": "It trumpets when a hunter comes near and hoots toward ore, caches and nests it hears; wounds mend 25% faster."},
 	"rex": {"id": "tyrants_shadow", "name": "Tyrant's shadow", "text": "Raptors and allosaurs won't come for you."},
 	# Pass 12.
 	"dimetrodon": {"id": "sun_warmed", "name": "Sun-warmed", "text": "Its sail gathers the sun: your crops grow 25% faster by day."},
@@ -121,7 +121,9 @@ func _process(delta: float) -> void:
 		changed.emit()
 	else:
 		active = now
-	if has("alarm_call"): _alarm(keeper)
+	if has("alarm_call"):
+		_alarm(keeper)
+		_sense(keeper)
 	if has("sand_digger"): _dig(keeper)
 
 
@@ -143,6 +145,74 @@ func _dig(keeper: Node2D) -> void:
 		session._toast("Your protoceratops digs something up!")
 		return
 	_dig_clock = 20.0
+
+
+## The parasaur's ear (pass 13: "the parasaur should have exploration and
+## resource detection"): now and then a parasaur at the keeper's side hoots
+## toward something it hears that the keeper hasn't found: an ore vein, Sky-
+## Fang crystal, a fallen star, an old cache or a buried find, a nest with
+## eggs. A mark (WorldPing) stands over it a while and the map remembers it
+## (world.sensed).
+const SENSE_REACH := 32
+const SENSE_EVERY := 22.0
+const SENSED := {"rustiron_vein": "rustiron", "sunstone_vein": "sunstone", "ashglass_vein": "ashglass",
+	"bogiron_vein": "bog iron", "pale_crystal": "Sky-Fang crystal", "skyfang_spire": "a Sky-Fang spire",
+	"meteor_rock": "a fallen star", "cache": "an old cache", "relic": "something buried", "roots": "wild roots"}
+var _sense_clock := 10.0
+
+func _sense(keeper: Node2D) -> void:
+	_sense_clock -= 1.0
+	if _sense_clock > 0.0: return
+	_sense_clock = 6.0
+	var para: Node2D = null
+	for c in get_tree().get_nodes_in_group("forest_creatures"):
+		if c.species == "parasaur" and c.tamed and not c.baby and not c.is_dead and c.global_position.distance_to(keeper.global_position) < 220.0:
+			para = c
+			break
+	if para == null: return
+	var world = session.world
+	var here: Vector2i = world.to_cell(keeper.global_position)
+	var best := Vector2i(9999, 9999)
+	var best_d := INF
+	var what := ""
+	for y in range(-SENSE_REACH, SENSE_REACH + 1):
+		for x in range(-SENSE_REACH, SENSE_REACH + 1):
+			var c: Vector2i = here + Vector2i(x, y)
+			if world.sensed.has(c): continue
+			var p = world.props.get(c)
+			if not is_instance_valid(p): continue
+			var kind: String = p.kind
+			var label := ""
+			if SENSED.has(kind): label = SENSED[kind]
+			elif kind == "ore" and p.rich_vein: label = "prism crystal"
+			if label == "" or (kind == "cache" and p.opened): continue
+			var d := float(x * x + y * y)
+			# Seen already (on screen): nothing to hear.
+			if d < 144.0: continue
+			if d < best_d:
+				best_d = d
+				best = c
+				what = label
+	if world.nesting:
+		for c in world.nesting.nests:
+			if world.sensed.has(c) or int(world.nesting.nests[c].eggs) <= 0: continue
+			var d := float((c - here).length_squared())
+			if d < 144.0 or d > float(SENSE_REACH * SENSE_REACH): continue
+			if d < best_d:
+				best_d = d
+				best = c
+				what = "a nest with eggs"
+	if best == Vector2i(9999, 9999): return
+	_sense_clock = SENSE_EVERY
+	world.sensed[best] = what
+	var ping = preload("res://Forest/fx/WorldPing.gd").new()
+	ping.position = Vector2(best * 16) + Vector2(8, 8)
+	world.add_child(ping)
+	if para.has_method("play_action"): para.play_action("roar")
+	var way := Vector2(best - here)
+	var dirs := ["east", "south-east", "south", "south-west", "west", "north-west", "north", "north-east"]
+	var heading: String = dirs[posmod(int(round(way.angle() / (PI / 4.0))), 8)]
+	session._toast("Your parasaur hoots to the %s: it hears %s." % [heading, what])
 
 
 ## The parasaur trumpets when a wild hunter comes within 14 cells.

@@ -295,6 +295,7 @@ func show_talk(words: String) -> void:
 			"lore": _button(grid, "A story", func(): say(_pick(Folk.info(id).lore)))
 			"trade": _button(grid, "Trade", show_trade)
 			"advice": _button(grid, "The beasts", show_advice)
+			"camp": _button(grid, "The camp", show_camp)
 			"tend": _button(grid, "Tend beasts", func(): say(manager.tend()))
 	var quests = _quests()
 	if quests and not QuestData.for_giver(id).is_empty():
@@ -454,15 +455,51 @@ func show_trade(side := "buy") -> void:
 	_refit()
 
 
+## A tribe's camp (pass 13): its name, how it stands with the keeper, what it
+## asks for, a gift of coins.
+func show_camp() -> void:
+	page = "camp"
+	_clear()
+	if not manager.has_method("camp_page"):
+		show_talk("")
+		return
+	var info: Dictionary = manager.camp_page(id)
+	if info.is_empty():
+		say("We're a long way from any camp.")
+	else:
+		var r: Dictionary = info.request
+		var ask := ""
+		if not r.is_empty():
+			ask = str(r.text)
+			if r.has("hunt"): ask += " (%d of %d)" % [int(r.done), int(r.count)]
+		say("%s. You are %s here (%d). %s" % [info.name, str(info.word).to_lower(), int(info.standing), ask])
+		var grid := _grid(2)
+		if not r.is_empty():
+			var give := _button(grid, "Hand it over" if r.has("bring") else "It's done", func():
+				say(manager.camp_give(id))
+				show_camp())
+			give.disabled = not bool(info.ready)
+		_button(grid, "A gift (5 coins)", func():
+			say(manager.camp_gift(id)))
+	_button(_content, "Back", func(): show_talk(""))
+	_refit()
+
+
 func show_advice() -> void:
 	page = "advice"
 	_clear()
-	say("Pick a beast. I'll tell you what it eats, how to earn its trust, and whether you can ride it.")
-	var grid := _grid(3)
+	say("Pick a beast. Every one is won its own way: I'll tell you how, what it eats, and whether you can ride it.")
+	# (Pass 13: twenty beasts; the list scrolls.)
+	var list := _list(92)
+	var grid := GridContainer.new()
+	grid.columns = 3
+	grid.add_theme_constant_override("h_separation", 3)
+	grid.add_theme_constant_override("v_separation", 3)
+	list.add_child(grid)
 	for species in Folk.BEASTS:
 		var facts: Array = Folk.BEASTS[species]
-		_button(grid, species.capitalize(), func():
-			say("%s. Eats: %s. %s %s" % [species.capitalize(), facts[0], facts[1], facts[2]]))
+		_button(grid, str(facts[0]), func():
+			say("%s. Eats: %s. %s %s" % [facts[0], facts[1], facts[2], facts[3]]))
 	_button(_content, "Back", func(): show_talk(""))
 	_refit()
 

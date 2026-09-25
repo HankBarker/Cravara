@@ -77,6 +77,17 @@ func run() -> void:
 	print("SPLIT at %s: %d creatures (%d within 640 px), %d tribesmen" % [at, creatures.size(), near, folk.size()])
 	var base := await tick_ms()
 	print("SPLIT all running         %6.2f ms/tick" % base)
+	# Who ticks at full rate out of sight (a close fight runs every tick anywhere).
+	for sample in 3:
+		var full_far := 0
+		var states := {}
+		for c in get_tree().get_nodes_in_group("forest_creatures"):
+			if not is_instance_valid(c) or c.is_dead: continue
+			var far_off: bool = c.global_position.distance_to(scene.player.global_position) > 640.0
+			if far_off and c._close_foe(): full_far += 1
+			if far_off: states[c.state] = int(states.get(c.state, 0)) + 1
+		print("FULLRATE far close-fights %d; far states %s" % [full_far, states])
+		await get_tree().create_timer(1.0).timeout
 	print("MON active bodies %d, pairs %d, islands %d; nodes %d; objects %d" % [Performance.get_monitor(Performance.PHYSICS_2D_ACTIVE_OBJECTS), Performance.get_monitor(Performance.PHYSICS_2D_COLLISION_PAIRS), Performance.get_monitor(Performance.PHYSICS_2D_ISLAND_COUNT), Performance.get_monitor(Performance.OBJECT_NODE_COUNT), Performance.get_monitor(Performance.OBJECT_COUNT)])
 	# Every node that ticks physics, by script.
 	var ticking := {}
@@ -130,6 +141,19 @@ func run() -> void:
 		_set_physics(by[sp], false)
 		print("SPLIT   without %-10s x%-3d %6.2f ms/tick" % [sp, by[sp].size(), await tick_ms(90)])
 		_set_physics(by[sp], true)
+	# Each species' share over the whole world, near and far (--all-species),
+	# against a fresh baseline each time (ticks drift as the world lives on).
+	if "--all-species" in args:
+		var every := {}
+		for c in creatures:
+			if is_instance_valid(c): every[c.species] = every.get(c.species, []) + [c]
+		for sp in every:
+			var with_them := await tick_ms(120)
+			_set_physics(every[sp], false)
+			var without := await tick_ms(120)
+			_set_physics(every[sp], true)
+			print("SPECIES %-10s x%-3d  %6.2f -> %6.2f ms/tick  (%+.2f)" % [sp, every[sp].size(), with_them, without, with_them - without])
+		print("MON nodes %d objects %d" % [Performance.get_monitor(Performance.OBJECT_NODE_COUNT), Performance.get_monitor(Performance.OBJECT_COUNT)])
 	scene.queue_free()
 	await get_tree().process_frame
 	get_tree().quit(0)

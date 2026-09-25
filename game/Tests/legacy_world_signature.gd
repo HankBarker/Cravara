@@ -10,7 +10,7 @@ extends Node
 const FIXTURE := "res://Tests/fixtures/legacy_world_signature.json"
 const SEEDS := [1337, 90210, 424242]
 ## Props placed after the seeded ground, on cells nothing held (nests).
-const ADDED := ["nest"]
+const ADDED := ["nest", "rustiron_vein", "sunstone_vein", "ashglass_vein", "bogiron_vein", "pale_crystal"]
 const FOREST := Rect2i(-54, -54, 108, 109)
 const BONELANDS := Rect2i(56, -54, 111, 109)
 

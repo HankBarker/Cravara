@@ -99,6 +99,29 @@ tree and fells it with the tail; the trike gores bushes).
   everything; loops pin `last_frame` to the first frame so the cycle closes.
 - Front/back views drift: crests grow into pillars, attacks turn side-on. The QA flags catch most;
   "hunched with its head held low" fixed the rex's front walk.
+- **Back-view displays turn the animal round** (pass 13): screeches, roars, eats and chomps from
+  behind came back showing the open jaws to the viewer, side-on, or with the tail reared into a pale
+  spike (deinonychus threat, Suchomimus roar/eat/chomp). The QA scores don't see facing: check every
+  `_up` action by eye. What worked: `"Keeps its back to the viewer the whole time: ..."` on the
+  steady `ai` model for small motions (deino threat_up, sucho eat_up; 12-frame ai clips cost 3), the
+  rex's "lunges forward away from the viewer..." on pmm for bites; and when the model insists,
+  `lift_back.py` (below). A front slash drew a dark swoosh (utah): "rakes both clawed hands down"
+  fixed it; a white burst on a snap (sucho bite_down) was replaced by holding the closed-jaw frame.
+- `lift_back.py KEY CLIP --hip ROW [--lift PX]`: a back-view roar/threat from the back idle loop,
+  everything above the hips lifted by a rise-hold-settle curve with the leg tops stretched (negative
+  `--lift` dips, for eating). The Suchomimus roar_up (`--hip 91 --lift 4`).
+- Run-loop hygiene: `gen.py redo` while `gen.py run` is going is safe only when that key has no job
+  the loop could collect in the same round (it saves its round-start copy of the ledger); a job stuck
+  at "processing 95%" for half an hour is cancelled with PixelLab `cancel_job` (frees the slot) and
+  redone. When a clip runs out of attempts the loop keeps the *least-bad by score* attempt, which
+  can bring back an old wrong-facing one: look at `kept_attempt` in the ledger.
+- Frame time: the machine varies more than the builds (pass 12 and pass 13 both 10-15 ms one
+  morning, 15-45 ms that evening). Judge a change with `Tests/PerfProbe.tscn` on both builds back to
+  back (the previous commit in a `git worktree`, imported once), and `Tests/PerfSplit.tscn --at dunes
+  --all-species` for each species' share against a fresh baseline.
+- Exports: `export.py KEY` writes the catalogue (`art/v2/KEY.json`) that `DinoArt.has_key` reads, so
+  the game spawns the species at once; never leave a catalogue in place without `--import` while
+  suites run (they'd load unimported strips). Pass-13 strides: utah walk 22, deino 16/44, sucho 28.
 
 ## Tests
 - `Tests/DinoV2Suite.tscn` (headless): catalogue for all keys/clips/facings (side-only clips
@@ -354,3 +377,48 @@ Result: 10-19 ms a frame across runs (camp ~11-14, the villages ~10-18, a sandst
 - **Tribe beasts:** `master` (see folk-and-housing.md → Tribes).
 - **The Scarhorn's art is Blender-made** (`blender-pipeline.md`): catalogue `"source": "blender"`,
   and BODY walk/run matched to the render's stride.
+
+## Pass 13: telegraphs, calmer wilds, new beasts, each beast its own animal
+- **Pace:** `ForestCreature.PACE` (0.72) scales every species' `stats.speed` in `_stage_stats`;
+  BODY `chase` values were lowered to match (raptor 98 > keeper sprint 88). BODY `walk`/`run` are
+  art strides (stride.py) and `run_at` the walk-to-run switch: don't scale them with the pace
+  (pass 13 did, briefly, and the raptor's walk never played at 1x).
+- **The alert** (`ALERT_TIME`, `_alert_needed`, `_begin_alert`, `_draw_alert_mark`): before going for
+  the keeper, a tribesman or a companion, a beast stops, faces it, plays its display
+  (`ALERT_CLIPS`: threat, roar, windup, stomp, sniff) and shows a red "!". Struck first, it skips
+  most of it (`ALERT_STRUCK`). Bosses and babies don't. The old per-species lock-on roars are gone.
+- **Who hunts whom:** `NOTICE` (hungry) vs `DANGER` (fed: `sated > 0` only reacts inside it);
+  `TERRITORY`: past its ground a hunter gives up and walks home (`_wander_velocity` walks back at
+  0.8 of its pace when well off its ground). Herbivores ward off (`COMFORT` display, `WARD_LEASH`/
+  `WARD_GAP` give-up). Babies' kin react to `life.disturbed()` (the keeper reaching for the baby),
+  nests to `rob()` only.
+- **Pounce** (`DinoMoves.FLIGHT_MAX` 0.3 s, `HOP_PER_PX`): the flight's frames play faster, the body
+  hops (`c.hop`, the shadow shrinks) and dust kicks up at both ends.
+- **LOD bug fixed:** the lazy-tick stretch must divide by `get_physics_process_delta_time()` (it
+  multiplied by `physics_ticks_per_second`, which counted `Engine.time_scale` twice: 4x tests moved
+  every beast 16x per frame and the rex's bites whiffed through the stego). Tribesman.gd too.
+- **New species** (PixelLab v3 from words, `tools/dino/pick13.py`; clips via gen.py):
+  - `deino` (Reedstalker Deinonychus, bog packs; raptor tactics),
+  - `utah` (Sandblade Utahraptor, Bonelands pairs; the longest pounce),
+  - `sucho` (Mirefang Suchomimus: lurks in the shallows by its home, `LURK`; eats fish),
+  - `spino` (Sailking Spinosaurus, the bog apex: wades the deep mere, `DEEP_WADERS` clear the
+    deep-water collision bit; `AQUATIC` keeps most of their pace in water).
+  - The **Scarhorn** is PixelLab again (Blender retired). v3 read "horns" as a ceratopsian frill twice.
+    "Built like a slim tyrannosaur ... two stubby bull horns jutting sideways above the eyes" gave a
+    theropod. The deinonychus came out with side = "east", front = "south-west", back = "north-east"
+    (not the usual north-east/south-east/north-west): check every set by eye.
+  - The spinosaur's 96 px side view had its paddle tail cut flat by the canvas. `tools/dino/tail_tip.py`
+    carries the edge column on, tapering, in the drawing's own colours. The 128 px redraw was whole but
+    twice the rex.
+  - `threat` clips for the beasts that had no display (raptor, stego, anky, proto, compy; deino).
+- **Genes** (`Genes.gd`, `genes.gdshader`): each beast's hue/sat/val, markings (the art's own dark
+  bands made bold or faded, or frame-local speckles), a rare mutation colour, temperament, traits and
+  stats (x0.88-1.12) are rolled at `_ready` from where it was born, saved with it, and blended for the
+  keeper's own young (`LifeKeeper.bred`). The shader samples `TEXTURE` itself, so it multiplies by
+  the incoming `COLOR` (the modulate hurt-flash still works). A bone thrall keeps its bone shader.
+- **Taming ways** (`TamingWays.gd`): every species has its own way (see the table there). Offerings
+  (`Offering.gd`) are food set down; a beast whose way it is walks to it once the keeper is
+  `OFFER_SHY` away. The Taming tree's lore (`Skills.LORE`) gates hunters and the apex.
+- **Siege** (`SIEGE_SECONDS`, `_find_blocker`, `_tick_siege`, `ForestWorld.siege_hit`): hunting and
+  blocked, a beast bashes through a keeper's building (fractions of a blow add up in `prop.siege`); the
+  big ones shoulder through trees.

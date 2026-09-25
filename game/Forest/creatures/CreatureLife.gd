@@ -68,23 +68,27 @@ func tick(delta: float) -> void:
 		elif has_nest(): _guard_nest()
 
 
-## The wild baby calls its kin when a keeper comes close (or a hunter does).
+## The wild baby calls its kin when a hunter comes close. A keeper who only
+## passes by is watched, not charged (pass 13): the kin come when the keeper
+## meddles with the young (disturbed: reaching to feed or net it, striking it).
 func _guard_baby() -> void:
-	var threat: Node2D = null
-	if is_instance_valid(c._player) and c._valid_target(c._player) and c.global_position.distance_to(c._player.global_position) < Life.PROTECT:
-		threat = c._player
-	else:
-		threat = c._hunter_near()
-	if threat == null:
-		return
+	var threat: Node2D = c._hunter_near()
+	if threat != null: disturbed(threat)
+
+
+## Something meddled with this wild baby: its kin charge it.
+func disturbed(by: Node2D) -> void:
+	if not is_instance_valid(by): return
 	for other in c.roster(c.get_tree()):
 		if other == c or other.is_dead or other.tamed or other.baby or other.species != c.species: continue
 		if other.global_position.distance_to(c.global_position) > 220.0: continue
-		other._threat = threat
+		other._threat = by
 		other.provoked_time = maxf(other.provoked_time, 6.0)
+		other.wake()
 
 
-## A guardian drives off a keeper who comes up to its nest.
+## A guardian warns off a keeper who comes up to its nest (its display, facing
+## them). Pass 13: only taking an egg (rob) brings the charge.
 func _guard_nest() -> void:
 	# A nest that's no longer there (an older journey's, before nests grew
 	# rare): nothing left to guard.
@@ -92,9 +96,11 @@ func _guard_nest() -> void:
 		nest = Vector2i(9999, 9999)
 		return
 	if not is_instance_valid(c._player) or not c._valid_target(c._player): return
-	if c._player.global_position.distance_to(nest_centre()) < Life.NEST_GUARD:
-		c._threat = c._player
-		c.provoked_time = maxf(c.provoked_time, 5.0)
+	if c._player.global_position.distance_to(nest_centre()) < Life.NEST_GUARD and c._warned <= 0.0 and c._action_time <= 0.0 and not c.moves.busy():
+		var clip: String = c._display_clip()
+		c._warned = 7.0
+		c._face(c.global_position.direction_to(c._player.global_position), true)
+		if clip != "": c.play_action(clip)
 
 
 ## The keeper took an egg: every guardian of this nest charges.

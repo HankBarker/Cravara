@@ -37,7 +37,8 @@ ART = os.path.join(ROOT, "game", "Forest", "creatures", "art")
 NEW = os.path.join(ROOT, "art", "dino-v2", "new")
 FRAME = {"dodo": (20, 24), "longneck": (70, 60), "raptor": (42, 32), "rex": (76, 56), "stego": (60, 40), "trike": (54, 42),
          "alpha": (84, 60), "allo": (64, 46), "lystro": (24, 20), "parasaur": (76, 52), "ossuar": (84, 64),
-         "dimetrodon": (60, 56), "carno": (68, 70), "yuty": (68, 68), "anky": (56, 52), "proto": (32, 30), "compy": (24, 20)}
+         "dimetrodon": (60, 56), "carno": (68, 66), "yuty": (68, 68), "anky": (56, 52), "proto": (32, 30), "compy": (24, 20),
+         "utah": (52, 54), "deino": (42, 44), "sucho": (72, 64), "spino": (108, 90)}
 UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) CraveraDino/1.0"}
 
 

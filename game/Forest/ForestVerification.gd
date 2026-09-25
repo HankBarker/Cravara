@@ -47,10 +47,10 @@ func run(game):
 	player.position = dry_pos
 	player.controls_locked = true
 	player._physics_process(0.016)
-	check(player.in_water and player.walk_speed == 40, "Wading slows actual player movement")
+	check(player.in_water and player.walk_speed == player.WADE_WALK, "Wading slows actual player movement")
 	player.position = Vector2.ZERO
 	player._physics_process(0.016)
-	check(not player.in_water and player.walk_speed == 76, "Dry ground restores walk speed")
+	check(not player.in_water and player.walk_speed == player.WALK, "Dry ground restores walk speed")
 	player.controls_locked = false
 	InventoryManager.add_item(ItemDB.make("wood_wall"), 2)
 	var wall_pos := Vector2(56, 24)
@@ -71,6 +71,9 @@ func run(game):
 	check(not raptor.interact("trex_meat").ok, "Wild predator refuses meat without restraint")
 	check(raptor.interact("net").consume and raptor.net_time > 0, "Net restrains predator and consumes once")
 	check(not raptor.interact("net").consume, "Repeated net cannot consume while already restrained")
+	# Pass 13: a raptor takes only a keeper with Pack-lore (the Taming tree).
+	check(not raptor.interact("trex_meat").ok, "Without Pack-lore a netted raptor won't take meat")
+	game.skills.grant("lore_pack")
 	check(raptor.interact("trex_meat").ok, "Restrained predator accepts food")
 	check(not raptor.interact("trex_meat").consume, "Feed cooldown prevents item waste")
 	var bites := 1
@@ -78,7 +81,7 @@ func run(game):
 		raptor.feed_cooldown = 0
 		raptor.interact("trex_meat")
 		bites += 1
-	check(raptor.tamed and bites == int(raptor.stats.feeds), "A netted raptor tames in %d feeds" % int(raptor.stats.feeds))
+	check(raptor.tamed and bites == raptor.feeds_needed(), "A netted raptor tames in %d feeds" % raptor.feeds_needed())
 	var order: String = raptor.order
 	raptor.interact("")
 	check(raptor.order != order, "Tamed companion accepts order change")
@@ -91,7 +94,7 @@ func run(game):
 	player._attack_target = prey.position
 	var before: int = prey.health
 	player._forest_hit()
-	check(prey.health == before - player.get_active_weapon_damage(), "Equipped weapon damages creature exactly once per swing")
+	check(prey.health == before - player.strike_damage(), "Equipped weapon damages creature exactly once per swing")
 	player.switch_state("idle")
 	player.current_health = 61
 	game._milestones["verification"] = true

@@ -196,7 +196,7 @@ func test_acceleration() -> void:
 		await physics()
 		speeds.append(snappedf(player.velocity.x, 0.1))
 	note("walk start velocity.x per physics frame: %s" % str(speeds))
-	check(player.state == "walk" and is_equal_approx(player.velocity.x, 76.0), "walk reaches exactly walk_speed 76 (accelerated, not snapped)")
+	check(player.state == "walk" and is_equal_approx(player.velocity.x, float(player.WALK)), "walk reaches exactly walk_speed %d (accelerated, not snapped)" % player.WALK)
 	check(speeds[0] < 76.0, "first walking frame is below full speed (acceleration)")
 	check(camera.offset == Vector2.ZERO and camera.position == Vector2.ZERO, "camera stays locked while moving")
 	Input.action_release("Right")
@@ -213,7 +213,7 @@ func test_acceleration() -> void:
 	Input.action_press("Sprint")
 	for i in 12:
 		await physics()
-	check(is_equal_approx(player.velocity.length(), 125.0), "sprint reaches exactly sprint_speed 125")
+	check(is_equal_approx(player.velocity.length(), float(player.SPRINT)), "sprint reaches exactly sprint_speed %d" % player.SPRINT)
 	Input.action_press("Down")
 	await physics(3)
 	check(player.last_facing == "right", "adding Down to a rightward run keeps the right-facing view (hysteresis)")
@@ -325,7 +325,7 @@ func test_water() -> void:
 		if entered >= 0 and i - entered > 26:
 			break
 	check(entered >= 0, "feet (sampled at +8) register entering water")
-	check(player.in_water and player.walk_speed == 40 and player.sprint_speed == 52, "wading speeds unchanged (walk 40 / sprint 52)")
+	check(player.in_water and player.walk_speed == player.WADE_WALK and player.sprint_speed == player.WADE_SPRINT, "wading speeds unchanged (walk %d / sprint %d)" % [player.WADE_WALK, player.WADE_SPRINT])
 	note("wading velocity %.1f px/s (sprint_speed %d)" % [player.velocity.length(), player.sprint_speed])
 	release_all()
 	await physics(20)

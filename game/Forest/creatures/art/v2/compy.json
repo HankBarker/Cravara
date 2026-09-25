@@ -57,6 +57,14 @@
     "side": 5
    }
   },
+  "threat": {
+   "fps": 10,
+   "loop": false,
+   "views": [
+    "side"
+   ],
+   "frames": 9
+  },
   "hurt": {
    "fps": 12,
    "loop": false,

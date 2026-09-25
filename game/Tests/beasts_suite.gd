@@ -133,11 +133,12 @@ func _taming() -> void:
 	dodo.feed_cooldown = 0.0
 	r = dodo.interact("berry")
 	check(r.ok and dodo.tamed, "and a second, and trusts you: no waiting about")
-	var stego = _spawn("stego", _spot(Vector2(80, 0)))
+	# (Pass 13: a stego only eats asleep; the parasaur shows the patience.)
+	var stego = _spawn("parasaur", _spot(Vector2(80, 0)))
 	await frames(2)
 	keeper.global_position = stego.global_position + Vector2(30, 0)
 	r = stego.interact("berry")
-	check(r.ok and stego.trust == 1 and stego.settle > 0.0, "a stego eats a berry, and now wants room")
+	check(r.ok and stego.trust == 1 and stego.settle > 0.0, "a parasaur eats a berry, and now wants room")
 	stego.feed_cooldown = 0.0
 	r = stego.interact("berry")
 	check(not r.ok and stego.trust == 1 and "room" in str(r.message), "it won't take another while you hover: " + str(r.message))
@@ -169,6 +170,7 @@ func _taming() -> void:
 # --- nets ----------------------------------------------------------------------
 
 func _nets() -> void:
+	stage.skills.grant("lore_pack")
 	var raptor = _spawn("raptor", _spot(Vector2(0, -80)))
 	await frames(2)
 	var r: Dictionary = raptor.interact("trex_meat")

@@ -93,16 +93,58 @@ func stop_action():
 	action_kind=""
 	if state not in ["dead","attack"]: switch_state("idle")
 
-# The legacy stamina fields remain readable by older saves and FSM scripts.
-# Forest play has no energy gate: activity is paid for through gentle hunger.
+# Pass 13: the legacy stamina fields hold the keeper's breath. Sprinting and
+# rolling spend it and a breather fills it again, so the long roads push back
+# ("everyone's too speedy"). Blows never wait on it (combat stays fluid:
+# has_stamina is always true for them), and hunger still pays for activity.
+const SPRINT_SECONDS := 9.0     # a full bar of flat-out running
+const BREATH_REFILL := 7.0      # seconds from empty to full at rest
+const BREATH_DELAY := 0.9       # the pause after running before it fills
+const ROLL_BREATH := 14.0
+const WINDED_UNTIL := 0.35      # run dry: no sprinting until back to this share
+## Walking pace and flat-out running (pass 13: from 76 and 125).
+const WALK := 54
+const SPRINT := 88
+## Wading pace (before a river totem or the Tidecaller set).
+const WADE_WALK := 28
+const WADE_SPRINT := 36
+var winded := false
+var _breath_rest := 0.0
+var _breath_shown := -1.0
+
 func has_stamina(_amount: float) -> bool:
 	return true
 
 func consume_stamina(_amount: float):
 	spend_exertion(0.10)
 
-func _tick_stamina(_delta: float):
-	current_stamina = max_stamina
+## Shift runs only with breath to spare (the run and walk states ask).
+func can_sprint() -> bool:
+	return not winded and current_stamina > 0.0 and not boating
+
+func spend_breath(amount: float) -> void:
+	current_stamina = maxf(0.0, current_stamina - amount)
+	_breath_rest = BREATH_DELAY
+	if current_stamina <= 0.0: winded = true
+	_show_breath()
+
+func _tick_stamina(delta: float):
+	var running := state == "run" and velocity.length() > 20.0 and not boating and not is_instance_valid(mounted_creature)
+	if running:
+		current_stamina = maxf(0.0, current_stamina - max_stamina / SPRINT_SECONDS * delta)
+		_breath_rest = BREATH_DELAY
+		if current_stamina <= 0.0: winded = true
+	else:
+		_breath_rest = maxf(0.0, _breath_rest - delta)
+		if _breath_rest <= 0.0:
+			current_stamina = minf(max_stamina, current_stamina + max_stamina / BREATH_REFILL * delta)
+	if winded and current_stamina >= max_stamina * WINDED_UNTIL: winded = false
+	_show_breath()
+
+func _show_breath() -> void:
+	if absf(current_stamina - _breath_shown) >= 0.5 or (current_stamina >= max_stamina and _breath_shown < max_stamina):
+		_breath_shown = current_stamina
+		SignalBus.player_stamina_changed.emit(current_stamina, max_stamina)
 
 func spend_exertion(hunger_points: float):
 	if food_satiation_left > 0:
@@ -121,6 +163,10 @@ func _tick_hunger(delta: float):
 	_meal_cooldown = maxf(0, _meal_cooldown - delta)
 	var activity := hunger_activity()
 	var rate: float = {"idle":0.012, "walk":0.035, "sprint":0.16}[activity]
+	# Snowfall (pass 13): out under the open sky the cold makes the keeper hungrier.
+	var events = get_tree().get_first_node_in_group("world_events")
+	if events and events.cold() and forest_world and forest_world.has_method("to_cell") and not forest_world.roofs.has(forest_world.to_cell(global_position)):
+		rate *= 1.35
 	var satiety_speed: float = {"idle":0.5, "walk":1.0, "sprint":2.0}[activity]
 	var fed_time := minf(delta, food_satiation_left / satiety_speed)
 	food_satiation_left = maxf(0, food_satiation_left - delta * satiety_speed)
@@ -154,6 +200,9 @@ func take_damage(amount: int, attacker = null, knockback := 200.0):
 	for trinket in equipped_trinkets:
 		if trinket: guard += trinket.defense
 	guard += SetBonus.defense_bonus(self)
+	# A Warden's calling (pass 13).
+	var sk := _skills()
+	if sk: guard += int(sk.value("defence"))
 	# Hornguard: a tenth less harm, and blows barely shove.
 	amount = maxi(1, int(round(float(amount) * SetBonus.harm_mult(self))))
 	knockback *= SetBonus.knockback_mult(self)
@@ -175,8 +224,8 @@ func _ready():
 	collision_mask |= 32
 	animated_sprite.scale = Vector2.ONE
 	forest_world = get_tree().get_first_node_in_group("forest_world")
-	walk_speed = 76
-	sprint_speed = 125
+	walk_speed = WALK
+	sprint_speed = SPRINT
 	var feet := RectangleShape2D.new()
 	feet.size = Vector2(10,8)
 	$CollisionShape2D.shape = feet
@@ -252,13 +301,13 @@ func _physics_process(delta):
 	var wade_boost := SetBonus.wading_bonus(self)
 	for trinket in equipped_trinkets:
 		if trinket: wade_boost += trinket.wading_bonus
-	walk_speed = int(40 + 76 * wade_boost) if in_water else 76
-	sprint_speed = int(52 + 125 * wade_boost) if in_water else 125
+	walk_speed = int(WADE_WALK + WALK * wade_boost) if in_water else WALK
+	sprint_speed = int(WADE_SPRINT + SPRINT * wade_boost) if in_water else SPRINT
 	if boating:
 		# Paddling, not wading.
 		in_water = false
-		walk_speed = 84
-		sprint_speed = 110
+		walk_speed = 64
+		sprint_speed = 64
 	var gifts = _gifts()
 	if gifts:
 		walk_speed = int(round(walk_speed * gifts.speed_mult()))
@@ -268,6 +317,14 @@ func _physics_process(delta):
 		set_speed *= SetBonus.sand_speed_mult(self)
 	# Choking on ash (or struck by an Ashmane's roar): slower.
 	set_speed *= ash_speed_mult()
+	# The going (pass 13): the bog's mud drags at the feet, loose sand a little.
+	if forest_world and not boating and not in_water and forest_world.has_method("to_cell"):
+		match str(forest_world.ground_style.get(forest_world.to_cell(global_position), "")):
+			"mud": set_speed *= 0.72
+			"sand": set_speed *= 0.85
+		# Fresh snow underfoot, out in the open (a snowfall, pass 13).
+		var weather = get_tree().get_first_node_in_group("world_events")
+		if weather and weather.cold() and not forest_world.roofs.has(forest_world.to_cell(global_position)): set_speed *= 0.85
 	walk_speed = int(round(walk_speed * set_speed))
 	sprint_speed = int(round(sprint_speed * set_speed))
 	move_accel_scale = WATER_ACCEL_SCALE if in_water else 1.0
@@ -315,6 +372,9 @@ func switch_state(state_name: String):
 		else:
 			last_facing = "down" if aim.y > 0 else "up"
 		_attack_target = global_position + aim.limit_length(42)
+		# The swing's item before the attack state enters: it picks its clip
+		# from the item's class (blow_class), not the last swing's item.
+		_swing_item = selected
 	super.switch_state(state_name)
 	if state_name == "attack" and state == "attack":
 		_swing_time = _swing_duration
@@ -336,7 +396,14 @@ func _forest_hit():
 		if not hit.is_empty() and hit.collider != prop and hit.collider.get_parent() != prop:
 			harvest_reachable = false
 	var power: int=maxi(1,_swing_item.mining_power if tool=="pickaxe" else _swing_item.chop_power) if _swing_item else 1
-	var harvested: bool = forest_world.mine_at(_attack_target, tool,power) if harvest_reachable else false
+	# Pass 13: Gathering bites harder (never past the tool's own tier).
+	var skills := _skills()
+	var knack := 0
+	if skills and is_instance_valid(prop):
+		knack = int(floor(skills.value("gather_power")))
+		if prop.kind == "tree": knack += int(skills.value("tree_power"))
+		elif prop.kind in ["rock", "wall", "ore"] or str(forest_world.Prop.WILD.get(prop.kind, {}).get("tool", "")) == "pickaxe": knack += int(skills.value("stone_power"))
+	var harvested: bool = forest_world.mine_at(_attack_target, tool, power, knack) if harvest_reachable else false
 	if harvested:
 		var material: String = forest_world.last_hit_material
 		AudioManager.play_sfx("chop_wood" if material=="wood" else ("harvest_plant" if material=="plant" else "mine_rock"))
@@ -347,41 +414,174 @@ func _forest_hit():
 	elif forest_world.last_feedback != "":
 		var ui = get_tree().get_first_node_in_group("inventory_ui")
 		if ui: ui.show_toast(forest_world.last_feedback)
-	# An explicit overlap check also hits a creature already inside the sword area.
-	# Forest creatures receive one hit here; the legacy enter signal is filtered below.
-	var damage: int = _swing_item.damage if _swing_item else 1
-	for trinket in equipped_trinkets:
-		if trinket: damage += trinket.damage_bonus
-	var gifts = _gifts()
-	if gifts: damage = int(round(float(damage) * gifts.damage_mult()))
-	damage = int(round(float(damage) * SetBonus.damage_mult(self)))
+	# Pass 13: the weapon's class shapes the blow (BLOWS): a sweep cuts every
+	# foe in its arc, a stab jabs one, a smash knocks everything on a spot back
+	# and staggers it, a thrust runs through a line.
+	var damage := _base_blow_damage()
 	# Blows that bleed: the Plate Maul, or any blade in the Plateback set.
 	var bleed_dps: float = _swing_item.bleed_dps if _swing_item else 0.0
 	if SetBonus.bleeds(self): bleed_dps = maxf(bleed_dps, 2.5)
-	for creature in get_tree().get_nodes_in_group("forest_creatures"):
-		if creature.untouchable: continue
-		if creature.global_position.distance_to(_attack_target) < (28 if tool=="sword" else 22) and creature.global_position.distance_to(global_position) < 52:
-			var ray := PhysicsRayQueryParameters2D.create(global_position, creature.global_position, 16)
-			if not get_world_2d().direct_space_state.intersect_ray(ray).is_empty():
-				continue
-			creature.take_damage(damage, self)
-			if bleed_dps > 0.0 and not creature.is_dead: creature.apply_bleed(bleed_dps, 4.0, self)
-			_feel_creature_hit(creature, damage, tool)
-			return
-	# The tribes' folk (pass 12).
-	for folk in get_tree().get_nodes_in_group("tribesmen"):
-		if folk.is_dead or folk.global_position.distance_to(_attack_target) >= (28 if tool=="sword" else 22) or folk.global_position.distance_to(global_position) >= 52: continue
-		var ray := PhysicsRayQueryParameters2D.create(global_position, folk.global_position, 16)
-		if not get_world_2d().direct_space_state.intersect_ray(ray).is_empty(): continue
-		folk.take_damage(damage, self)
-		_feel_creature_hit(folk, damage, tool)
-		return
+	var blow := blow_class()
+	var shape := blow_shape(blow)
+	var aim := global_position.direction_to(_attack_target)
+	if aim == Vector2.ZERO: aim = _facing_vector()
+	_swing_trail(blow, aim, shape)
+	var hits := _blow_targets(blow, shape, aim)
+	for n in hits.size():
+		var target: Node2D = hits[n]
+		var dealt := strike_damage(n, hits)
+		# Vitals: a stab now and then finds the spot.
+		if blow == "stab" and skills and randf() < skills.value("stab_crit"): dealt *= 2
+		var alive: bool = not target.is_dead
+		var plated: bool = blow == "smash" and skills and skills.value("smash_plates") > 0.0 and target.get("species") != null and target.PLATED.has(target.species)
+		target.take_damage(dealt + (int(target.PLATED[target.species]) if plated else 0), self, float(shape.knock))
+		if bool(shape.get("stagger", false)) and not target.is_dead and target.has_method("stagger"): target.stagger(0.4 + (skills.value("smash_stagger") if skills else 0.0))
+		if bleed_dps > 0.0 and not target.is_dead and target.has_method("apply_bleed"): target.apply_bleed(bleed_dps, 4.0, self)
+		_feel_creature_hit(target, dealt, tool)
+		# Combat: every blow on a foe teaches; a kill teaches more.
+		if skills and alive:
+			var xp := minf(float(dealt), 40.0) * 0.5
+			if target.is_dead: xp += clampf(float(target.get("stats").hp if target.get("stats") != null else 60) / 10.0, 4.0, 60.0)
+			skills.gain("combat", xp)
+	if not hits.is_empty(): return
 	# Old Maw, while it is out of the water (OldMaw.gd).
 	for beast in get_tree().get_nodes_in_group("sea_beasts"):
 		if beast.can_be_hit() and beast.global_position.distance_to(_attack_target) < 36 and beast.global_position.distance_to(global_position) < 60:
 			beast.take_damage(damage, self)
 			_feel_creature_hit(beast, damage, tool)
 			return
+
+## The shape of each class of blow (Item.weapon_class). arc: half-angle (deg)
+## either side of the aim; reach: px from the keeper to a foe's edge; spot: a
+## smash's radius, centred SMASH_AT ahead; line: a thrust's half-width; most:
+## foes one blow can hit; more: damage to the second and on; knock: shove;
+## mult: damage; stagger: breaks a heavy beast's wind-up.
+const BLOWS := {
+	"sweep": {"arc": 70.0, "reach": 42.0, "most": 99, "more": 0.75, "knock": 150.0, "mult": 1.0},
+	"stab": {"arc": 22.0, "reach": 44.0, "most": 1, "more": 1.0, "knock": 70.0, "mult": 1.25},
+	"smash": {"spot": 26.0, "reach": 50.0, "most": 99, "more": 0.85, "knock": 280.0, "mult": 1.0, "stagger": true},
+	"thrust": {"line": 9.0, "reach": 62.0, "most": 3, "more": 0.7, "knock": 120.0, "mult": 1.0},
+	"tool": {"arc": 35.0, "reach": 38.0, "most": 1, "more": 1.0, "knock": 110.0, "mult": 1.0},
+}
+const SMASH_AT := 24.0
+
+## The skills (pass 13), or null outside a journey.
+func _skills() -> Node:
+	return get_tree().get_first_node_in_group("skills") if is_inside_tree() else null
+
+## The weapon, its charms, the companions' gifts and the armour set.
+func _base_blow_damage() -> int:
+	var damage: int = _swing_item.damage if _swing_item and state == "attack" else (InventoryManager.get_selected_item().damage if InventoryManager.get_selected_item() else 1)
+	for trinket in equipped_trinkets:
+		if trinket: damage += trinket.damage_bonus
+	var gifts = _gifts()
+	if gifts: damage = int(round(float(damage) * gifts.damage_mult()))
+	return int(round(float(damage) * SetBonus.damage_mult(self)))
+
+## A class of blow's shape, as the keeper's perks have widened it.
+func blow_shape(blow: String) -> Dictionary:
+	var shape: Dictionary = BLOWS.get(blow, BLOWS.tool).duplicate()
+	var skills := _skills()
+	if skills:
+		match blow:
+			"sweep":
+				shape.arc = float(shape.arc) + skills.value("sweep_arc")
+				shape.more = minf(1.0, float(shape.more) + skills.value("sweep_more"))
+			"smash":
+				shape.spot = float(shape.spot) + skills.value("smash_spot")
+				shape.knock = float(shape.knock) * (1.0 + skills.value("smash_knock"))
+			"thrust":
+				shape.reach = float(shape.reach) + skills.value("thrust_reach")
+				shape.most = int(shape.most) + int(skills.value("thrust_most"))
+	return shape
+
+## What a blow deals to the n-th foe it lands on (0: the first), before any
+## lucky stab: the weapon (_base_blow_damage), the class's weight, and the
+## keeper's combat skill (level, perks and callings). `foes`: everything the
+## blow landed on (a Brawler counts them).
+func strike_damage(n: int = 0, foes: Array = []) -> int:
+	var blow := blow_class()
+	var shape := blow_shape(blow)
+	var mult := float(shape.mult) * (1.0 if n == 0 else float(shape.more))
+	var skills := _skills()
+	if skills:
+		var bonus: float = skills.value("melee_damage")
+		if blow == "thrust": bonus += skills.value("thrust_damage")
+		var near := _foes_near(64.0)
+		if near <= 1: bonus += skills.value("duel_damage")
+		else: bonus += skills.value("brawl_damage") * float(mini(near - 1, 3))
+		if current_health * 2 < max_health: bonus += skills.value("rage_damage")
+		mult *= 1.0 + bonus
+	return maxi(1, int(round(float(_base_blow_damage()) * mult)))
+
+## Hostile beasts and raiders within this many px.
+func _foes_near(radius: float) -> int:
+	var count := 0
+	for creature in get_tree().get_nodes_in_group("forest_creatures"):
+		if not creature.is_dead and not creature.tamed and creature.global_position.distance_to(global_position) < radius: count += 1
+	for folk in get_tree().get_nodes_in_group("tribesmen"):
+		if not folk.is_dead and folk.is_hostile_to_keeper() and folk.global_position.distance_to(global_position) < radius: count += 1
+	return count
+
+## The class of the blow the held item (or bare fists) makes.
+func blow_class() -> String:
+	var item: Item = _swing_item if state == "attack" and _swing_item else InventoryManager.get_selected_item()
+	if item == null: return "stab"
+	if item.weapon_class != "": return item.weapon_class
+	return "sweep" if item.tool_type == "sword" else "tool"
+
+func _facing_vector() -> Vector2:
+	return {"down": Vector2.DOWN, "up": Vector2.UP, "left": Vector2.LEFT, "right": Vector2.RIGHT}.get(last_facing, Vector2.DOWN)
+
+## Who a blow lands on, nearest first: wild beasts and the tribes' folk inside
+## its shape, in clear sight. Companions are never struck; a peaceful
+## tribesman only when nothing hostile is in reach (a deliberate blow).
+func _blow_targets(blow: String, shape: Dictionary, aim: Vector2) -> Array:
+	var found: Array = []
+	var calm: Array = []
+	var space := get_world_2d().direct_space_state
+	var candidates: Array = []
+	for creature in get_tree().get_nodes_in_group("forest_creatures"):
+		if creature.untouchable or creature.is_dead or creature.tamed: continue
+		candidates.append([creature, float(creature.stats.radius), true])
+	for folk in get_tree().get_nodes_in_group("tribesmen"):
+		if folk.is_dead: continue
+		candidates.append([folk, 6.0, folk.is_hostile_to_keeper()])
+	for entry in candidates:
+		var target: Node2D = entry[0]
+		var r: float = entry[1]
+		var v := target.global_position - global_position
+		var d := v.length()
+		if d > float(shape.get("reach", 40.0)) + r + 30.0: continue
+		var inside := false
+		match blow:
+			"smash":
+				inside = target.global_position.distance_to(global_position + aim * SMASH_AT) - r <= float(shape.spot)
+			"thrust":
+				var along := v.dot(aim)
+				inside = along >= -2.0 and along <= float(shape.reach) + r and absf(v.cross(aim)) <= float(shape.line) + r
+			_:
+				inside = d - r <= float(shape.reach) and (d < 12.0 or absf(rad_to_deg(aim.angle_to(v))) <= float(shape.arc))
+		if not inside: continue
+		var ray := PhysicsRayQueryParameters2D.create(global_position, target.global_position, 16)
+		if not space.intersect_ray(ray).is_empty(): continue
+		if entry[2]: found.append([d, target])
+		else: calm.append([d, target])
+	if found.is_empty() and not calm.is_empty():
+		calm.sort_custom(func(a, b): return a[0] < b[0])
+		return [calm[0][1]]
+	found.sort_custom(func(a, b): return a[0] < b[0])
+	var out: Array = []
+	for i in mini(found.size(), int(shape.get("most", 1))):
+		out.append(found[i][1])
+	return out
+
+func _swing_trail(blow: String, aim: Vector2, shape: Dictionary) -> void:
+	if not is_instance_valid(forest_world): return
+	var trail = preload("res://Forest/fx/SwingTrail.gd").new()
+	trail.setup(blow, aim, shape)
+	trail.position = global_position + Vector2(0, -4)
+	forest_world.add_child(trail)
 
 func _on_SwordHitbox_area_entered(area):
 	if area.get_parent().is_in_group("forest_creatures"):
@@ -632,7 +832,9 @@ func eat(item: Item) -> bool:
 	if item.healing_total>0:
 		# One ongoing effect per food prevents a stack of meals becoming instant healing.
 		_food_healing = _food_healing.filter(func(effect): return effect.get("id", "") != item.id)
-		_food_healing.append({"id":item.id,"left":item.healing_duration,"rate":item.healing_total/maxf(1,item.healing_duration),"potion":item.hunger_value == 0})
+		# A Herbalist's food heals a quarter more (pass 13).
+		var herb: float = 1.0 + (_skills().value("food_heal") if _skills() else 0.0)
+		_food_healing.append({"id":item.id,"left":item.healing_duration,"rate":item.healing_total*herb/maxf(1,item.healing_duration),"potion":item.hunger_value == 0})
 	play_gesture("eat")
 	return true
 
@@ -789,6 +991,8 @@ func request_roll() -> void:
 func can_roll() -> bool:
 	if respawning or controls_locked or action_time > 0.0 or is_instance_valid(mounted_creature): return false
 	if roll_cooldown > 0.0 or not states.has("roll"): return false
+	# A tumble takes breath; out of it, no roll.
+	if current_stamina < ROLL_BREATH * 0.5: return false
 	var session := get_tree().get_first_node_in_group("forest_session")
 	if session and is_instance_valid(session.get("fishing")) and session.fishing.is_active(): return false
 	# A swing can be cancelled into a roll after its contact, never in the windup.
@@ -803,6 +1007,7 @@ func _try_start_roll() -> void:
 	if boating: return
 	if _roll_buffer > 0.0 and can_roll():
 		_roll_buffer = 0.0
+		spend_breath(ROLL_BREATH)
 		switch_state("roll")
 
 ## The held direction, or the facing when nothing is held.
@@ -815,7 +1020,7 @@ func roll_direction() -> Vector2:
 func finish_roll() -> void:
 	var input := get_movement_input()
 	if input == Vector2.ZERO: switch_state("idle")
-	else: switch_state("run" if Input.is_action_pressed("Sprint") else "walk")
+	else: switch_state("run" if Input.is_action_pressed("Sprint") and can_sprint() else "walk")
 
 ## Short gesture clips (eat, craft, place, interact, cheer). They never lock
 ## input or freeze movement (unlike play_action) and are skipped while busy,

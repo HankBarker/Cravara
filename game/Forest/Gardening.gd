@@ -49,11 +49,13 @@ func use_at(target: Vector2, id: String) -> bool:
 		plot.seed=id
 		plot.growth=0.0
 		player.play_action("pickup",target)
-		notice.emit("Planted. Water this patch with a water bucket.")
+		_farming(3)
+		notice.emit("Planted. Water this patch with a water bucket." if not plot.watered else "Planted, in soil still wet from the last crop.")
 	elif id=="water_bucket":
 		if plot.watered: notice.emit("This patch is already watered."); return false
 		if not world._exchange_bucket("water_bucket","bucket"): return false
 		plot.watered=true
+		_farming(1)
 		player.play_action("bucket",target)
 		AudioManager.play_sfx("harvest_plant")
 		notice.emit("Watered. Your crop will grow while you explore.")
@@ -64,11 +66,17 @@ func use_at(target: Vector2, id: String) -> bool:
 			notice.emit("Needs water." if not plot.watered else "%d seconds until harvest." % ceili(duration-float(plot.growth)))
 			return false
 		var center: Vector2=Vector2(c)*16+Vector2(8,8)
-		world._drop(CROPS[plot.seed]["yield"],3,center)
+		# Farming (pass 13): a bigger harvest, and soil that stays wet.
+		var sk = get_tree().get_first_node_in_group("skills")
+		var extra := 0.0
+		if sk: extra = sk.value("harvest_extra")
+		var count := 3 + int(floor(extra)) + (1 if randf() < fmod(extra, 1.0) else 0)
+		world._drop(CROPS[plot.seed]["yield"],count,center)
 		world._drop(plot.seed,1,center+Vector2(5,0))
 		plot.seed=""
 		plot.growth=0.0
-		plot.watered=false
+		plot.watered=sk != null and sk.value("keep_water") > 0.0
+		_farming(6)
 		player.play_action("pickup",target)
 		AudioManager.play_sfx("harvest_plant")
 		notice.emit("Harvest gathered. A seed remains for the next planting.")
@@ -80,7 +88,13 @@ func use_at(target: Vector2, id: String) -> bool:
 ## A tamed lystrosaur about tills the soil: crops grow faster (Buffs.gd).
 func _crop_speed() -> float:
 	var gifts = get_tree().get_first_node_in_group("companion_buffs")
-	return gifts.crop_speed() if gifts else 1.0
+	var sk = get_tree().get_first_node_in_group("skills")
+	return (gifts.crop_speed() if gifts else 1.0) * (1.0 + (sk.value("crop_speed") if sk else 0.0))
+
+## Farming XP (pass 13): sowing, watering, bringing it in.
+func _farming(xp: float) -> void:
+	var sk = get_tree().get_first_node_in_group("skills")
+	if sk: sk.gain("farming", xp)
 
 ## A Sun Sail (pass 12: dimetrodon sail scales on a frame) gathers the sun
 ## over the garden: crops within SAIL_REACH cells grow half again as fast by

@@ -1,5 +1,152 @@
 # Cravera: The Skyfang Wilds
 
+## Thirteenth pass: a slower, fairer wild; skills, taming ways, beasts of their own
+
+**The feel: slower, and every fight telegraphed**
+1. **Everyone is slower.** The keeper walks 54 and sprints 88 (was 76/125); every beast moves at
+   0.72 of its old pace. Hunters still outrun a sprint, but a raptor only just.
+2. **Breath.** Sprinting spends breath (about 9 s from full); a breather fills it again. Winded, you
+   can't sprint until it's back to a third. A slim bar under the hunger bar shows it. Rolling costs
+   breath too.
+3. **The going pushes back.** The bog's mud (0.72), loose sand (0.85) and fresh snow (0.85) slow
+   you. Crossing the wilds takes a good while longer.
+4. **Every enemy shows itself before it comes.** A hunter noticing you stops, faces you and does its
+   display (a roar, a screech, a stomp, a raised claw) with a red "!" over its head for half a second
+   to a second, then comes. Struck first, it skips most of it. The tribes do the same: a raised fist
+   and a shout, each one a beat apart, so a band comes in staggered.
+5. **The raptor's pounce is a leap now.** At most 0.3 s in the air, in an arc over its shadow (the
+   shadow shrinks and fades while it's up), with dust where it leaves and lands.
+
+**Not everything chases you**
+6. **Hunters notice you nearer** (a raptor at 150, not 180) and **a fed hunter lets you be** unless
+   you walk right into it. Hungry ones hunt. Out past their own ground they let you go and walk
+   home.
+7. **Herbivores ward you off, then calm down.** Come too close and a trike paws the ground, a stego
+   raises its tail. Strike one and it fights, but only near its own ground: keep away and it gives
+   up within a couple of seconds and goes back to grazing. (The trike that followed you for minutes
+   won't any more.) Left alone, a herd grazes more than it walks: a few steps, then heads down.
+8. **Babies:** their kin only charge when you reach for the baby (feed, net or strike it), not for
+   walking by.
+9. **Nests:** the guardians warn you off; they charge when you take an egg.
+10. **The tribes** notice you nearer (110, not 170) and cry out to each other over less ground.
+
+**Weapons: four ways to strike**
+11. **Swords sweep:** a wide arc, every foe in it (the second and on take 75%), and a shove.
+12. **Daggers stab:** one foe, quick, 25% harder.
+13. **Mauls and clubs smash:** everything on a spot ahead is knocked back hard and **staggered** (even
+    a big beast loses the blow it was winding up).
+14. **Spears thrust:** a long line that runs through up to three. The keeper has a new spear lunge.
+15. Each blow leaves a trail for a moment (a crescent, a streak, a ring). Holding a tool or weapon
+    while running, you now carry it forward at the ready.
+
+**Skills and perks ("let's do both")**
+16. **Six skills level by doing them** (L opens them): Combat, Archery, Taming, Breeding, Farming,
+    Gathering. Every level: a small boost (+2% melee, faster draws, fewer feeds to tame, quicker
+    hatching, faster crops, a harder bite on stone and trees) and a **perk point** (two at levels 5
+    and 10). A banner tells you.
+17. **Perk trees** per skill, e.g. Combat: Wide Arc and Cleave (sweep), Quick Hands and Vitals
+    (stab), Quake and Bonebreaker (smash, which goes through an anky's plates), Long Reach and
+    Skewer (thrust). Archery: Steady Draw, Heavy Draw, Far Shot, Piercing Shot. Gathering:
+    Woodsman's Swing, Stonecutter, Prospector, Crystal-seer.
+18. **Callings at levels 5 and 10**: pick one of two, like Stardew's professions (Duelist or Brawler,
+    Warden or Berserker; Hunter or Skirmisher; Beastfriend or Tamer; Hatcher or Mutationist; Tiller
+    or Forager; Miner or Woodsman, and more).
+19. **The Taming tree's lore decides which beasts will take you at all**: small and herd beasts from
+    the start; raptors and deinonychus with **Pack-lore**; allosaurs, Scarhorns, Sandblades, the
+    Suchomimus and the Ashmane with **Hunter-lore**; the rex and the spinosaur with **Apex-lore**.
+    Their eggs won't hatch for you before that either. Rope-craft and Saddlebags are learned there
+    too.
+
+**Every beast is won its own way (ask Kaya: "The beasts")**
+20. - Dodos, lystros and compies: food from your hand.
+    - Parasaurs and protos: walk up slowly. Run at one and it startles and loses trust.
+    - Longnecks: set berries down, back away, and it comes to them.
+    - Stegos: only asleep, at night.
+    - Trikes: let it warn you off and **stand your ground**; then it takes berries.
+    - Ankylosaurs: **break the rocks around it** while it watches (it roots for grubs); then berries.
+    - Dimetrodons: only while it basks in the sun (basking, it's sleepy and lets you walk right up).
+    - Raptors and deinonychus: a net, then meat.
+    - **Allosaurs: wear the Rustback** (its kin's smell), set meat down and back off. In the
+      Rustback, allosaurs don't hunt you. The Ashmane is the same with the Ashen gear.
+    - **The rex and the Sandblade: strike it and get away unhurt, three times**, then meat.
+    - **The Scarhorn: roll clear of its charge three times**, then meat.
+    - The Suchomimus and the spinosaur: fish, set down by the water.
+    - Food that's set down (the longneck's berries, the allosaur's meat, the fish) goes down from
+      where the beast can see it: hold it and press E up to seven tiles off. No need to walk into
+      the jaws of a Suchomimus (it snaps at four tiles) or the spinosaur (seven).
+
+**Beasts of their own (ARK-style)**
+21. **No two beasts alike.** Each has its own colours (a hue and shade of its kind), markings (bold
+    or faded bands, speckles), a temperament (calm, bold, skittish, fierce: how near it lets you
+    come, how long it chases, how hard it is to win) and up to two traits (hardy, swift, brute,
+    thick-hided, tireless, gentle, keen-eyed).
+22. **Rare mutations**: purple, white, black, gold, crimson or azure, with a stat gift. They're
+    commoner far out, and your own pairs can throw them (more with Breeding perks).
+23. **Stats**: health, bite and pace each vary ±12%. **Training** raises a tamed beast's stats a
+    little (three ranks a stat, 1.7% each, with food and rest between).
+24. **The Sky-Fang lens**: once two of the great beasts have fallen (Skarn, the Buried King, Old
+    Maw) you can read a beast's stats in its Care panel and when you look at it in the wild.
+25. **Bloodlines**: an egg your own pair lays carries both parents' genes; the young take the better
+    parent's gifts more often than not (always with the Breeder calling).
+
+**New beasts, and the Scarhorn remade**
+26. **The Mirefen:** reed-running **Deinonychus** packs; the **Suchomimus**, which waits in the
+    shallows at the water's edge and lunges; and the bog's apex, the **Sailking Spinosaurus**, which
+    wades out into the deep mere itself.
+27. **The Bonelands:** pairs of **Sandblade Utahraptors**, great feathered raptors that leap from
+    further than any raptor.
+28. **The Scarhorn** is a PixelLab carnotaurus again (bull horns, tiny arms), like the rest of the
+    beasts. The Blender experiment is retired.
+29. **Warning displays** for the beasts that had none (raptor screech, stego tail, anky club, proto
+    hiss, compy screech).
+
+**The world**
+30. **An ore for each far land**, found around its beasts: **rustiron** round the allosaurs' nests
+    (Bonelands), **sunstone** in the Scarhorn's southern dunes, **ashglass** in the Ashmane's ash
+    fields, **bog iron** along the mere. New weapons need the ore and the beast: Rustjaw Sabre
+    (sweep 32), Sunstone Maul (smash 42), Ashglass Knife (stab 28), Bog-iron Harpoon (thrust 38),
+    Spinesail Glaive (sweep 50).
+31. **More Sky-Fang crystal** the further out you go.
+32. **The desert's great bones** are new (a half-buried ribcage, a great skull) and rare. Search
+    them for bone, fossils and old coins.
+
+**Companions**
+33. **Care** (hold E on a companion, then Care): its temperament and traits (its stats through the
+    lens), saddlebags, rope, training.
+34. **Saddlebags**: a companion carries a bag (4 to 12 slots by size, more with the perk) you open
+    anywhere. If it falls, the bag and all in it drop.
+35. **A lead rope and hitching posts**: lead a companion close (it won't fight while led), or tie it
+    to a post and it stays put. The rope comes back when you let go.
+36. **The parasaur's ear**: one at your side now and then hoots toward something it hears: ore, Sky-
+    Fang crystal, a fallen star, an old cache, a nest with eggs. A gold mark stands over it and the
+    map remembers it.
+
+**Building, and beasts that break things**
+37. **Pen gates**, three tiles wide, for big beasts; E opens and shuts them.
+38. **Beasts break your builds**, slowly: a rex bashes through a timber wall in about 35 s (stone
+    about 80), raptors take minutes. Your own tools are far quicker. The big beasts shoulder through
+    trees in their way.
+
+**The tribes' camps**
+39. **Named camps** with their own standing: Tamar Oasis and Cinderhold, and the small camps of
+    Saltwell (dunes), Reedwatch (the Mirefen) and Bonepyre (an Ashen camp in the Bonelands).
+40. **Requests**: each camp asks for something (hides, fruit, ore, a beast hunted). Done, it pays in
+    coins (and sometimes Ashen gear) and thinks better of you. Gifts of coins help too.
+41. **Diplomacy**: striking a camp's folk drops your standing there (and a little with its kin).
+    **Win an Ashen camp over** with coins at its totem and its requests: at 0 it lets you be, and
+    trusted, its war chief Vorr will talk.
+42. **The small camps move on** now and then; the map shows where they went.
+
+**The world stirs**
+43. **Events** every 10 to 18 minutes, with a banner and a map mark:
+    - **Earthquake**: the ground heaves, rock tumbles down, the herds bolt.
+    - **Snowfall**: out in the open the cold makes you hungry and slow.
+    - **Wildfire**: scrub and trees burn and it spreads; don't stand in it. A water bucket puts it
+      out.
+    - **Meteor shower** (at night): falling stars leave warm rocks of prism crystal.
+    - **SKYFANG DETECTED** (once Skarn has fallen): a Sky-Fang spire bursts out of the ground nearby
+      and **crystal beasts** pour out of it for a while. Break the spire for prism crystal.
+
 ## Twelfth pass: tougher wilds, tribes, new beasts, the bog and the ashen Pale Lands
 
 **Fixed first**

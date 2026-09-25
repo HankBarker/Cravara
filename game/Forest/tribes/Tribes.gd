@@ -46,19 +46,19 @@ const LOOKS := {
 		"look": {"skin": "umber", "hair": "charcoal", "hair_style": "short", "cloth": "clay", "trousers": "slate"}},
 }
 ## The clips each role needs (baked facings: down, up, right; left mirrors right).
-const CLIPS := {"melee": ["idle", "walk", "run", "sword", "hurt", "death"],
-	"archer": ["idle", "walk", "run", "sword", "bow_draw", "bow_release", "hurt", "death"],
+const CLIPS := {"melee": ["idle", "walk", "run", "sword", "cheer", "hurt", "death"],
+	"archer": ["idle", "walk", "run", "sword", "bow_draw", "bow_release", "cheer", "hurt", "death"],
 	"trader": ["idle", "walk", "interact", "cheer", "hurt", "death"],
 	"chief": ["idle", "walk", "run", "sword", "cheer", "hurt", "death"]}
 
 ## How a role fights: health, a blow's damage, its reach (px) and pause (s),
-## walking and running pace (px/s: the keeper sprints at 125, so a keeper can
-## outrun a band, just), a bow's range.
+## walking and running pace (px/s, pass 13: the keeper sprints at 88 for a
+## breath, so a keeper can outrun a band for a while), a bow's range.
 const ROLES := {
-	"melee": {"hp": 70, "damage": 9, "reach": 18.0, "cooldown": 1.25, "walk": 38.0, "run": 104.0},
-	"archer": {"hp": 55, "damage": 7, "reach": 16.0, "cooldown": 1.6, "walk": 38.0, "run": 98.0, "range": 150.0},
-	"trader": {"hp": 60, "damage": 5, "reach": 16.0, "cooldown": 1.6, "walk": 30.0, "run": 90.0},
-	"chief": {"hp": 220, "damage": 16, "reach": 20.0, "cooldown": 1.1, "walk": 38.0, "run": 100.0},
+	"melee": {"hp": 70, "damage": 9, "reach": 18.0, "cooldown": 1.25, "walk": 28.0, "run": 80.0},
+	"archer": {"hp": 55, "damage": 7, "reach": 16.0, "cooldown": 1.6, "walk": 28.0, "run": 76.0, "range": 150.0},
+	"trader": {"hp": 60, "damage": 5, "reach": 16.0, "cooldown": 1.6, "walk": 24.0, "run": 70.0},
+	"chief": {"hp": 220, "damage": 16, "reach": 20.0, "cooldown": 1.1, "walk": 28.0, "run": 78.0},
 }
 ## Weapons reach a little further: a spear more than a club.
 const REACH := {"horn_spear": 24.0, "allo_cleaver": 20.0, "raider_club": 18.0, "bone_dagger": 15.0}
@@ -90,7 +90,16 @@ const CAST := {
 			"Never walk the deep south alone. The Scarhorn runs faster than any of us."],
 		"lore": ["North of the hills the ash falls like snow, from the mountain that burns beyond. No birds sing there. The ash will choke you before the beasts do, unless you cover your face: a veil of sail-skin, or our wraps.",
 			"The Ashmanes hunt in pairs in the grey land. Their roar throws ash in your eyes and you can't run."],
-		"services": ["trade", "lore"]},
+		"services": ["trade", "lore", "camp"]},
+	# Pass 13: the Ashen war chief parleys with a keeper its camp has come to
+	# trust (Camps.PARLEY_AT).
+	"tribe_ashen": {"name": "Vorr", "title": "Ashen war chief",
+		"greet": ["So. The outsider who brings us what we ask.", "Speak, and be quick.", "Ash and bone, outsider."],
+		"chat": ["We came down from the white hills when the mountain woke. We take what the ash leaves us.",
+			"The Sunward trade and smile. We remember who drove us north.",
+			"The Ashmane hunts beside us. It knows our smell. It does not know yours."],
+		"lore": ["The Sky-Fang fell before our grandmothers' grandmothers. Where it broke the ground, the beasts grew crystal in their backs."],
+		"services": ["camp", "lore"]},
 }
 
 ## The folk's words.

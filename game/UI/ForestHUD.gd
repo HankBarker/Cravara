@@ -42,6 +42,8 @@ var _hotbar_page: Label
 var shortcut_buttons: Array[Button] = []
 var _interface_ready := false
 var appearance_editor: CanvasLayer
+## The Skills panel (pass 13, UI/SkillsPanel.gd; L).
+var skills_panel: Control
 var sort_button: Button
 var quick_stack_button: Button
 const FRAME = preload("res://UI/CrystalFrame.gd")
@@ -166,8 +168,23 @@ func _button(parent: Node, text: String, pos: Vector2, dimensions: Vector2, call
 ## The status plate: a heart and a haunch, each with its crystal meter and the
 ## number itself. Region name top right; bleeding, toasts and the context line
 ## sit on soft dark backings so they read over the brightest meadow.
+## The keeper's breath (pass 13): a slim bar under the hunger bar, shown only
+## while it isn't full; ember while the keeper is winded (no sprinting).
+class BreathBar extends Control:
+	var value := 1.0
+	var winded := false
+	func _draw() -> void:
+		draw_rect(Rect2(0, 0, size.x, size.y), Color(0.04, 0.09, 0.09, 0.9))
+		var w := roundf((size.x - 2.0) * clampf(value, 0.0, 1.0))
+		if w > 0.0: draw_rect(Rect2(1, 1, w, size.y - 2.0), Color("e39a7f") if winded else Color("9fddbb"))
+
+var _breath: BreathBar
+var _breath_alpha := 0.0
+## Where the lines under the status plate start (the gifts, a bleed, the ash).
+const UNDER_PLATE := 53.0
+
 func _build_status() -> void:
-	var frame := _panel(root,Vector2(6,5),Vector2(158,42))
+	var frame := _panel(root,Vector2(6,5),Vector2(158,47))
 	frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	for i in 2:
 		var name: String = ["VITALITY","HUNGER"][i]
@@ -182,13 +199,19 @@ func _build_status() -> void:
 		var amount := _label(frame,"",Vector2(131,y+4),8,PAPER)
 		amount.size = Vector2(17,9)
 		status_values[name] = amount
+	_breath = BreathBar.new()
+	_breath.position = Vector2(28,36)
+	_breath.size = Vector2(100,4)
+	_breath.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_breath.modulate.a = 0.0
+	frame.add_child(_breath)
 	_region_plate = _backing(root,Vector4(7,1,7,2))
 	_region_label = _label(_region_plate,"The Skyfang Wilds",Vector2.ZERO,11,GOLD)
 	_region_plate.reset_size()
 	_region_plate.position = Vector2(475-_region_plate.size.x,3)
 	# A bleeding cut (a stego's tail): a drop and the seconds left, under the plate.
 	_bleed_box = _backing(root,Vector4(3,1,6,1))
-	_bleed_box.position = Vector2(8,48)
+	_bleed_box.position = Vector2(8,UNDER_PLATE)
 	var bleed_row := HBoxContainer.new()
 	bleed_row.add_theme_constant_override("separation",2)
 	bleed_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -199,7 +222,7 @@ func _build_status() -> void:
 	_bleed_box.visible = false
 	# The ash (pass 12, the Pale Lands): how much the keeper has breathed, then CHOKING.
 	_ash_box = _backing(root,Vector4(3,1,6,1))
-	_ash_box.position = Vector2(8,61)
+	_ash_box.position = Vector2(8,UNDER_PLATE)
 	var ash_row := HBoxContainer.new()
 	ash_row.add_theme_constant_override("separation",2)
 	ash_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -253,6 +276,7 @@ func _build_hotbar() -> void:
 		else: open_panels())
 	_shortcut("Gear","K",Vector2(380,222),Vector2(94,21),show_equipment)
 	_shortcut("Companions","P",Vector2(380,246),Vector2(94,21),show_roster)
+	_shortcut("Skills","L",Vector2(380,198),Vector2(94,21),show_skills)
 
 func _slot(parent: Node, index: int, pos: Vector2, pixels: int, source = null) -> Control:
 	var slot := Panel.new()
@@ -346,6 +370,17 @@ func _process(delta: float) -> void:
 			var beat := 0.5 + 0.5 * sin(_pulse * (9.0 if name == "VITALITY" else 5.0))
 			status_icons[name].modulate = Color(1.0 + 0.5 * beat, 1.0 + 0.2 * beat, 1.0 + 0.2 * beat) if low else Color.WHITE
 			status_values[name].add_theme_color_override("font_color",UI.EMBER if low else PAPER)
+		# News waits under an open panel (pass 13).
+		if is_instance_valid(_banner): _banner.visible = not is_open()
+		# Breath: shown while it isn't full, fading out once it is.
+		var breath: float = float(player.current_stamina) / maxf(1.0, float(player.max_stamina))
+		var winded: bool = player.get("winded") == true
+		_breath_alpha = move_toward(_breath_alpha, 1.0 if breath < 0.995 or winded else 0.0, delta * (6.0 if breath < 0.995 else 1.5))
+		if not is_equal_approx(_breath.value, breath) or _breath.winded != winded or not is_equal_approx(_breath.modulate.a, _breath_alpha):
+			_breath.value = breath
+			_breath.winded = winded
+			_breath.modulate.a = _breath_alpha
+			_breath.queue_redraw()
 		var bleeding: bool = player.get("bleed") != null and player.bleed.active()
 		_bleed_box.visible = bleeding
 		if bleeding: bleed_label.text = "BLEEDING  %ds" % ceili(player.bleed.time_left)
@@ -355,7 +390,9 @@ func _process(delta: float) -> void:
 			var choking := ash >= 1.0
 			ash_label.text = "CHOKING" if choking else "ASH  %d%%" % int(round(ash * 100.0))
 			ash_label.add_theme_color_override("font_color", UI.EMBER if choking else ASH)
-			_ash_box.position.y = 61.0 if bleeding else 48.0
+			# Under the gifts line and the bleed box, whichever show.
+			var gifts_on: bool = is_instance_valid(_gifts_box) and _gifts_box.visible
+			_ash_box.position.y = UNDER_PLATE + (14.0 if gifts_on else 0.0) + (14.0 if bleeding else 0.0)
 	if _last_selected != InventoryManager.selected_slot_index:
 		_last_selected = InventoryManager.selected_slot_index
 		update_inventory_display()
@@ -387,6 +424,11 @@ func _input(event: InputEvent) -> void:
 		InventoryManager.cycle_hotbar()
 		get_viewport().set_input_as_handled()
 		return
+	if key == KEY_L and not focus is LineEdit and is_instance_valid(skills_panel):
+		if skills_panel.visible: close_panels()
+		else: show_skills()
+		get_viewport().set_input_as_handled()
+		return
 	if key in [KEY_K,KEY_P] and not focus is LineEdit:
 		if key == KEY_K:
 			if equipment_panel.visible: close_panels()
@@ -414,7 +456,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 
 func is_open() -> bool:
-	return (inventory_panel != null and inventory_panel.visible) or (equipment_panel != null and equipment_panel.visible) or (roster_panel != null and roster_panel.visible) or is_instance_valid(command_panel) or (is_instance_valid(appearance_editor) and appearance_editor.is_open())
+	return (is_instance_valid(skills_panel) and skills_panel.visible) or (inventory_panel != null and inventory_panel.visible) or (equipment_panel != null and equipment_panel.visible) or (roster_panel != null and roster_panel.visible) or is_instance_valid(command_panel) or (is_instance_valid(appearance_editor) and appearance_editor.is_open())
 
 func open_panels() -> void:
 	close_panels()
@@ -439,6 +481,7 @@ func close_panels() -> void:
 	close_chest()
 	if equipment_panel: equipment_panel.hide()
 	if roster_panel: roster_panel.hide()
+	if is_instance_valid(skills_panel): skills_panel.hide()
 	if _shade: _shade.hide()
 	if is_instance_valid(command_panel):
 		command_panel.hide()
@@ -496,8 +539,8 @@ func show_gifts(names: Array) -> void:
 	_gifts_box.visible = not names.is_empty()
 	_gifts_label.text = " · ".join(names)
 	_gifts_box.reset_size()
-	_gifts_box.position = Vector2(8,48)
-	if is_instance_valid(_bleed_box): _bleed_box.position = Vector2(8,62 if _gifts_box.visible else 48)
+	_gifts_box.position = Vector2(8,UNDER_PLATE)
+	if is_instance_valid(_bleed_box): _bleed_box.position = Vector2(8,UNDER_PLATE + 14.0 if _gifts_box.visible else UNDER_PLATE)
 
 ## A boss's name and health across the top of the screen while the fight
 ## lasts (AlphaBoss): fades in on the first call, then just follows the health.
@@ -535,6 +578,10 @@ func show_banner(title: String, text: String, icon: Texture2D = null) -> void:
 
 func _next_banner() -> void:
 	if _banners.is_empty(): return
+	# Pass 13: the news waits while a panel is open.
+	if is_open():
+		get_tree().create_timer(0.6).timeout.connect(func(): if not is_instance_valid(_banner): _next_banner())
+		return
 	var entry: Array = _banners.pop_front()
 	# Below the vitals plate, dropping a few pixels into place as it fades in.
 	var plate := _panel(root,Vector2(100,42),Vector2(280,44))
@@ -752,7 +799,7 @@ func open_chest(chest: Node) -> void:
 	AudioManager.play_sfx("satchel_open")
 	recipes_panel.hide()
 	chest_panel = _panel(root,Vector2(224,58),Vector2(248,172))
-	_label(chest_panel,"CAMP STORAGE",Vector2(12,7),10,GOLD)
+	_label(chest_panel,str(chest.get("bag_title")) if chest.get("bag_title") != null else "CAMP STORAGE",Vector2(12,7),10,GOLD)
 	_label(chest_panel,"Drag stacks or Shift-click to transfer.",Vector2(8,28),7)
 	for i in chest.inventory.size():
 		chest_slots.append(_slot(chest_panel,i,Vector2(8+(i%8)*29,42+(i/8)*29),26,chest))
@@ -931,6 +978,20 @@ func _build_roster() -> void:
 	roster_list.add_theme_constant_override("separation",4)
 	scroll.add_child(roster_list)
 
+## The skills (pass 13): built once the session hands its Skills node over.
+func setup_skills(skills: Node) -> void:
+	skills_panel = preload("res://UI/SkillsPanel.gd").new()
+	root.add_child(skills_panel)
+	skills_panel.setup(self, skills)
+	skills_panel.hide()
+	root.move_child(skills_panel, root.get_child_count() - 1)
+
+func show_skills() -> void:
+	if not is_instance_valid(skills_panel): return
+	close_panels()
+	_shade.show()
+	skills_panel.open()
+
 func show_roster() -> void:
 	close_panels()
 	_shade.show()
@@ -1046,9 +1107,81 @@ func show_companion_commands(creature: Node = null) -> void:
 		_button(command_panel,"Locate companion",Vector2(13,row_y),Vector2(123,21),func():_locate_companion(creature))
 		_button(command_panel,"Back to bonds",Vector2(141,row_y),Vector2(123,21),show_roster)
 		_label(command_panel,"Esc closes without changing orders.",Vector2(13,row_y+26),7,GOLD)
+		_button(command_panel,"Care",Vector2(181,row_y+25),Vector2(40,16),func():show_companion_care(creature))
 		_button(command_panel,"Pet",Vector2(225,row_y+25),Vector2(39,16),func():_pet_companion(creature))
 	else:
 		_label(command_panel,"Click a command. Esc closes without changes.",Vector2(13,154),7,GOLD)
+
+## Pass 13: a companion's care. What it is (temperament, traits, a mutation's
+## colour; its stats once the Sky-Fang lens is won), its saddlebags, the lead
+## rope and the hitching post, and a little training.
+func show_companion_care(creature: Node) -> void:
+	if not is_instance_valid(creature) or not creature.tamed or creature.is_dead: return
+	close_panels()
+	_shade.show()
+	_command_target = creature
+	_command_is_group = false
+	command_panel = _panel(root,Vector2(101,20),Vector2(278,226))
+	var title := _label(command_panel,str(creature.stats.name),Vector2(13,8),10,GOLD)
+	title.size.x = 228
+	title.clip_text = true
+	_button(command_panel,"X",Vector2(247,8),Vector2(18,17),close_panels)
+	var looks: String = preload("res://Forest/creatures/Genes.gd").looks(creature.genes) if creature.get("genes") != null else ""
+	var about := _label(command_panel,looks if looks != "" else "An ordinary one of its kind.",Vector2(13,30),8,MINT)
+	about.size.x = 252
+	about.clip_text = true
+	var reading: String = creature.stat_reading() if creature.has_method("stat_reading") else ""
+	var stats_line := _label(command_panel,"",Vector2(13,42),7 if reading == "" else 8,PAPER if reading != "" else EDGE)
+	stats_line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	stats_line.size = Vector2(252,20)
+	stats_line.text = reading if reading != "" else "Its strengths can't be read yet (beat two great beasts: the Sky-Fang lens)."
+	# Saddlebags.
+	_label(command_panel,"Saddlebags",Vector2(13,64),9,MINT)
+	var bag = creature.get("bag")
+	_label(command_panel,("%d of %d slots used" % [bag.used(), bag.inventory.size()]) if bag else "None fitted",Vector2(96,66),8,GOLD)
+	if bag:
+		_button(command_panel,"Open",Vector2(13,80),Vector2(81,21),func():
+			if is_instance_valid(creature) and creature.bag: open_chest(creature.bag))
+		_button(command_panel,"Take off",Vector2(99,80),Vector2(81,21),func():
+			var why: String = creature.remove_bag()
+			show_toast("Saddlebags taken off." if why == "" else why)
+			show_companion_care(creature))
+	else:
+		_button(command_panel,"Fit saddlebags",Vector2(13,80),Vector2(123,21),func():
+			var why: String = creature.fit_bag()
+			show_toast("Saddlebags fitted: %d slots." % creature.bag_slots() if why == "" else why)
+			show_companion_care(creature))
+	# The rope.
+	_label(command_panel,"Rope",Vector2(13,106),9,MINT)
+	var roped: bool = creature.order in ["lead", "tether"]
+	_label(command_panel,{"lead": "On the lead", "tether": "Tied to a post"}.get(creature.order, "Free (a lead rope: %d)" % InventoryManager.get_item_count("lead_rope")),Vector2(56,108),8,GOLD)
+	_button(command_panel,"Lead",Vector2(13,122),Vector2(81,21),func():
+		show_toast("On the lead rope: it heels and won't fight." if creature.set_order("lead") else "You need a lead rope (Taming: Rope-craft).")
+		show_companion_care(creature))
+	_button(command_panel,"Tie to post",Vector2(99,122),Vector2(81,21),func():
+		show_toast("Tied to the hitching post." if creature.set_order("tether") else "Bring it next to a hitching post, with a lead rope.")
+		show_companion_care(creature))
+	var untie := _button(command_panel,"Let go",Vector2(185,122),Vector2(81,21),func():
+		creature.set_order("follow")
+		show_toast("The rope comes off: it follows you.")
+		show_companion_care(creature))
+	untie.disabled = not roped
+	# Training.
+	_label(command_panel,"Training",Vector2(13,148),9,MINT)
+	var rest: float = float(creature.get("_train_rest")) if creature.get("_train_rest") != null else 0.0
+	_label(command_panel,("Rested: ready" if rest <= 0.0 else "Resting %d s" % int(ceil(rest))) + ("  ·  4 %s a session" % preload("res://Forest/creatures/TamingWays.gd").food_name(str(creature.stats.food))),Vector2(76,150),8,GOLD)
+	var train: Dictionary = creature.genes.get("train", {}) if creature.get("genes") != null else {}
+	var names := {"hp": "Health", "damage": "Bite", "speed": "Pace"}
+	var i := 0
+	for stat in ["hp", "damage", "speed"]:
+		var ranks := int(train.get(stat, 0))
+		var b := _button(command_panel,"%s %d/3" % [names[stat], ranks],Vector2(13 + i * 86,164),Vector2(81,21),func():
+			var why: String = creature.train(stat)
+			show_toast(("%s trained: +1.7%% %s." % [creature.stats.name, names[stat].to_lower()]) if why == "" else why)
+			show_companion_care(creature))
+		b.disabled = ranks >= 3
+		i += 1
+	_button(command_panel,"Back",Vector2(185,196),Vector2(81,21),func():show_companion_commands(creature))
 
 func _apply_companion_command(kind: String,value: String) -> void:
 	var targets: Array[Node] = []

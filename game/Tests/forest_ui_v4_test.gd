@@ -14,7 +14,7 @@ func run():
 	var settings_hash := FileAccess.get_sha256(settings_path) if FileAccess.file_exists(settings_path) else "missing"
 	var initial_shortcuts: bool = GameSettings.shortcut_buttons_visible
 	GameSettings.set_shortcut_buttons(true)
-	check(hud.shortcut_buttons.size()==3,"Exactly three corner shortcut charms")
+	check(hud.shortcut_buttons.size()==4,"Exactly four corner shortcut charms (Skills since pass 13)")
 	for button in hud.shortcut_buttons:
 		check(button.visible,"Shortcut initially visible: "+button.caption)
 	await click(hud.shortcut_buttons[0])
@@ -26,6 +26,10 @@ func run():
 	await click(hud.shortcut_buttons[2])
 	check(hud.roster_panel.visible,"Companions charm accepts actual click")
 	await key(KEY_P)
+	await click(hud.shortcut_buttons[3])
+	check(hud.skills_panel.visible,"Skills charm accepts actual click")
+	await key(KEY_L)
+	check(not hud.skills_panel.visible,"L closes the skills again")
 	await shot("01-shortcut-charms")
 	var settings = load("res://UI/SettingsPanel.gd").new()
 	add_child(settings)

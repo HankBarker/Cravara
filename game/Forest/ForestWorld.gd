@@ -130,6 +130,9 @@ func _process(delta: float) -> void:
 		var speed := 1.0
 		var session := get_tree().get_first_node_in_group("forest_session")
 		if session and session.get("buffs") != null: speed = session.buffs.incubation_speed()
+		# Breeding (pass 13): a keeper who knows eggs keeps them warmer.
+		var sk = get_tree().get_first_node_in_group("skills")
+		if sk: speed *= 1.0 + sk.value("hatch_speed")
 		for hatch in nesting.tick(_nest_clock, speed):
 			egg_hatched_at.emit(hatch.cell, hatch.species)
 		for c in clams.keys():
@@ -158,6 +161,14 @@ func _process(delta: float) -> void:
 			if is_instance_valid(p) and p.kind in ["workbench","campfire"] and p.global_position.distance_to(player.global_position) < 64:
 				stations.append(p.kind)
 	CraftingManager.set_nearby_stations(stations)
+
+## Ores and far crystal (pass 13, world/Minerals.gd).
+var minerals
+## What companions have sensed (the parasaur, pass 13): cell -> what, for the map.
+var sensed := {}
+## What the world's events left standing (pass 13: Sky-Fang spires, fallen
+## stars): cell -> kind, saved, gone once broken.
+var event_props := {}
 
 func _generate() -> void:
 	nesting = Nesting.new(self)
@@ -225,6 +236,9 @@ func _generate() -> void:
 	# The wild nests (pass 11), on ground nothing else took, with numbers of
 	# their own.
 	nesting.place_all()
+	# Each far land's ore round its beasts, and crystal thicker far out (pass 13).
+	minerals = preload("res://Forest/world/Minerals.gd").new(self)
+	minerals.place()
 	_build_deep_water()
 	_build_shore()
 
@@ -734,7 +748,8 @@ func _index_solids(p, add: bool) -> void:
 					if _solid_cells[c].is_empty(): _solid_cells.erase(c)
 
 ## How many hits a prop takes; stone outlasts timber.
-const STRUCTURE_HP := {"tree":3,"wall":3,"ore":3,"rock":8,"wood_wall":4,"wood_floor":3,"workbench":6,"chest":6,"torch":3,"campfire":5,"sun_sail":5,"wood_door":5,"thatch_roof":3,"hide_bed":5,"tent":8,"stone_wall":10,"stone_floor":6,"stone_door":8,"slate_roof":5}
+const STRUCTURE_HP := {"tree":3,"wall":3,"ore":3,"rock":8,"wood_wall":4,"wood_floor":3,"workbench":6,"chest":6,"torch":3,"campfire":5,"sun_sail":5,"wood_door":5,"thatch_roof":3,"hide_bed":5,"tent":8,"stone_wall":10,"stone_floor":6,"stone_door":8,"slate_roof":5,
+	"incubator":5,"hitching_post":4,"big_gate":8}
 
 func _spawn_floor(c: Vector2i, kind := "wood_floor") -> void:
 	_flora_dirty = true
@@ -955,12 +970,22 @@ func get_interaction_hint(pos: Vector2) -> String:
 			"chest": return "E · Open storage chest"
 			"torch": return "A warm beacon in the wild."
 			"wood_door","stone_door": return "E · Close door" if props[c].opened else "E · Open door"
+			"big_gate": return "Pen gate · E: shut it" if props[c].opened else "Pen gate · E: open it"
+			"hitching_post": return "Hitching post · hold E on a companion close by to tie it here"
 			"cache": return "An emptied cache" if props[c].opened else "E · Open the ancient cache"
 			"folk_hut": return "Someone's hut"
 			"folk_camp": return "A cold camp"
 			"folk_cage": return "E · Break the trap open"
 			"folk_cage_open": return "A broken beast-trap"
 			"bone_pile": return "Old bones · picked clean" if searched.has(c) else "Old bones · E: search through them"
+			"dune_ribs": return "A giant's ribs · picked clean" if searched.has(c) else "A giant's ribs · E: search the sand round them"
+			"dune_skull": return "A great skull · picked clean" if searched.has(c) else "A great skull · E: search it"
+			"rustiron_vein": return "PICKAXE POWER 2 · Rustiron ore (allosaur ground)"
+			"sunstone_vein": return "PICKAXE POWER 2 · Sunstone ore (Scarhorn ground)"
+			"ashglass_vein": return "PICKAXE POWER 2 · Ashglass (Ashmane ground)"
+			"bogiron_vein": return "PICKAXE POWER 2 · Bog iron (the mere's edge)"
+			"skyfang_spire": return "PICKAXE POWER 2 · A Sky-Fang spire: prism crystal"
+			"meteor_rock": return "PICKAXE · A fallen star, still warm"
 			"nest":
 				var nest: Dictionary = nesting.nest_at(c)
 				if nest.is_empty(): return ""
@@ -986,7 +1011,9 @@ func get_interaction_hint(pos: Vector2) -> String:
 	if water.has(to_cell(pos)): return "BUCKET · Collect water / wade to cross"
 	return ""
 
-func mine_at(pos: Vector2, tool_type: String, power: int = 1) -> bool:
+## `knack`: the keeper's Gathering bite (pass 13): more damage per blow, never
+## a tier the tool doesn't have.
+func mine_at(pos: Vector2, tool_type: String, power: int = 1, knack: int = 0) -> bool:
 	last_feedback=""
 	var c:=_target_cell(pos)
 	# The roof over the keeper's own head can't be struck from below.
@@ -1030,13 +1057,15 @@ func mine_at(pos: Vector2, tool_type: String, power: int = 1) -> bool:
 		last_hit_material = "wood" if wild.tool == "axe" else ("stone" if wild.tool == "pickaxe" else "plant")
 		var gifts_w = get_tree().get_first_node_in_group("companion_buffs")
 		var bonus: int = gifts_w.break_bonus() if gifts_w and str(wild.tool) != "" else 0
-		p.receive_hit((maxi(1, power) + bonus) if str(wild.tool) != "" else 1)
+		p.receive_hit((maxi(1, power) + bonus + knack) if str(wild.tool) != "" else 1)
 		if p.hp > 0: return true
 		var drop: Array = wild.get("drop", [])
 		_remove_prop(c)
+		event_props.erase(c)
 		mined[c] = true
 		placed.erase(c)
-		if not drop.is_empty(): _drop(str(drop[0]), int(drop[1]), Vector2(c * CELL) + Vector2(8, 8))
+		if not drop.is_empty(): _drop(str(drop[0]), int(drop[1]) + _gather_extra(str(wild.tool), str(drop[0])), Vector2(c * CELL) + Vector2(8, 8))
+		_gathered("tree" if str(wild.tool) == "axe" else ("rock" if str(wild.tool) == "pickaxe" else "forage"), pos)
 		return true
 	if p.kind=="tree" and tool_type!="axe":
 		last_feedback="Equip an axe to fell this tree."
@@ -1051,7 +1080,7 @@ func mine_at(pos: Vector2, tool_type: String, power: int = 1) -> bool:
 		return false
 	var gifts = get_tree().get_first_node_in_group("companion_buffs")
 	var extra: int = gifts.break_bonus() if gifts and p.kind in ["tree","rock","wall","ore"] else 0
-	p.receive_hit((maxi(1,power) + extra) if p.kind in ["tree","rock","wall","ore"] else 1)
+	p.receive_hit((maxi(1,power) + extra + knack) if p.kind in ["tree","rock","wall","ore"] else 1)
 	if p.hp>0: return true
 	var kind: String=p.kind
 	if roof:
@@ -1067,8 +1096,39 @@ func mine_at(pos: Vector2, tool_type: String, power: int = 1) -> bool:
 	var amount := 3 if kind in ["tree","bush","fern","rock"] else 1
 	if kind == "bush" and gifts: amount += gifts.extra_berries()
 	if kind in ["rock","wall","ore"] and gifts: amount += gifts.extra_ore()
+	if not roof and not floor_tile and not p.is_placed:
+		amount += _gather_extra("axe" if kind == "tree" else ("pickaxe" if kind in ["rock","wall","ore"] else ""), id)
+		_gathered({"tree":"tree","rock":"rock","wall":"rock","ore":"ore"}.get(kind, "forage"), pos)
 	_drop(id,amount,Vector2(c*CELL)+Vector2(8,8))
+	# Pass 13: a crystal-seer (or a geologist) finds prism in any vein now and then.
+	var sk = get_tree().get_first_node_in_group("skills")
+	if sk and kind == "ore" and not p.rich_vein and randf() < sk.value("prism_chance"):
+		_drop("prism_crystal", 1, Vector2(c*CELL)+Vector2(8,4))
 	return true
+
+## Gathering's extra yield (pass 13): the Miner's and Woodsman's one more,
+## the Prospector's odd extra ore, the Forager's extra from wild plants.
+func _gather_extra(tool_type: String, id: String) -> int:
+	var sk = get_tree().get_first_node_in_group("skills")
+	if not sk: return 0
+	var extra := 0
+	match tool_type:
+		"axe": extra += int(sk.value("log_extra"))
+		"pickaxe":
+			extra += int(sk.value("stone_extra"))
+			if id in ["crystal_shard", "prism_crystal"] or id.ends_with("_ore") or id.ends_with("ore"):
+				if randf() < sk.value("ore_extra"): extra += 1
+		_: extra += int(sk.value("forage_extra"))
+	return extra
+
+## A tree felled, a rock or vein broken, a wild plant picked: Gathering XP, and
+## a watching ankylosaur takes note (its way: clear the rocks around it).
+func _gathered(what: String, at: Vector2) -> void:
+	var sk = get_tree().get_first_node_in_group("skills")
+	if sk: sk.gain("gathering", float(sk.XP.get(what, 1.0)))
+	if what in ["rock", "ore"]:
+		for beast in load("res://Forest/creatures/ForestCreature.gd").near(get_tree(), at, 150.0):
+			if beast.has_method("on_rock_cleared"): beast.on_rock_cleared(at)
 
 func _drop(id: String, count: int, pos: Vector2) -> void:
 	var item:=ItemDB.make(id)
@@ -1106,7 +1166,7 @@ func interact_at(pos: Vector2, item_id: String) -> bool:
 					if session and session.has_method("set_spawn_bed"):
 						session.set_spawn_bed(prop)
 						return true
-				"wood_door","stone_door":
+				"wood_door","stone_door","big_gate":
 					if prop.opened and _placement_overlaps_actor(target,prop.kind):
 						last_feedback="The doorway is occupied."
 						return false
@@ -1139,8 +1199,13 @@ func interact_at(pos: Vector2, item_id: String) -> bool:
 				"incubator":
 					_notify(nesting.status(target))
 					return true
-				"bone_pile":
+				"bone_pile", "dune_ribs", "dune_skull":
 					return _search_bones(target)
+				"ashen_totem":
+					# Pass 13: coins left at an Ashen totem win their camp over, a little.
+					var tk = get_tree().get_first_node_in_group("tribe_keeper")
+					if tk: _notify(tk.totem_offering(prop.global_position))
+					return true
 				"clam_bed":
 					return _open_clams(target, prop)
 				"keeper_camp":
@@ -1174,6 +1239,13 @@ func interact_at(pos: Vector2, item_id: String) -> bool:
 		surface.rebuild_cells([c])
 		_flora_cells[c] = true
 		return true
+	# Pass 13: a bucket of water puts out a burning patch (a wildfire).
+	if item_id=="water_bucket":
+		var fire = get_tree().get_first_node_in_group("world_events")
+		if fire and not fire.burning.is_empty() and fire.douse(_target_cell(pos)):
+			_exchange_bucket("water_bucket","bucket")
+			_notify("You douse the flames.")
+			return true
 	if item_id=="water_bucket" and not water.has(c) and not props.has(c) and not floors.has(c):
 		if not _exchange_bucket("water_bucket","bucket"): return false
 		water[c]=true
@@ -1207,7 +1279,7 @@ func interact_at(pos: Vector2, item_id: String) -> bool:
 		if not InventoryManager.remove_item(item_id,1): return false
 		_spawn_floor(c, item_id)
 		return true
-	if item_id in ["wood_wall","stone_wall","campfire","workbench","torch","chest","wood_door","stone_door","hide_bed","tent","incubator","sun_sail"] and not water.has(c) and not props.has(c):
+	if item_id in ["wood_wall","stone_wall","campfire","workbench","torch","chest","wood_door","stone_door","hide_bed","tent","incubator","sun_sail","hitching_post","big_gate"] and not water.has(c) and not props.has(c):
 		if _placement_overlaps_actor(c,item_id):
 			last_feedback="A creature or survivor is standing in the way."
 			return false
@@ -1238,6 +1310,8 @@ func _take_egg(c: Vector2i) -> bool:
 		return true
 	_burst({egg: 1}, Vector2(c * CELL) + Vector2(8, 12))
 	AudioManager.play_sfx("harvest_plant")
+	var sk = get_tree().get_first_node_in_group("skills")
+	if sk: sk.gain("breeding", float(sk.XP.egg))
 	_notify("You take a %s egg. Its parents are coming!" % name)
 	SignalBus.nest_robbed.emit(c, str(nest.species))
 	return true
@@ -1263,6 +1337,38 @@ func _open_clams(c: Vector2i, bed) -> bool:
 
 ## Pick through a bone heap once: old bones, sometimes a fossil or a shard of
 ## Sky-Fang crystal (the same for a cell every time).
+## A beast bashing at a building or shouldering a tree (pass 13): damage in
+## fractions of a blow, adding up. True once it breaks: a building is simply
+## gone (nothing to reclaim), a tree falls and leaves its logs.
+func siege_hit(c: Vector2i, amount: float, who := "A beast") -> bool:
+	var p = props.get(c)
+	if not is_instance_valid(p): return true
+	p.siege += amount
+	while p.siege >= 1.0 and p.hp > 0:
+		p.siege -= 1.0
+		p.receive_hit(1)
+	if p.hp > 0: return false
+	var kind: String = p.kind
+	var was_placed: bool = p.is_placed or placed.has(c)
+	# A broken chest spills what was in it.
+	if kind == "chest" and p.has_node("PlacedObject"):
+		var spill := {}
+		for slot in p.get_node("PlacedObject").inventory:
+			if slot.item and int(slot.quantity) > 0: spill[slot.item.id] = int(spill.get(slot.item.id, 0)) + int(slot.quantity)
+		if not spill.is_empty(): _burst(spill, Vector2(c * CELL) + Vector2(8, 10))
+	_remove_prop(c)
+	mined[c] = true
+	placed.erase(c)
+	if kind in ["tree", "palm", "pine", "birch", "dead_tree"]:
+		_drop("log", 2, Vector2(c * CELL) + Vector2(8, 8))
+		AudioManager.play_sfx("chop_wood")
+	else:
+		AudioManager.play_sfx("mine_rock")
+	if was_placed:
+		var names := {"wood_wall": "timber wall", "stone_wall": "stone wall", "wood_door": "door", "stone_door": "stone door", "big_gate": "pen gate", "hitching_post": "hitching post", "tent": "tent", "chest": "chest", "workbench": "workbench"}
+		_notify("%s has broken through your %s!" % [who, str(names.get(kind, kind.replace("_", " ")))])
+	return true
+
 func _search_bones(c: Vector2i) -> bool:
 	if searched.has(c):
 		_notify("Picked clean. Only splinters are left.")
@@ -1272,6 +1378,11 @@ func _search_bones(c: Vector2i) -> bool:
 	var loot := {"old_bone": 2 + h % 3}
 	if h % 10 < 3: loot["fossil_bone"] = 1
 	if h % 7 == 0: loot["crystal_shard"] = 1 + h % 2
+	# The dunes' giants (pass 13): rare, and worth the dig.
+	if props.has(c) and props[c].kind in ["dune_ribs", "dune_skull"]:
+		loot["old_bone"] = 4 + h % 4
+		loot["fossil_bone"] = 1 + (1 if h % 3 == 0 else 0)
+		if h % 4 == 0: loot["ancient_coin"] = 2 + h % 3
 	_burst(loot, Vector2(c * CELL) + Vector2(8, 10))
 	AudioManager.play_sfx("harvest_plant")
 	_notify("You pick through the old bones.")
@@ -1340,6 +1451,8 @@ func serialize() -> Dictionary:
 		if placed[c]=="chest" and props.has(c):
 			data.chests.append([c.x,c.y,props[c].get_node("PlacedObject").get_save_data()])
 	for c in roofs: data.roofs.append([c.x,c.y,roofs[c].hp,roofs[c].kind])
+	data.event_props = []
+	for c in event_props: data.event_props.append([c.x, c.y, event_props[c]])
 	for c in props:
 		var p=props[c]
 		if p.kind in Prop.DOORS: data.doors.append([c.x,c.y,p.opened])
@@ -1357,6 +1470,8 @@ func restore(data: Dictionary) -> void:
 	edits.clear()
 	placed.clear()
 	world_seed=int(data.get("seed",world_seed))
+	event_props.clear()
+	sensed.clear()
 	_generate()
 	for entry in data.get("mined",[]):
 		var c:=Vector2i(entry[0],entry[1])
@@ -1371,6 +1486,11 @@ func restore(data: Dictionary) -> void:
 		else:
 			water.erase(c)
 			terrain[c]=1
+	for entry in data.get("event_props", []):
+		var ec := Vector2i(int(entry[0]), int(entry[1]))
+		if props.has(ec) or not Prop.WILD.has(str(entry[2])): continue
+		_spawn_prop(ec, str(entry[2]))
+		event_props[ec] = str(entry[2])
 	for entry in data.get("placed",[]):
 		var c:=Vector2i(entry[0],entry[1])
 		_remove_prop(c)

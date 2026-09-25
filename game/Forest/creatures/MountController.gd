@@ -111,9 +111,16 @@ func update_mounted(delta: float):
 	var direction := Vector2.ZERO
 	if not rider.controls_locked and not creature.moves.busy(): direction = rider.get_movement_input()
 	var sprinting: bool = direction.length() > 0 and Input.is_action_pressed("Sprint")
-	var speed: float = 48.0 if creature.species == "stego" else 60.0
+	# Riding is the fast road (pass 13): quicker than a keeper's walk, and a
+	# gallop that never runs out of breath.
+	var speed: float = 50.0 if creature.species == "stego" else 62.0
+	# Taming (pass 13): a rider's seat and spur, and the saddle-hours it teaches.
+	var sk = creature.get_tree().get_first_node_in_group("skills")
+	if sk:
+		speed *= 1.0 + sk.value("mount_speed")
+		if direction != Vector2.ZERO: sk.gain("taming", delta * float(sk.XP.ride_second))
 	if sprinting:
-		speed *= 1.5
+		speed *= 1.55 + (sk.value("mount_sprint") if sk else 0.0)
 	creature.in_water = is_instance_valid(creature._world) and creature._world.is_water_at(creature.global_position)
 	if creature.in_water: speed *= creature.WATER_SPEED_MULTIPLIER
 	creature.velocity = creature.velocity.move_toward(direction * speed, 240.0 * delta)

@@ -524,6 +524,12 @@ covers the forest interior `Rect2i(-54,-54,108,109)` and the Bonelands interior
   (lore `buried_king`, which unlocks the Grave Horn recipe).
 - `_open_seams()` takes the old rim's walls/ore off rows y=-56,-55,55 and columns x=-56,-55.
 - Nests (`Forest/world/Nesting.gd`) are placed after all of it from `world_seed ^ 0x4E57`.
+- Pass 13 ore veins and far crystal (`Forest/world/Minerals.gd`) come last, from `world_seed ^ 0x0E5E`
+  for the cells and `^ 0x0E5F` swapped into `world.rng` for the art variants.
+- **Every post-pass that calls `_spawn_prop` must swap its own RNG into `world.rng`** (and put the
+  forest's back): `_spawn_prop` draws `variant` from `world.rng`. Minerals first used a private RNG
+  for its cells only, so its 380 props' variants shifted with whatever the ruins drew before them
+  (`Tests/WorldPOISuite.tscn`, which regenerates the world without ruins, caught it).
 
 **Rendering a world this size** (pass 11; 11,000 props and ~180 beasts at ~11 ms):
 - `ForestGround` bakes the ground in 32-cell chunks near the view (`BAKES_PER_FRAME 2`,

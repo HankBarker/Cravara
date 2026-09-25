@@ -10,6 +10,10 @@ extends Node2D
 ## Pass 12 samples the camps, the bog and a sandstorm too (252 creatures):
 ## 10-15 ms a frame (camp ~11, a sandstorm ~15) after the lazy-tick work;
 ## runs vary by a few ms.
+## Pass 13 (302 creatures): the same as pass 12 measured in the same hour. The
+## laptop itself varies far more than the builds do (both measured 10-15 ms
+## one morning, 15-45 ms that evening): compare against the previous commit
+## checked out in a worktree, run back to back, not against old numbers.
 var scene
 var t_proc := 0
 var t_pre := 0

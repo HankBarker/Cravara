@@ -21,6 +21,31 @@ func open_with(person: Node2D) -> void:
 	folk[person.trade_id] = {}
 
 
+## The camp the one talking belongs to (pass 13), and its page for the dialogue.
+func camp_id(id: String) -> String:
+	var who = actors.get(id)
+	return tribes.camp_of(who) if is_instance_valid(who) else ""
+
+
+func camp_page(id: String) -> Dictionary:
+	var vid := camp_id(id)
+	if vid == "": return {}
+	var Camps = tribes.Camps
+	var tribe: String = str(tribes.villages.get(vid, {}).get("tribe", ""))
+	var st := int(tribes.standing.get(vid, 0))
+	return {"camp": vid, "name": Camps.name_of(vid), "standing": st, "word": Camps.word(st, tribe), "request": tribes.request_of(vid), "ready": tribes.request_met(vid)}
+
+
+func camp_give(id: String) -> String:
+	var vid := camp_id(id)
+	return tribes.give(vid) if vid != "" else "There's no camp here."
+
+
+func camp_gift(id: String) -> String:
+	var vid := camp_id(id)
+	return tribes.gift(vid) if vid != "" else "There's no camp here."
+
+
 func coins() -> int:
 	return InventoryManager.get_item_count(Tribes.COIN)
 

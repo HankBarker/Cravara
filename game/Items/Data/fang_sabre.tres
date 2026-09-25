@@ -11,3 +11,4 @@ max_stack = 1
 rarity = "rare"
 tool_type = "sword"
 damage = 12
+weapon_class = "sweep"

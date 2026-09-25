@@ -132,7 +132,7 @@ func _babies() -> void:
 	check(b._companion_target() == null, "a baby companion never picks a fight")
 	b.growth = 0.999
 	b.grow_up()
-	check(not b.baby and b.stats == FC.SPECIES.stego and b.art_key == "stego", "grown up: a full stego again")
+	check(not b.baby and b.stats.name == FC.SPECIES.stego.name and int(b.stats.hp) >= int(FC.SPECIES.stego.hp * 0.8) and float(b.stats.radius) == float(FC.SPECIES.stego.radius) and b.art_key == "stego", "grown up: a full stego again")
 	b.queue_free()
 	var wild = stage._spawn_creature("trike", _spot(Vector2(60, 0)))
 	wild.set_baby(true)
@@ -146,6 +146,10 @@ func _babies() -> void:
 	wild.queue_free()
 	var pup = stage._spawn_creature("raptor", _spot(Vector2(120, 0)))
 	pup.set_baby(true)
+	pup.feed_cooldown = 0.0
+	# (Pass 13: even a baby raptor wants a keeper with Pack-lore.)
+	check(not pup.interact("trex_meat").get("ok", false), "a baby raptor won't take meat without Pack-lore")
+	stage.skills.grant("lore_pack")
 	pup.feed_cooldown = 0.0
 	check(pup.interact("trex_meat").get("ok", false), "a baby raptor takes meat from the hand, no net")
 	check(not pup._is_hostile(), "a baby raptor hunts nobody")
@@ -162,7 +166,10 @@ func _protective() -> void:
 	await frames(2)
 	baby.life._watch = 0.0
 	baby.life.tick(0.1)
-	check(mother._threat == stage.player and mother.provoked_time > 0.0, "come near a baby and its mother charges")
+	# Pass 13: being near is watched, not charged; reaching for it is.
+	check(mother._threat != stage.player, "a keeper near a baby is watched, not charged")
+	baby.interact("berry")
+	check(mother._threat == stage.player and mother.provoked_time > 0.0, "reach for the baby and its mother charges")
 	var flee: Vector2 = baby.life.baby_move(0.1)
 	check(flee != Vector2.INF and flee.dot(baby.global_position - stage.player.global_position) > 0.0, "the baby runs from the keeper")
 	_keeper_to(_spot(Vector2(-400, 0)))

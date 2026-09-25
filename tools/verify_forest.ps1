@@ -94,10 +94,12 @@ $suites = @(
     # sight (not in Ashen dress), trade and grudges, bands with tamed beasts,
     # archers, wild hunters taking tribesmen, the tribes' memory.
     @{Name='tribes'; Args=@('res://Tests/TribeSuite.tscn')},
-    # Pass 12 wilds: the Blender Scarhorn's clips, the raptor coats, the bog,
+    # Pass 12 wilds: the Scarhorn's clips (PixelLab again since pass 13), the raptor coats, the bog,
     # barren dunes and ashen Pale Lands, territory, plates, swarms, the
     # dimetrodon's sun, the ash in the air, the Sun Sail.
-    @{Name='wilds12'; Args=@('res://Tests/Wilds12Suite.tscn')}
+    @{Name='wilds12'; Args=@('res://Tests/Wilds12Suite.tscn')},
+    # Pass 13: pace, telegraphs, weapon classes, skills, taming ways, genes, ores, care, siege, events, camps.
+    @{Name='pass13'; Args=@('res://Tests/Pass13Suite.tscn')}
 )
 if ($FromSuite -ne '' -and $FromSuite -notin $suites.Name) { throw ('Unknown suite: ' + $FromSuite) }
 $started = $FromSuite -eq ''

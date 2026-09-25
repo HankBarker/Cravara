@@ -74,6 +74,17 @@ var personal_recipes: Array = [
 	{"name":"Sun Sail", "item_id":"sun_sail", "ingredients":{"sail_scale":4,"plank":6,"plant_fiber":4}, "station":"workbench", "category":"Building", "description":"Crops within three tiles grow half again as fast by day, and on through the night by its glow. It warms whoever stands by it."},
 	{"name":"Sandclub Maul", "item_id":"club_maul", "ingredients":{"anky_plate":5,"log":2,"trike_hide":1}, "station":"workbench", "category":"Tools", "description":"30 damage: heavy enough to break through an ankylosaur's plates."},
 	{"name":"Scarhorn Lance", "item_id":"scarhorn_lance", "ingredients":{"carno_horn":2,"trex_scale":3,"plank":2}, "station":"workbench", "category":"Tools", "description":"40 damage. The Scarhorn's horn on an ash shaft."},
+	# Pass 13: a far land's ore and its beast's parts make each new weapon; the
+	# stockman's gear waits on the Taming tree (hidden_until "perk:...").
+	{"name":"Rustjaw Sabre", "item_id":"rustjaw_sabre", "ingredients":{"rustiron":5,"allo_tooth":3,"raptor_hide":2}, "station":"workbench", "category":"Tools", "description":"32 damage, sweeping. Rustiron from the allosaurs' ground, edged with their teeth."},
+	{"name":"Sunstone Maul", "item_id":"sunstone_maul", "ingredients":{"sunstone":5,"anky_plate":3,"carno_horn":1}, "station":"workbench", "category":"Tools", "description":"42 damage, smashing. Sunstone from the Scarhorn's dunes on an ankylosaur plate."},
+	{"name":"Ashglass Knife", "item_id":"ashglass_knife", "ingredients":{"ashglass":4,"ashmane_fur":2,"sickle_claw":1}, "station":"workbench", "category":"Tools", "description":"28 damage, a quick stab. Ashglass from the Ashmane's fields, a Sandblade claw for a guard."},
+	{"name":"Bog-iron Harpoon", "item_id":"bogiron_harpoon", "ingredients":{"bog_iron":5,"sucho_claw":2,"plank":2}, "station":"workbench", "category":"Tools", "description":"38 damage, a thrust through three. Bog iron and a Suchomimus claw."},
+	{"name":"Spinesail Glaive", "item_id":"spinesail_glaive", "ingredients":{"bog_iron":4,"spino_spine":3,"prism_crystal":2}, "station":"workbench", "category":"Tools", "description":"50 damage, a wide sweep. The Sailking's own spine."},
+	{"name":"Lead Rope", "item_id":"lead_rope", "ingredients":{"plant_fiber":6,"raptor_hide":1}, "category":"Tools", "hidden_until":"perk:hand_rope", "description":"Lead a companion close on the rope, or tie it to a hitching post. (Taming: Rope-craft.)"},
+	{"name":"Hitching Post", "item_id":"hitching_post", "ingredients":{"log":3,"plant_fiber":4}, "category":"Building", "hidden_until":"perk:hand_rope", "description":"Tie a companion to it and it stays put. (Taming: Rope-craft.)"},
+	{"name":"Pen Gate", "item_id":"big_gate", "ingredients":{"plank":10,"log":4,"plant_fiber":6}, "station":"workbench", "category":"Building", "description":"A gate three tiles wide for a pen of big beasts. E opens and shuts it."},
+	{"name":"Saddlebags", "item_id":"saddlebag", "ingredients":{"raptor_hide":3,"trike_hide":2,"plant_fiber":4}, "station":"workbench", "category":"Tools", "hidden_until":"perk:hand_bags", "description":"A companion carries a bag for you. (Taming: Saddlebags.)"},
 	{"name":"Hunter's Fang", "item_id":"hunter_charm", "ingredients":{"raptor_fang":3,"plant_fiber":3}, "station":"workbench", "category":"Relics", "description":"Wear this hunting charm for +2 weapon damage."},
 	{"name":"River Totem", "item_id":"river_totem", "ingredients":{"crystal_shard":3,"log":2,"plant_fiber":3}, "station":"workbench", "category":"Relics", "description":"A carved river charm improves shallow-water movement."},
 	{"name":"Shard Lantern", "item_id":"lantern", "ingredients":{"crystal_shard":5,"plank":2,"plant_fiber":2}, "station":"workbench", "category":"Relics", "description":"Equip a cool crystal light in your light slot."},
@@ -111,6 +122,10 @@ func get_recipes_by_category(category: String) -> Array:
 func is_known(recipe: Dictionary) -> bool:
 	var needs := str(recipe.get("hidden_until", ""))
 	if needs == "": return true
+	# Pass 13: a perk of the keeper's skills ("perk:hand_rope").
+	if needs.begins_with("perk:"):
+		var skills = get_tree().get_first_node_in_group("skills") if is_inside_tree() else null
+		return skills != null and skills.has(needs.substr(5))
 	var session := get_tree().get_first_node_in_group("forest_session") if is_inside_tree() else null
 	return session != null and bool(session.get("_milestones").get(needs, false))
 
@@ -155,6 +170,9 @@ func _simulate(recipe: Dictionary) -> Array[Dictionary]:
 				needed -= used
 				if slot.quantity == 0: slot.item = null
 	var remaining := int(recipe.get("quantity",1))
+	if recipe.item_id == "bone_arrow" and is_inside_tree():
+		var sk = get_tree().get_first_node_in_group("skills")
+		if sk and sk.value("arrow_craft") > 0.0: remaining *= 2
 	for slot in result:
 		if slot.item and slot.item.id == item.id:
 			var amount := mini(remaining, maxi(0,item.max_stack-int(slot.quantity)))

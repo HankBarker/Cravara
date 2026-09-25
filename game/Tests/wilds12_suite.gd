@@ -73,7 +73,9 @@ func _spot(cell: Vector2i) -> Vector2:
 
 func _scarhorn_art() -> void:
 	var m: Dictionary = DinoArt.meta("carno")
-	check(str(m.get("source", "")) == "blender", "the Scarhorn's clips come from the Blender factory")
+	# Pass 13: Hank's verdict on the Blender Scarhorn ("doesn't look that
+	# great"): it's a PixelLab drawing again, animated like the rest.
+	check(str(m.get("source", "")) != "blender", "the Scarhorn's clips are PixelLab's again")
 	for clip in ["idle", "walk", "run", "bite", "roar", "hurt", "death"]:
 		for facing in ["side", "down", "up"]:
 			check(DinoArt.strip_texture("carno", clip, facing) != null, "Scarhorn %s_%s" % [clip, facing])
@@ -153,6 +155,8 @@ func _plates_and_swarms() -> void:
 	for i in 4:
 		swarm.append(stage._spawn_creature("compy", at + Vector2(i * 6, 8)))
 	await frames(2)
+	# (Pass 13: a fed swarm lets a keeper be; a hungry one comes.)
+	for c in swarm: c.sated = 0.0
 	lone._hunt_scan = 0.0
 	check(lone._wild_target() == keeper, "a swarm of compies does")
 	for c in swarm: c.queue_free()

@@ -17,7 +17,7 @@ func update_state(delta):
 	# hysteresis) before walk/run pick their first clip.
 	var input: Vector2 = player.get_movement_input()
 	if input != Vector2.ZERO:
-		if Input.is_action_pressed("Sprint"):
+		if Input.is_action_pressed("Sprint") and (not player.has_method("can_sprint") or player.can_sprint()):
 			player.switch_state("run")
 		else:
 			player.switch_state("walk")

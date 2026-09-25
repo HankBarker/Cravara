@@ -110,6 +110,9 @@ func run() -> void:
 	# 1. Raptor pack.
 	var r1 = spawn("raptor", Vector2(-90, -20))
 	var r2 = spawn("raptor", Vector2(90, 25))
+	# (Pass 13: a fed hunter lets a keeper be; a hungry pack comes for them.)
+	r1.sated = 0.0
+	r2.sated = 0.0
 	var res: Array = await watch(6.0, [r1, r2])
 	strip("raptors", res[0])
 	var moves := 0

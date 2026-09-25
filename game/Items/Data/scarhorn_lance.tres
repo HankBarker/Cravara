@@ -11,3 +11,4 @@ max_stack = 1
 rarity = "legendary"
 tool_type = "sword"
 damage = 40
+weapon_class = "thrust"

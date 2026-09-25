@@ -150,6 +150,8 @@ func run():
 	check(stego.is_mounted(),"Companion can be remounted after workbench use")
 	var target=stage._spawn_creature("trike",stego.position+Vector2(32,0))
 	target.set_physics_process(false)
+	# Pass 13 beasts are individuals (a thick hide takes 8% less): measure a plain one.
+	target.set_genes({})
 	var hp_before: int=target.health
 	await point_at(target.position)
 	var attack_point: Vector2=get_viewport().get_canvas_transform()*target.position

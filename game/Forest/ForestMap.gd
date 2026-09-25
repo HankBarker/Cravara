@@ -83,6 +83,19 @@ func _draw():
 		var spot: Vector2 = (person.global_position + offset) * scale_factor
 		draw_rect(Rect2(spot - Vector2(2, 2), Vector2(5, 5)), Color("2c2840"))
 		draw_rect(Rect2(spot - Vector2(1, 1), Vector2(3, 3)), Color("c9a8f0"))
+	# What a parasaur has heard (pass 13): amber diamonds.
+	var heard: Dictionary = world.get("sensed") if world.get("sensed") != null else {}
+	for cell in heard:
+		var at: Vector2 = (Vector2(cell) * 16 + Vector2(8, 8) + offset) * scale_factor
+		draw_colored_polygon(PackedVector2Array([at + Vector2(0, -3), at + Vector2(3, 0), at + Vector2(0, 3), at + Vector2(-3, 0)]), Color("2e241f"))
+		draw_colored_polygon(PackedVector2Array([at + Vector2(0, -2), at + Vector2(2, 0), at + Vector2(0, 2), at + Vector2(-2, 0)]), Color("f2c84b"))
+	# The world's events under way (pass 13: a Sky-Fang spire, a fire...).
+	var events = get_tree().get_first_node_in_group("world_events")
+	if events and events.has_method("markers"):
+		for mark in events.markers():
+			var at: Vector2 = (Vector2(mark.at) + offset) * scale_factor
+			draw_rect(Rect2(at - Vector2(3, 3), Vector2(7, 7)), Color("2e241f"))
+			draw_rect(Rect2(at - Vector2(2, 2), Vector2(5, 5)), mark.color)
 	var player_pos: Vector2 = (player.global_position + offset) * scale_factor
 	draw_rect(Rect2(player_pos - Vector2(2, 2), Vector2(5, 5)), Color("2e241f"))
 	draw_rect(Rect2(player_pos - Vector2(1, 1), Vector2(3, 3)), Color("ffe199"))

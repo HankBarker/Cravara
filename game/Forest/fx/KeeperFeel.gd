@@ -369,7 +369,7 @@ func on_state_entered(_requested: String) -> void:
 			var kind: String = str(player._swing_kind)
 			var contact: float = float(player._swing_duration) * ActionFrames.contact_ratio(kind)
 			_whoosh_in = maxf(0.0, contact - WHOOSH_LEAD)
-			_whoosh_pitch = {"pickaxe": 0.84, "axe": 0.9, "sword": 1.02}.get(kind, 1.12)
+			_whoosh_pitch = {"pickaxe": 0.84, "axe": 0.9, "sword": 1.02, "thrust": 1.2}.get(kind, 1.12)
 		"roll":
 			_roll_burst()
 

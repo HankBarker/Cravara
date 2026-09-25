@@ -137,7 +137,8 @@ func run():
 	check(raptor._wild_target()==player,"provoked predator targets the real rider without redirecting to mount")
 	var before: int = player.current_health
 	var mount_before: int = mount.health
-	await pause(0.60)
+	# (Pass 13: it shows itself first, the alert, then strikes.)
+	await pause(1.4)
 	check(player.current_health<before and mount.health==mount_before,"actual enemy attack damages rider independently of mount")
 	check(mount.is_mounted(),"small hit keeps rider in saddle")
 	raptor.queue_free()

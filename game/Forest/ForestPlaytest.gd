@@ -71,6 +71,11 @@ var buffs: Node
 var quests: Node
 ## Boats on Glassmere (pass 11).
 var boating: Node
+## The keeper's skills and perks (pass 13, progress/Skills.gd).
+var skills: Node
+## The world's events (pass 13, world/WorldEvents.gd): quakes, snow, fire,
+## meteors and the Sky-Fang surges.
+var events: Node
 ## The region the keeper is in (for the HUD plate and first-visit banners).
 var region := ""
 var _region_clock := 0.0
@@ -99,6 +104,10 @@ func _ready():
 	player.process_mode = Node.PROCESS_MODE_PAUSABLE
 	player.position = world.get_spawn_position()
 	add_child(player)
+	# The keeper's skills (pass 13): everything else asks them.
+	skills = preload("res://Forest/progress/Skills.gd").new()
+	skills.name = "Skills"
+	add_child(skills)
 	lighting = preload("res://Forest/ForestLighting.gd").new()
 	lighting.world=world
 	lighting.player=player
@@ -107,6 +116,10 @@ func _ready():
 	hud.player = player
 	hud.process_mode = Node.PROCESS_MODE_PAUSABLE
 	add_child(hud)
+	hud.setup_skills(skills)
+	skills.leveled.connect(_on_skill_level)
+	skills.calling_ready.connect(func(skill, tier):
+		hud.show_banner("A calling: %s %d" % [skills.SKILLS[skill].name, tier], "Choose one of two paths. Press L.", null))
 	fishing = preload("res://Forest/FishingController.gd").new()
 	fishing.process_mode = Node.PROCESS_MODE_PAUSABLE
 	add_child(fishing)
@@ -158,6 +171,9 @@ func _ready():
 	boating = BOATING.new()
 	add_child(boating)
 	boating.setup(self)
+	events = preload("res://Forest/world/WorldEvents.gd").new()
+	events.setup(self)
+	add_child(events)
 	quests.changed.connect(func(): hud.show_tasks(quests.tracked(), func(q): return quests.goal_lines(q)))
 	buffs.changed.connect(func(): hud.show_gifts(buffs.listing().map(func(g): return str(g.name))))
 	folk = FOLK.new()
@@ -185,9 +201,7 @@ func _ready():
 		_toast("Welcome back to the Skyfang Wilds.")
 	else:
 		player.apply_appearance(get_tree().get_meta("forest_appearance",{}))
-		if _blender_playtest():
-			_spawn_blender_park()
-		elif _dino_playtest():
+		if _dino_playtest():
 			_spawn_dino_park()
 			_toast("Dino playtest: E rides the saddled stego or trike, click to strike. Herd east, dodos north, raptors north-west, rex west.")
 		else:
@@ -336,6 +350,65 @@ const WILDS12_LIFE := [
 	["compy", 2, [5, 8], Rect2i(72, -46, 90, 92), ""],
 ]
 
+## Pass 13: the Mirefen's hunters (deinonychus packs in the reeds, a
+## Suchomimus or three at the mere's edge, the Sailking spinosaur by the deep
+## water) and the Bonelands' Sandblade pairs. A beast whose clips aren't
+## exported yet stays out of the world.
+const WILDS13_LIFE := [
+	["deino", 3, [3, 4], Rect2i(-160, -50, 100, 100), ""],
+	["utah", 2, [2, 2], Rect2i(66, -48, 92, 96), ""],
+]
+const MERE_HUNTERS := [["sucho", 3], ["spino", 1]]
+
+func _spawn_wilds13_life(met: Array = []):
+	var rng := RandomNumberGenerator.new()
+	rng.seed = hash(world.world_seed) ^ 0x1313
+	var DA = preload("res://Forest/creatures/DinoArt.gd")
+	for entry in WILDS13_LIFE:
+		if not DA.has_key(str(entry[0])) or str(entry[0]) in met: continue
+		var area: Rect2i = entry[3]
+		for group in int(entry[1]):
+			var centre := Vector2(rng.randi_range(area.position.x, area.end.x), rng.randi_range(area.position.y, area.end.y)) * 16.0
+			for i in rng.randi_range(int(entry[2][0]), int(entry[2][1])):
+				var wanted := centre + Vector2(rng.randf_range(-30.0, 30.0), rng.randf_range(-22.0, 22.0))
+				var at: Vector2 = world.get_spawnable_position(wanted)
+				if at.distance_to(wanted) > 220.0: continue
+				_spawn_creature(str(entry[0]), at)
+	# The mere's hunters: at the water's edge (the Suchomimus in the
+	# shallows, the spinosaur by the deep water).
+	var shallows: Array = []
+	var deep_edge: Array = []
+	for c in world.water:
+		if not world.GLASSMERE.has_point(c): continue
+		if world.deep.has(c):
+			if not world.deep.has(c + Vector2i(3, 0)) or not world.deep.has(c + Vector2i(-3, 0)): deep_edge.append(c)
+		else:
+			shallows.append(c)
+	shallows.sort()
+	deep_edge.sort()
+	for entry in MERE_HUNTERS:
+		if not DA.has_key(str(entry[0])) or str(entry[0]) in met: continue
+		var pool: Array = deep_edge if str(entry[0]) == "spino" else shallows
+		if pool.is_empty(): continue
+		for n in int(entry[1]):
+			var cell: Vector2i = pool[rng.randi() % pool.size()]
+			var at: Vector2 = world.get_spawnable_position(Vector2(cell * 16) + Vector2(8, 8))
+			var beast = _spawn_creature(str(entry[0]), at)
+			beast.home = Vector2(cell * 16) + Vector2(8, 8) if str(entry[0]) == "sucho" else at
+
+## The pass-13 beasts are all exported (then a save marks them as met).
+func _wilds13_ready() -> bool:
+	return _wilds13_met().size() == 4
+
+## A save's marks for each pass-13 beast already in the world ("wilds13:utah"):
+## a journey loaded by a build with more of them exported meets only the new ones.
+func _wilds13_met() -> Array:
+	var DA = preload("res://Forest/creatures/DinoArt.gd")
+	var out: Array = []
+	for sp in ["deino", "utah", "sucho", "spino"]:
+		if DA.has_key(sp): out.append("wilds13:" + sp)
+	return out
+
 func _spawn_wilds12_life():
 	var rng := RandomNumberGenerator.new()
 	rng.seed = hash(world.world_seed) ^ 0x1212
@@ -396,6 +469,7 @@ func _spawn_wildlife():
 	_spawn_bonelands_life()
 	_spawn_wilds_life()
 	_spawn_wilds12_life()
+	_spawn_wilds13_life()
 	var rng := RandomNumberGenerator.new()
 	rng.seed = hash(world.world_seed) ^ 0x51a7
 	for entry in WILDLIFE:
@@ -418,28 +492,6 @@ func _dino_playtest() -> bool:
 	var args := OS.get_cmdline_user_args()
 	return "--dino-playtest" in args and "--no-save-playtest" in args
 
-## --blender-playtest (no-save runs only, pass 12): the Blender-made dinosaur
-## (tools/blender: the Scarhorn Carnotaurus, modelled, rigged and animated in
-## Blender and rendered to pixel sprites) on its own: one follows you, one
-## stands beside a PixelLab allosaur to compare, one hunts east of camp.
-func _blender_playtest() -> bool:
-	var args := OS.get_cmdline_user_args()
-	return "--blender-playtest" in args and "--no-save-playtest" in args
-
-func _spawn_blender_park():
-	var home: Vector2 = player.global_position
-	var follower = _spawn_creature("carno", world.get_spawnable_position(home + Vector2(-40, 30)))
-	follower.tamed = true
-	follower.trust = int(follower.stats.feeds)
-	follower.set_order("follow")
-	# Side by side with an allosaur drawn by PixelLab, a little north.
-	for entry in [["carno", Vector2(-40, -110)], ["allo", Vector2(40, -110)]]:
-		var c = _spawn_creature(entry[0], world.get_spawnable_position(home + entry[1]))
-		c.tamed = true
-		c.trust = int(c.stats.feeds)
-		c.set_order("stay")
-	# A wild one to fight, well east (out of its notice at the start).
-	_spawn_creature("carno", world.get_spawnable_position(home + Vector2(460, 20)))
 	for slot in {"head": "rex_helmet", "chest": "rex_chestplate", "legs": "rex_leggings"}:
 		player._set_equipment(slot, ItemDB.make({"head": "rex_helmet", "chest": "rex_chestplate", "legs": "rex_leggings"}[slot]))
 	for entry in [["scarhorn_lance", 1], ["reed_bow", 1], ["bone_arrow", 40], ["cooked_meat", 12], ["net", 3]]:
@@ -848,6 +900,11 @@ func _interact_creature():
 			if is_instance_valid(prop): player.play_gesture("interact", prop.global_position)
 			if world.last_feedback != "": _toast(world.last_feedback)
 			return
+	# Food set down for a beast whose way that is (fish for a Suchomimus,
+	# meat for an allosaur in the Rustback) is left where it can see it, not
+	# under its jaws: a fed Suchomimus snaps at 70 px, the spinosaur at 120.
+	var setting_down: bool = creature == null
+	if not creature: creature = _offer_target()
 	if not creature:
 		_toast("Move closer to interact. Aim at plants to gather them.")
 		return
@@ -861,8 +918,26 @@ func _interact_creature():
 	var result: Dictionary = creature.interact(id)
 	if result.get("ok", false) and result.get("consume", false):
 		InventoryManager.remove_item(id, 1)
-		player.play_action("net" if id=="net" else "pet",creature.global_position)
+		if setting_down: player.play_gesture("place", player.global_position + Vector2(0, 10))
+		else: player.play_action("net" if id=="net" else "pet",creature.global_position)
 	_toast(str(result.get("message", "")))
+
+## The nearest wild beast within an offering's sight that takes its food set
+## down (TamingWays SET_DOWN), when the keeper holds that food.
+func _offer_target():
+	var item: Item = InventoryManager.get_selected_item()
+	if not item: return null
+	var Ways = preload("res://Forest/creatures/TamingWays.gd")
+	var best = null
+	var distance: float = Ways.OFFER_SIGHT
+	for creature in get_tree().get_nodes_in_group("forest_creatures"):
+		if creature.is_dead or creature.tamed or creature.baby or creature.is_queued_for_deletion(): continue
+		if not Ways.sets_down(creature.species) or str(creature.stats.food) != item.id: continue
+		var d: float = creature.global_position.distance_to(player.global_position)
+		if d < distance:
+			best = creature
+			distance = d
+	return best
 
 func _prop_distance(prop: Node2D) -> float:
 	var rect: Rect2 = prop.get_collision_rect()
@@ -872,7 +947,7 @@ func _prop_distance(prop: Node2D) -> float:
 	return feet.distance_to(nearest)
 
 ## Props that answer E from nearby (landmarks too: E reads their carving).
-const _INTERACTIVE := ["workbench","campfire","chest","wood_door","stone_door","hide_bed","shrine","tent","cache","relic","roots","nest","incubator","bone_pile","boat","clam_bed","keeper_camp","ossuary"]
+const _INTERACTIVE := ["workbench","campfire","chest","wood_door","stone_door","hide_bed","shrine","tent","cache","relic","roots","nest","incubator","bone_pile","boat","clam_bed","keeper_camp","ossuary","dune_ribs","dune_skull","big_gate","ashen_totem"]
 
 func _interaction_prop():
 	var nearest = null
@@ -1022,7 +1097,13 @@ func _egg_into_incubator(item: Item) -> bool:
 	if world.nesting.has_egg(cell):
 		_toast("This incubator already holds an egg.")
 		return true
+	# Pass 13: an egg only hatches for a keeper who knows its kind (Taming lore).
+	var kind: String = Life.species_of_egg(item.id)
+	if is_instance_valid(skills) and not skills.knows(kind):
+		_toast("You don't know the %s well enough to raise one. (Taming: %s)" % [str(Life.SHORT.get(kind, kind)).to_lower(), skills.lore_needed(kind)])
+		return true
 	if world.nesting.put_egg(cell, item.id) and InventoryManager.remove_item(item.id, 1):
+		if is_instance_valid(skills): skills.gain("breeding", float(skills.XP.incubate))
 		player.play_gesture("place", prop.global_position)
 		AudioManager.play_sfx("place_object")
 		_toast("The %s egg is settled in the straw. %s" % [str(Life.SHORT.get(Life.species_of_egg(item.id), "")).to_lower(), "Keep it warm." if not world.nesting.is_warm(cell) else "It's warm: it will hatch in time."])
@@ -1236,7 +1317,7 @@ func _on_cache_opened(_cell: Vector2i, loot: Dictionary) -> void:
 func _show_field_skills():
 	var column:=_make_overlay("LIVING WITH THE FOREST","journal")
 	column.add_theme_constant_override("separation", 2)
-	_overlay_text(column,"K > Appearance changes your keeper. Gear stays equipped.\nBow: hold click; release fires a bone arrow.\nStego / trike saddles support your bow.\nHoe earth, plant seeds, water once. E harvests.\nBerries grow in 90s; mushrooms in 120s.\nCompanions: Set home, Assign chest, Work.\nStego: wood. Trike: berries/fiber. Dodo: eggs.\nReturn delivers carried items to storage.\nSort pack / Stack nearby keep hotbar items.\nPower 2 tools unlock dense violet seams.",8)
+	_overlay_text(column,"L: your skills, perks and callings. Hold E on a companion > Care.\nK > Appearance changes your keeper. Gear stays equipped.\nBow: hold click; release fires a bone arrow.\nStego / trike saddles support your bow.\nHoe earth, plant seeds, water once. E harvests.\nBerries grow in 90s; mushrooms in 120s.\nCompanions: Set home, Assign chest, Work.\nStego: wood. Trike: berries/fiber. Dodo: eggs.\nReturn delivers carried items to storage.\nSort pack / Stack nearby keep hotbar items.\nPower 2 tools unlock dense violet seams.",8)
 	_overlay_button(column,"BACK TO FIRST CAMP",_show_journal)
 	_overlay_button(column,"RETURN TO THE WILDS",_close_overlay)
 
@@ -1247,7 +1328,7 @@ func _show_map():
 	_map.player = player
 	_map.custom_minimum_size = Vector2(288, 138)
 	column.add_child(_map)
-	_overlay_text(column, "Yellow: you   Gold: ruins   Violet: folk   Red: bosses   Orange: great beasts   Cream: nests\nWest: the Mirefen Bog   North: the Pale Lands   East: the Bonelands   South: the Sunscar Dunes", 8)
+	_overlay_text(column, "Yellow: you   Gold: ruins   Violet: folk   Red: bosses   Orange: great beasts   Cream: nests   Amber: heard by your parasaur\nWest: the Mirefen Bog   North: the Pale Lands   East: the Bonelands   South: the Sunscar Dunes", 8)
 	_overlay_button(column, "RETURN  [M / ESC]", _close_overlay)
 
 func save_journey(path: String = SAVE_FILE) -> bool:
@@ -1288,11 +1369,13 @@ func save_journey(path: String = SAVE_FILE) -> bool:
 		"spawn_bed": [_spawn_bed_cell.x,_spawn_bed_cell.y] if _has_spawn_bed else [],
 		"equipment": {},
 		"time": TimeCycle.time_of_day, "milestones": _milestones, "seconds": _session_seconds,
-		"regions": ["bonelands", "nests", "wilds", "wilds12"],
+		"regions": ["bonelands", "nests", "wilds", "wilds12"] + (["wilds13"] if _wilds13_ready() else []) + _wilds13_met(),
 		"folk": folk.serialize(),
 		"quests": quests.serialize(),
 		"nests_kept": life.serialize(),
-		"tribes": tribes.serialize()
+		"tribes": tribes.serialize(),
+		"skills": skills.serialize(),
+		"bloodlines": life.bred
 	}
 	for slot in player.equipped_armor:
 		var item = player.equipped_armor[slot]
@@ -1306,6 +1389,17 @@ func save_journey(path: String = SAVE_FILE) -> bool:
 	file.store_string(JSON.stringify(data))
 	file.close()
 	return DirAccess.rename_absolute(path + ".tmp", path) == OK
+
+## A skill rose (pass 13): a banner with what it brought.
+func _on_skill_level(skill: String, level: int) -> void:
+	var info: Dictionary = skills.SKILLS[skill]
+	var boosts: Array = []
+	for effect in skills.PER_LEVEL[skill]:
+		var per: float = float(skills.PER_LEVEL[skill][effect])
+		boosts.append(("+%d%% " % int(round(per * 100.0)) if effect != "gather_power" else "stronger ") + str({"melee_damage": "melee", "bow_damage": "arrows", "draw_speed": "draw", "feeds_cut": "taming", "mount_speed": "riding", "hatch_speed": "hatching", "growth_speed": "growth", "crop_speed": "crops", "gather_power": "gathering"}.get(effect, effect)))
+	var points := 2 if level in [5, 10] else 1
+	hud.show_banner("%s %d" % [info.name, level], "%s. %d perk point%s to spend (L)." % [", ".join(boosts), points, "s" if points > 1 else ""], null)
+	AudioManager.play_sfx("craft")
 
 func _load_journey(path: String = SAVE_FILE) -> bool:
 	if not FileAccess.file_exists(path):
@@ -1370,6 +1464,7 @@ func _load_journey(path: String = SAVE_FILE) -> bool:
 	_milestones = parsed.get("milestones", {})
 	folk.restore(parsed.get("folk", null))
 	quests.restore(parsed.get("quests", null))
+	skills.restore(parsed.get("skills", null))
 	if afloat: boating.call_deferred("resume_afloat")
 	region = ""
 	_session_seconds = float(parsed.get("seconds", 0))
@@ -1384,9 +1479,16 @@ func _load_journey(path: String = SAVE_FILE) -> bool:
 	if not "wilds" in parsed.get("regions", []): _spawn_wilds_life()
 	# A journey from before pass 12: the dunes' and the Pale Lands' new beasts arrive once.
 	if not "wilds12" in parsed.get("regions", []): _spawn_wilds12_life()
+	# A journey from before pass 13: the Mirefen's and the Bonelands' new hunters arrive once.
+	if not "wilds13" in parsed.get("regions", []):
+		var met: Array = []
+		for mark in parsed.get("regions", []):
+			if str(mark).begins_with("wilds13:"): met.append(str(mark).trim_prefix("wilds13:"))
+		_spawn_wilds13_life(met)
 	# Nests met for the first time (a journey from before them, or a kind
 	# added since) get their guardians.
 	life.restore(parsed.get("nests_kept", null))
+	life.bred = parsed.get("bloodlines", {}) if parsed.get("bloodlines", {}) is Dictionary else {}
 	if not "nests" in parsed.get("regions", []): life.populated.clear()
 	life.populate_nests()
 	for entry in parsed.get("drops", []):

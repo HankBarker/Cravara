@@ -34,6 +34,10 @@ var session
 var populated := {}
 var _together := {}
 var _rested := {}
+## Pass 13: the bloodlines. Eggs the keeper's own pairs lay carry their young's
+## genes (species -> [genes, ...], first laid first hatched); a wild egg hatches
+## a beast of its own. Saved by the session ("bloodlines").
+var bred := {}
 var _clock := 0.0
 var _wild_clock := 0.0
 
@@ -112,10 +116,14 @@ func _on_hatched(cell: Vector2i, species: String) -> void:
 	var at: Vector2 = session.world.get_spawnable_position(Vector2(cell * 16) + Vector2(8, 26))
 	var baby = session._spawn_creature(species, at)
 	baby.set_baby(true, 0.0)
+	if bred.has(species) and not (bred[species] as Array).is_empty():
+		baby.set_genes((bred[species] as Array).pop_front())
 	baby.tamed = true
 	baby.trust = int(baby.stats.feeds)
 	baby.set_order("follow")
 	AudioManager.play_sfx("harvest_plant")
+	var sk = get_tree().get_first_node_in_group("skills")
+	if sk: sk.gain("breeding", float(sk.XP.hatch))
 	session._toast("A baby %s hatched! It knows you already." % str(Life.SHORT.get(species, species)).to_lower())
 	SignalBus.egg_hatched.emit(baby)
 
@@ -186,6 +194,16 @@ func _process(delta: float) -> void:
 				_rested[b.get_instance_id()] = REST_AFTER
 				var egg := Life.egg_of(a.species)
 				session.world._burst({egg: 1}, (a.global_position + b.global_position) / 2.0 + Vector2(0, 6))
+				# The young one's genes, from both parents (Breeding perks tip the odds).
+				var bs = get_tree().get_first_node_in_group("skills")
+				var inherit: float = clampf(0.55 + (bs.value("inherit") if bs else 0.0), 0.0, 1.0)
+				var mutation: float = 1.0 + (bs.value("mutation") if bs else 0.0)
+				var rng := RandomNumberGenerator.new()
+				rng.randomize()
+				if not bred.has(a.species): bred[a.species] = []
+				bred[a.species].append(FC.Genes.blend(a.genes, b.genes, rng, inherit, mutation))
 				session._toast("Your %ss have laid an egg! Set it in a warm incubator." % str(Life.SHORT.get(a.species, a.species)).to_lower())
+				var sk = get_tree().get_first_node_in_group("skills")
+				if sk: sk.gain("breeding", float(sk.XP.bred))
 	for key in _together.keys():
 		if not seen.has(key): _together.erase(key)

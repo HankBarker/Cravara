@@ -72,6 +72,25 @@ ICONS = {
     "ashen_helmet": ("a bleached raptor skull mask with a crest of dark red quills, no person, game item icon", "art/keeper-v2/source/ashen/south.png"),
     "ashen_chestplate": ("a dark hide vest with a harness of bone plates, dark fur shoulders and red stripes, no person, game item icon", "art/keeper-v2/source/ashen/south.png"),
     "ashen_leggings": ("a dark hide loincloth over wrapped dark leggings with bone shin guards, no person, game item icon", "art/keeper-v2/source/ashen/south.png"),
+    # Pass 13: an ore for each far land, the new beasts' spoils, the weapons
+    # made from both, and the stockman's gear.
+    "rustiron": ("a lump of rusty red iron ore with dark grey rock, game item icon", "art/pass11/objects/rustiron_vein.png"),
+    "sunstone": ("a cluster of glowing amber-gold sunstone crystals, game item icon", "art/pass11/objects/sunstone_vein.png"),
+    "ashglass": ("a jagged shard of glossy black volcanic glass with a thin glowing orange vein, game item icon", "art/pass11/objects/ashglass_vein.png"),
+    "bog_iron": ("a knobbly black-brown lump of bog iron with a little green moss, game item icon", "art/pass11/objects/bogiron_vein.png"),
+    "sickle_claw": ("a single large curved sickle-shaped dinosaur toe claw, ivory with a dark base, no creature, game item icon", "game/Forest/creatures/art/utah.png"),
+    "deino_claw": ("a small curved sickle-shaped dinosaur claw, olive and ivory, no creature, game item icon", "game/Forest/creatures/art/deino.png"),
+    "sucho_claw": ("a big hooked dinosaur thumb claw, dark olive with an ivory point, no creature, game item icon", "game/Forest/creatures/art/sucho.png"),
+    "spino_spine": ("a single long curved spine from a dinosaur's sail with a strip of red and ochre skin along it, no creature, game item icon", "game/Forest/creatures/art/spino.png"),
+    "rustjaw_sabre": ("a heavy curved sabre of rusty red iron with a row of serrated allosaurus teeth set along its back edge, diagonal, game item icon", "art/pass11/objects/rustiron_vein.png"),
+    "sunstone_maul": ("a great two-handed maul whose head is a bony ankylosaur plate set with a glowing amber sunstone, diagonal, game item icon", "art/pass11/objects/sunstone_vein.png"),
+    "ashglass_knife": ("a long knife with a blade of glossy black volcanic glass and a hilt wrapped in grey fur, diagonal, game item icon", "art/pass11/objects/ashglass_vein.png"),
+    "bogiron_harpoon": ("a barbed harpoon of dark bog iron on a long wooden shaft, a big hooked claw lashed behind the barb, diagonal, game item icon", "art/pass11/objects/bogiron_vein.png"),
+    "spinesail_glaive": ("a long glaive whose curved blade is a dinosaur sail spine edged with dark iron, a strip of red and ochre sail skin on the haft, diagonal, game item icon", "game/Forest/creatures/art/spino.png"),
+    "lead_rope": ("a neat coil of thick rope with a loop at one end, game item icon", "art/pass11/objects/hitching_post.png"),
+    "hitching_post": ("a small wooden hitching post with a crossbar and an iron ring, game item icon", "art/pass11/objects/hitching_post.png"),
+    "big_gate": ("a wide wooden double gate of heavy lashed logs, game item icon", "art/pass11/objects/big_gate.png"),
+    "saddlebag": ("a pair of leather saddlebags joined by a strap, buckled shut, game item icon", "art/keeper-v2/source/sunward/south.png"),
 }
 ARMOUR = ("_helmet", "_chestplate", "_leggings")
 

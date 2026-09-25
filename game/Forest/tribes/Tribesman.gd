@@ -20,9 +20,18 @@ const FC = preload("res://Forest/creatures/ForestCreature.gd")
 const SHADOW_COLOR := Color(0.03, 0.10, 0.09)
 ## The cel's centre sits this far above the feet (the keeper's SORT_Y).
 const LIFT := 8.0
-## How far off a raider sees the keeper; a band that has cried out sees further.
-const NOTICE := 170.0
-const CRIED := 300.0
+## How far off a raider sees the keeper; a band that has cried out sees further
+## (pass 13: nearer than pass 12's 170 and 300, "their aggro range is crazy").
+const NOTICE := 110.0
+const CRIED := 180.0
+## Pass 13: they don't all just run at you. Taking on the keeper (or a keeper's
+## beast), a tribesman first shows it for ALERT seconds: faces them, raises
+## its fists (cheer) with a "!" overhead and a shout, holds its ground; then
+## comes. Each one waits its own beat, so a band comes in staggered.
+const ALERT := 0.8
+var _alert := 0.0
+var _alert_fade := 0.0
+var _alerted: Node2D = null
 ## A fight is given up this far from where it started (the band won't be led off).
 const LEASH := 360.0
 ## Small game a hunting band runs down.
@@ -169,6 +178,9 @@ func _physics_process(delta: float) -> void:
 	_flee_time = maxf(0.0, _flee_time - delta)
 	_detour_time = maxf(0.0, _detour_time - delta)
 	_shown_bar = maxf(0.0, _shown_bar - delta)
+	_alert = maxf(0.0, _alert - delta)
+	if _alert > 0.0 or _alert_fade > 0.0: _bar.queue_redraw()
+	_alert_fade = maxf(0.0, _alert_fade - delta) if _alert <= 0.0 else 0.45
 	_tick_bark(delta)
 	_scan -= delta
 	if _scan <= 0.0:
@@ -179,6 +191,9 @@ func _physics_process(delta: float) -> void:
 		_tick_action(delta)
 	elif _flinch > 0.0:
 		state = "hurt"
+	elif _alert > 0.0 and _valid(foe):
+		state = "alert"
+		_face(global_position.direction_to(foe.global_position))
 	elif talking:
 		state = "talk"
 		if is_instance_valid(_keeper): _face(global_position.direction_to(_keeper.global_position))
@@ -194,7 +209,7 @@ func _physics_process(delta: float) -> void:
 	wanted = _steer(wanted, delta)
 	velocity = wanted + _knock
 	_knock = _knock.move_toward(Vector2.ZERO, 480.0 * delta)
-	var stretch := delta * float(Engine.physics_ticks_per_second)
+	var stretch := delta / maxf(get_physics_process_delta_time(), 0.0001)
 	if stretch > 1.01: velocity *= stretch
 	move_and_slide()
 	if stretch > 1.01: velocity /= stretch
@@ -246,6 +261,17 @@ func _choose_foe() -> void:
 
 func _engage(target: Node2D) -> void:
 	if foe != target: _fight_from = global_position
+	# The display first, when a fight with the keeper or their beast begins.
+	if target != _alerted and (target == _keeper or (target.is_in_group("forest_creatures") and target.tamed)):
+		_alerted = target
+		_alert = ALERT + float(get_instance_id() % 5) * 0.08
+		_face(global_position.direction_to(target.global_position))
+		# Fists up (the cheer clip), held for the whole display.
+		_action = "cheer" if sprite.sprite_frames.has_animation("cheer_" + _sheet_facing()) else ""
+		_action_total = _alert
+		_action_time = _alert if _action != "" else 0.0
+		_hit_done = true
+		if _action != "": _play("cheer", true, TribeArt.duration(look, "cheer") / _alert)
 	foe = target
 
 
@@ -434,6 +460,15 @@ func take_damage(amount: int, source: Variant = null, knockback := -1.0) -> void
 		bark("Run!" if tribe == "sunward" else "Fall back!")
 
 
+## A maul's smash (pass 13): reels a moment, whatever it was about.
+func stagger(seconds: float) -> void:
+	if is_dead: return
+	_flinch = maxf(_flinch, seconds)
+	_action = ""
+	_action_time = 0.0
+	_play("hurt", true)
+
+
 func _die() -> void:
 	is_dead = true
 	remove_from_group("tribesmen")
@@ -556,7 +591,14 @@ func _draw_shadow() -> void:
 
 ## A slim health bar over a hurt tribesman for a few seconds.
 func _draw_bar() -> void:
-	if _shown_bar <= 0.0 or is_dead: return
+	if is_dead: return
+	if _alert > 0.0 or _alert_fade > 0.0:
+		var a := 1.0 if _alert > 0.0 else clampf(_alert_fade / 0.45, 0.0, 1.0)
+		var at := Vector2(0, -50 - (1 if _alert > 0.0 and int(Time.get_ticks_msec() / 160) % 2 == 0 else 0))
+		_bar.draw_rect(Rect2(at + Vector2(-2, -1), Vector2(4, 11)), Color(0.1, 0.05, 0.05, 0.9 * a))
+		_bar.draw_rect(Rect2(at + Vector2(-1, 0), Vector2(2, 6)), Color(1.0, 0.36, 0.24, a))
+		_bar.draw_rect(Rect2(at + Vector2(-1, 7), Vector2(2, 2)), Color(1.0, 0.36, 0.24, a))
+	if _shown_bar <= 0.0: return
 	var w := 18.0
 	var frac := clampf(float(health) / maxf(1.0, float(stats.hp)), 0.0, 1.0)
 	_bar.draw_rect(Rect2(-w / 2.0 - 1, -38, w + 2, 3), Color(0.05, 0.05, 0.06, 0.8))

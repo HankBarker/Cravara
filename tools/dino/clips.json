@@ -52,6 +52,7 @@
     "slash",
     "pounce",
     "sniff",
+    "threat",
     "hurt",
     "death"
    ]
@@ -65,6 +66,7 @@
     "eat",
     "tail_swing",
     "tail_swing_far",
+    "threat",
     "hurt",
     "death"
    ]
@@ -409,6 +411,7 @@
     "eat",
     "tail_swing",
     "tail_swing_far",
+    "threat",
     "hurt",
     "death"
    ]
@@ -422,6 +425,7 @@
     "run",
     "peck",
     "eat",
+    "threat",
     "hurt",
     "death"
    ]
@@ -434,11 +438,70 @@
     "walk",
     "run",
     "bite",
+    "threat",
     "hurt",
     "death"
    ],
    "views": [
     "side"
+   ]
+  },
+  "utah": {
+   "species": "utah",
+   "body": "a sandy feathered utahraptor",
+   "clips": [
+    "idle",
+    "walk",
+    "run",
+    "slash",
+    "pounce",
+    "roar",
+    "hurt",
+    "death"
+   ]
+  },
+  "deino": {
+   "species": "deino",
+   "body": "an olive green deinonychus",
+   "clips": [
+    "idle",
+    "walk",
+    "run",
+    "slash",
+    "pounce",
+    "threat",
+    "hurt",
+    "death"
+   ]
+  },
+  "sucho": {
+   "species": "sucho",
+   "body": "a muddy green suchomimus",
+   "clips": [
+    "idle",
+    "walk",
+    "run",
+    "bite",
+    "chomp",
+    "roar",
+    "eat",
+    "hurt",
+    "death"
+   ]
+  },
+  "spino": {
+   "species": "spino",
+   "body": "a teal spinosaurus with a red sail",
+   "clips": [
+    "idle",
+    "walk",
+    "run",
+    "bite",
+    "slash",
+    "roar",
+    "eat",
+    "hurt",
+    "death"
    ]
   }
  },
@@ -505,7 +568,9 @@
    "motion": {
     "default": "Lowers its head to the ground, eats the grass with a few bites, then lifts its head back up.",
     "longneck": "Lowers its long neck down to the ground, eats the grass, then raises its neck back up.",
-    "dodo": "Pecks at the ground twice to eat seeds, then straightens up."
+    "dodo": "Pecks at the ground twice to eat seeds, then straightens up.",
+    "sucho": "Lowers its long snout to the ground, snaps up food and gulps it down with a few bites, then lifts its head back up.",
+    "spino": "Lowers its long snout to the ground, snaps up food and gulps it down with a few bites, then lifts its head back up."
    }
   },
   "sniff": {
@@ -586,7 +651,10 @@
     "ground": true,
     "anchor": false
    },
-   "motion": "Darts forward, snaps its jaws and swipes with its clawed hands, then springs back into its stance."
+   "motion": {
+    "default": "Darts forward, snaps its jaws and swipes with its clawed hands, then springs back into its stance.",
+    "spino": "Rears up a little and rakes down with its big clawed arms, then settles back into its stance."
+   }
   },
   "pounce": {
    "model": "pmm",
@@ -666,6 +734,23 @@
     "anchor": true
    },
    "motion": "Lunges its head forward and pecks hard twice with its beak, then straightens up."
+  },
+  "threat": {
+   "model": "pmm",
+   "frames": 8,
+   "loop": false,
+   "fps": 10,
+   "clean": {
+    "ground": true,
+    "anchor": true
+   },
+   "motion": {
+    "default": "Crouches low, raises its clawed arms and opens its jaws wide in a screech, holds the pose for a moment, then settles back into its stance.",
+    "stego": "Lowers its head and lifts its spiked tail high, swinging it from side to side as a warning, then lowers it again.",
+    "anky": "Plants its feet and swings its clubbed tail from side to side as a warning, then lets it hang again.",
+    "proto": "Lowers its head and opens its beak wide in a hiss, stamping one front foot, then settles back.",
+    "compy": "Crouches, opens its jaws wide in a shrill screech and flicks its tail, then settles."
+   }
   }
  },
  "bipeds": [
@@ -678,7 +763,11 @@
   "ossuar",
   "yuty",
   "carno",
-  "compy"
+  "compy",
+  "utah",
+  "deino",
+  "sucho",
+  "spino"
  ],
  "overrides": {
   "rex/walk_down": {
@@ -800,6 +889,34 @@
   "parasaur/stomp_up": {
    "model": "pmm",
    "motion": "Rears up on its hind legs, then stomps down hard with its front feet. It stays in place."
+  },
+  "utah/slash_down": {
+   "model": "pmm",
+   "motion": "Keeps facing the viewer: leans toward the viewer, snaps its jaws and rakes both clawed hands down, then steps back into its stance."
+  },
+  "deino/slash_up": {
+   "model": "pmm",
+   "motion": "Lunges forward away from the viewer, snapping its jaws and swiping with its clawed hands, then springs back."
+  },
+  "deino/threat_up": {
+   "model": "pmm",
+   "motion": "Keeps its back to the viewer: rears up, lifts its clawed arms out to the sides and screeches, then drops back into its stance."
+  },
+  "sucho/chomp_up": {
+   "model": "pmm",
+   "motion": "Keeps its back to the viewer: lunges forward away from the viewer and bites down hard, shakes its head from side to side, then returns to its stance."
+  },
+  "sucho/roar_up": {
+   "model": "ai",
+   "motion": "Keeps its back to the viewer the whole time: lifts its head high, then lowers it again."
+  },
+  "sucho/eat_up": {
+   "model": "ai",
+   "motion": "Keeps its back to the viewer the whole time: lowers its head to the ground and eats, then lifts its head again."
+  },
+  "spino/bite_up": {
+   "model": "pmm",
+   "motion": "Keeps its back to the viewer: lunges forward away from the viewer and bites down hard, then returns to its stance."
   }
  }
 }

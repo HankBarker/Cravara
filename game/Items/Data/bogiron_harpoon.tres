@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/art/items/bogiron_harpoon.png" id="2"]
+[resource]
+script = ExtResource("1")
+id = "bogiron_harpoon"
+name = "Bog-iron Harpoon"
+description = "38 damage, a thrust that runs through three. Barbed bog iron with a Suchomimus claw."
+icon = ExtResource("2")
+max_stack = 1
+tool_type = "sword"
+rarity = "epic"
+damage = 38
+weapon_class = "thrust"

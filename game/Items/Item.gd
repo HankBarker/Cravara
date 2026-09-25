@@ -16,6 +16,11 @@ extends Resource
 @export var rarity: String = "common"  # common, rare, epic, legendary
 @export var tool_type: String = ""  # Optional: "axe", "pickaxe", etc.
 @export var damage: int = 1  # Damage dealt when this item is the active weapon
+## Pass 13: the shape of a weapon's blow (ForestPlayer.BLOWS): "sweep" (an arc,
+## every foe in it), "stab" (a quick jab at one), "smash" (a heavy blow on a
+## spot: knocks back, staggers), "thrust" (a long line through several). ""
+## = sweep for blades, a tool's own swing otherwise.
+@export var weapon_class: String = ""
 @export var mining_power: int = 0
 @export var chop_power: int = 0
 @export var placeable: bool = false  # Can be placed in the world

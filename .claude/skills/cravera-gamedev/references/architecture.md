@@ -270,3 +270,25 @@ Prioritized, concrete recommendations against the real files:
 - [Finite State Machine — GDQuest](https://www.gdquest.com/tutorial/godot/design-patterns/finite-state-machine/) · [Node-Based FSM — Godot Foundry](https://godotfoundry.com/blog/godot-4-state-machine-tutorial) · [Pushdown Automaton addon](https://github.com/godot-addons/godot-pushdown-automaton)
 - [Optimization using MultiMeshes](https://docs.godotengine.org/en/stable/tutorials/performance/using_multimesh.html) · [MultiMeshInstance2D](https://docs.godotengine.org/en/stable/classes/class_multimeshinstance2d.html)
 - [TileMap → TileMapLayer migration — GameFromScratch](https://gamefromscratch.com/godot-tilemap-replaced-with-tilelayers/) · [TileMapLayer docs](https://docs.godotengine.org/en/stable/classes/class_tilemaplayer.html)
+
+## Pass 13 modules (2026-09-25)
+- `Forest/progress/Skills.gd`: the keeper's six skills (XP by use, levels to 10, a small boost a
+  level, perk points, perk trees `PERKS`, the callings at 5 and 10 `CALLINGS`/`CALLING`, the taming
+  lore `LORE`). Group `skills`. Systems ask `value(effect)`, `has(perk)` or `knows(species)` and
+  report with `gain(skill, xp)`. Panel: `UI/SkillsPanel.gd` (L). Saved as `"skills"`.
+  Perk-gated recipes use `hidden_until: "perk:<id>"` (CraftingManager.is_known).
+- `Forest/creatures/TamingWays.gd` (each beast's way to be won; Kaya's `LESSONS`),
+  `Offering.gd` (food set down), `Genes.gd` + `genes.gdshader` (individuals), `BeastBag.gd`
+  (saddlebags, the chest API: `inventory`, `inventory_changed`, `add_item`).
+- `Forest/world/Minerals.gd`: the far lands' ore veins by their beasts, far crystal (a post-pass after
+  the nests, its own RNG for cells and swapped into `world.rng` for variants; kinds left out of the
+  legacy signature).
+- Rendered suites (`--rendering-method gl_compatibility`) drive the real OS cursor (`warp_mouse`):
+  run them only on an idle desktop. With someone using the machine the aim lands wherever their
+  cursor is (fishing-pass5, interaction-pass4 and the UI suites fail on aim, not on the game).
+- `Forest/world/WorldEvents.gd`: quake, snow, fire, meteors, the Sky-Fang surge. Group
+  `world_events`. Props it leaves are `world.event_props` (saved).
+- `Forest/tribes/Camps.gd` + TribeKeeper: named camps, `standing`, `requests`, totem offerings,
+  migration of the small camps (sites saved as `camp_sites`).
+- `ForestPlayer.blow_class/blow_shape/strike_damage/_blow_targets`: the weapon classes (BLOWS).
+  Tests compare damage against `strike_damage()`, not `get_active_weapon_damage()`.

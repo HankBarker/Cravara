@@ -128,7 +128,8 @@ func _raiders() -> void:
 	var keeper = stage.player
 	keeper.global_position = at
 	_heal()
-	var band: Dictionary = stage.tribes.spawn_band("ashen", at + Vector2(120, 0), "dunes")
+	# (Pass 13: a raider sees the keeper 110 px off, not 170.)
+	var band: Dictionary = stage.tribes.spawn_band("ashen", at + Vector2(80, 0), "dunes")
 	check(band.members.size() >= 3, "an Ashen band sets out (%d)" % band.members.size())
 	var before: int = keeper.current_health
 	var noticed := false
@@ -239,11 +240,18 @@ func _archers() -> void:
 	var at := _open_spot()
 	keeper.global_position = at
 	_heal()
-	var band: Dictionary = stage.tribes.spawn_band("ashen", at + Vector2(110, 0), "dunes")
+	var band: Dictionary = stage.tribes.spawn_band("ashen", at + Vector2(80, 0), "dunes")
 	var archers: Array = band.members.filter(func(m): return m.role == "archer")
 	check(not archers.is_empty(), "a band has an archer")
 	for m in band.members:
 		if m.role != "archer": m.queue_free()
+	# The archer alone: a band's beast (a raptor, some of the time) would go
+	# wild with its master gone and take the keeper first.
+	for c in get_tree().get_nodes_in_group("forest_creatures"):
+		if c.has_meta("tribe_beast"):
+			c.remove_from_group("forest_creatures")
+			c.set_physics_process(false)
+			c.queue_free()
 	await frames(1)
 	var before: int = keeper.current_health
 	var shot := false

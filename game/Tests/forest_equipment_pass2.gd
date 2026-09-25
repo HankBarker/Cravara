@@ -78,10 +78,10 @@ func run():
 	scene.world.water[water_cell] = true
 	player.controls_locked = true
 	player._physics_process(0.01)
-	check(player.walk_speed > 40, "river totem increases wading speed")
+	check(player.walk_speed > player.WADE_WALK, "river totem increases wading speed")
 	check(player.unequip_to_inventory("trinket_2"), "river totem can be removed")
 	player._physics_process(0.01)
-	check(player.walk_speed == 40, "wading bonus reverts after unequip")
+	check(player.walk_speed == player.WADE_WALK, "wading bonus reverts after unequip")
 	player.current_stamina = 115
 	check(player.unequip_to_inventory("trinket_0") and player.max_stamina == 100 and player.current_stamina == 100, "pendant removal restores cap and clamps current stamina")
 	check(player.unequip_to_inventory("trinket_1") and player.get_active_weapon_damage() == damage, "hunter damage bonus reverts")
@@ -138,7 +138,7 @@ func run():
 		check(is_equal_approx(player._swing_duration,entry[2]), str(entry[1])+" uses intended windup duration")
 		check(player.animated_sprite.animation.begins_with(entry[1]), str(entry[1])+" has imported body animation")
 		var hp: int = victim.health
-		var expected: int = player.get_active_weapon_damage()
+		var expected: int = player.strike_damage()
 		var attack = player.states.attack
 		attack.update_state(float(entry[2])*(float(entry[3])-0.01))
 		check(victim.health == hp, str(entry[1])+" does not hit before contact")

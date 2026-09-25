@@ -92,24 +92,30 @@ const CAST := {
 	},
 }
 
-## What the warden knows of each beast ([food, how to earn trust, riding]).
+const Ways = preload("res://Forest/creatures/TamingWays.gd")
+## Kaya's beasts (pass 13): species -> [her name for it, what it eats, how it's
+## won (TamingWays.LESSONS: each beast its own way), riding].
 const BEASTS := {
-	"parasaur": ["Berries", "Eighteen berries, stepping back between. They graze the Mirefen's edges in herds and trumpet when a hunter comes.", "Too skittish to ride, but one at your side warns you of hunters."],
-	# Pass 12.
-	"dimetrodon": ["Meat", "Net it first; then meat, stepping back between. Go by day, when it's warm and slow to anger.", "Too low to ride, but its sail gathers the sun: your crops grow faster by day."],
-	"protoceratops": ["Berries", "A few berries; the herd bolts, so come at them slowly.", "Too small to ride. On sand it noses up old bones, fossils and coins."],
-	"ankylosaur": ["Berries", "Two dozen berries, stepping back between. Its plates shrug off light blows; don't make it angry.", "Not for riding, but beside you its club cracks stone: more from every rock and vein you mine, and it stands guard."],
-	"scarhorn": ["Meat", "A net, then meat and patience. It's the fastest hunter in the dunes: don't run from it.", "Not yet ridden. At your side you sprint faster."],
-	"ashmane": ["Meat", "A net, then meat and patience, in the ash of the Pale Lands.", "Not yet ridden. With one at your side the ash can't reach you."],
-	"dodo": ["Berries", "Offer berries from your hand. Dodos trust quickly and lay eggs at home.", "Too small to ride. Set them to work and they'll gather for you."],
-	"lystro": ["Berries", "A berry or two and it's yours. Lystrosaurs are the friendliest things in the wilds.", "Too small to ride, but it'll follow you anywhere."],
-	"stego": ["Berries", "Twenty berries and a lot of patience. Feed it, then step well back and let it settle before the next. Crowd it and that tail comes round.", "Fit a stego saddle (workbench). Steady, strong, and its tail swing bleeds foes."],
-	"trike": ["Berries", "Twenty berries, one at a time, with room between. Hang about and it charges, so feed and step away.", "Fit a trike saddle. Click to gore; hold to charge a ram that bowls foes over."],
-	"longneck": ["Berries", "Two dozen berries and the patience of stone. It spooks easily but never forgets a friend.", "Too tall for any saddle yet made."],
-	"raptor": ["Raw meat", "Net it and it goes down. Feed it raw meat before it tears free: about fifteen bites, so bring nets. Net the leader and the pack scatters.", "No saddle fits a raptor. It fights beside you instead."],
-	"allo": ["Raw meat", "A big hunter, and it tears nets fast. Net it, feed it, net it again. Its crystal scales make the finest armour, if you'd rather fight it.", "No saddle for an allosaurus. Yet."],
-	"rex": ["Raw meat", "Nobody tames a rex. It'd take forty bites and every net you own. Don't fight it alone either: bring beasts and arrows.", "Rex saddles are the stuff of legend."],
-	"alpha": ["Nothing", "Skarn leads the Shardback pack from its den in the north-east. It won't take food. It takes keepers.", "Beat it and the pack loses its nerve."],
+	"dodo": ["Dodo", "Berries", Ways.LESSONS.dodo, "Too small to ride. Set them to work and they'll gather for you."],
+	"lystro": ["Lystro", "Berries", Ways.LESSONS.lystro, "Too small to ride, but it'll follow you anywhere."],
+	"compy": ["Compy", "Raw meat", Ways.LESSONS.compy, "Too small to ride. A swarm of your own guards your back."],
+	"parasaur": ["Parasaur", "Berries", Ways.LESSONS.parasaur, "Too skittish to ride, but one at your side hears everything: it finds ore, caches and nests for you."],
+	"proto": ["Proto", "Berries", Ways.LESSONS.proto, "Too small to ride. On sand it noses up old bones, fossils and coins."],
+	"longneck": ["Longneck", "Berries", Ways.LESSONS.longneck, "Too tall for any saddle yet made."],
+	"stego": ["Stego", "Berries", Ways.LESSONS.stego, "Fit a stego saddle (workbench). Steady, strong, and its tail swing bleeds foes."],
+	"trike": ["Trike", "Berries", Ways.LESSONS.trike, "Fit a trike saddle. Click to gore; hold to charge a ram that bowls foes over."],
+	"anky": ["Anky", "Berries", Ways.LESSONS.anky, "Not for riding, but beside you its club cracks stone: more from every rock and vein you mine."],
+	"dimetrodon": ["Dimetrodon", "Raw meat", Ways.LESSONS.dimetrodon, "Too low to ride, but its sail gathers the sun: your crops grow faster by day."],
+	"raptor": ["Raptor", "Raw meat", Ways.LESSONS.raptor, "No saddle fits a raptor. It fights beside you instead."],
+	"deino": ["Deino", "Raw meat", Ways.LESSONS.deino, "No saddle fits it. A pack of your own in the reeds."],
+	"utah": ["Sandblade", "Raw meat", Ways.LESSONS.utah, "Not yet ridden. Its sickle claws open anything."],
+	"allo": ["Allosaur", "Raw meat", Ways.LESSONS.allo, "No saddle for an allosaurus. Yet."],
+	"carno": ["Scarhorn", "Raw meat", Ways.LESSONS.carno, "Not yet ridden. At your side you sprint faster."],
+	"yuty": ["Ashmane", "Raw meat", Ways.LESSONS.yuty, "Not yet ridden. With one at your side the ash can't reach you."],
+	"sucho": ["Suchomimus", "Fish", Ways.LESSONS.sucho, "Not ridden. It fishes the mere for you."],
+	"rex": ["Rex", "Raw meat", Ways.LESSONS.rex, "Rex saddles are the stuff of legend."],
+	"spino": ["Spinosaur", "Fish", Ways.LESSONS.spino, "The bog's king carries no one. Yet."],
+	"alpha": ["Skarn", "Nothing", "Skarn leads the Shardback pack from its den in the north-east. It won't take food. It takes keepers.", "Beat it and the pack loses its nerve."],
 }
 
 ## The trader's goods: id -> [price in ancient coins, how many per purchase].

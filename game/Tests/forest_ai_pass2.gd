@@ -55,13 +55,19 @@ func verify():
 	player.position = Vector2(130,0)
 	var stego = creature("stego", Vector2(-100,0), true)
 	var saw_wade := false
-	var slow_water := false
+	var dry_top := 0.0
+	var wet_top := 0.0
+	var wet_frames := 0
 	for i in 230:
 		await get_tree().physics_frame
 		if stego.in_water:
 			saw_wade = true
-			if stego.velocity.length() < 17: slow_water = true
-	check(saw_wade and slow_water, "follower enters shallow water and slows while wading")
+			wet_frames += 1
+			# Past the first strides in (a heavy body sheds speed slowly).
+			if wet_frames > 12: wet_top = maxf(wet_top, stego.velocity.length())
+		elif not saw_wade:
+			dry_top = maxf(dry_top, stego.velocity.length())
+	check(saw_wade and wet_top > 0.0 and wet_top < dry_top * 0.7, "follower enters shallow water and slows while wading (%.0f -> %.0f px/s)" % [dry_top, wet_top])
 	check(stego.position.x > 50, "stego crosses river to follow its owner instead of bouncing on shore")
 	check(stego.position.distance_to(player.position) < 51, "follower arrives near owner beyond river")
 	await clear_actors()
@@ -112,6 +118,8 @@ func verify():
 	neighbor.set_order("stay")
 	await step_frames(40)
 	check(tame.position.distance_to(Vector2(180,150)) < 0.1, "stay ignores herd separation and holds commanded position")
+	# (The herd mate goes: a guard returns to its post, not into a dodo.)
+	neighbor.queue_free()
 	tame.set_order("guard")
 	tame.position += Vector2(45,0)
 	await step_frames(60)

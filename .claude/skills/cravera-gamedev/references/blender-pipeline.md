@@ -1,5 +1,12 @@
 # The Cravera Dinosaur Factory: Blender as the animation backend (pass 12 experiment)
 
+> **RETIRED (pass 13, 2026-09-25).** Hank's verdict on the Blender Scarhorn: "doesn't look that
+> great". Improve the PixelLab and procedural process instead, and spend more care on each
+> creature. The Scarhorn was redrawn with PixelLab v3 and animated with `gen.py` like the rest
+> (`tools/dino/pick13.py`). The `-BlenderPreview` playtest, the `--blender-playtest` park and
+> `Tests/BlenderCapture` were removed. `tools/blender/` stays on disk for reference only. Don't use
+> it for game art without asking him.
+
 Hank asked (2026-09-25) for Blender to be tried as the dinosaur animation factory: model, rig and
 animate once, then render every clip from Cravera's fixed camera in every facing. The game stays
 2D pixel art. The test animal is the **Scarhorn** (key `carno`, a Carnotaurus). Its playtest is
