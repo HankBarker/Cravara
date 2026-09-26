@@ -1,0 +1,99 @@
+Godot Engine v4.6.1.stable.official.14d19694e - https://godotengine.org
+OpenGL API 3.3.0 Core Profile Context 24.10.36.04.250109 - Compatibility - Using Device: ATI Technologies Inc. - AMD Radeon RX 7700S
+
+📦 ItemDB loaded 249 items: allo_cleaver, allo_egg, allo_tooth, alpha_crest, ancient_coin, anky_plate, apex_signet, ashen_chestplate, ashen_helmet, ashen_leggings, ashglass, ashglass_eye, ashglass_knife, ashmane_fur, ashmane_mantle, ash_char, ash_tuft, baked_tuber, basic_axe, basic_pickaxe, beast_treat, berry, berry_compote, berry_seed, big_gate, bloodfang, bloody_bait, boat, bogiron_band, bogiron_harpoon, bogwood, bogwood_floor, bogwood_wall, bog_iron, bonegill, bone_arrow, bone_chestplate, bone_crown, bone_dagger, bone_helmet, bone_leggings, bucket, bulwark_charm, cactus_fruit, cactus_jelly, campfire, carno_horn, chest, claw_bracelet, club_knuckle, club_maul, compy_trove, cooked_fish, cooked_meat, cooking_pot, crest_horn, crest_whistle, crystal_axe, crystal_chestplate, crystal_flask, crystal_floor, crystal_heart, crystal_helmet, crystal_leggings, crystal_pendant, crystal_pickaxe, crystal_shard, crystal_wall, deino_claw, dodo_egg, dodo_plume, ember_chili, ember_pepper, fang_necklace, fang_sabre, fen_pike, fishers_chowder, fishing_rod, foragers_salad, forest_omelet, fossil_bone, frill_buckle, frill_guard, frostjaw, fur_wrap, garden_hoe, glass_pearl, gourd_porridge, gourd_seed, grave_horn, haunch, haunch_roast, hide_bed, hitching_post, horn_chestplate, horn_guard, horn_helmet, horn_leggings, horn_spear, hunters_stew, hunter_charm, incubator, keepers_locket, lantern, lead_rope, leather_chestplate, leather_helmet, leather_leggings, log, longneck_bell, longneck_egg, longneck_hide, lotus_broth, lucky_coin, lystro_egg, marrow_gourd, maw_charm, maw_tooth, melon_cooler, melon_seed, miners_pie, mirefang_tooth, mirelotus, mire_eel, moonscale, moonstone_ring, morsel, moss_chestplate, moss_helmet, moss_leggings, mushroom, mushroom_potion, mushroom_spore, mushroom_stew, net, oasis_carp, old_bone, old_compass, palewood, palewood_floor, palewood_wall, pale_crystal, parasaur_crest, parasaur_egg, pepper_steak, plank, plant_fiber, plate_chestplate, plate_helmet, plate_leggings, plate_maul, plate_pendant, prime_meat, prime_steak, prism_crystal, proto_frill, quiver_strap, raider_club, raptor_egg, raptor_fang, raptor_hide, redgrain, redgrain_loaf, reed_bow, reed_claw, reed_perch, rex_chestplate, rex_helmet, rex_leggings, river_totem, rustiron, rustjaw_sabre, rust_buckler, rust_catfish, rust_chestplate, rust_helmet, rust_leggings, rust_signet, saddlebag, sailking_fin, sail_scale, sail_veil, sandblade_plume, sandstone, sandstone_floor, sandstone_wall, scale_bracer, scarhorn_lance, scarhorn_tip, seared_morsel, shardfin, shard_sword, sickle_claw, sickle_toe, skyfang_shard, sky_idol, slate_roof, sleeper_fang, spinesail_glaive, spine_torc, spino_spine, stego_egg, stego_plate, stego_saddle, stone, stone_door, stone_floor, stone_wall, sucho_claw, sunfin, sunsail_brooch, sunstone, sunstone_amulet, sunstone_maul, sunward_chestplate, sunward_helmet, sunward_leggings, sun_melon, sun_sail, tail_spike, tent, thatch_roof, tide_chestplate, tide_helmet, tide_leggings, titan_pot_roast, titan_rib, titan_roast, tooth_ring, torch, trex_meat, trex_scale, trike_egg, trike_hide, trike_horn, trike_saddle, tuber_mash, tusk_charm, tyrant_eye, tyrant_fang, wanderers_step, water_bucket, water_flask, wayfarer_anklet, wild_tuber, wood_door, wood_floor, wood_wall, workbench
+PASS Fishing controller integrated in forest session
+PASS Full-bag world right-click fills flask in the exact selected slot
+PASS Flask filling preserves all other inventory and source water
+PASS Dry-ground flask right-click leaves vessel unchanged
+PASS Distant-water flask right-click cannot bypass range
+PASS Wall blocks selected-flask right-click to water
+PASS Satchel SlotUI right-click drinks tonic at full hunger and returns flask to same slot
+PASS Full-bag inventory tonic use conserves every other stack and vessel
+PASS Inventory tonic starts vitality recovery without changing full hunger
+PASS Seeded forest has multiple shoreline fishing holes
+PASS Fishing rod has a workbench crafting recipe
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Fishing hole occupies actual water
+PASS Each fishing hole holds a fish of its own land's water
+PASS Seeded waters offer every fishing difficulty (["Gentle", "Restless", "Wild", "Fierce"])
+PASS Cannot fish arbitrary dry ground
+PASS Cannot fish random water outside marked holes
+PASS Rejected casts consume no items
+PASS Fishing rod obeys casting range
+PASS Selected rod right-click starts fishing at visible hole
+PASS Fishing locks survivor movement
+PASS Fishing consumes companion E without opening another modal
+PASS Fishing consumes held Q without opening companion commands
+PASS Number hotkey cannot swap active fishing rod behind modal
+PASS Escape reels in without opening pause behind fishing
+PASS Cancellation preserves rod and complete inventory
+PASS Selected rod right-click starts fishing at visible hole
+PASS Tab cancels fishing without opening satchel behind it
+PASS Selected rod right-click starts fishing at visible hole
+PASS External selected-item change safely reels in fishing line
+PASS Selected rod right-click starts fishing at visible hole
+PASS Ignored invulnerable hit does not cancel fishing
+PASS Accepted damage interrupts fishing immediately
+PASS Selected rod right-click starts fishing at visible hole
+PASS Opening pause cancels active fishing
+PASS Selected rod right-click starts fishing at visible hole
+PASS Death cancels cast and removes minigame
+PASS Death during fishing grants no catch and loses no item
+PASS Selected rod right-click starts fishing at visible hole
+PASS Unbalanced held Space loses fish with no reward
+PASS Escaped fish gives hole a short recovery
+PASS Resting hole rejects immediate recast
+PASS Selected rod right-click starts fishing at visible hole
+PASS Real Space balance completes within time limit
+PASS Successful balance awards one reed_perch
+PASS Landed catch rests fishing hole for ninety seconds
+PASS Duplicate finish cannot grant a second catch
+PASS Selected rod right-click starts fishing at visible hole
+PASS Real Space balance completes within time limit
+PASS Successful balance awards one shardfin
+PASS Landed catch rests fishing hole for ninety seconds
+PASS Duplicate finish cannot grant a second catch
+PASS Selected rod right-click starts fishing at visible hole
+PASS Real Space balance completes within time limit
+PASS Successful balance awards one moonscale
+PASS Landed catch rests fishing hole for ninety seconds
+PASS Duplicate finish cannot grant a second catch
+PASS Catch tests genuinely alternate held and released Space
+PASS Selected rod right-click starts fishing at visible hole
+PASS Full satchel places won catch safely on bank
+PASS Making room picks up preserved fish exactly once
+PASS Fishing hole generation is deterministic after restore
+PASS Save restore preserves catch count and remaining cooldown
+PASS Fishing cooldown stops while game is paused
+PASS Fishing test preserves real settings file
+FISHING TEST: 94 checks, 0 failures

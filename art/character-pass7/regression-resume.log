@@ -1,0 +1,15 @@
+root-pass3: passed
+world-pass4: passed
+mount-pass4: passed
+ui-pass4: passed
+root-pass4: passed
+interaction-pass4: passed
+mount-render-pass4: passed
+world-pass5: passed
+Godot_v4.6.1-stable_win64_console.exe : ERROR: leather crown is clearly dark brown rather than blonde
+At C:\Cravera\tools\verify_forest.ps1:55 char:5
++     & $godotBinary @arguments 2>&1 | Out-File -LiteralPath $logFile - ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (ERROR: leather ...her than blonde:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 

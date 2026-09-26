@@ -1,0 +1,11 @@
+1c16959f-9c18-4971-989a-9568bffe1f94
+status: completed
+id: 1c16959f-9c18-4971-989a-9568bffe1f94
+job_id: 1c16959f-9c18-4971-989a-9568bffe1f94
+frames: 1
+transparent: yes
+asset_id: 6ea20996-1715-5822-ac68-7c31c0059451
+asset_type: image
+asset_status: saved
+gallery: saved to your PixelLab gallery (pixellab.ai/create)
+download: https://api.pixellab.ai/mcp/images/1c16959f-9c18-4971-989a-9568bffe1f94/download

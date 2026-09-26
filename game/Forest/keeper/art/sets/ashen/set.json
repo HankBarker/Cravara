@@ -1,0 +1,133 @@
+{
+ "parts": {
+  "head_down": {
+   "origin": [
+    24,
+    13
+   ]
+  },
+  "head_down_blink": {
+   "origin": [
+    24,
+    13
+   ]
+  },
+  "torso_down": {
+   "origin": [
+    27,
+    29
+   ]
+  },
+  "boot_m_down": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "boot_o_down": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "head_up": {
+   "origin": [
+    24,
+    13
+   ]
+  },
+  "torso_up": {
+   "origin": [
+    27,
+    28
+   ]
+  },
+  "boot_m_up": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "boot_o_up": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "head_side": {
+   "origin": [
+    22,
+    13
+   ]
+  },
+  "head_side_blink": {
+   "origin": [
+    22,
+    13
+   ]
+  },
+  "torso_side": {
+   "origin": [
+    25,
+    29
+   ]
+  },
+  "boot_m_side": {
+   "pivot": [
+    2.2,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  }
+ },
+ "materials": {
+  "arm_upper": [
+   "1f1410",
+   "32251b",
+   "42372c",
+   "6a5b4e",
+   "867563"
+  ],
+  "arm_lower": [
+   "1f1410",
+   "32251b",
+   "574130",
+   "6a5b4e",
+   "867563"
+  ],
+  "leg_upper": [
+   "1f1410",
+   "32251b",
+   "574130",
+   "6a5b4e",
+   "867563"
+  ],
+  "leg_lower": [
+   "1f1410",
+   "32251b",
+   "574130",
+   "6a5b4e",
+   "867563"
+  ]
+ },
+ "name": "Ashen Raider"
+}

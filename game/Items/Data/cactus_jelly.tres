@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/art/items/cactus_jelly.png" id="2"]
+[resource]
+script = ExtResource("1")
+id = "cactus_jelly"
+name = "Cactus Jelly"
+description = "Sticky, bright and quick. You slip out of harm's way."
+icon = ExtResource("2")
+max_stack = 20
+consumable = true
+hunger_value = 40
+food_satiation_seconds = 150.0
+healing_total = 12.0
+healing_duration = 15.0
+effects = {
+"dodge": 0.3,
+"speed": 0.05
+}
+buff_seconds = 240.0

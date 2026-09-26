@@ -1,0 +1,11 @@
+a3ac250e-afc5-4c36-b2a4-29492eec1f5b
+status: completed
+id: a3ac250e-afc5-4c36-b2a4-29492eec1f5b
+job_id: a3ac250e-afc5-4c36-b2a4-29492eec1f5b
+frames: 1
+transparent: yes
+asset_id: 33cc65f9-6e09-5c03-8e11-ffc67d066298
+asset_type: image
+asset_status: saved
+gallery: saved to your PixelLab gallery (pixellab.ai/create)
+download: https://api.pixellab.ai/mcp/images/a3ac250e-afc5-4c36-b2a4-29492eec1f5b/download

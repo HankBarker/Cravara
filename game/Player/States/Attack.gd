@@ -6,6 +6,12 @@ var attack_timer := 0.3
 func enter_state():
 	player.velocity = Vector2.ZERO
 
+	# Stamina cost — fail the swing if not enough
+	if not player.has_stamina(player.STAMINA_ATTACK_COST):
+		player.switch_state("idle")
+		return
+	player.consume_stamina(player.STAMINA_ATTACK_COST)
+
 	# Position and rotate the sword hitbox correctly
 	match player.last_facing:
 		"up":
@@ -35,27 +41,22 @@ func update_state(delta):
 	pass
 
 func _check_for_destructible_objects():
+	if not is_instance_valid(player) or not player.sword_hitbox:
+		return
 	var overlapping_bodies = player.sword_hitbox.get_overlapping_bodies()
-	var selected_item = InventoryManager.get_selected_item()
+	var tool_type: String = player.get_active_tool_type()
+	var damage: int = player.get_active_weapon_damage()
 
 	for body in overlapping_bodies:
 		if body is DestructibleObject:
-			var required_tool = body.harvest_tool_required
-
-			if required_tool == "" or required_tool == "none":
-				body.take_damage(1, "none")
-				AudioManager.play_sfx("chop_wood")
-				continue
-
-			if selected_item == null:
-				continue
-
-			if selected_item.tool_type == required_tool:
-				body.take_damage(1, selected_item.tool_type)
-				if required_tool == "axe":
-					AudioManager.play_sfx("chop_wood")
-				elif required_tool == "pickaxe":
-					AudioManager.play_sfx("mine_rock")
+			# DestructibleObject.take_damage handles the wrong-tool check
+			# and shows a "Needs axe" floater. Returns false on mismatch.
+			var hit_ok: bool = body.take_damage(damage, tool_type)
+			if hit_ok:
+				match body.harvest_tool_required:
+					"axe": AudioManager.play_sfx("chop_wood")
+					"pickaxe": AudioManager.play_sfx("mine_rock")
+					_: AudioManager.play_sfx("chop_wood")
 
 func on_attack_done():
 	player.switch_state("idle")

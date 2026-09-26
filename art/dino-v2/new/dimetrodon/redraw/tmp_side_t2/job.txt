@@ -1,0 +1,11 @@
+9996237f-0098-4f04-b8de-e37f8f983909
+status: completed
+id: 9996237f-0098-4f04-b8de-e37f8f983909
+job_id: 9996237f-0098-4f04-b8de-e37f8f983909
+frames: 1
+transparent: yes
+asset_id: 65637b47-dcb4-57d1-9bf2-93161ff83868
+asset_type: image
+asset_status: saved
+gallery: saved to your PixelLab gallery (pixellab.ai/create)
+download: https://api.pixellab.ai/mcp/images/9996237f-0098-4f04-b8de-e37f8f983909/download

@@ -1,0 +1,479 @@
+{
+ "idle_side": {
+  "job": "ccc1fa4f-fc5d-4f5c-aa91-021b2abe394e",
+  "tool": "animate_image_pixminimax",
+  "seed": 3197743,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stands still in a relaxed pose; its body rises and falls very slightly and its tail sways a little. It stays in place, facing right.",
+  "frames": 9,
+  "submitted": 1790383996.3100252,
+  "finished": 1790384182.2731838,
+  "score": {
+   "bright": 6,
+   "area": 1.03,
+   "wide": 1.0,
+   "base": 203
+  }
+ },
+ "idle_down": {
+  "job": "a6a725e6-9654-46b4-8cd2-ed0b52a3e3af",
+  "tool": "animate_image_pixminimax",
+  "seed": 4793311,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stands still in a relaxed pose; its body rises and falls very slightly and its tail sways a little. It stays in place, facing the viewer the whole time.",
+  "frames": 8,
+  "submitted": 1790383997.3014631,
+  "finished": 1790384190.5501988,
+  "score": {
+   "bright": 17,
+   "area": 1.04,
+   "wide": 1.0,
+   "base": 70
+  },
+  "method": "lunge_front.py (idle from the down drawing)"
+ },
+ "idle_up": {
+  "job": "7beb557b-e01c-41ce-8c14-23077f4d580e",
+  "tool": "animate_image_pixminimax",
+  "seed": 1511096,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stands still in a relaxed pose; its body rises and falls very slightly and its tail sways a little. It stays in place with its back to the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790383998.1855175,
+  "finished": 1790384094.102481,
+  "score": {
+   "bright": 9,
+   "area": 1.0,
+   "wide": 1.0,
+   "base": 119
+  }
+ },
+ "walk_down": {
+  "job": "eabf79ca-ebd0-4227-be6e-68524c86a588",
+  "tool": "animate_image",
+  "seed": 5330367,
+  "status": "done",
+  "cost": 2.0,
+  "prompt": "Walks in place: its legs step one after the other, its body bobs gently with each step and its tail sways. It stays in place, facing the viewer the whole time.",
+  "frames": 8,
+  "submitted": 1790384000.1819112,
+  "finished": 1790384105.0500789,
+  "score": {
+   "bright": 0,
+   "area": 1.0,
+   "wide": 1.0,
+   "base": 70
+  },
+  "method": "walk_front.py (walk gait from the down drawing)"
+ },
+ "_history": {
+  "walk_side": [
+   {
+    "job": "9eb66d0d-fed9-423c-8a15-05a42f1fb377",
+    "tool": "animate_image",
+    "seed": 14208280,
+    "status": "done",
+    "cost": 2.0,
+    "prompt": "Walks in place: its legs step one after the other, its body bobs gently with each step and its tail sways. It stays in place, facing right.",
+    "frames": 9,
+    "submitted": 1790383999.215418,
+    "finished": 1790384199.9474256,
+    "score": {
+     "bright": 211,
+     "area": 1.16,
+     "wide": 1.01,
+     "base": 203
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\parasaur_crystal\\walk_side@0"
+   }
+  ],
+  "roar_down": [
+   {
+    "job": "3eea9b24-19e4-4bd0-a02b-9ae17a9b1f88",
+    "tool": "animate_image_pixminimax",
+    "seed": 512038,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Raises its head high and trumpets a long call through its crest, then lowers its head again. It stays in place. It stays in place, facing the viewer the whole time.",
+    "frames": 13,
+    "submitted": 1790384400.604225,
+    "finished": 1790384685.2773416,
+    "score": {
+     "bright": 66,
+     "area": 1.41,
+     "wide": 1.07,
+     "base": 70
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\parasaur_crystal\\roar_down@0"
+   },
+   {
+    "job": "7d398394-b8a3-450c-8a35-70885ade5e89",
+    "tool": "animate_image_pixminimax",
+    "seed": 513038,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Raises its head high and trumpets a long call through its crest, then lowers its head again. It stays in place. It stays in place, facing the viewer the whole time.",
+    "frames": 13,
+    "submitted": 1790384789.2937222,
+    "finished": 1790384973.0188901,
+    "score": {
+     "bright": 66,
+     "area": 1.26,
+     "wide": 1.0,
+     "base": 70
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\parasaur_crystal\\roar_down@1"
+   }
+  ]
+ },
+ "walk_up": {
+  "job": "c4a94007-aafd-498f-becb-8d64186a3f02",
+  "tool": "animate_image",
+  "seed": 3501215,
+  "status": "done",
+  "cost": 2.0,
+  "prompt": "Walks in place: its legs step one after the other, its body bobs gently with each step and its tail sways. It stays in place with its back to the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790384201.2744923,
+  "finished": 1790384322.1486206,
+  "score": {
+   "bright": 2,
+   "area": 1.01,
+   "wide": 1.04,
+   "base": 119
+  }
+ },
+ "run_side": {
+  "job": "8c85b969-90e9-4886-bb8a-21cc188d82ee",
+  "tool": "animate_image_pixminimax",
+  "seed": 880848,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Runs in place with long fast strides, its body leaning forward and its tail held straight out behind. It stays in place, facing right.",
+  "frames": 9,
+  "submitted": 1790384202.2881622,
+  "finished": 1790384334.4829307,
+  "score": {
+   "bright": 2,
+   "area": 1.0,
+   "wide": 1.04,
+   "base": 203
+  }
+ },
+ "run_down": {
+  "job": "9eb859a8-383b-4ebb-a098-857a29aca20e",
+  "tool": "animate_image_pixminimax",
+  "seed": 15034940,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Runs in place with long fast strides, its body leaning forward and its tail held straight out behind. It stays in place, facing the viewer the whole time.",
+  "frames": 8,
+  "submitted": 1790384204.5713136,
+  "finished": 1790384343.6862614,
+  "score": {
+   "bright": 5,
+   "area": 1.0,
+   "wide": 1.0,
+   "base": 70
+  },
+  "method": "walk_front.py (run gait from the down drawing)"
+ },
+ "run_up": {
+  "job": "63038b55-5864-441e-ac54-ebcb9ec246b6",
+  "tool": "animate_image_pixminimax",
+  "seed": 6458524,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Runs in place with long fast strides, its body leaning forward and its tail held straight out behind. It stays in place with its back to the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790384205.5039017,
+  "finished": 1790384354.7212703,
+  "score": {
+   "bright": 14,
+   "area": 1.03,
+   "wide": 1.0,
+   "base": 119
+  }
+ },
+ "eat_side": {
+  "job": "fb9b9526-cd89-4635-a656-5fe0bf02acd0",
+  "tool": "animate_image_pixminimax",
+  "seed": 6597525,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Lowers its head to the ground, eats the grass with a few bites, then lifts its head back up. It stays in place, facing right.",
+  "frames": 13,
+  "submitted": 1790384206.5722666,
+  "finished": 1790384370.1602764,
+  "score": {
+   "bright": 12,
+   "area": 1.04,
+   "wide": 1.09,
+   "base": 203
+  }
+ },
+ "eat_down": {
+  "job": "826d2466-04ae-4c56-a679-27ae2186897d",
+  "tool": "animate_image_pixminimax",
+  "seed": 11673950,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Lowers its head to the ground, eats the grass with a few bites, then lifts its head back up. It stays in place, facing the viewer the whole time.",
+  "frames": 13,
+  "submitted": 1790384207.7031693,
+  "finished": 1790384385.9657197,
+  "score": {
+   "bright": 2,
+   "area": 1.03,
+   "wide": 1.0,
+   "base": 70
+  },
+  "method": "lunge_front.py (eat from the down drawing)"
+ },
+ "walk_side": {
+  "job": "f12423b3-9895-4165-adec-ed7f0f4e18ad",
+  "tool": "animate_image",
+  "seed": 14209280,
+  "status": "done",
+  "cost": 2.0,
+  "prompt": "Walks in place: its legs step one after the other, its body bobs gently with each step and its tail sways. It stays in place, facing right.",
+  "frames": 9,
+  "submitted": 1790384275.8732626,
+  "finished": 1790384433.5115068,
+  "score": {
+   "bright": 0,
+   "area": 1.0,
+   "wide": 1.03,
+   "base": 203
+  }
+ },
+ "eat_up": {
+  "job": "0cd0373e-115e-409d-afea-171b7a7d3408",
+  "tool": "animate_image_pixminimax",
+  "seed": 2256093,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Lowers its head to the ground, eats the grass with a few bites, then lifts its head back up. It stays in place with its back to the viewer the whole time.",
+  "frames": 13,
+  "submitted": 1790384395.8286045,
+  "finished": 1790384547.1801648,
+  "score": {
+   "bright": 10,
+   "area": 1.01,
+   "wide": 1.0,
+   "base": 119
+  }
+ },
+ "stomp_side": {
+  "job": "4cecc063-29db-45e0-a6f7-6269942b3094",
+  "tool": "animate_image_pixminimax",
+  "seed": 3940149,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Rears up on its hind legs, then stomps down hard with its front feet. It stays in place. It stays in place, facing right.",
+  "frames": 13,
+  "submitted": 1790384396.716091,
+  "finished": 1790384507.2604613,
+  "score": {
+   "bright": 20,
+   "area": 1.1,
+   "wide": 1.05,
+   "base": 203
+  }
+ },
+ "stomp_down": {
+  "job": "bebd3cdf-50cd-4f16-95aa-8b7a550eeb6a",
+  "tool": "animate_image_pixminimax",
+  "seed": 14826311,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Rears up on its hind legs, then stomps down hard with its front feet. It stays in place. It stays in place, facing the viewer the whole time.",
+  "frames": 13,
+  "submitted": 1790384397.668995,
+  "finished": 1790384589.752749,
+  "score": {
+   "bright": 12,
+   "area": 1.21,
+   "wide": 1.0,
+   "base": 70
+  },
+  "method": "lunge_front.py (stomp from the down drawing)"
+ },
+ "stomp_up": {
+  "job": "ac821a38-2344-45e8-b31d-7414f970532c",
+  "tool": "animate_image_pixminimax",
+  "seed": 9526484,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Rears up on its hind legs, then stomps down hard with its front feet. It stays in place. It stays in place with its back to the viewer the whole time.",
+  "frames": 13,
+  "submitted": 1790384398.6060514,
+  "finished": 1790385018.2100322,
+  "score": {
+   "bright": 12,
+   "area": 1.31,
+   "wide": 1.16,
+   "base": 119
+  }
+ },
+ "roar_side": {
+  "job": "ace327af-874d-4f53-9cca-ec5e344818b3",
+  "tool": "animate_image_pixminimax",
+  "seed": 12664799,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Raises its head high and trumpets a long call through its crest, then lowers its head again. It stays in place. It stays in place, facing right.",
+  "frames": 13,
+  "submitted": 1790384399.39492,
+  "finished": 1790384636.987552,
+  "score": {
+   "bright": 31,
+   "area": 1.1,
+   "wide": 1.07,
+   "base": 203
+  }
+ },
+ "roar_up": {
+  "job": "1db27584-ab50-4d21-ab51-4dbcdaa06096",
+  "tool": "animate_image_pixminimax",
+  "seed": 4457997,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Raises its head high and trumpets a long call through its crest, then lowers its head again. It stays in place. It stays in place with its back to the viewer the whole time.",
+  "frames": 13,
+  "submitted": 1790384512.6752105,
+  "finished": 1790384699.8355565,
+  "score": {
+   "bright": 10,
+   "area": 1.25,
+   "wide": 1.0,
+   "base": 119
+  },
+  "method": "lunge_front.py (roar from the up drawing)"
+ },
+ "hurt_side": {
+  "job": "42547d89-5cdd-4f89-97e6-7c98307d92ce",
+  "tool": "animate_image_pixminimax",
+  "seed": 5079657,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Flinches: jerks its head and body back, then returns to its stance. It stays in place, facing right.",
+  "frames": 5,
+  "submitted": 1790384553.461268,
+  "finished": 1790384706.699434,
+  "score": {
+   "bright": 5,
+   "area": 1.04,
+   "wide": 1.0,
+   "base": 203
+  }
+ },
+ "hurt_down": {
+  "job": "cbd53fab-f0d8-43cc-b8f2-b7d4a085b80a",
+  "tool": "animate_image_pixminimax",
+  "seed": 13218132,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Flinches: jerks its head and body back, then returns to its stance. It stays in place, facing the viewer the whole time.",
+  "frames": 5,
+  "submitted": 1790384597.6635723,
+  "finished": 1790384712.4938817,
+  "score": {
+   "bright": 0,
+   "area": 1.06,
+   "wide": 1.04,
+   "base": 70
+  },
+  "method": "lunge_front.py (hurt from the down drawing)"
+ },
+ "hurt_up": {
+  "job": "c3130c13-31be-4499-b23e-fdd6a4d8c2d2",
+  "tool": "animate_image_pixminimax",
+  "seed": 8300503,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Flinches: jerks its head and body back, then returns to its stance. It stays in place with its back to the viewer the whole time.",
+  "frames": 5,
+  "submitted": 1790384643.9092214,
+  "finished": 1790384719.9376268,
+  "score": {
+   "bright": 0,
+   "area": 1.01,
+   "wide": 1.12,
+   "base": 119
+  }
+ },
+ "death_side": {
+  "job": "f74e0c9a-fd7e-4759-ba06-2cefb320654e",
+  "tool": "animate_image_pixminimax",
+  "seed": 13975710,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stumbles, its legs give way and it falls over onto its side, then lies still. It stays in place, facing right.",
+  "frames": 13,
+  "submitted": 1790384721.501858,
+  "finished": 1790384859.413625,
+  "score": {
+   "bright": 0,
+   "area": 1.0,
+   "wide": 1.23,
+   "base": 203
+  }
+ },
+ "death_down": {
+  "job": "8b26737b-4ccf-40b0-86b7-1c9067039121",
+  "tool": "animate_image_pixminimax",
+  "seed": 975644,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stumbles, its legs give way and it falls over onto its side, then lies still. It stays in place, facing the viewer the whole time.",
+  "frames": 13,
+  "submitted": 1790384724.2459385,
+  "finished": 1790384876.7031744,
+  "score": {
+   "bright": 0,
+   "area": 1.0,
+   "wide": 2.21,
+   "base": 70
+  },
+  "method": "lunge_front.py (death from the down drawing)"
+ },
+ "death_up": {
+  "job": "ddc4db74-fba9-4a5d-a839-fa8f7dade910",
+  "tool": "animate_image_pixminimax",
+  "seed": 11011587,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stumbles, its legs give way and it falls over onto its side, then lies still. It stays in place with its back to the viewer the whole time.",
+  "frames": 13,
+  "submitted": 1790384725.5431304,
+  "finished": 1790384893.5872674,
+  "score": {
+   "bright": 14,
+   "area": 1.0,
+   "wide": 2.4,
+   "base": 119
+  }
+ },
+ "roar_down": {
+  "job": "90334496-2fac-4a4b-aedc-7ffd7e57be57",
+  "tool": "animate_image_pixminimax",
+  "seed": 514038,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Raises its head high and trumpets a long call through its crest, then lowers its head again. It stays in place. It stays in place, facing the viewer the whole time.",
+  "frames": 13,
+  "submitted": 1790385027.919145,
+  "finished": 1790385359.3498967,
+  "score": {
+   "bright": 33,
+   "area": 1.28,
+   "wide": 1.0,
+   "base": 70
+  },
+  "method": "lunge_front.py (roar from the down drawing)"
+ }
+}

@@ -1,0 +1,49 @@
+{
+ "notes": [
+  "Moonscale Tidecaller. Scale-fin pauldrons reach up into the head rows (13-15); they are cut out of the helmet (the helmet keeps its own cheek flaps).",
+  "Forearm bracers are the darker teal scales.",
+  "eyes: narrower-set eyes than the base (down view)."
+ ],
+ "labels": {
+  "down": [
+   {
+    "rect": [5, 13, 9, 15],
+    "label": "pauldron_o"
+   },
+   {
+    "rect": [6, 16, 10, 16],
+    "label": "pauldron_o"
+   },
+   {
+    "rect": [21, 13, 25, 15],
+    "label": "pauldron_m"
+   },
+   {
+    "rect": [20, 16, 25, 16],
+    "label": "pauldron_m"
+   }
+  ],
+  "up": [
+   {
+    "rect": [7, 13, 11, 16],
+    "label": "pauldron_o"
+   },
+   {
+    "rect": [21, 13, 25, 16],
+    "label": "pauldron_m"
+   }
+  ],
+  "side": [
+   {
+    "rect": [9, 15, 15, 17],
+    "label": "pauldron_m"
+   }
+  ]
+ },
+ "ramp_hint": {
+  "arm_lower": "378370"
+ },
+ "eyes": {
+  "down": [[12, 11, 14, 13], [16, 11, 18, 13]]
+ }
+}

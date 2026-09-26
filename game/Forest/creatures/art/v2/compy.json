@@ -1,0 +1,101 @@
+{
+ "key": "compy",
+ "species": "compy",
+ "canvas": [
+  48,
+  40
+ ],
+ "ground": 33,
+ "origin": {
+  "side": [
+   12,
+   14
+  ],
+  "down": [
+   12,
+   14
+  ],
+  "up": [
+   12,
+   14
+  ]
+ },
+ "clips": {
+  "idle": {
+   "fps": 6,
+   "loop": true,
+   "views": [
+    "side"
+   ],
+   "frames": 8
+  },
+  "walk": {
+   "fps": 9,
+   "loop": true,
+   "views": [
+    "side"
+   ],
+   "frames": 8
+  },
+  "run": {
+   "fps": 13,
+   "loop": true,
+   "views": [
+    "side"
+   ],
+   "frames": 8
+  },
+  "bite": {
+   "fps": 14,
+   "loop": false,
+   "views": [
+    "side"
+   ],
+   "frames": 9,
+   "hit": 5,
+   "hit_view": {
+    "side": 5
+   }
+  },
+  "threat": {
+   "fps": 10,
+   "loop": false,
+   "views": [
+    "side"
+   ],
+   "frames": 9
+  },
+  "hurt": {
+   "fps": 12,
+   "loop": false,
+   "views": [
+    "side"
+   ],
+   "frames": 5
+  },
+  "death": {
+   "fps": 10,
+   "loop": false,
+   "views": [
+    "side"
+   ],
+   "frames": 13
+  },
+  "look": {
+   "fps": 7,
+   "loop": false,
+   "views": [
+    "side"
+   ],
+   "frames": 13
+  },
+  "stalk": {
+   "fps": 6,
+   "loop": true,
+   "views": [
+    "side"
+   ],
+   "frames": 8
+  }
+ }
+}

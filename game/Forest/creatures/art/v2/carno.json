@@ -1,0 +1,76 @@
+{
+ "key": "carno",
+ "species": "carno",
+ "canvas": [
+  128,
+  112
+ ],
+ "ground": 105,
+ "origin": {
+  "side": [
+   30,
+   40
+  ],
+  "down": [
+   30,
+   40
+  ],
+  "up": [
+   30,
+   40
+  ]
+ },
+ "clips": {
+  "idle": {
+   "fps": 6,
+   "loop": true,
+   "frames": 8
+  },
+  "walk": {
+   "fps": 9,
+   "loop": true,
+   "frames": 8
+  },
+  "run": {
+   "fps": 13,
+   "loop": true,
+   "frames": 8
+  },
+  "bite": {
+   "fps": 14,
+   "loop": false,
+   "frames": 9,
+   "hit": 6,
+   "hit_view": {
+    "side": 6,
+    "down": 5,
+    "up": 5
+   }
+  },
+  "roar": {
+   "fps": 10,
+   "loop": false,
+   "frames": 13
+  },
+  "hurt": {
+   "fps": 12,
+   "loop": false,
+   "frames": 5
+  },
+  "death": {
+   "fps": 10,
+   "loop": false,
+   "frames": 13
+  },
+  "look": {
+   "fps": 7,
+   "loop": false,
+   "frames": 13
+  },
+  "stalk": {
+   "fps": 6,
+   "loop": true,
+   "frames": 8
+  }
+ }
+}

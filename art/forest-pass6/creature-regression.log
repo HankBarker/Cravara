@@ -1,0 +1,18 @@
+Godot Engine v4.6.1.stable.official.14d19694e - https://godotengine.org
+
+SCRIPT ERROR: Parse Error: Cannot infer the type of "end" variable because the value doesn't have a set type.
+   at: GDScript::reload (res://Forest/creatures/ForestCreature.gd:545)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+   at: GDScript::reload (res://Tests/forest_creatures_test.gd:0)
+ERROR: Failed to load script "res://Tests/forest_creatures_test.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript.cpp:2907)
+📦 ItemDB loaded 56 items: basic_axe, basic_pickaxe, berry, berry_compote, berry_seed, bone_arrow, bone_dagger, bucket, campfire, chest, cooked_fish, cooked_meat, crystal_axe, crystal_flask, crystal_pendant, crystal_pickaxe, crystal_shard, dodo_egg, fishing_rod, forest_omelet, garden_hoe, hide_bed, hunter_charm, lantern, leather_chestplate, leather_helmet, leather_leggings, log, moonscale, mushroom, mushroom_potion, mushroom_spore, net, plank, plant_fiber, prism_crystal, raptor_fang, reed_bow, reed_perch, river_totem, shardfin, shard_sword, stego_saddle, stone, tent, thatch_roof, torch, trex_meat, trex_scale, trike_saddle, water_bucket, water_flask, wood_door, wood_floor, wood_wall, workbench
+SCRIPT ERROR: Invalid call. Nonexistent function 'new' in base 'GDScript'.
+   at: make_creature (res://Tests/forest_creatures_test.gd:22)
+   GDScript backtrace (most recent call first):
+       [0] make_creature (res://Tests/forest_creatures_test.gd:22)
+       [1] verify (res://Tests/forest_creatures_test.gd:30)
+SCRIPT ERROR: Invalid access to property or key '_sprite' on a base object of type 'Nil'.
+   at: verify (res://Tests/forest_creatures_test.gd:31)
+   GDScript backtrace (most recent call first):
+       [0] verify (res://Tests/forest_creatures_test.gd:31)

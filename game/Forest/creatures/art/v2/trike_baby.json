@@ -1,0 +1,75 @@
+{
+ "key": "trike_baby",
+ "species": "trike",
+ "canvas": [
+  56,
+  48
+ ],
+ "ground": 41,
+ "origin": {
+  "side": [
+   12,
+   16
+  ],
+  "down": [
+   12,
+   16
+  ],
+  "up": [
+   12,
+   16
+  ]
+ },
+ "clips": {
+  "idle": {
+   "fps": 6,
+   "loop": true,
+   "views": [
+    "side"
+   ],
+   "frames": 8
+  },
+  "walk": {
+   "fps": 9,
+   "loop": true,
+   "views": [
+    "side"
+   ],
+   "frames": 8
+  },
+  "run": {
+   "fps": 13,
+   "loop": true,
+   "views": [
+    "side"
+   ],
+   "frames": 8
+  },
+  "eat": {
+   "fps": 8,
+   "loop": false,
+   "views": [
+    "side"
+   ],
+   "frames": 13
+  },
+  "hurt": {
+   "fps": 12,
+   "loop": false,
+   "views": [
+    "side"
+   ],
+   "frames": 5,
+   "placeholder": true
+  },
+  "death": {
+   "fps": 10,
+   "loop": false,
+   "views": [
+    "side"
+   ],
+   "frames": 13,
+   "placeholder": true
+  }
+ }
+}

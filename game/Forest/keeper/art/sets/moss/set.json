@@ -1,0 +1,183 @@
+{
+ "parts": {
+  "head_down": {
+   "origin": [
+    24,
+    13
+   ]
+  },
+  "head_down_blink": {
+   "origin": [
+    24,
+    13
+   ]
+  },
+  "torso_down": {
+   "origin": [
+    26,
+    29
+   ]
+  },
+  "pauldron_m_down": {
+   "origin": [
+    35,
+    26
+   ],
+   "shoulder": [
+    36.8,
+    30.6
+   ]
+  },
+  "pauldron_o_down": {
+   "origin": [
+    22,
+    26
+   ],
+   "shoulder": [
+    27.2,
+    30.6
+   ]
+  },
+  "boot_m_down": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "boot_o_down": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "head_up": {
+   "origin": [
+    24,
+    13
+   ]
+  },
+  "torso_up": {
+   "origin": [
+    27,
+    28
+   ]
+  },
+  "pauldron_m_up": {
+   "origin": [
+    34,
+    26
+   ],
+   "shoulder": [
+    37.0,
+    30.4
+   ]
+  },
+  "pauldron_o_up": {
+   "origin": [
+    22,
+    26
+   ],
+   "shoulder": [
+    27.0,
+    30.4
+   ]
+  },
+  "boot_m_up": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "boot_o_up": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "head_side": {
+   "origin": [
+    24,
+    13
+   ]
+  },
+  "head_side_blink": {
+   "origin": [
+    24,
+    13
+   ]
+  },
+  "torso_side": {
+   "origin": [
+    27,
+    29
+   ]
+  },
+  "pauldron_m_side": {
+   "origin": [
+    26,
+    27
+   ],
+   "shoulder": [
+    30.2,
+    30.8
+   ]
+  },
+  "boot_m_side": {
+   "pivot": [
+    3.2,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  }
+ },
+ "materials": {
+  "arm_upper": [
+   "2e4b1b",
+   "486829",
+   "5e8737",
+   "81b344",
+   "a5c56e"
+  ],
+  "arm_lower": [
+   "4f3e20",
+   "6a5a2e",
+   "96794a",
+   "b29a67",
+   "c4b78e"
+  ],
+  "leg_upper": [
+   "091c0a",
+   "142f11",
+   "2a4e20",
+   "437531",
+   "5e8737"
+  ],
+  "leg_lower": [
+   "091c0a",
+   "142f11",
+   "2a4e20",
+   "437531",
+   "5e8737"
+  ]
+ },
+ "name": "Mossweave Warden"
+}

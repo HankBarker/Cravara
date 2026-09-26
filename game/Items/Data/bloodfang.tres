@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/art/items/bloodfang.png" id="2"]
+[resource]
+script = ExtResource("1")
+id = "bloodfang"
+name = "Bloodfang Necklace"
+description = "Fangs and a filed plate: every cut counts."
+icon = ExtResource("2")
+max_stack = 1
+rarity = "epic"
+equipment_slot = "trinket"
+effects = {
+"crit": 0.07,
+"bleed": 2.0
+}

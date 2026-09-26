@@ -1,0 +1,11 @@
+e5f94971-81da-4c0d-ae41-54fd1a16e14b
+status: completed
+id: e5f94971-81da-4c0d-ae41-54fd1a16e14b
+job_id: e5f94971-81da-4c0d-ae41-54fd1a16e14b
+frames: 1
+transparent: yes
+asset_id: eb654412-079e-58fe-b5f7-5d4364d45dc7
+asset_type: image
+asset_status: saved
+gallery: saved to your PixelLab gallery (pixellab.ai/create)
+download: https://api.pixellab.ai/mcp/images/e5f94971-81da-4c0d-ae41-54fd1a16e14b/download

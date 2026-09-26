@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/art/items/mirefang_tooth.png" id="2"]
+[resource]
+script = ExtResource("1")
+id = "mirefang_tooth"
+name = "Mirefang Tooth"
+description = "A Suchomimus tooth. Fish bite sooner; the shallows pull less."
+icon = ExtResource("2")
+max_stack = 1
+rarity = "rare"
+equipment_slot = "trinket"
+effects = {
+"fishing": 0.25,
+"wading": 0.2
+}

@@ -1,0 +1,776 @@
+{
+ "idle_side": {
+  "job": "3d1965a3-c626-4b0d-bf10-a8c7588c65ff",
+  "tool": "animate_image_pixminimax",
+  "seed": 6860709,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stands still in a relaxed pose; its body rises and falls very slightly and its tail sways a little. It stays in place, facing right.",
+  "frames": 9,
+  "submitted": 1790385948.9103482,
+  "finished": 1790386133.3799498,
+  "score": {
+   "bright": 1,
+   "area": 1.0,
+   "wide": 1.0,
+   "base": 46
+  }
+ },
+ "idle_down": {
+  "job": "af76e088-712c-4e5e-b1ba-22d28cfb8221",
+  "tool": "animate_image_pixminimax",
+  "seed": 4774402,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stands still in a relaxed pose; its body rises and falls very slightly and its tail sways a little. It stays in place, facing the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790386061.836569,
+  "finished": 1790386216.2137978,
+  "score": {
+   "bright": 2,
+   "area": 1.08,
+   "wide": 1.18,
+   "base": 18
+  }
+ },
+ "idle_up": {
+  "job": "6675a5ee-0d8f-4ced-a4a9-a21b2cae7ef0",
+  "tool": "animate_image_pixminimax",
+  "seed": 143486,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stands still in a relaxed pose; its body rises and falls very slightly and its tail sways a little. It stays in place with its back to the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790386135.6295269,
+  "finished": 1790386264.3255434,
+  "score": {
+   "bright": 14,
+   "area": 1.03,
+   "wide": 1.0,
+   "base": 29
+  }
+ },
+ "walk_side": {
+  "job": "116e151e-dcb6-4beb-a4ae-2297749c4909",
+  "tool": "animate_image",
+  "seed": 8001158,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Walks in place: its legs step one after the other, its body bobs gently with each step and its tail sways. It stays in place, facing right.",
+  "frames": 9,
+  "submitted": 1790386136.7152972,
+  "finished": 1790386275.4383607,
+  "score": {
+   "bright": 1,
+   "area": 1.03,
+   "wide": 1.07,
+   "base": 46
+  }
+ },
+ "walk_up": {
+  "job": "fcb31211-4d7b-49b6-894e-860af09c7d3d",
+  "tool": "animate_image",
+  "seed": 3449498,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Walks in place: its legs step one after the other, its body bobs gently with each step and its tail sways. It stays in place with its back to the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790386138.2726324,
+  "finished": 1790386229.81926,
+  "score": {
+   "bright": 4,
+   "area": 1.01,
+   "wide": 1.11,
+   "base": 29
+  }
+ },
+ "run_side": {
+  "job": "e1a45e3f-233a-4c6e-ad48-5b218047535d",
+  "tool": "animate_image_pixminimax",
+  "seed": 3259891,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Runs in place with long fast strides, its body leaning forward and its tail held straight out behind. It stays in place, facing right.",
+  "frames": 9,
+  "submitted": 1790386231.0364525,
+  "finished": 1790386346.4373314,
+  "score": {
+   "bright": 10,
+   "area": 1.03,
+   "wide": 1.15,
+   "base": 46
+  }
+ },
+ "run_up": {
+  "job": "91100b5a-5c87-44e1-a9d5-7f20b1cb5ce4",
+  "tool": "animate_image_pixminimax",
+  "seed": 10570490,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Runs in place with long fast strides, its body leaning forward and its tail held straight out behind. It stays in place with its back to the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790386233.2408462,
+  "finished": 1790386380.0365016,
+  "score": {
+   "bright": 29,
+   "area": 1.0,
+   "wide": 1.32,
+   "base": 29
+  }
+ },
+ "slash_side": {
+  "job": "9462ee2f-8e55-4415-b5d2-523556d5b908",
+  "tool": "animate_image_pixminimax",
+  "seed": 12553982,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Darts forward, snaps its jaws and swipes with its clawed hands, then springs back into its stance. It stays in place, facing right.",
+  "frames": 9,
+  "submitted": 1790386234.0691655,
+  "finished": 1790386391.2543225,
+  "score": {
+   "bright": 23,
+   "area": 1.14,
+   "wide": 1.65,
+   "base": 46
+  }
+ },
+ "_history": {
+  "walk_down": [
+   {
+    "job": "5e5934d0-6707-4efd-91c1-d17ec02cf1c7",
+    "tool": "animate_image",
+    "seed": 8988735,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Walks in place: its legs step one after the other, its body bobs gently with each step and its tail sways. It stays in place, facing the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790386137.533856,
+    "finished": 1790386336.681127,
+    "score": {
+     "bright": 20,
+     "area": 1.21,
+     "wide": 1.64,
+     "base": 18
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\deino_crystal\\walk_down@0"
+   },
+   {
+    "job": "b3eac022-5849-43b5-b0ad-0f8aec043606",
+    "tool": "animate_image",
+    "seed": 8989735,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Walks in place: its legs step one after the other, its body bobs gently with each step and its tail sways. It stays in place, facing the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790386439.6987379,
+    "finished": 1790386588.6393104,
+    "score": {
+     "bright": 0,
+     "area": 1.32,
+     "wide": 1.05,
+     "base": 18
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\deino_crystal\\walk_down@1"
+   },
+   {
+    "job": "3b6216de-87be-46ca-9b1b-b180edc0f86c",
+    "tool": "animate_image",
+    "seed": 8990735,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Walks in place: its legs step one after the other, its body bobs gently with each step and its tail sways. It stays in place, facing the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790386765.8159301,
+    "finished": 1790386899.8390572,
+    "score": {
+     "bright": 0,
+     "area": 1.2,
+     "wide": 1.0,
+     "base": 18
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\deino_crystal\\walk_down@2"
+   }
+  ],
+  "run_down": [
+   {
+    "job": "1ee59f5f-9b75-4623-a7df-5b648d02a70f",
+    "tool": "animate_image_pixminimax",
+    "seed": 3057440,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Runs in place with long fast strides, its body leaning forward and its tail held straight out behind. It stays in place, facing the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790386232.208764,
+    "finished": 1790386370.0060952,
+    "score": {
+     "bright": 2,
+     "area": 1.24,
+     "wide": 1.09,
+     "base": 18
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\deino_crystal\\run_down@0"
+   },
+   {
+    "job": "ec29680a-fa0e-4df2-9048-9e6192b149dd",
+    "tool": "animate_image_pixminimax",
+    "seed": 3058440,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Runs in place with long fast strides, its body leaning forward and its tail held straight out behind. It stays in place, facing the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790386517.6422133,
+    "finished": 1790386598.0160267,
+    "score": {
+     "bright": 5,
+     "area": 1.25,
+     "wide": 1.18,
+     "base": 18
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\deino_crystal\\run_down@1"
+   },
+   {
+    "job": "567b2d7a-cea7-44e4-8328-569c7ea1502b",
+    "tool": "animate_image_pixminimax",
+    "seed": 3059440,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Runs in place with long fast strides, its body leaning forward and its tail held straight out behind. It stays in place, facing the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790386766.7763085,
+    "finished": 1790386908.7745316,
+    "score": {
+     "bright": 12,
+     "area": 1.32,
+     "wide": 1.09,
+     "base": 18
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\deino_crystal\\run_down@2"
+   }
+  ],
+  "slash_up": [
+   {
+    "job": "c5d2fa9d-aa76-4702-977e-576ffd73467e",
+    "tool": "animate_image_pixminimax",
+    "seed": 7533641,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Lunges forward away from the viewer, snapping its jaws and swiping with its clawed hands, then springs back. It stays in place with its back to the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790386394.54448,
+    "finished": 1790386472.9307399,
+    "score": {
+     "bright": 33,
+     "area": 1.82,
+     "wide": 2.05,
+     "base": 29
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\deino_crystal\\slash_up@0"
+   },
+   {
+    "job": "4effb0bd-9afb-4308-a067-3212fe7ea40e",
+    "tool": "animate_image_pixminimax",
+    "seed": 7534641,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Lunges forward away from the viewer, snapping its jaws and swiping with its clawed hands, then springs back. It stays in place with its back to the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790386642.0755236,
+    "finished": 1790386812.7616167,
+    "score": {
+     "bright": 36,
+     "area": 1.5,
+     "wide": 2.42,
+     "base": 29
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\deino_crystal\\slash_up@1"
+   },
+   {
+    "job": "6e1eafef-ecd1-4174-870f-c2fca54b06e9",
+    "tool": "animate_image_pixminimax",
+    "seed": 7535641,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Lunges forward away from the viewer, snapping its jaws and swiping with its clawed hands, then springs back. It stays in place with its back to the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790386950.521204,
+    "finished": 1790387047.4368944,
+    "score": {
+     "bright": 105,
+     "area": 1.83,
+     "wide": 2.68,
+     "base": 29
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\deino_crystal\\slash_up@2"
+   }
+  ],
+  "slash_down": [
+   {
+    "job": "fc3c51f9-6a0f-4cf2-bb89-9d1759fe499d",
+    "tool": "animate_image_pixminimax",
+    "seed": 12963775,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Darts forward, snaps its jaws and swipes with its clawed hands, then springs back into its stance. It stays in place, facing the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790386393.356731,
+    "finished": 1790386607.725279,
+    "score": {
+     "bright": 71,
+     "area": 1.65,
+     "wide": 2.5,
+     "base": 18
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\deino_crystal\\slash_down@0"
+   },
+   {
+    "job": "1f95bf97-a028-4b89-b433-681202b4233e",
+    "tool": "animate_image_pixminimax",
+    "seed": 12964775,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Darts forward, snaps its jaws and swipes with its clawed hands, then springs back into its stance. It stays in place, facing the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790386768.1932697,
+    "finished": 1790386918.156,
+    "score": {
+     "bright": 302,
+     "area": 1.85,
+     "wide": 2.77,
+     "base": 18
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\deino_crystal\\slash_down@1"
+   },
+   {
+    "job": "be4171da-5d4f-4298-b9a5-184eeb95c541",
+    "tool": "animate_image_pixminimax",
+    "seed": 12965775,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Darts forward, snaps its jaws and swipes with its clawed hands, then springs back into its stance. It stays in place, facing the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790387111.0864835,
+    "finished": 1790387228.8616986,
+    "score": {
+     "bright": 28,
+     "area": 1.34,
+     "wide": 2.68,
+     "base": 18
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\deino_crystal\\slash_down@2"
+   }
+  ],
+  "threat_down": [
+   {
+    "job": "7de83117-e518-4c84-a499-e3afc1ce7e21",
+    "tool": "animate_image_pixminimax",
+    "seed": 9260177,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Crouches low, raises its clawed arms and opens its jaws wide in a screech, holds the pose for a moment, then settles back into its stance. It stays in place, facing the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790386520.429632,
+    "finished": 1790386628.7735724,
+    "score": {
+     "bright": 40,
+     "area": 1.65,
+     "wide": 2.55,
+     "base": 18
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\deino_crystal\\threat_down@0"
+   },
+   {
+    "job": "f45a921d-b201-4927-b75a-c4d6cab83995",
+    "tool": "animate_image_pixminimax",
+    "seed": 9261177,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Crouches low, raises its clawed arms and opens its jaws wide in a screech, holds the pose for a moment, then settles back into its stance. It stays in place, facing the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790386838.4895494,
+    "finished": 1790386928.8878627,
+    "score": {
+     "bright": 40,
+     "area": 1.73,
+     "wide": 2.18,
+     "base": 18
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\deino_crystal\\threat_down@1"
+   },
+   {
+    "job": "d89d963a-bfb8-483d-8b3b-5fa8ea608518",
+    "tool": "animate_image_pixminimax",
+    "seed": 9262177,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Crouches low, raises its clawed arms and opens its jaws wide in a screech, holds the pose for a moment, then settles back into its stance. It stays in place, facing the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790387111.9647868,
+    "finished": 1790387247.401108,
+    "score": {
+     "bright": 43,
+     "area": 2.02,
+     "wide": 2.55,
+     "base": 18
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\deino_crystal\\threat_down@2"
+   }
+  ],
+  "threat_up": [
+   {
+    "job": "a43228df-0fe7-40e3-abeb-9f8b0b26215a",
+    "tool": "animate_image_pixminimax",
+    "seed": 12568967,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Keeps its back to the viewer: rears up, lifts its clawed arms out to the sides and screeches, then drops back into its stance. It stays in place with its back to the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790386521.3689556,
+    "finished": 1790386641.1273973,
+    "score": {
+     "bright": 88,
+     "area": 2.28,
+     "wide": 3.37,
+     "base": 29
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\deino_crystal\\threat_up@0"
+   },
+   {
+    "job": "b99cb377-e34f-45b9-a6b1-c67660aa3ccf",
+    "tool": "animate_image_pixminimax",
+    "seed": 12569967,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Keeps its back to the viewer: rears up, lifts its clawed arms out to the sides and screeches, then drops back into its stance. It stays in place with its back to the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790386839.756726,
+    "finished": 1790386938.2483149,
+    "score": {
+     "bright": 75,
+     "area": 2.28,
+     "wide": 3.32,
+     "base": 29
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\deino_crystal\\threat_up@1"
+   },
+   {
+    "job": "5db272b1-f583-4d51-abc7-a336808ef5ad",
+    "tool": "animate_image_pixminimax",
+    "seed": 12570967,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Keeps its back to the viewer: rears up, lifts its clawed arms out to the sides and screeches, then drops back into its stance. It stays in place with its back to the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790387112.9327126,
+    "finished": 1790387257.2100604,
+    "score": {
+     "bright": 49,
+     "area": 2.01,
+     "wide": 2.89,
+     "base": 29
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\deino_crystal\\threat_up@2"
+   }
+  ],
+  "hurt_up": [
+   {
+    "job": "58c2b85a-49fb-4a80-a4f4-52fe69de5e85",
+    "tool": "animate_image_pixminimax",
+    "seed": 11550721,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Flinches: jerks its head and body back, then returns to its stance. It stays in place with its back to the viewer the whole time.",
+    "frames": 5,
+    "submitted": 1790386645.2468107,
+    "finished": 1790386818.834083,
+    "score": {
+     "bright": 1,
+     "area": 1.05,
+     "wide": 1.79,
+     "base": 29
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\deino_crystal\\hurt_up@0"
+   }
+  ]
+ },
+ "pounce_side": {
+  "job": "d8179406-ba0a-4e94-990d-fda87b446643",
+  "tool": "animate_image_pixminimax",
+  "seed": 15489425,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Crouches low, jumps forward into the air with its foot claws raised, lands and recovers. It stays in place, facing right.",
+  "frames": 13,
+  "submitted": 1790386395.9357538,
+  "finished": 1790386487.974677,
+  "score": {
+   "bright": 14,
+   "area": 1.09,
+   "wide": 1.43,
+   "base": 46
+  }
+ },
+ "pounce_down": {
+  "job": "b705dfdf-a591-425f-a40e-7244ff54a2ab",
+  "tool": "animate_image_pixminimax",
+  "seed": 2541164,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Crouches low, jumps forward into the air with its foot claws raised, lands and recovers. It stays in place, facing the viewer the whole time.",
+  "frames": 13,
+  "submitted": 1790386397.0419781,
+  "finished": 1790386502.240469,
+  "score": {
+   "bright": 15,
+   "area": 1.33,
+   "wide": 1.59,
+   "base": 18
+  }
+ },
+ "pounce_up": {
+  "job": "8146f5fb-a23d-4c30-baaf-6bdd64095fa9",
+  "tool": "animate_image_pixminimax",
+  "seed": 7338900,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Crouches low, jumps forward into the air with its foot claws raised, lands and recovers. It stays in place with its back to the viewer the whole time.",
+  "frames": 13,
+  "submitted": 1790386398.39216,
+  "finished": 1790386515.9103684,
+  "score": {
+   "bright": 32,
+   "area": 1.46,
+   "wide": 2.11,
+   "base": 29
+  }
+ },
+ "threat_side": {
+  "job": "e7530415-f482-40d4-9f39-93263b64da4f",
+  "tool": "animate_image_pixminimax",
+  "seed": 13233074,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Crouches low, raises its clawed arms and opens its jaws wide in a screech, holds the pose for a moment, then settles back into its stance. It stays in place, facing right.",
+  "frames": 9,
+  "submitted": 1790386518.8306875,
+  "finished": 1790386617.5211544,
+  "score": {
+   "bright": 35,
+   "area": 1.34,
+   "wide": 1.25,
+   "base": 46
+  }
+ },
+ "hurt_side": {
+  "job": "cbdda9db-7a6a-413e-bdba-a0432096bc52",
+  "tool": "animate_image_pixminimax",
+  "seed": 2631059,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Flinches: jerks its head and body back, then returns to its stance. It stays in place, facing right.",
+  "frames": 5,
+  "submitted": 1790386643.2368052,
+  "finished": 1790386706.2956498,
+  "score": {
+   "bright": 15,
+   "area": 1.01,
+   "wide": 1.0,
+   "base": 46
+  }
+ },
+ "hurt_down": {
+  "job": "db1a00be-3e8a-426d-8e59-4c70e4daae9f",
+  "tool": "animate_image_pixminimax",
+  "seed": 16114945,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Flinches: jerks its head and body back, then returns to its stance. It stays in place, facing the viewer the whole time.",
+  "frames": 5,
+  "submitted": 1790386644.4685497,
+  "finished": 1790386712.5142574,
+  "score": {
+   "bright": 9,
+   "area": 1.09,
+   "wide": 1.0,
+   "base": 18
+  }
+ },
+ "death_side": {
+  "job": "d40eaed6-344c-4b76-8104-6c2b9085b3c7",
+  "tool": "animate_image_pixminimax",
+  "seed": 13511444,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stumbles, its legs give way and it falls over onto its side, then lies still. It stays in place, facing right.",
+  "frames": 13,
+  "submitted": 1790386646.033447,
+  "finished": 1790386730.055685,
+  "score": {
+   "bright": 12,
+   "area": 1.03,
+   "wide": 1.65,
+   "base": 46
+  }
+ },
+ "death_down": {
+  "job": "b6327767-7504-4f76-bf15-6bd18f69bfe7",
+  "tool": "animate_image_pixminimax",
+  "seed": 4032431,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stumbles, its legs give way and it falls over onto its side, then lies still. It stays in place, facing the viewer the whole time.",
+  "frames": 13,
+  "submitted": 1790386646.742796,
+  "finished": 1790386837.1985898,
+  "score": {
+   "bright": 4,
+   "area": 1.06,
+   "wide": 3.0,
+   "base": 18
+  }
+ },
+ "death_up": {
+  "job": "eba6d0b6-9d5c-4a0d-af3b-8facb90cdd75",
+  "tool": "animate_image_pixminimax",
+  "seed": 1392765,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stumbles, its legs give way and it falls over onto its side, then lies still. It stays in place with its back to the viewer the whole time.",
+  "frames": 13,
+  "submitted": 1790386647.9544878,
+  "finished": 1790386752.7691982,
+  "score": {
+   "bright": 12,
+   "area": 1.05,
+   "wide": 2.58,
+   "base": 29
+  }
+ },
+ "hurt_up": {
+  "job": "5374208c-1f1b-47b5-9ff2-b57aafa2291d",
+  "tool": "animate_image_pixminimax",
+  "seed": 11551721,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Flinches: jerks its head and body back, then returns to its stance. It stays in place with its back to the viewer the whole time.",
+  "frames": 5,
+  "submitted": 1790386952.1549017,
+  "finished": 1790387052.2153137,
+  "score": {
+   "bright": 10,
+   "area": 1.04,
+   "wide": 1.05,
+   "base": 29
+  }
+ },
+ "walk_down": {
+  "job": "e642770d-4a4d-4c30-b119-6a777ee46df5",
+  "tool": "animate_image",
+  "seed": 8991735,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Walks in place: its legs step one after the other, its body bobs gently with each step and its tail sways. It stays in place, facing the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790387109.1804614,
+  "finished": 1790387217.7496514,
+  "score": {
+   "bright": 0,
+   "area": 1.29,
+   "wide": 1.0,
+   "base": 18
+  },
+  "kept_attempt": "C:\\Cravera\\art\\dino-v2\\raw\\deino_crystal\\walk_down@2",
+  "method": "AI clip + cap_clamp.py (tol 1)"
+ },
+ "run_down": {
+  "job": "68bf6856-de38-4500-8195-7bea3bf1ee36",
+  "tool": "animate_image_pixminimax",
+  "seed": 3060440,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Runs in place with long fast strides, its body leaning forward and its tail held straight out behind. It stays in place, facing the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790387109.976186,
+  "finished": 1790387307.4089925,
+  "score": {
+   "bright": 4,
+   "area": 1.34,
+   "wide": 1.14,
+   "base": 18
+  },
+  "kept_attempt": "C:\\Cravera\\art\\dino-v2\\raw\\deino_crystal\\run_down@0",
+  "method": "AI clip + cap_clamp.py (tol 1)"
+ },
+ "slash_up": {
+  "job": "d7ad712b-0138-4fd6-b845-04d4ff688498",
+  "tool": "animate_image_pixminimax",
+  "seed": 7536641,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Lunges forward away from the viewer, snapping its jaws and swiping with its clawed hands, then springs back. It stays in place with its back to the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790387161.4634676,
+  "finished": 1790387237.4457495,
+  "score": {
+   "bright": 50,
+   "area": 1.98,
+   "wide": 2.37,
+   "base": 29
+  },
+  "kept_attempt": "C:\\Cravera\\art\\dino-v2\\raw\\deino_crystal\\slash_up@1",
+  "method": "lunge_front.py bite_up (as slash_up; the AI frames in slash_up_ai)"
+ },
+ "slash_down": {
+  "job": "7e087196-cdf3-4c0c-bf9e-afde16527ac8",
+  "tool": "animate_image_pixminimax",
+  "seed": 12966775,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Darts forward, snaps its jaws and swipes with its clawed hands, then springs back into its stance. It stays in place, facing the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790387322.203653,
+  "finished": 1790387449.0785558,
+  "score": {
+   "bright": 19,
+   "area": 1.1,
+   "wide": 2.27,
+   "base": 18
+  }
+ },
+ "threat_down": {
+  "job": "dbf15984-640d-4bc8-b0d7-67bdb3a2c4fc",
+  "tool": "animate_image_pixminimax",
+  "seed": 9263177,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Crouches low, raises its clawed arms and opens its jaws wide in a screech, holds the pose for a moment, then settles back into its stance. It stays in place, facing the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790387322.9507098,
+  "finished": 1790387457.4994066,
+  "score": {
+   "bright": 51,
+   "area": 1.86,
+   "wide": 2.64,
+   "base": 18
+  },
+  "kept_attempt": "C:\\Cravera\\art\\dino-v2\\raw\\deino_crystal\\threat_down@1"
+ },
+ "threat_up": {
+  "job": "fafe701b-c46f-4275-a408-3f17fda06608",
+  "tool": "animate_image_pixminimax",
+  "seed": 12571967,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Keeps its back to the viewer: rears up, lifts its clawed arms out to the sides and screeches, then drops back into its stance. It stays in place with its back to the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790387406.8192055,
+  "finished": 1790387505.8750556,
+  "score": {
+   "bright": 70,
+   "area": 2.12,
+   "wide": 3.11,
+   "base": 29
+  },
+  "kept_attempt": "C:\\Cravera\\art\\dino-v2\\raw\\deino_crystal\\threat_up@2"
+ }
+}

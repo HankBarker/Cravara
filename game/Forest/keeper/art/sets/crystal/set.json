@@ -1,0 +1,183 @@
+{
+ "parts": {
+  "head_down": {
+   "origin": [
+    25,
+    13
+   ]
+  },
+  "head_down_blink": {
+   "origin": [
+    25,
+    13
+   ]
+  },
+  "torso_down": {
+   "origin": [
+    26,
+    29
+   ]
+  },
+  "pauldron_m_down": {
+   "origin": [
+    36,
+    27
+   ],
+   "shoulder": [
+    36.8,
+    30.6
+   ]
+  },
+  "pauldron_o_down": {
+   "origin": [
+    22,
+    27
+   ],
+   "shoulder": [
+    27.2,
+    30.6
+   ]
+  },
+  "boot_m_down": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "boot_o_down": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "head_up": {
+   "origin": [
+    25,
+    13
+   ]
+  },
+  "torso_up": {
+   "origin": [
+    27,
+    28
+   ]
+  },
+  "pauldron_m_up": {
+   "origin": [
+    35,
+    27
+   ],
+   "shoulder": [
+    37.0,
+    30.4
+   ]
+  },
+  "pauldron_o_up": {
+   "origin": [
+    23,
+    27
+   ],
+   "shoulder": [
+    27.0,
+    30.4
+   ]
+  },
+  "boot_m_up": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "boot_o_up": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "head_side": {
+   "origin": [
+    25,
+    13
+   ]
+  },
+  "head_side_blink": {
+   "origin": [
+    25,
+    13
+   ]
+  },
+  "torso_side": {
+   "origin": [
+    27,
+    29
+   ]
+  },
+  "pauldron_m_side": {
+   "origin": [
+    25,
+    27
+   ],
+   "shoulder": [
+    30.2,
+    30.8
+   ]
+  },
+  "boot_m_side": {
+   "pivot": [
+    3.2,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  }
+ },
+ "materials": {
+  "arm_upper": [
+   "4b7277",
+   "5f9194",
+   "93abb0",
+   "c0c5cc",
+   "eef1ee"
+  ],
+  "arm_lower": [
+   "5f9194",
+   "93abb0",
+   "c0c5cc",
+   "eef1ee",
+   "fafafa"
+  ],
+  "leg_upper": [
+   "0a424c",
+   "0e616b",
+   "1c8e8f",
+   "29bfb2",
+   "21dfc1"
+  ],
+  "leg_lower": [
+   "0a424c",
+   "0e616b",
+   "1c8e8f",
+   "29bfb2",
+   "21dfc1"
+  ]
+ },
+ "name": "Skyshard"
+}

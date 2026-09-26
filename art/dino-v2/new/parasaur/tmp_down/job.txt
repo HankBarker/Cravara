@@ -1,0 +1,11 @@
+f38da8cb-5944-4c32-9724-5d302061afd2
+status: completed
+id: f38da8cb-5944-4c32-9724-5d302061afd2
+job_id: f38da8cb-5944-4c32-9724-5d302061afd2
+frames: 1
+transparent: yes
+asset_id: 26252722-ecde-5714-b9e8-c1e9fa61684d
+asset_type: image
+asset_status: saved
+gallery: saved to your PixelLab gallery (pixellab.ai/create)
+download: https://api.pixellab.ai/mcp/images/f38da8cb-5944-4c32-9724-5d302061afd2/download

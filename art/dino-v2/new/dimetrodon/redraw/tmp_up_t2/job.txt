@@ -1,0 +1,11 @@
+fe260d39-576f-44d2-a7de-046abda08367
+status: completed
+id: fe260d39-576f-44d2-a7de-046abda08367
+job_id: fe260d39-576f-44d2-a7de-046abda08367
+frames: 1
+transparent: yes
+asset_id: 42439aa9-0377-523c-ba0a-350bd946371b
+asset_type: image
+asset_status: saved
+gallery: saved to your PixelLab gallery (pixellab.ai/create)
+download: https://api.pixellab.ai/mcp/images/fe260d39-576f-44d2-a7de-046abda08367/download

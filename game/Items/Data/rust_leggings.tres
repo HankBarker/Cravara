@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/equipment/art/wardrobe/icons/rust_leggings.png" id="2"]
+[resource]
+script = ExtResource("1")
+id = "rust_leggings"
+name = "Rustback Leggings"
+description = "Rust-red scale and dark boots. Rustback set: blows 20% harder."
+icon = ExtResource("2")
+max_stack = 1
+rarity = "epic"
+armor_slot = "legs"
+defense = 12

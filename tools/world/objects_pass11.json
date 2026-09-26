@@ -1,0 +1,110 @@
+[
+ {
+  "name": "nest",
+  "description": "front view of a big dinosaur nest on the ground: a shallow ring of woven twigs, dry grass, a few feathers and leaves, with an empty hollow in the middle, orthographic 3/4 top-down RPG prop, facing the camera",
+  "width": 48,
+  "height": 32
+ },
+ {
+  "name": "incubator",
+  "description": "front view of a small hatchery for one dinosaur egg: a round nest of golden straw in a low clay bowl set on flat warm stones, a small glowing ember beneath it, orthographic 3/4 top-down RPG prop, facing the camera",
+  "width": 32,
+  "height": 32
+ },
+ {
+  "name": "palm",
+  "description": "front view of a tropical palm tree with a gently curved ringed trunk and a lush crown of long green fronds, a few coconuts, orthographic 3/4 top-down RPG prop, facing the camera, standing on the ground",
+  "width": 64,
+  "height": 80
+ },
+ {
+  "name": "cactus",
+  "description": "front view of a tall green saguaro cactus with two raised arms, pale spines and three small red fruits on top, orthographic 3/4 top-down RPG prop, facing the camera, standing on sand",
+  "width": 32,
+  "height": 48
+ },
+ {
+  "name": "dead_tree",
+  "description": "front view of a bare dead desert tree, twisted grey trunk and a few crooked leafless branches, sun-bleached bark, orthographic 3/4 top-down RPG prop, facing the camera",
+  "width": 48,
+  "height": 64
+ },
+ {
+  "name": "reeds",
+  "description": "front view of a clump of tall green lake reeds and bulrushes with brown seed heads, orthographic 3/4 top-down RPG prop, facing the camera",
+  "width": 32,
+  "height": 40
+ },
+ {
+  "name": "lily_pads",
+  "description": "top-down view of three round green lily pads floating flat on water, one with a small pink water lily flower, no water drawn, transparent background",
+  "width": 32,
+  "height": 32
+ },
+ {
+  "name": "clam_bed",
+  "description": "front view of a cluster of large pale blue-grey clams half buried in wet sand at the water's edge, one open showing a clear shining pearl, orthographic 3/4 top-down RPG prop",
+  "width": 32,
+  "height": 32
+ },
+ {
+  "name": "boat",
+  "description": "top-down view of a small wooden dugout canoe with a paddle lying across it, warm brown wood, pointed bow and stern, facing right, orthographic RPG prop, no water",
+  "width": 64,
+  "height": 32
+ },
+ {
+  "name": "pine",
+  "description": "front view of a tall dark green pine tree with layered drooping branches and a brown trunk, cool colours, orthographic 3/4 top-down RPG prop, facing the camera",
+  "width": 48,
+  "height": 80
+ },
+ {
+  "name": "birch",
+  "description": "front view of a slender white birch tree with black bark markings and a light airy crown of pale yellow-green leaves, orthographic 3/4 top-down RPG prop, facing the camera",
+  "width": 48,
+  "height": 72
+ },
+ {
+  "name": "chalk_rock",
+  "description": "front view of a big rounded pale chalk boulder, white and light grey stone with soft cracks and a little moss at the base, orthographic 3/4 top-down RPG prop, facing the camera",
+  "width": 40,
+  "height": 40
+ },
+ {
+  "name": "ossuary",
+  "description": "front view of an ancient ring of giant bleached dinosaur ribs curving up from the sand around a great horned skull lying on a flat stone altar, blue crystal shards growing through the bones, orthographic 3/4 top-down RPG landmark, facing the camera",
+  "width": 112,
+  "height": 88
+ },
+ {
+  "name": "mesa",
+  "description": "front view of a small flat-topped red sandstone mesa rock formation with layered stripes and a steep face, orthographic 3/4 top-down RPG prop, facing the camera",
+  "width": 64,
+  "height": 56
+ },
+ {
+  "name": "keeper_camp",
+  "description": "front view of an old abandoned explorer's camp: a weathered patched hide tent, a cold ring of stones with ashes, a small wooden crate with a leather journal on it, orthographic 3/4 top-down RPG prop, facing the camera",
+  "width": 80,
+  "height": 64
+ },
+ {
+  "name": "pale_crystal",
+  "description": "front view of a cluster of white and pale lavender crystal spires growing from grey rock, faintly glowing, orthographic 3/4 top-down RPG prop, facing the camera",
+  "width": 32,
+  "height": 40
+ },
+ {
+  "name": "maw_breach",
+  "description": "side view of a huge grey prehistoric megalodon shark leaping up out of the water with its jaws wide open showing rows of white teeth, water splashing around its body, dramatic, facing right",
+  "width": 96,
+  "height": 64
+ },
+ {
+  "name": "maw_shadow",
+  "description": "top-down view of the dark blue-grey silhouette of a huge shark swimming just under the water surface, a tall dorsal fin breaking the surface, long tail, facing right",
+  "width": 96,
+  "height": 48
+ }
+]

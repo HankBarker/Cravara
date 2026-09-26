@@ -1,0 +1,11 @@
+98958f3d-9850-4ee9-ae6e-92793de1850c
+status: completed
+id: 98958f3d-9850-4ee9-ae6e-92793de1850c
+job_id: 98958f3d-9850-4ee9-ae6e-92793de1850c
+frames: 1
+transparent: yes
+asset_id: a77479c3-6a11-5bba-a939-b4773ad0269c
+asset_type: image
+asset_status: saved
+gallery: saved to your PixelLab gallery (pixellab.ai/create)
+download: https://api.pixellab.ai/mcp/images/98958f3d-9850-4ee9-ae6e-92793de1850c/download

@@ -1,0 +1,31 @@
+Godot Engine v4.6.1.stable.official.14d19694e - https://godotengine.org
+OpenGL API 3.3.0 Core Profile Context 24.10.36.04.250109 - Compatibility - Using Device: ATI Technologies Inc. - AMD Radeon RX 7700S
+
+📦 ItemDB loaded 34 items: basic_axe, basic_pickaxe, berry, bone_dagger, bucket, campfire, chest, cooked_meat, crystal_pendant, crystal_shard, hide_bed, hunter_charm, lantern, leather_chestplate, leather_helmet, leather_leggings, log, net, plank, plant_fiber, raptor_fang, river_totem, stego_saddle, stone, thatch_roof, torch, trex_meat, trex_scale, trike_saddle, water_bucket, wood_door, wood_floor, wood_wall, workbench
+PASS E press waits for tap-or-hold decision
+PASS Quick E release mounts nearest saddled companion
+PASS Held E while riding targets mounted companion
+PASS Held E release neither dismounts nor cycles orders
+PASS Companion commands lock mounted movement
+PASS Actual movement key cannot move mount behind commands
+PASS Quick E dismounts after closing commands
+PASS Held Q near companion targets that individual
+PASS Held Q away from companions opens group orders
+PASS Held E near wild dinosaur does not expose companion orders
+PASS E opens nearby workbench without cursor targeting
+PASS Companion can be remounted after workbench use
+AIM DIAGNOSTIC actual=(60.0, 0.0) target=(60.0, 0.0) screen=(272.0, 147.0) canvas=[X: (1.0, 0.0), Y: (0.0, 1.0), O: (212.0, 147.0)] final=[X: (4.0, 0.0), Y: (0.0, 4.0), O: (0.0, 60.0)]
+PASS Mouse aim reaches strike target in active renderer
+PASS Attack test holds real Input mouse state
+PASS Mounted left-click resolves one directional stego strike
+PASS Holding attack mouse does not retrigger damage
+PASS F plus key-repeat heals once and consumes exactly one berry
+PASS Feed cooldown blocks immediate duplicate heal and consumption
+PASS Mouse held across modal close cannot leak into mounted attack
+PASS F behind modal cannot consume mount food
+PASS Mouse held across modal close cannot leak into survivor tool swing
+PASS Respawn blocks shortcuts and interaction hold state
+PASS Right-click roofs occupied wall tile and consumes exactly one roof
+PASS Right-click floors beneath door through actual selection routing
+PASS Interaction regression preserves real settings file
+INTERACTION PASS 4: 25 checks, 0 failures

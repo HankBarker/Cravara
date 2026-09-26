@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="Item" load_steps=2 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "hunter_charm"
+name = "Hunter's Fang"
+description = "A fang charm etched with an old hunting mark. Wear for +2 weapon damage."
+icon_generator = "forest"
+max_stack = 1
+equipment_slot = "trinket"
+damage_bonus = 2

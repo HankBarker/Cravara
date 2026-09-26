@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/equipment/art/wardrobe/icons/crystal_helmet.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = "crystal_helmet"
+name = "Skyshard Helmet"
+description = "Luminous Sky-Fang crystal crowned with prism spikes and secured by dark hide straps."
+icon = ExtResource("2")
+max_stack = 1
+rarity = "epic"
+armor_slot = "head"
+defense = 5

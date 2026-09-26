@@ -1,0 +1,11 @@
+e95da897-b1f5-40ed-badd-fffa524db971
+status: completed
+id: e95da897-b1f5-40ed-badd-fffa524db971
+job_id: e95da897-b1f5-40ed-badd-fffa524db971
+frames: 1
+transparent: yes
+asset_id: d92b884d-07bd-5903-b7fc-6ee8040ee4fe
+asset_type: image
+asset_status: saved
+gallery: saved to your PixelLab gallery (pixellab.ai/create)
+download: https://api.pixellab.ai/mcp/images/e95da897-b1f5-40ed-badd-fffa524db971/download

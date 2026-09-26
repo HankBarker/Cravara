@@ -1,0 +1,19 @@
+Godot Engine v4.6.1.stable.official.14d19694e - https://godotengine.org
+
+📦 ItemDB loaded 62 items: basic_axe, basic_pickaxe, berry, berry_compote, berry_seed, bone_arrow, bone_chestplate, bone_dagger, bone_helmet, bone_leggings, bucket, campfire, chest, cooked_fish, cooked_meat, crystal_axe, crystal_chestplate, crystal_flask, crystal_helmet, crystal_leggings, crystal_pendant, crystal_pickaxe, crystal_shard, dodo_egg, fishing_rod, forest_omelet, garden_hoe, hide_bed, hunter_charm, lantern, leather_chestplate, leather_helmet, leather_leggings, log, moonscale, mushroom, mushroom_potion, mushroom_spore, net, plank, plant_fiber, prism_crystal, raptor_fang, reed_bow, reed_perch, river_totem, shardfin, shard_sword, stego_saddle, stone, tent, thatch_roof, torch, trex_meat, trex_scale, trike_saddle, water_bucket, water_flask, wood_door, wood_floor, wood_wall, workbench
+PASS September 21 journey snapshot is available
+PASS September 21 journey loads with new wardrobe installed
+PASS all current inventory IDs and quantities are preserved
+PASS all current equipped armor IDs are preserved
+PASS saved appearance or legacy defaults load correctly
+PASS current creatures and companions remain present
+PASS mixed armor and new hairstyle save to an isolated test file
+PASS saved JSON contains actual mixed-set IDs and new hairstyle
+PASS isolated upgraded journey reloads successfully
+PASS new mixed armor survives a complete save/load
+PASS new hairstyle and all five appearance choices survive save/load
+PASS appearance and gear changes do not alter existing satchel contents
+PASS isolated wardrobe roundtrip preserves creature count
+PASS real user journey remains byte-identical
+PASS source journey snapshot remains byte-identical
+WARDROBE_SAVE_PASS7 assertions=15 failures=0

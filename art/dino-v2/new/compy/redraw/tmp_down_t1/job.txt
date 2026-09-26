@@ -1,0 +1,11 @@
+c43dc8e4-8e30-456a-a48a-4bf8e49720d3
+status: completed
+id: c43dc8e4-8e30-456a-a48a-4bf8e49720d3
+job_id: c43dc8e4-8e30-456a-a48a-4bf8e49720d3
+frames: 1
+transparent: yes
+asset_id: bb6cea9d-f23e-52f6-b12e-356c19b5141c
+asset_type: image
+asset_status: saved
+gallery: saved to your PixelLab gallery (pixellab.ai/create)
+download: https://api.pixellab.ai/mcp/images/c43dc8e4-8e30-456a-a48a-4bf8e49720d3/download

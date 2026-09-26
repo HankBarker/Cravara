@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Item" load_steps=2 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "forest_omelet"
+name = "Forest Omelet"
+description = "Dodo eggs folded around woodland mushrooms. 75 hunger, 150 seconds of fullness and 24 vitality over 24 seconds."
+icon_generator = "forest"
+max_stack = 20
+consumable = true
+hunger_value = 75
+food_satiation_seconds = 150.0
+healing_total = 24.0
+healing_duration = 24.0

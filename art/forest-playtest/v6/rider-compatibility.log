@@ -1,0 +1,42 @@
+Godot Engine v4.6.1.stable.official.14d19694e - https://godotengine.org
+
+📦 ItemDB loaded 56 items: basic_axe, basic_pickaxe, berry, berry_compote, berry_seed, bone_arrow, bone_dagger, bucket, campfire, chest, cooked_fish, cooked_meat, crystal_axe, crystal_flask, crystal_pendant, crystal_pickaxe, crystal_shard, dodo_egg, fishing_rod, forest_omelet, garden_hoe, hide_bed, hunter_charm, lantern, leather_chestplate, leather_helmet, leather_leggings, log, moonscale, mushroom, mushroom_potion, mushroom_spore, net, plank, plant_fiber, prism_crystal, raptor_fang, reed_bow, reed_perch, river_totem, shardfin, shard_sword, stego_saddle, stone, tent, thatch_roof, torch, trex_meat, trex_scale, trike_saddle, water_bucket, water_flask, wood_door, wood_floor, wood_wall, workbench
+PASS down seated head torso and arms exactly match actual current hero cel
+PASS down seated pose introduces no foreign skin or palette colors
+PASS down source leg clusters are reposed for sitting
+PASS down basic cloth visible without armor
+PASS down cloth preserves identity face and hair pixels
+PASS right seated head torso and arms exactly match actual current hero cel
+PASS right seated pose introduces no foreign skin or palette colors
+PASS right source leg clusters are reposed for sitting
+PASS right basic cloth visible without armor
+PASS right cloth preserves identity face and hair pixels
+PASS left seated head torso and arms exactly match actual current hero cel
+PASS left seated pose introduces no foreign skin or palette colors
+PASS left source leg clusters are reposed for sitting
+PASS left basic cloth visible without armor
+PASS left cloth preserves identity face and hair pixels
+PASS up seated head torso and arms exactly match actual current hero cel
+PASS up seated pose introduces no foreign skin or palette colors
+PASS up source leg clusters are reposed for sitting
+PASS up basic cloth visible without armor
+PASS up cloth preserves identity face and hair pixels
+PASS cosmetic baseline grants no armor or defense
+PASS leather crown is clearly dark brown rather than blonde
+PASS source-first rider mounts
+PASS mounted player retains live separate hurtbox
+PASS movement body collision still delegates to dinosaur
+PASS mounted attack works with zero legacy energy
+PASS mounted sprint has no energy gate or consumption
+PASS provoked predator targets the real rider without redirecting to mount
+PASS actual enemy attack damages rider independently of mount
+PASS small hit keeps rider in saddle
+PASS substantial hit reduces actual player health
+PASS substantial hit knocks rider off and restores normal rendering
+PASS knockoff restores collision at nearby safe landing
+PASS rider remounts after hit recovery
+PASS enclosed knockoff lands inside existing mount footprint without crossing walls
+PASS rider can remount before lethal hit
+PASS rider death detaches before respawn independently of living mount
+PASS player death does not kill or heal the mount
+FOREST_RIDER_PASS5 assertions=38 failures=0

@@ -1,0 +1,19 @@
+Godot Engine v4.6.1.stable.official.14d19694e - https://godotengine.org
+OpenGL API 3.3.0 Core Profile Context 24.10.36.04.250109 - Compatibility - Using Device: ATI Technologies Inc. - AMD Radeon RX 7700S
+
+📦 ItemDB loaded 62 items: basic_axe, basic_pickaxe, berry, berry_compote, berry_seed, bone_arrow, bone_chestplate, bone_dagger, bone_helmet, bone_leggings, bucket, campfire, chest, cooked_fish, cooked_meat, crystal_axe, crystal_chestplate, crystal_flask, crystal_helmet, crystal_leggings, crystal_pendant, crystal_pickaxe, crystal_shard, dodo_egg, fishing_rod, forest_omelet, garden_hoe, hide_bed, hunter_charm, lantern, leather_chestplate, leather_helmet, leather_leggings, log, moonscale, mushroom, mushroom_potion, mushroom_spore, net, plank, plant_fiber, prism_crystal, raptor_fang, reed_bow, reed_perch, river_totem, shardfin, shard_sword, stego_saddle, stone, tent, thatch_roof, torch, trex_meat, trex_scale, trike_saddle, water_bucket, water_flask, wood_door, wood_floor, wood_wall, workbench
+PASS rendered world-leather
+PASS rendered world-bone
+PASS rendered world-crystal
+PASS crystal keeper mounts as real player entity
+PASS mounted Right remains synchronized
+PASS rendered mounted-crystal-right
+PASS mounted Left remains synchronized
+PASS rendered mounted-crystal-left
+PASS mounted Up remains synchronized
+PASS rendered mounted-crystal-up
+PASS mounted Down remains synchronized
+PASS rendered mounted-crystal-down
+PASS dismount returns same equipped keeper
+PASS dismount retains real armor
+WARDROBE_WORLD_PASS7 assertions=14 failures=0

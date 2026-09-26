@@ -1,0 +1,93 @@
+{
+ "key": "utah",
+ "species": "utah",
+ "canvas": [
+  112,
+  96
+ ],
+ "ground": 89,
+ "origin": {
+  "side": [
+   30,
+   36
+  ],
+  "down": [
+   30,
+   36
+  ],
+  "up": [
+   30,
+   36
+  ]
+ },
+ "clips": {
+  "idle": {
+   "fps": 6,
+   "loop": true,
+   "frames": 8
+  },
+  "walk": {
+   "fps": 9,
+   "loop": true,
+   "frames": 8
+  },
+  "run": {
+   "fps": 13,
+   "loop": true,
+   "frames": 8
+  },
+  "slash": {
+   "fps": 14,
+   "loop": false,
+   "frames": 9,
+   "hit": 6,
+   "hit_view": {
+    "side": 6,
+    "down": 5,
+    "up": 6
+   }
+  },
+  "pounce": {
+   "fps": 14,
+   "loop": false,
+   "frames": 13,
+   "hit": 8,
+   "hit_view": {
+    "side": 8,
+    "down": 8,
+    "up": 8
+   },
+   "takeoff": 4,
+   "takeoff_view": {
+    "side": 4,
+    "down": 4,
+    "up": 3
+   }
+  },
+  "roar": {
+   "fps": 10,
+   "loop": false,
+   "frames": 13
+  },
+  "hurt": {
+   "fps": 12,
+   "loop": false,
+   "frames": 5
+  },
+  "death": {
+   "fps": 10,
+   "loop": false,
+   "frames": 13
+  },
+  "look": {
+   "fps": 7,
+   "loop": false,
+   "frames": 13
+  },
+  "stalk": {
+   "fps": 6,
+   "loop": true,
+   "frames": 8
+  }
+ }
+}

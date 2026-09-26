@@ -1,0 +1,11 @@
+fc5604c6-827d-4ca7-88d4-9c220a06c88b
+status: completed
+id: fc5604c6-827d-4ca7-88d4-9c220a06c88b
+job_id: fc5604c6-827d-4ca7-88d4-9c220a06c88b
+frames: 1
+transparent: yes
+asset_id: 923599d2-d596-58a5-acdd-b7603742ab3a
+asset_type: image
+asset_status: saved
+gallery: saved to your PixelLab gallery (pixellab.ai/create)
+download: https://api.pixellab.ai/mcp/images/fc5604c6-827d-4ca7-88d4-9c220a06c88b/download

@@ -1,0 +1,382 @@
+{
+ "_doc": "Contact (hit) and take-off frames per key/clip, per facing where they differ; read off peek.py --numbers strips.",
+ "raptor": {
+  "pounce": {
+   "side": {
+    "hit": 8,
+    "takeoff": 3
+   },
+   "down": {
+    "hit": 9,
+    "takeoff": 2
+   },
+   "up": {
+    "hit": 9,
+    "takeoff": 1
+   }
+  },
+  "slash": {
+   "side": 5,
+   "down": 5,
+   "up": 4
+  }
+ },
+ "rex": {
+  "bite": {
+   "side": 5,
+   "down": 5,
+   "up": 4
+  },
+  "chomp": {
+   "side": 5,
+   "down": 4,
+   "up": 5
+  }
+ },
+ "stego": {
+  "tail_swing": {
+   "down": 5,
+   "side": 6,
+   "up": 4
+  },
+  "tail_swing_far": {
+   "side": 6
+  }
+ },
+ "longneck": {
+  "stomp": {
+   "side": 10,
+   "down": 10,
+   "up": 10
+  },
+  "tail_swing": {
+   "side": 7,
+   "down": 5,
+   "up": 3
+  },
+  "tail_swing_far": {
+   "side": 6
+  }
+ },
+ "dodo": {
+  "peck": {
+   "down": 5,
+   "up": 3,
+   "side": 5
+  }
+ },
+ "trike": {
+  "gore": {
+   "side": 5,
+   "down": 5,
+   "up": 5
+  }
+ },
+ "stego_saddle": {
+  "tail_swing": {
+   "down": 5,
+   "side": 6,
+   "up": 4
+  },
+  "tail_swing_far": {
+   "side": 6
+  }
+ },
+ "trike_saddle": {
+  "gore": {
+   "side": 5,
+   "down": 5,
+   "up": 5
+  }
+ },
+ "alpha": {
+  "slash": {
+   "side": 5,
+   "down": 6,
+   "up": 5
+  },
+  "pounce": {
+   "side": {
+    "hit": 8,
+    "takeoff": 4
+   },
+   "down": {
+    "hit": 7,
+    "takeoff": 3
+   },
+   "up": {
+    "hit": 8,
+    "takeoff": 5
+   }
+  }
+ },
+ "allo": {
+  "bite": 5,
+  "chomp": 5
+ },
+ "lystro": {
+  "peck": 3
+ },
+ "parasaur": {
+  "stomp": {
+   "side": 8,
+   "down": 8,
+   "up": 10
+  }
+ },
+ "ossuar": {
+  "bite": {
+   "side": 6,
+   "down": 5,
+   "up": 5
+  },
+  "chomp": {
+   "side": 7,
+   "down": 7,
+   "up": 7
+  }
+ },
+ "dimetrodon": {
+  "bite": {
+   "side": 6,
+   "down": 5,
+   "up": 5
+  },
+  "chomp": {
+   "side": 6,
+   "down": 6,
+   "up": 7
+  }
+ },
+ "compy": {
+  "bite": 5
+ },
+ "anky": {
+  "tail_swing_far": {
+   "side": 6
+  },
+  "tail_swing": {
+   "side": 6,
+   "down": 5,
+   "up": 5
+  }
+ },
+ "yuty": {
+  "bite": {
+   "side": 6,
+   "down": 6,
+   "up": 6
+  },
+  "chomp": {
+   "side": 6,
+   "down": 5,
+   "up": 7
+  }
+ },
+ "proto": {
+  "peck": {
+   "side": 6,
+   "down": 5,
+   "up": 5
+  }
+ },
+ "carno": {
+  "bite": {
+   "side": 6,
+   "down": 5,
+   "up": 5
+  }
+ },
+ "utah": {
+  "pounce": {
+   "side": {
+    "hit": 8,
+    "takeoff": 4
+   },
+   "down": {
+    "hit": 8,
+    "takeoff": 4
+   },
+   "up": {
+    "hit": 8,
+    "takeoff": 3
+   }
+  },
+  "slash": {
+   "side": 6,
+   "down": 5,
+   "up": 6
+  }
+ },
+ "deino": {
+  "pounce": {
+   "side": {
+    "hit": 8,
+    "takeoff": 3
+   },
+   "down": {
+    "hit": 9,
+    "takeoff": 4
+   },
+   "up": {
+    "hit": 9,
+    "takeoff": 4
+   }
+  },
+  "slash": {
+   "side": 5,
+   "down": 6,
+   "up": 3
+  }
+ },
+ "sucho": {
+  "bite": {
+   "side": 6,
+   "down": 5,
+   "up": 6
+  },
+  "chomp": {
+   "side": 6,
+   "down": 5,
+   "up": 8
+  }
+ },
+ "spino": {
+  "bite": {
+   "side": 6,
+   "down": 5,
+   "up": 4
+  },
+  "slash": {
+   "side": 6,
+   "down": 6,
+   "up": 5
+  }
+ },
+ "raptor_crystal": {
+  "pounce": {
+   "side": {
+    "hit": 8,
+    "takeoff": 3
+   },
+   "down": {
+    "hit": 9,
+    "takeoff": 2
+   },
+   "up": {
+    "hit": 9,
+    "takeoff": 1
+   }
+  },
+  "slash": {
+   "side": 5,
+   "down": 5,
+   "up": 4
+  }
+ },
+ "trike_crystal": {
+  "gore": {
+   "side": 5,
+   "down": 5,
+   "up": 5
+  }
+ },
+ "stego_crystal": {
+  "tail_swing": {
+   "down": 5,
+   "side": 6,
+   "up": 5
+  },
+  "tail_swing_far": {
+   "side": 6
+  }
+ },
+ "longneck_crystal": {
+  "stomp": {
+   "side": 10,
+   "down": 10,
+   "up": 10
+  },
+  "tail_swing": {
+   "side": 7,
+   "down": 5,
+   "up": 3
+  },
+  "tail_swing_far": {
+   "side": 6
+  }
+ },
+ "parasaur_crystal": {
+  "stomp": {
+   "side": 8,
+   "down": 8,
+   "up": 10
+  }
+ },
+ "utah_crystal": {
+  "pounce": {
+   "side": {
+    "hit": 8,
+    "takeoff": 4
+   },
+   "down": {
+    "hit": 8,
+    "takeoff": 4
+   },
+   "up": {
+    "hit": 8,
+    "takeoff": 3
+   }
+  },
+  "slash": {
+   "side": 6,
+   "down": 5,
+   "up": 6
+  }
+ },
+ "deino_crystal": {
+  "pounce": {
+   "side": {
+    "hit": 8,
+    "takeoff": 3
+   },
+   "down": {
+    "hit": 9,
+    "takeoff": 4
+   },
+   "up": {
+    "hit": 9,
+    "takeoff": 4
+   }
+  },
+  "slash": {
+   "side": 5,
+   "down": 6,
+   "up": 5
+  }
+ },
+ "sucho_crystal": {
+  "bite": {
+   "side": 6,
+   "down": 5,
+   "up": 5
+  },
+  "chomp": {
+   "side": 6,
+   "down": 7,
+   "up": 8
+  }
+ },
+ "spino_crystal": {
+  "bite": {
+   "side": 6,
+   "down": 5,
+   "up": 4
+  },
+  "slash": {
+   "side": 6,
+   "down": 6,
+   "up": 5
+  }
+ }
+}

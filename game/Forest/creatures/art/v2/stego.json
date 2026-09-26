@@ -1,0 +1,92 @@
+{
+ "key": "stego",
+ "species": "stego",
+ "canvas": [
+  112,
+  80
+ ],
+ "ground": 73,
+ "origin": {
+  "side": [
+   26,
+   36
+  ],
+  "down": [
+   26,
+   36
+  ],
+  "up": [
+   26,
+   42
+  ]
+ },
+ "clips": {
+  "idle": {
+   "fps": 6,
+   "loop": true,
+   "frames": 8
+  },
+  "walk": {
+   "fps": 9,
+   "loop": true,
+   "frames": 8
+  },
+  "eat": {
+   "fps": 8,
+   "loop": false,
+   "frames": 13
+  },
+  "tail_swing": {
+   "fps": 14,
+   "loop": false,
+   "frames": 13,
+   "hit": 6,
+   "hit_view": {
+    "side": 6,
+    "down": 5,
+    "up": 4
+   },
+   "swing": {
+    "down": "right",
+    "up": "left"
+   }
+  },
+  "tail_swing_far": {
+   "fps": 14,
+   "loop": false,
+   "views": [
+    "side"
+   ],
+   "frames": 13,
+   "hit": 6,
+   "hit_view": {
+    "side": 6
+   }
+  },
+  "threat": {
+   "fps": 10,
+   "loop": false,
+   "frames": 9
+  },
+  "hurt": {
+   "fps": 12,
+   "loop": false,
+   "frames": 5
+  },
+  "death": {
+   "fps": 10,
+   "loop": false,
+   "frames": 13
+  },
+  "look": {
+   "fps": 7,
+   "loop": false,
+   "frames": 13
+  },
+  "rest": {
+   "fps": 6,
+   "loop": false,
+   "frames": 13
+  }
+ }
+}

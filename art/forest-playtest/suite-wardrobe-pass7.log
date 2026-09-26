@@ -1,0 +1,558 @@
+﻿Godot Engine v4.6.1.stable.official.14d19694e - https://godotengine.org
+
+≡ƒôª ItemDB loaded 249 items: allo_cleaver, allo_egg, allo_tooth, alpha_crest, ancient_coin, anky_plate, apex_signet, ashen_chestplate, ashen_helmet, ashen_leggings, ashglass, ashglass_eye, ashglass_knife, ashmane_fur, ashmane_mantle, ash_char, ash_tuft, baked_tuber, basic_axe, basic_pickaxe, beast_treat, berry, berry_compote, berry_seed, big_gate, bloodfang, bloody_bait, boat, bogiron_band, bogiron_harpoon, bogwood, bogwood_floor, bogwood_wall, bog_iron, bonegill, bone_arrow, bone_chestplate, bone_crown, bone_dagger, bone_helmet, bone_leggings, bucket, bulwark_charm, cactus_fruit, cactus_jelly, campfire, carno_horn, chest, claw_bracelet, club_knuckle, club_maul, compy_trove, cooked_fish, cooked_meat, cooking_pot, crest_horn, crest_whistle, crystal_axe, crystal_chestplate, crystal_flask, crystal_floor, crystal_heart, crystal_helmet, crystal_leggings, crystal_pendant, crystal_pickaxe, crystal_shard, crystal_wall, deino_claw, dodo_egg, dodo_plume, ember_chili, ember_pepper, fang_necklace, fang_sabre, fen_pike, fishers_chowder, fishing_rod, foragers_salad, forest_omelet, fossil_bone, frill_buckle, frill_guard, frostjaw, fur_wrap, garden_hoe, glass_pearl, gourd_porridge, gourd_seed, grave_horn, haunch, haunch_roast, hide_bed, hitching_post, horn_chestplate, horn_guard, horn_helmet, horn_leggings, horn_spear, hunters_stew, hunter_charm, incubator, keepers_locket, lantern, lead_rope, leather_chestplate, leather_helmet, leather_leggings, log, longneck_bell, longneck_egg, longneck_hide, lotus_broth, lucky_coin, lystro_egg, marrow_gourd, maw_charm, maw_tooth, melon_cooler, melon_seed, miners_pie, mirefang_tooth, mirelotus, mire_eel, moonscale, moonstone_ring, morsel, moss_chestplate, moss_helmet, moss_leggings, mushroom, mushroom_potion, mushroom_spore, mushroom_stew, net, oasis_carp, old_bone, old_compass, palewood, palewood_floor, palewood_wall, pale_crystal, parasaur_crest, parasaur_egg, pepper_steak, plank, plant_fiber, plate_chestplate, plate_helmet, plate_leggings, plate_maul, plate_pendant, prime_meat, prime_steak, prism_crystal, proto_frill, quiver_strap, raider_club, raptor_egg, raptor_fang, raptor_hide, redgrain, redgrain_loaf, reed_bow, reed_claw, reed_perch, rex_chestplate, rex_helmet, rex_leggings, river_totem, rustiron, rustjaw_sabre, rust_buckler, rust_catfish, rust_chestplate, rust_helmet, rust_leggings, rust_signet, saddlebag, sailking_fin, sail_scale, sail_veil, sandblade_plume, sandstone, sandstone_floor, sandstone_wall, scale_bracer, scarhorn_lance, scarhorn_tip, seared_morsel, shardfin, shard_sword, sickle_claw, sickle_toe, skyfang_shard, sky_idol, slate_roof, sleeper_fang, spinesail_glaive, spine_torc, spino_spine, stego_egg, stego_plate, stego_saddle, stone, stone_door, stone_floor, stone_wall, sucho_claw, sunfin, sunsail_brooch, sunstone, sunstone_amulet, sunstone_maul, sunward_chestplate, sunward_helmet, sunward_leggings, sun_melon, sun_sail, tail_spike, tent, thatch_roof, tide_chestplate, tide_helmet, tide_leggings, titan_pot_roast, titan_rib, titan_roast, tooth_ring, torch, trex_meat, trex_scale, trike_egg, trike_hide, trike_horn, trike_saddle, tuber_mash, tusk_charm, tyrant_eye, tyrant_fang, wanderers_step, water_bucket, water_flask, wayfarer_anklet, wild_tuber, wood_door, wood_floor, wood_wall, workbench
+PASS wardrobe test covers every registered armour set in tier order
+PASS moss set is registered with the Keeper rig
+PASS leather set is registered with the Keeper rig
+PASS bone set is registered with the Keeper rig
+PASS crystal set is registered with the Keeper rig
+PASS tide set is registered with the Keeper rig
+PASS rex set is registered with the Keeper rig
+PASS moss_helmet registered
+PASS moss_helmet has correct independent equipment slot
+PASS moss_helmet has inventory artwork
+PASS moss_helmet instances are independent resources
+PASS moss_helmet has a workbench recipe
+PASS moss_helmet recipe uses obtainable registered ingredients
+PASS moss_helmet changes actual character pixels
+PASS moss_helmet has distinct artwork and cache identity
+PASS moss_helmet reuses only matching cached frames
+PASS moss_chestplate registered
+PASS moss_chestplate has correct independent equipment slot
+PASS moss_chestplate has inventory artwork
+PASS moss_chestplate instances are independent resources
+PASS moss_chestplate has a workbench recipe
+PASS moss_chestplate recipe uses obtainable registered ingredients
+PASS moss_chestplate changes actual character pixels
+PASS moss_chestplate has distinct artwork and cache identity
+PASS moss_chestplate reuses only matching cached frames
+PASS moss_leggings registered
+PASS moss_leggings has correct independent equipment slot
+PASS moss_leggings has inventory artwork
+PASS moss_leggings instances are independent resources
+PASS moss_leggings has a workbench recipe
+PASS moss_leggings recipe uses obtainable registered ingredients
+PASS moss_leggings changes actual character pixels
+PASS moss_leggings has distinct artwork and cache identity
+PASS moss_leggings reuses only matching cached frames
+PASS moss complete set is visible
+PASS moss preserves axe_down animation timing
+PASS moss preserves axe_left animation timing
+PASS moss preserves axe_right animation timing
+PASS moss preserves axe_up animation timing
+PASS moss preserves bow_draw_down animation timing
+PASS moss preserves bow_draw_left animation timing
+PASS moss preserves bow_draw_right animation timing
+PASS moss preserves bow_draw_up animation timing
+PASS moss preserves fishing_cast_down animation timing
+PASS moss preserves fishing_cast_left animation timing
+PASS moss preserves fishing_cast_right animation timing
+PASS moss preserves fishing_cast_up animation timing
+PASS moss preserves idle_down animation timing
+PASS moss preserves idle_left animation timing
+PASS moss preserves idle_right animation timing
+PASS moss preserves idle_up animation timing
+PASS leather_helmet registered
+PASS leather_helmet has correct independent equipment slot
+PASS leather_helmet has inventory artwork
+PASS leather_helmet instances are independent resources
+PASS leather_helmet has a workbench recipe
+PASS leather_helmet recipe uses obtainable registered ingredients
+PASS leather_helmet changes actual character pixels
+PASS leather_helmet has distinct artwork and cache identity
+PASS leather_helmet reuses only matching cached frames
+PASS leather_chestplate registered
+PASS leather_chestplate has correct independent equipment slot
+PASS leather_chestplate has inventory artwork
+PASS leather_chestplate instances are independent resources
+PASS leather_chestplate has a workbench recipe
+PASS leather_chestplate recipe uses obtainable registered ingredients
+PASS leather_chestplate changes actual character pixels
+PASS leather_chestplate has distinct artwork and cache identity
+PASS leather_chestplate reuses only matching cached frames
+PASS leather_leggings registered
+PASS leather_leggings has correct independent equipment slot
+PASS leather_leggings has inventory artwork
+PASS leather_leggings instances are independent resources
+PASS leather_leggings has a workbench recipe
+PASS leather_leggings recipe uses obtainable registered ingredients
+PASS leather_leggings changes actual character pixels
+PASS leather_leggings has distinct artwork and cache identity
+PASS leather_leggings reuses only matching cached frames
+PASS leather complete set is visible
+PASS leather preserves axe_down animation timing
+PASS leather preserves axe_left animation timing
+PASS leather preserves axe_right animation timing
+PASS leather preserves axe_up animation timing
+PASS leather preserves bow_draw_down animation timing
+PASS leather preserves bow_draw_left animation timing
+PASS leather preserves bow_draw_right animation timing
+PASS leather preserves bow_draw_up animation timing
+PASS leather preserves fishing_cast_down animation timing
+PASS leather preserves fishing_cast_left animation timing
+PASS leather preserves fishing_cast_right animation timing
+PASS leather preserves fishing_cast_up animation timing
+PASS leather preserves idle_down animation timing
+PASS leather preserves idle_left animation timing
+PASS leather preserves idle_right animation timing
+PASS leather preserves idle_up animation timing
+PASS bone_helmet registered
+PASS bone_helmet has correct independent equipment slot
+PASS bone_helmet has inventory artwork
+PASS bone_helmet instances are independent resources
+PASS bone_helmet has a workbench recipe
+PASS bone_helmet recipe uses obtainable registered ingredients
+PASS bone_helmet changes actual character pixels
+PASS bone_helmet has distinct artwork and cache identity
+PASS bone_helmet reuses only matching cached frames
+PASS bone_chestplate registered
+PASS bone_chestplate has correct independent equipment slot
+PASS bone_chestplate has inventory artwork
+PASS bone_chestplate instances are independent resources
+PASS bone_chestplate has a workbench recipe
+PASS bone_chestplate recipe uses obtainable registered ingredients
+PASS bone_chestplate changes actual character pixels
+PASS bone_chestplate has distinct artwork and cache identity
+PASS bone_chestplate reuses only matching cached frames
+PASS bone_leggings registered
+PASS bone_leggings has correct independent equipment slot
+PASS bone_leggings has inventory artwork
+PASS bone_leggings instances are independent resources
+PASS bone_leggings has a workbench recipe
+PASS bone_leggings recipe uses obtainable registered ingredients
+PASS bone_leggings changes actual character pixels
+PASS bone_leggings has distinct artwork and cache identity
+PASS bone_leggings reuses only matching cached frames
+PASS bone complete set is visible
+PASS bone preserves axe_down animation timing
+PASS bone preserves axe_left animation timing
+PASS bone preserves axe_right animation timing
+PASS bone preserves axe_up animation timing
+PASS bone preserves bow_draw_down animation timing
+PASS bone preserves bow_draw_left animation timing
+PASS bone preserves bow_draw_right animation timing
+PASS bone preserves bow_draw_up animation timing
+PASS bone preserves fishing_cast_down animation timing
+PASS bone preserves fishing_cast_left animation timing
+PASS bone preserves fishing_cast_right animation timing
+PASS bone preserves fishing_cast_up animation timing
+PASS bone preserves idle_down animation timing
+PASS bone preserves idle_left animation timing
+PASS bone preserves idle_right animation timing
+PASS bone preserves idle_up animation timing
+PASS crystal_helmet registered
+PASS crystal_helmet has correct independent equipment slot
+PASS crystal_helmet has inventory artwork
+PASS crystal_helmet instances are independent resources
+PASS crystal_helmet has a workbench recipe
+PASS crystal_helmet recipe uses obtainable registered ingredients
+PASS crystal_helmet changes actual character pixels
+PASS crystal_helmet has distinct artwork and cache identity
+PASS crystal_helmet reuses only matching cached frames
+PASS crystal_chestplate registered
+PASS crystal_chestplate has correct independent equipment slot
+PASS crystal_chestplate has inventory artwork
+PASS crystal_chestplate instances are independent resources
+PASS crystal_chestplate has a workbench recipe
+PASS crystal_chestplate recipe uses obtainable registered ingredients
+PASS crystal_chestplate changes actual character pixels
+PASS crystal_chestplate has distinct artwork and cache identity
+PASS crystal_chestplate reuses only matching cached frames
+PASS crystal_leggings registered
+PASS crystal_leggings has correct independent equipment slot
+PASS crystal_leggings has inventory artwork
+PASS crystal_leggings instances are independent resources
+PASS crystal_leggings has a workbench recipe
+PASS crystal_leggings recipe uses obtainable registered ingredients
+PASS crystal_leggings changes actual character pixels
+PASS crystal_leggings has distinct artwork and cache identity
+PASS crystal_leggings reuses only matching cached frames
+PASS crystal complete set is visible
+PASS crystal preserves axe_down animation timing
+PASS crystal preserves axe_left animation timing
+PASS crystal preserves axe_right animation timing
+PASS crystal preserves axe_up animation timing
+PASS crystal preserves bow_draw_down animation timing
+PASS crystal preserves bow_draw_left animation timing
+PASS crystal preserves bow_draw_right animation timing
+PASS crystal preserves bow_draw_up animation timing
+PASS crystal preserves fishing_cast_down animation timing
+PASS crystal preserves fishing_cast_left animation timing
+PASS crystal preserves fishing_cast_right animation timing
+PASS crystal preserves fishing_cast_up animation timing
+PASS crystal preserves idle_down animation timing
+PASS crystal preserves idle_left animation timing
+PASS crystal preserves idle_right animation timing
+PASS crystal preserves idle_up animation timing
+PASS tide_helmet registered
+PASS tide_helmet has correct independent equipment slot
+PASS tide_helmet has inventory artwork
+PASS tide_helmet instances are independent resources
+PASS tide_helmet has a workbench recipe
+PASS tide_helmet recipe uses obtainable registered ingredients
+PASS tide_helmet changes actual character pixels
+PASS tide_helmet has distinct artwork and cache identity
+PASS tide_helmet reuses only matching cached frames
+PASS tide_chestplate registered
+PASS tide_chestplate has correct independent equipment slot
+PASS tide_chestplate has inventory artwork
+PASS tide_chestplate instances are independent resources
+PASS tide_chestplate has a workbench recipe
+PASS tide_chestplate recipe uses obtainable registered ingredients
+PASS tide_chestplate changes actual character pixels
+PASS tide_chestplate has distinct artwork and cache identity
+PASS tide_chestplate reuses only matching cached frames
+PASS tide_leggings registered
+PASS tide_leggings has correct independent equipment slot
+PASS tide_leggings has inventory artwork
+PASS tide_leggings instances are independent resources
+PASS tide_leggings has a workbench recipe
+PASS tide_leggings recipe uses obtainable registered ingredients
+PASS tide_leggings changes actual character pixels
+PASS tide_leggings has distinct artwork and cache identity
+PASS tide_leggings reuses only matching cached frames
+PASS tide complete set is visible
+PASS tide preserves axe_down animation timing
+PASS tide preserves axe_left animation timing
+PASS tide preserves axe_right animation timing
+PASS tide preserves axe_up animation timing
+PASS tide preserves bow_draw_down animation timing
+PASS tide preserves bow_draw_left animation timing
+PASS tide preserves bow_draw_right animation timing
+PASS tide preserves bow_draw_up animation timing
+PASS tide preserves fishing_cast_down animation timing
+PASS tide preserves fishing_cast_left animation timing
+PASS tide preserves fishing_cast_right animation timing
+PASS tide preserves fishing_cast_up animation timing
+PASS tide preserves idle_down animation timing
+PASS tide preserves idle_left animation timing
+PASS tide preserves idle_right animation timing
+PASS tide preserves idle_up animation timing
+PASS rex_helmet registered
+PASS rex_helmet has correct independent equipment slot
+PASS rex_helmet has inventory artwork
+PASS rex_helmet instances are independent resources
+PASS rex_helmet has a workbench recipe
+PASS rex_helmet recipe uses obtainable registered ingredients
+PASS rex_helmet changes actual character pixels
+PASS rex_helmet has distinct artwork and cache identity
+PASS rex_helmet reuses only matching cached frames
+PASS rex_chestplate registered
+PASS rex_chestplate has correct independent equipment slot
+PASS rex_chestplate has inventory artwork
+PASS rex_chestplate instances are independent resources
+PASS rex_chestplate has a workbench recipe
+PASS rex_chestplate recipe uses obtainable registered ingredients
+PASS rex_chestplate changes actual character pixels
+PASS rex_chestplate has distinct artwork and cache identity
+PASS rex_chestplate reuses only matching cached frames
+PASS rex_leggings registered
+PASS rex_leggings has correct independent equipment slot
+PASS rex_leggings has inventory artwork
+PASS rex_leggings instances are independent resources
+PASS rex_leggings has a workbench recipe
+PASS rex_leggings recipe uses obtainable registered ingredients
+PASS rex_leggings changes actual character pixels
+PASS rex_leggings has distinct artwork and cache identity
+PASS rex_leggings reuses only matching cached frames
+PASS rex complete set is visible
+PASS rex preserves axe_down animation timing
+PASS rex preserves axe_left animation timing
+PASS rex preserves axe_right animation timing
+PASS rex preserves axe_up animation timing
+PASS rex preserves bow_draw_down animation timing
+PASS rex preserves bow_draw_left animation timing
+PASS rex preserves bow_draw_right animation timing
+PASS rex preserves bow_draw_up animation timing
+PASS rex preserves fishing_cast_down animation timing
+PASS rex preserves fishing_cast_left animation timing
+PASS rex preserves fishing_cast_right animation timing
+PASS rex preserves fishing_cast_up animation timing
+PASS rex preserves idle_down animation timing
+PASS rex preserves idle_left animation timing
+PASS rex preserves idle_right animation timing
+PASS rex preserves idle_up animation timing
+PASS mixed set moss/moss/moss remains distinct
+PASS mixed set moss/moss/leather remains distinct
+PASS mixed set moss/moss/bone remains distinct
+PASS mixed set moss/moss/crystal remains distinct
+PASS mixed set moss/moss/tide remains distinct
+PASS mixed set moss/moss/rex remains distinct
+PASS mixed set moss/leather/moss remains distinct
+PASS mixed set moss/leather/leather remains distinct
+PASS mixed set moss/leather/bone remains distinct
+PASS mixed set moss/leather/crystal remains distinct
+PASS mixed set moss/leather/tide remains distinct
+PASS mixed set moss/leather/rex remains distinct
+PASS mixed set moss/bone/moss remains distinct
+PASS mixed set moss/bone/leather remains distinct
+PASS mixed set moss/bone/bone remains distinct
+PASS mixed set moss/bone/crystal remains distinct
+PASS mixed set moss/bone/tide remains distinct
+PASS mixed set moss/bone/rex remains distinct
+PASS mixed set moss/crystal/moss remains distinct
+PASS mixed set moss/crystal/leather remains distinct
+PASS mixed set moss/crystal/bone remains distinct
+PASS mixed set moss/crystal/crystal remains distinct
+PASS mixed set moss/crystal/tide remains distinct
+PASS mixed set moss/crystal/rex remains distinct
+PASS mixed set moss/tide/moss remains distinct
+PASS mixed set moss/tide/leather remains distinct
+PASS mixed set moss/tide/bone remains distinct
+PASS mixed set moss/tide/crystal remains distinct
+PASS mixed set moss/tide/tide remains distinct
+PASS mixed set moss/tide/rex remains distinct
+PASS mixed set moss/rex/moss remains distinct
+PASS mixed set moss/rex/leather remains distinct
+PASS mixed set moss/rex/bone remains distinct
+PASS mixed set moss/rex/crystal remains distinct
+PASS mixed set moss/rex/tide remains distinct
+PASS mixed set moss/rex/rex remains distinct
+PASS mixed set leather/moss/moss remains distinct
+PASS mixed set leather/moss/leather remains distinct
+PASS mixed set leather/moss/bone remains distinct
+PASS mixed set leather/moss/crystal remains distinct
+PASS mixed set leather/moss/tide remains distinct
+PASS mixed set leather/moss/rex remains distinct
+PASS mixed set leather/leather/moss remains distinct
+PASS mixed set leather/leather/leather remains distinct
+PASS mixed set leather/leather/bone remains distinct
+PASS mixed set leather/leather/crystal remains distinct
+PASS mixed set leather/leather/tide remains distinct
+PASS mixed set leather/leather/rex remains distinct
+PASS mixed set leather/bone/moss remains distinct
+PASS mixed set leather/bone/leather remains distinct
+PASS mixed set leather/bone/bone remains distinct
+PASS mixed set leather/bone/crystal remains distinct
+PASS mixed set leather/bone/tide remains distinct
+PASS mixed set leather/bone/rex remains distinct
+PASS mixed set leather/crystal/moss remains distinct
+PASS mixed set leather/crystal/leather remains distinct
+PASS mixed set leather/crystal/bone remains distinct
+PASS mixed set leather/crystal/crystal remains distinct
+PASS mixed set leather/crystal/tide remains distinct
+PASS mixed set leather/crystal/rex remains distinct
+PASS mixed set leather/tide/moss remains distinct
+PASS mixed set leather/tide/leather remains distinct
+PASS mixed set leather/tide/bone remains distinct
+PASS mixed set leather/tide/crystal remains distinct
+PASS mixed set leather/tide/tide remains distinct
+PASS mixed set leather/tide/rex remains distinct
+PASS mixed set leather/rex/moss remains distinct
+PASS mixed set leather/rex/leather remains distinct
+PASS mixed set leather/rex/bone remains distinct
+PASS mixed set leather/rex/crystal remains distinct
+PASS mixed set leather/rex/tide remains distinct
+PASS mixed set leather/rex/rex remains distinct
+PASS mixed set bone/moss/moss remains distinct
+PASS mixed set bone/moss/leather remains distinct
+PASS mixed set bone/moss/bone remains distinct
+PASS mixed set bone/moss/crystal remains distinct
+PASS mixed set bone/moss/tide remains distinct
+PASS mixed set bone/moss/rex remains distinct
+PASS mixed set bone/leather/moss remains distinct
+PASS mixed set bone/leather/leather remains distinct
+PASS mixed set bone/leather/bone remains distinct
+PASS mixed set bone/leather/crystal remains distinct
+PASS mixed set bone/leather/tide remains distinct
+PASS mixed set bone/leather/rex remains distinct
+PASS mixed set bone/bone/moss remains distinct
+PASS mixed set bone/bone/leather remains distinct
+PASS mixed set bone/bone/bone remains distinct
+PASS mixed set bone/bone/crystal remains distinct
+PASS mixed set bone/bone/tide remains distinct
+PASS mixed set bone/bone/rex remains distinct
+PASS mixed set bone/crystal/moss remains distinct
+PASS mixed set bone/crystal/leather remains distinct
+PASS mixed set bone/crystal/bone remains distinct
+PASS mixed set bone/crystal/crystal remains distinct
+PASS mixed set bone/crystal/tide remains distinct
+PASS mixed set bone/crystal/rex remains distinct
+PASS mixed set bone/tide/moss remains distinct
+PASS mixed set bone/tide/leather remains distinct
+PASS mixed set bone/tide/bone remains distinct
+PASS mixed set bone/tide/crystal remains distinct
+PASS mixed set bone/tide/tide remains distinct
+PASS mixed set bone/tide/rex remains distinct
+PASS mixed set bone/rex/moss remains distinct
+PASS mixed set bone/rex/leather remains distinct
+PASS mixed set bone/rex/bone remains distinct
+PASS mixed set bone/rex/crystal remains distinct
+PASS mixed set bone/rex/tide remains distinct
+PASS mixed set bone/rex/rex remains distinct
+PASS mixed set crystal/moss/moss remains distinct
+PASS mixed set crystal/moss/leather remains distinct
+PASS mixed set crystal/moss/bone remains distinct
+PASS mixed set crystal/moss/crystal remains distinct
+PASS mixed set crystal/moss/tide remains distinct
+PASS mixed set crystal/moss/rex remains distinct
+PASS mixed set crystal/leather/moss remains distinct
+PASS mixed set crystal/leather/leather remains distinct
+PASS mixed set crystal/leather/bone remains distinct
+PASS mixed set crystal/leather/crystal remains distinct
+PASS mixed set crystal/leather/tide remains distinct
+PASS mixed set crystal/leather/rex remains distinct
+PASS mixed set crystal/bone/moss remains distinct
+PASS mixed set crystal/bone/leather remains distinct
+PASS mixed set crystal/bone/bone remains distinct
+PASS mixed set crystal/bone/crystal remains distinct
+PASS mixed set crystal/bone/tide remains distinct
+PASS mixed set crystal/bone/rex remains distinct
+PASS mixed set crystal/crystal/moss remains distinct
+PASS mixed set crystal/crystal/leather remains distinct
+PASS mixed set crystal/crystal/bone remains distinct
+PASS mixed set crystal/crystal/crystal remains distinct
+PASS mixed set crystal/crystal/tide remains distinct
+PASS mixed set crystal/crystal/rex remains distinct
+PASS mixed set crystal/tide/moss remains distinct
+PASS mixed set crystal/tide/leather remains distinct
+PASS mixed set crystal/tide/bone remains distinct
+PASS mixed set crystal/tide/crystal remains distinct
+PASS mixed set crystal/tide/tide remains distinct
+PASS mixed set crystal/tide/rex remains distinct
+PASS mixed set crystal/rex/moss remains distinct
+PASS mixed set crystal/rex/leather remains distinct
+PASS mixed set crystal/rex/bone remains distinct
+PASS mixed set crystal/rex/crystal remains distinct
+PASS mixed set crystal/rex/tide remains distinct
+PASS mixed set crystal/rex/rex remains distinct
+PASS mixed set tide/moss/moss remains distinct
+PASS mixed set tide/moss/leather remains distinct
+PASS mixed set tide/moss/bone remains distinct
+PASS mixed set tide/moss/crystal remains distinct
+PASS mixed set tide/moss/tide remains distinct
+PASS mixed set tide/moss/rex remains distinct
+PASS mixed set tide/leather/moss remains distinct
+PASS mixed set tide/leather/leather remains distinct
+PASS mixed set tide/leather/bone remains distinct
+PASS mixed set tide/leather/crystal remains distinct
+PASS mixed set tide/leather/tide remains distinct
+PASS mixed set tide/leather/rex remains distinct
+PASS mixed set tide/bone/moss remains distinct
+PASS mixed set tide/bone/leather remains distinct
+PASS mixed set tide/bone/bone remains distinct
+PASS mixed set tide/bone/crystal remains distinct
+PASS mixed set tide/bone/tide remains distinct
+PASS mixed set tide/bone/rex remains distinct
+PASS mixed set tide/crystal/moss remains distinct
+PASS mixed set tide/crystal/leather remains distinct
+PASS mixed set tide/crystal/bone remains distinct
+PASS mixed set tide/crystal/crystal remains distinct
+PASS mixed set tide/crystal/tide remains distinct
+PASS mixed set tide/crystal/rex remains distinct
+PASS mixed set tide/tide/moss remains distinct
+PASS mixed set tide/tide/leather remains distinct
+PASS mixed set tide/tide/bone remains distinct
+PASS mixed set tide/tide/crystal remains distinct
+PASS mixed set tide/tide/tide remains distinct
+PASS mixed set tide/tide/rex remains distinct
+PASS mixed set tide/rex/moss remains distinct
+PASS mixed set tide/rex/leather remains distinct
+PASS mixed set tide/rex/bone remains distinct
+PASS mixed set tide/rex/crystal remains distinct
+PASS mixed set tide/rex/tide remains distinct
+PASS mixed set tide/rex/rex remains distinct
+PASS mixed set rex/moss/moss remains distinct
+PASS mixed set rex/moss/leather remains distinct
+PASS mixed set rex/moss/bone remains distinct
+PASS mixed set rex/moss/crystal remains distinct
+PASS mixed set rex/moss/tide remains distinct
+PASS mixed set rex/moss/rex remains distinct
+PASS mixed set rex/leather/moss remains distinct
+PASS mixed set rex/leather/leather remains distinct
+PASS mixed set rex/leather/bone remains distinct
+PASS mixed set rex/leather/crystal remains distinct
+PASS mixed set rex/leather/tide remains distinct
+PASS mixed set rex/leather/rex remains distinct
+PASS mixed set rex/bone/moss remains distinct
+PASS mixed set rex/bone/leather remains distinct
+PASS mixed set rex/bone/bone remains distinct
+PASS mixed set rex/bone/crystal remains distinct
+PASS mixed set rex/bone/tide remains distinct
+PASS mixed set rex/bone/rex remains distinct
+PASS mixed set rex/crystal/moss remains distinct
+PASS mixed set rex/crystal/leather remains distinct
+PASS mixed set rex/crystal/bone remains distinct
+PASS mixed set rex/crystal/crystal remains distinct
+PASS mixed set rex/crystal/tide remains distinct
+PASS mixed set rex/crystal/rex remains distinct
+PASS mixed set rex/tide/moss remains distinct
+PASS mixed set rex/tide/leather remains distinct
+PASS mixed set rex/tide/bone remains distinct
+PASS mixed set rex/tide/crystal remains distinct
+PASS mixed set rex/tide/tide remains distinct
+PASS mixed set rex/tide/rex remains distinct
+PASS mixed set rex/rex/moss remains distinct
+PASS mixed set rex/rex/leather remains distinct
+PASS mixed set rex/rex/bone remains distinct
+PASS mixed set rex/rex/crystal remains distinct
+PASS mixed set rex/rex/tide remains distinct
+PASS mixed set rex/rex/rex remains distinct
+PASS all wardrobe builds leave source sprite textures immutable
+PASS hair style short survives saved appearance JSON
+PASS hair style cropped survives saved appearance JSON
+PASS hair style tied survives saved appearance JSON
+PASS hair style braid survives saved appearance JSON
+PASS hair style curly survives saved appearance JSON
+PASS hair style ponytail survives saved appearance JSON
+PASS new armor swaps successfully with a full satchel
+PASS full-bag swap returns previous armor to the exact source slot
+PASS head armor cannot enter the leg slot
+PASS full-bag unequip preserves equipped armor
+PASS unequip succeeds when an empty slot is available
+PASS moss_helmet cannot bypass required workbench
+PASS moss_helmet crafts exactly one equippable item
+PASS moss_helmet consumes exact material costs
+PASS moss_chestplate cannot bypass required workbench
+PASS moss_chestplate crafts exactly one equippable item
+PASS moss_chestplate consumes exact material costs
+PASS moss_leggings cannot bypass required workbench
+PASS moss_leggings crafts exactly one equippable item
+PASS moss_leggings consumes exact material costs
+PASS leather_helmet cannot bypass required workbench
+PASS leather_helmet crafts exactly one equippable item
+PASS leather_helmet consumes exact material costs
+PASS leather_chestplate cannot bypass required workbench
+PASS leather_chestplate crafts exactly one equippable item
+PASS leather_chestplate consumes exact material costs
+PASS leather_leggings cannot bypass required workbench
+PASS leather_leggings crafts exactly one equippable item
+PASS leather_leggings consumes exact material costs
+PASS bone_helmet cannot bypass required workbench
+PASS bone_helmet crafts exactly one equippable item
+PASS bone_helmet consumes exact material costs
+PASS bone_chestplate cannot bypass required workbench
+PASS bone_chestplate crafts exactly one equippable item
+PASS bone_chestplate consumes exact material costs
+PASS bone_leggings cannot bypass required workbench
+PASS bone_leggings crafts exactly one equippable item
+PASS bone_leggings consumes exact material costs
+PASS crystal_helmet cannot bypass required workbench
+PASS crystal_helmet crafts exactly one equippable item
+PASS crystal_helmet consumes exact material costs
+PASS crystal_chestplate cannot bypass required workbench
+PASS crystal_chestplate crafts exactly one equippable item
+PASS crystal_chestplate consumes exact material costs
+PASS crystal_leggings cannot bypass required workbench
+PASS crystal_leggings crafts exactly one equippable item
+PASS crystal_leggings consumes exact material costs
+PASS tide_helmet cannot bypass required workbench
+PASS tide_helmet crafts exactly one equippable item
+PASS tide_helmet consumes exact material costs
+PASS tide_chestplate cannot bypass required workbench
+PASS tide_chestplate crafts exactly one equippable item
+PASS tide_chestplate consumes exact material costs
+PASS tide_leggings cannot bypass required workbench
+PASS tide_leggings crafts exactly one equippable item
+PASS tide_leggings consumes exact material costs
+PASS rex_helmet cannot bypass required workbench
+PASS rex_helmet crafts exactly one equippable item
+PASS rex_helmet consumes exact material costs
+PASS rex_chestplate cannot bypass required workbench
+PASS rex_chestplate crafts exactly one equippable item
+PASS rex_chestplate consumes exact material costs
+PASS rex_leggings cannot bypass required workbench
+PASS rex_leggings crafts exactly one equippable item
+PASS rex_leggings consumes exact material costs
+PASS wardrobe test never changes the real journey
+WARDROBE_PASS7 assertions=554 failures=0

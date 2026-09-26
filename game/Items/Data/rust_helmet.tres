@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/equipment/art/wardrobe/icons/rust_helmet.png" id="2"]
+[resource]
+script = ExtResource("1")
+id = "rust_helmet"
+name = "Rustback Hood"
+description = "An allosaur's head for a hood, its teeth round your face. Rustback set: blows 20% harder."
+icon = ExtResource("2")
+max_stack = 1
+rarity = "epic"
+armor_slot = "head"
+defense = 10

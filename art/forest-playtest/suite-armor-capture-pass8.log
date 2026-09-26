@@ -1,0 +1,182 @@
+﻿Godot Engine v4.6.1.stable.official.14d19694e - https://godotengine.org
+
+≡ƒôª ItemDB loaded 249 items: allo_cleaver, allo_egg, allo_tooth, alpha_crest, ancient_coin, anky_plate, apex_signet, ashen_chestplate, ashen_helmet, ashen_leggings, ashglass, ashglass_eye, ashglass_knife, ashmane_fur, ashmane_mantle, ash_char, ash_tuft, baked_tuber, basic_axe, basic_pickaxe, beast_treat, berry, berry_compote, berry_seed, big_gate, bloodfang, bloody_bait, boat, bogiron_band, bogiron_harpoon, bogwood, bogwood_floor, bogwood_wall, bog_iron, bonegill, bone_arrow, bone_chestplate, bone_crown, bone_dagger, bone_helmet, bone_leggings, bucket, bulwark_charm, cactus_fruit, cactus_jelly, campfire, carno_horn, chest, claw_bracelet, club_knuckle, club_maul, compy_trove, cooked_fish, cooked_meat, cooking_pot, crest_horn, crest_whistle, crystal_axe, crystal_chestplate, crystal_flask, crystal_floor, crystal_heart, crystal_helmet, crystal_leggings, crystal_pendant, crystal_pickaxe, crystal_shard, crystal_wall, deino_claw, dodo_egg, dodo_plume, ember_chili, ember_pepper, fang_necklace, fang_sabre, fen_pike, fishers_chowder, fishing_rod, foragers_salad, forest_omelet, fossil_bone, frill_buckle, frill_guard, frostjaw, fur_wrap, garden_hoe, glass_pearl, gourd_porridge, gourd_seed, grave_horn, haunch, haunch_roast, hide_bed, hitching_post, horn_chestplate, horn_guard, horn_helmet, horn_leggings, horn_spear, hunters_stew, hunter_charm, incubator, keepers_locket, lantern, lead_rope, leather_chestplate, leather_helmet, leather_leggings, log, longneck_bell, longneck_egg, longneck_hide, lotus_broth, lucky_coin, lystro_egg, marrow_gourd, maw_charm, maw_tooth, melon_cooler, melon_seed, miners_pie, mirefang_tooth, mirelotus, mire_eel, moonscale, moonstone_ring, morsel, moss_chestplate, moss_helmet, moss_leggings, mushroom, mushroom_potion, mushroom_spore, mushroom_stew, net, oasis_carp, old_bone, old_compass, palewood, palewood_floor, palewood_wall, pale_crystal, parasaur_crest, parasaur_egg, pepper_steak, plank, plant_fiber, plate_chestplate, plate_helmet, plate_leggings, plate_maul, plate_pendant, prime_meat, prime_steak, prism_crystal, proto_frill, quiver_strap, raider_club, raptor_egg, raptor_fang, raptor_hide, redgrain, redgrain_loaf, reed_bow, reed_claw, reed_perch, rex_chestplate, rex_helmet, rex_leggings, river_totem, rustiron, rustjaw_sabre, rust_buckler, rust_catfish, rust_chestplate, rust_helmet, rust_leggings, rust_signet, saddlebag, sailking_fin, sail_scale, sail_veil, sandblade_plume, sandstone, sandstone_floor, sandstone_wall, scale_bracer, scarhorn_lance, scarhorn_tip, seared_morsel, shardfin, shard_sword, sickle_claw, sickle_toe, skyfang_shard, sky_idol, slate_roof, sleeper_fang, spinesail_glaive, spine_torc, spino_spine, stego_egg, stego_plate, stego_saddle, stone, stone_door, stone_floor, stone_wall, sucho_claw, sunfin, sunsail_brooch, sunstone, sunstone_amulet, sunstone_maul, sunward_chestplate, sunward_helmet, sunward_leggings, sun_melon, sun_sail, tail_spike, tent, thatch_roof, tide_chestplate, tide_helmet, tide_leggings, titan_pot_roast, titan_rib, titan_roast, tooth_ring, torch, trex_meat, trex_scale, trike_egg, trike_hide, trike_horn, trike_saddle, tuber_mash, tusk_charm, tyrant_eye, tyrant_fang, wanderers_step, water_bucket, water_flask, wayfarer_anklet, wild_tuber, wood_door, wood_floor, wood_wall, workbench
+PASS Button inside editor frame: Appearance
+PASS Button inside editor frame: Wardrobe
+PASS Button inside editor frame: <
+PASS Button inside editor frame: >
+PASS Button inside editor frame: <
+PASS Button inside editor frame: >
+PASS Button inside editor frame: <
+PASS Button inside editor frame: >
+PASS Button inside editor frame: <
+PASS Button inside editor frame: >
+PASS Button inside editor frame: <
+PASS Button inside editor frame: >
+PASS Button inside editor frame: Current
+PASS Button inside editor frame: <
+PASS Button inside editor frame: >
+PASS Button inside editor frame: <
+PASS Button inside editor frame: >
+PASS Button inside editor frame: <
+PASS Button inside editor frame: >
+PASS Button inside editor frame: Mossweave
+PASS Button inside editor frame: Leather
+PASS Button inside editor frame: Fangbound
+PASS Button inside editor frame: Skyshard
+PASS Button inside editor frame: Tidecaller
+PASS Button inside editor frame: Tyrant
+PASS Button inside editor frame: Turn preview
+PASS Button inside editor frame: Idle >
+PASS Button inside editor frame: Preview: clothing
+PASS Button inside editor frame: Reset
+PASS Button inside editor frame: Cancel
+PASS Button inside editor frame: Begin journey
+PASS Wardrobe page buttons never overlap
+PASS Six complete-outfit buttons
+PASS Outfit resolves real items: moss
+PASS Complete outfit button highlights: moss
+PASS Idle keeper previews at scale 3: moss down
+PASS Idle keeper fits portrait: moss down
+PASS Idle keeper previews at scale 3: moss left
+PASS Idle keeper fits portrait: moss left
+PASS Idle keeper previews at scale 3: moss up
+PASS Idle keeper fits portrait: moss up
+PASS Idle keeper previews at scale 3: moss right
+PASS Idle keeper fits portrait: moss right
+PASS Outfit resolves real items: leather
+PASS Complete outfit button highlights: leather
+PASS Idle keeper previews at scale 3: leather down
+PASS Idle keeper fits portrait: leather down
+PASS Idle keeper previews at scale 3: leather left
+PASS Idle keeper fits portrait: leather left
+PASS Idle keeper previews at scale 3: leather up
+PASS Idle keeper fits portrait: leather up
+PASS Idle keeper previews at scale 3: leather right
+PASS Idle keeper fits portrait: leather right
+PASS Outfit resolves real items: bone
+PASS Complete outfit button highlights: bone
+PASS Idle keeper previews at scale 3: bone down
+PASS Idle keeper fits portrait: bone down
+PASS Idle keeper previews at scale 3: bone left
+PASS Idle keeper fits portrait: bone left
+PASS Idle keeper previews at scale 3: bone up
+PASS Idle keeper fits portrait: bone up
+PASS Idle keeper previews at scale 3: bone right
+PASS Idle keeper fits portrait: bone right
+PASS Outfit resolves real items: crystal
+PASS Complete outfit button highlights: crystal
+PASS Idle keeper previews at scale 3: crystal down
+PASS Idle keeper fits portrait: crystal down
+PASS Idle keeper previews at scale 3: crystal left
+PASS Idle keeper fits portrait: crystal left
+PASS Idle keeper previews at scale 3: crystal up
+PASS Idle keeper fits portrait: crystal up
+PASS Idle keeper previews at scale 3: crystal right
+PASS Idle keeper fits portrait: crystal right
+PASS Outfit resolves real items: tide
+PASS Complete outfit button highlights: tide
+PASS Idle keeper previews at scale 3: tide down
+PASS Idle keeper fits portrait: tide down
+PASS Idle keeper previews at scale 3: tide left
+PASS Idle keeper fits portrait: tide left
+PASS Idle keeper previews at scale 3: tide up
+PASS Idle keeper fits portrait: tide up
+PASS Idle keeper previews at scale 3: tide right
+PASS Idle keeper fits portrait: tide right
+PASS Outfit resolves real items: rex
+PASS Complete outfit button highlights: rex
+PASS Idle keeper previews at scale 3: rex down
+PASS Idle keeper fits portrait: rex down
+PASS Idle keeper previews at scale 3: rex left
+PASS Idle keeper fits portrait: rex left
+PASS Idle keeper previews at scale 3: rex up
+PASS Idle keeper fits portrait: rex up
+PASS Idle keeper previews at scale 3: rex right
+PASS Idle keeper fits portrait: rex right
+PASS Motion fits portrait at an integer scale: idle down (x3)
+PASS Motion fits portrait at an integer scale: idle left (x3)
+PASS Motion fits portrait at an integer scale: idle up (x3)
+PASS Motion fits portrait at an integer scale: idle right (x3)
+PASS Baked held item is a real item: idle
+PASS Motion fits portrait at an integer scale: walk down (x3)
+PASS Motion fits portrait at an integer scale: walk left (x3)
+PASS Motion fits portrait at an integer scale: walk up (x3)
+PASS Motion fits portrait at an integer scale: walk right (x3)
+PASS Baked held item is a real item: walk
+PASS Motion fits portrait at an integer scale: run down (x3)
+PASS Motion fits portrait at an integer scale: run left (x3)
+PASS Motion fits portrait at an integer scale: run up (x3)
+PASS Motion fits portrait at an integer scale: run right (x3)
+PASS Baked held item is a real item: run
+PASS Motion fits portrait at an integer scale: roll down (x3)
+PASS Motion fits portrait at an integer scale: roll left (x3)
+PASS Motion fits portrait at an integer scale: roll up (x3)
+PASS Motion fits portrait at an integer scale: roll right (x3)
+PASS Baked held item is a real item: roll
+PASS Motion fits portrait at an integer scale: cheer down (x3)
+PASS Motion fits portrait at an integer scale: cheer left (x3)
+PASS Motion fits portrait at an integer scale: cheer up (x3)
+PASS Motion fits portrait at an integer scale: cheer right (x3)
+PASS Baked held item is a real item: cheer
+PASS Motion fits portrait at an integer scale: eat down (x3)
+PASS Motion fits portrait at an integer scale: eat left (x3)
+PASS Motion fits portrait at an integer scale: eat up (x3)
+PASS Motion fits portrait at an integer scale: eat right (x3)
+PASS Baked held item is a real item: eat
+PASS Motion fits portrait at an integer scale: axe down (x2)
+PASS Motion fits portrait at an integer scale: axe left (x2)
+PASS Motion fits portrait at an integer scale: axe up (x2)
+PASS Motion fits portrait at an integer scale: axe right (x2)
+PASS Baked held item is a real item: axe
+PASS Motion fits portrait at an integer scale: pickaxe down (x2)
+PASS Motion fits portrait at an integer scale: pickaxe left (x2)
+PASS Motion fits portrait at an integer scale: pickaxe up (x2)
+PASS Motion fits portrait at an integer scale: pickaxe right (x2)
+PASS Baked held item is a real item: pickaxe
+PASS Motion fits portrait at an integer scale: sword down (x2)
+PASS Motion fits portrait at an integer scale: sword left (x2)
+PASS Motion fits portrait at an integer scale: sword up (x2)
+PASS Motion fits portrait at an integer scale: sword right (x2)
+PASS Baked held item is a real item: sword
+PASS Motion fits portrait at an integer scale: bow_draw down (x3)
+PASS Motion fits portrait at an integer scale: bow_draw left (x3)
+PASS Motion fits portrait at an integer scale: bow_draw up (x3)
+PASS Motion fits portrait at an integer scale: bow_draw right (x3)
+PASS Baked held item is a real item: bow_draw
+PASS Motion fits portrait at an integer scale: fishing_cast down (x2)
+PASS Motion fits portrait at an integer scale: fishing_cast left (x2)
+PASS Motion fits portrait at an integer scale: fishing_cast up (x2)
+PASS Motion fits portrait at an integer scale: fishing_cast right (x2)
+PASS Baked held item is a real item: fishing_cast
+PASS Motion fits portrait at an integer scale: hoe down (x2)
+PASS Motion fits portrait at an integer scale: hoe left (x2)
+PASS Motion fits portrait at an integer scale: hoe up (x2)
+PASS Motion fits portrait at an integer scale: hoe right (x2)
+PASS Baked held item is a real item: hoe
+PASS Motion fits portrait at an integer scale: craft down (x3)
+PASS Motion fits portrait at an integer scale: craft left (x3)
+PASS Motion fits portrait at an integer scale: craft up (x3)
+PASS Motion fits portrait at an integer scale: craft right (x3)
+PASS Baked held item is a real item: craft
+PASS Motion fits portrait at an integer scale: pet down (x3)
+PASS Motion fits portrait at an integer scale: pet left (x3)
+PASS Motion fits portrait at an integer scale: pet up (x3)
+PASS Motion fits portrait at an integer scale: pet right (x3)
+PASS Baked held item is a real item: pet
+PASS Tool preview reports the baked axe
+PASS Tooltip explains set and tier: moss
+PASS Tooltip explains set and tier: leather
+PASS Tooltip explains set and tier: bone
+PASS Tooltip explains set and tier: crystal
+PASS Tooltip explains set and tier: tide
+PASS Tooltip explains set and tier: rex
+TOOLTIP
+Tidecaller Helm
+Sea-green moonscale plates rising to a tall aqua fin crest. It hums like a shell held to the ear.
+Defense 7
+Head armor ┬╖ Moonscale Tidecaller set, tier 5 of 6
+Full set: defense 26, hits deal 79%
+Right-click to wear
+Stack limit 1
+ARMOR_WARDROBE_CAPTURE: 170 checks, 0 failures

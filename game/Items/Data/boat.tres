@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/art/items/boat.png" id="2"]
+[resource]
+script = ExtResource("1")
+id = "boat"
+name = "Dugout Boat"
+description = "A hollowed skywood canoe and a paddle. Set it on Glassmere's water and press E to climb in: it crosses the deep water no one can wade."
+icon = ExtResource("2")
+max_stack = 1
+placeable = true

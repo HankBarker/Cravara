@@ -391,3 +391,23 @@ the rest of the ladder is copy-paste-tune.
 - Loot tables / weighted drops / sinks — [Game Developer: Loot drop best practices](https://www.gamedeveloper.com/design/loot-drop-best-practices), [Game Developer: Loot tables in ARPG](https://www.gamedeveloper.com/design/defining-loot-tables-in-arpg-game-design)
 - Taming & breeding — [ARK Wiki: Taming](https://ark.fandom.com/wiki/Taming), [ARK Wiki: Breeding](https://ark.fandom.com/wiki/Breeding)
 - Game juice — [Juice it or Lose it](https://gamejuice.co.uk/resources/juice-it-or-lose-it), [Wayline: the juice problem](https://www.wayline.io/blog/the-juice-problem-how-exaggerated-feedback-is-harming-game-design)
+
+## Pass 15: the long road, the larder
+
+- **Skills** (`progress/Skills.gd`): 50 levels; XP to the next level `round(40 * L^1.35 + 10)`
+  (50 for level 2, ~7,700 for level 50). Kills teach by species (`KILL_XP`: compy 3, raptor 12,
+  trike 30, allo 45, rex 110, spino 150, bosses 300-500; sick x1.3/x1.6, mutant x1.2, baby x0.25);
+  each landed blow a little (`HIT_XP`). One star point a level, +1 every tenth: 54 by level 50.
+  Trees: 28 stars each (`tools/skills/constellations.py` -> `SkillStars.gd`), many with 2-3 ranks
+  (each rank a point, `RANK_STEP` 5 levels later, its effect again); the generator asserts every tree
+  costs exactly 54 and every last rank fits under 50. Saves: format 4 stores `{star: rank}`; older
+  formats recount XP on the new table and light each saved star once.
+- **Food** (`tools/items/foods.py` writes the `.tres` files and `life/FoodData.gd`):
+  - crops per land (home land grows 1.25x faster), wild crop props for the far ones;
+  - meat by size: morsel < trex_meat < haunch (trike = stego) < titan_rib (longneck) < prime_meat;
+  - the Cooking Pot's 16 dishes, each a timed buff (`Item.buff_seconds`, `ForestPlayer.food_buffs`
+    per effect: a new dish replaces the same effect, different effects stack; `Trinkets.value` adds
+    them in);
+  - recipes may use groups (`any:fish`, `any:meat`: InventoryManager counts and removes across the
+    group, commonest first);
+  - taming diets with favourites worth double trust (`FAVOURITES`, `SCORNS`).

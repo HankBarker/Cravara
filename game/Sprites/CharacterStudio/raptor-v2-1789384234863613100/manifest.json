@@ -1,0 +1,1318 @@
+{
+  "name": "Raptor V2",
+  "brief": "Fresh front/rear run rebuild: 16 frames at 24 FPS. Awaiting visual review.",
+  "concept": {
+    "file": "concept-1788890570448379800.png",
+    "approved_sha256": "c130b813655d7f4be662d0829d5baa55e24d42fd541d960fd31dc669a0eb86eb"
+  },
+  "clips": {
+    "walk_right": {
+      "frames": [
+        "clips/walk_right-1788892769002015000/000.png",
+        "clips/walk_right-1788892769002015000/001.png",
+        "clips/walk_right-1788892769002015000/002.png",
+        "clips/walk_right-1788892769002015000/003.png",
+        "clips/walk_right-1788892769002015000/004.png",
+        "clips/walk_right-1788892769002015000/005.png",
+        "clips/walk_right-1788892769002015000/006.png",
+        "clips/walk_right-1788892769002015000/007.png"
+      ],
+      "fps": 10,
+      "loop": true,
+      "pivot": [
+        48,
+        32
+      ],
+      "concept_sha256": "c130b813655d7f4be662d0829d5baa55e24d42fd541d960fd31dc669a0eb86eb",
+      "review_notes": "Revision 2: eight frames at 10 fps, subtle head bob, arm swing and tail sway. Review the foot exchange and loop seam before approving. Previous six-frame files are preserved.",
+      "approved_sha256": "22d8122d7b73a2817290999ed15f040ac4b29285d017a10f6de4270c7d602d47"
+    },
+    "run_right": {
+      "frames": [
+        "clips/run_right-1789011476278866400/000.png",
+        "clips/run_right-1789011476278866400/001.png",
+        "clips/run_right-1789011476278866400/002.png",
+        "clips/run_right-1789011476278866400/003.png",
+        "clips/run_right-1789011476278866400/004.png",
+        "clips/run_right-1789011476278866400/005.png",
+        "clips/run_right-1789011476278866400/006.png",
+        "clips/run_right-1789011476278866400/007.png",
+        "clips/run_right-1789011476278866400/008.png",
+        "clips/run_right-1789011476278866400/009.png",
+        "clips/run_right-1789011476278866400/010.png",
+        "clips/run_right-1789011476278866400/011.png",
+        "clips/run_right-1789011476278866400/012.png",
+        "clips/run_right-1789011476278866400/013.png",
+        "clips/run_right-1789011476278866400/014.png",
+        "clips/run_right-1789011476278866400/015.png"
+      ],
+      "fps": 25,
+      "loop": true,
+      "pivot": [
+        48,
+        32
+      ],
+      "concept_sha256": "c130b813655d7f4be662d0829d5baa55e24d42fd541d960fd31dc669a0eb86eb",
+      "review_notes": "16-frame leg refinement: reordered recovery, four new transition poses, retained jaw sequence and body sway. 25 fps (0.64 seconds); try 20 for slower or 30 for faster. Animation awaiting review; gameplay speed matching remains for integration.",
+      "approved_sha256": "23c54bfb00a71a42d079b8083bdafd834750346e91dff73441879918ce0c8538"
+    },
+    "run_down": {
+      "frames": [
+        "clips/run_down-1789348538770548700/000.png",
+        "clips/run_down-1789348538770548700/001.png",
+        "clips/run_down-1789348538770548700/002.png",
+        "clips/run_down-1789348538770548700/003.png",
+        "clips/run_down-1789348538770548700/004.png",
+        "clips/run_down-1789348538770548700/005.png",
+        "clips/run_down-1789348538770548700/006.png",
+        "clips/run_down-1789348538770548700/007.png",
+        "clips/run_down-1789348538770548700/008.png",
+        "clips/run_down-1789348538770548700/009.png",
+        "clips/run_down-1789348538770548700/010.png",
+        "clips/run_down-1789348538770548700/011.png",
+        "clips/run_down-1789348538770548700/012.png",
+        "clips/run_down-1789348538770548700/013.png",
+        "clips/run_down-1789348538770548700/014.png",
+        "clips/run_down-1789348538770548700/015.png"
+      ],
+      "fps": 24,
+      "loop": true,
+      "pivot": [
+        56,
+        40
+      ],
+      "concept_sha256": "c130b813655d7f4be662d0829d5baa55e24d42fd541d960fd31dc669a0eb86eb",
+      "preview": "rebuild-r6/run_down/preview-4x.gif",
+      "contact_sheet": "rebuild-r6/run_down/contact-sheet.png",
+      "review_notes": "Fresh rebuild from approved concept: 16 newly drawn poses at 24 FPS. Whole-frame alignment and stride ordering in Aseprite; no prior leg-warp rig. Awaiting your visual review.",
+      "approved_sha256": "82e117c243ce3db3a6543c8dbaf8262fb629f97cdd44c49018abd499deda49f7"
+    },
+    "run_up": {
+      "frames": [
+        "clips/run_up-1789348538959834200/000.png",
+        "clips/run_up-1789348538959834200/001.png",
+        "clips/run_up-1789348538959834200/002.png",
+        "clips/run_up-1789348538959834200/003.png",
+        "clips/run_up-1789348538959834200/004.png",
+        "clips/run_up-1789348538959834200/005.png",
+        "clips/run_up-1789348538959834200/006.png",
+        "clips/run_up-1789348538959834200/007.png",
+        "clips/run_up-1789348538959834200/008.png",
+        "clips/run_up-1789348538959834200/009.png",
+        "clips/run_up-1789348538959834200/010.png",
+        "clips/run_up-1789348538959834200/011.png",
+        "clips/run_up-1789348538959834200/012.png",
+        "clips/run_up-1789348538959834200/013.png",
+        "clips/run_up-1789348538959834200/014.png",
+        "clips/run_up-1789348538959834200/015.png"
+      ],
+      "fps": 24,
+      "loop": true,
+      "pivot": [
+        56,
+        40
+      ],
+      "concept_sha256": "c130b813655d7f4be662d0829d5baa55e24d42fd541d960fd31dc669a0eb86eb",
+      "preview": "rebuild-r6/run_up/preview-4x.gif",
+      "contact_sheet": "rebuild-r6/run_up/contact-sheet.png",
+      "review_notes": "Fresh rebuild from approved concept: 16 newly drawn poses at 24 FPS. Whole-frame alignment and stride ordering in Aseprite; no prior leg-warp rig. Awaiting your visual review.",
+      "approved_sha256": "ffa34b261c0e3bad492ce8426e215e98ed1323eb031b6142f56f556bda7a0be5"
+    },
+    "bite_down": {
+      "frames": [
+        "clips/bite_down-1789141823725047300/000.png",
+        "clips/bite_down-1789141823725047300/001.png",
+        "clips/bite_down-1789141823725047300/002.png",
+        "clips/bite_down-1789141823725047300/003.png",
+        "clips/bite_down-1789141823725047300/004.png",
+        "clips/bite_down-1789141823725047300/005.png",
+        "clips/bite_down-1789141823725047300/006.png",
+        "clips/bite_down-1789141823725047300/007.png",
+        "clips/bite_down-1789141823725047300/008.png",
+        "clips/bite_down-1789141823725047300/009.png",
+        "clips/bite_down-1789141823725047300/010.png",
+        "clips/bite_down-1789141823725047300/011.png",
+        "clips/bite_down-1789141823725047300/012.png",
+        "clips/bite_down-1789141823725047300/013.png",
+        "clips/bite_down-1789141823725047300/014.png",
+        "clips/bite_down-1789141823725047300/015.png"
+      ],
+      "fps": 20,
+      "loop": false,
+      "pivot": [
+        56,
+        40
+      ],
+      "concept_sha256": "c130b813655d7f4be662d0829d5baa55e24d42fd541d960fd31dc669a0eb86eb",
+      "review_notes": "Review batch 2: One-shot wind-up, strike and recovery; press Play to replay. Prepared and checked at native resolution; awaiting your visual approval.",
+      "preview": "batch-review-r2/bite_down/preview-4x.gif",
+      "contact_sheet": "batch-review-r2/bite_down/contact-sheet.png",
+      "approved_sha256": "e8a19bbc0ddd0a0dbc3668a1cf65721258f79f847156e30e1fdc05116557e360"
+    },
+    "bite_right": {
+      "frames": [
+        "clips/bite_right-1789141823769761100/000.png",
+        "clips/bite_right-1789141823769761100/001.png",
+        "clips/bite_right-1789141823769761100/002.png",
+        "clips/bite_right-1789141823769761100/003.png",
+        "clips/bite_right-1789141823769761100/004.png",
+        "clips/bite_right-1789141823769761100/005.png",
+        "clips/bite_right-1789141823769761100/006.png",
+        "clips/bite_right-1789141823769761100/007.png",
+        "clips/bite_right-1789141823769761100/008.png",
+        "clips/bite_right-1789141823769761100/009.png",
+        "clips/bite_right-1789141823769761100/010.png",
+        "clips/bite_right-1789141823769761100/011.png",
+        "clips/bite_right-1789141823769761100/012.png",
+        "clips/bite_right-1789141823769761100/013.png",
+        "clips/bite_right-1789141823769761100/014.png",
+        "clips/bite_right-1789141823769761100/015.png"
+      ],
+      "fps": 20,
+      "loop": false,
+      "pivot": [
+        56,
+        40
+      ],
+      "concept_sha256": "c130b813655d7f4be662d0829d5baa55e24d42fd541d960fd31dc669a0eb86eb",
+      "review_notes": "Review batch 2: One-shot wind-up, strike and recovery; press Play to replay. Prepared and checked at native resolution; awaiting your visual approval.",
+      "preview": "batch-review-r2/bite_right/preview-4x.gif",
+      "contact_sheet": "batch-review-r2/bite_right/contact-sheet.png",
+      "approved_sha256": "e348ca388a4ff7c2177c39d5e5b922d1e3b4a22e98fb74b1d8698f86e305dfb1"
+    },
+    "bite_up": {
+      "frames": [
+        "clips/bite_up-1789141823812973500/000.png",
+        "clips/bite_up-1789141823812973500/001.png",
+        "clips/bite_up-1789141823812973500/002.png",
+        "clips/bite_up-1789141823812973500/003.png",
+        "clips/bite_up-1789141823812973500/004.png",
+        "clips/bite_up-1789141823812973500/005.png",
+        "clips/bite_up-1789141823812973500/006.png",
+        "clips/bite_up-1789141823812973500/007.png",
+        "clips/bite_up-1789141823812973500/008.png",
+        "clips/bite_up-1789141823812973500/009.png",
+        "clips/bite_up-1789141823812973500/010.png",
+        "clips/bite_up-1789141823812973500/011.png",
+        "clips/bite_up-1789141823812973500/012.png",
+        "clips/bite_up-1789141823812973500/013.png",
+        "clips/bite_up-1789141823812973500/014.png",
+        "clips/bite_up-1789141823812973500/015.png"
+      ],
+      "fps": 20,
+      "loop": false,
+      "pivot": [
+        56,
+        40
+      ],
+      "concept_sha256": "c130b813655d7f4be662d0829d5baa55e24d42fd541d960fd31dc669a0eb86eb",
+      "review_notes": "Review batch 2: One-shot wind-up, strike and recovery; press Play to replay. Prepared and checked at native resolution; awaiting your visual approval. Rear-view bite reads mostly through the neck lunge because the mouth is occluded.",
+      "preview": "batch-review-r2/bite_up/preview-4x.gif",
+      "contact_sheet": "batch-review-r2/bite_up/contact-sheet.png",
+      "approved_sha256": "776d538b5e37d6a6a1cb7199d1a7d67b9ebdbd5d0c8087d59243a3fa1ecd1477"
+    },
+    "death": {
+      "frames": [
+        "clips/death-1789141823853929800/000.png",
+        "clips/death-1789141823853929800/001.png",
+        "clips/death-1789141823853929800/002.png",
+        "clips/death-1789141823853929800/003.png",
+        "clips/death-1789141823853929800/004.png",
+        "clips/death-1789141823853929800/005.png",
+        "clips/death-1789141823853929800/006.png",
+        "clips/death-1789141823853929800/007.png",
+        "clips/death-1789141823853929800/008.png",
+        "clips/death-1789141823853929800/009.png",
+        "clips/death-1789141823853929800/010.png",
+        "clips/death-1789141823853929800/011.png",
+        "clips/death-1789141823853929800/012.png",
+        "clips/death-1789141823853929800/013.png",
+        "clips/death-1789141823853929800/014.png",
+        "clips/death-1789141823853929800/015.png"
+      ],
+      "fps": 20,
+      "loop": false,
+      "pivot": [
+        56,
+        40
+      ],
+      "concept_sha256": "c130b813655d7f4be662d0829d5baa55e24d42fd541d960fd31dc669a0eb86eb",
+      "review_notes": "Review batch 2: Non-looping collapse with a held final pose. Prepared and checked at native resolution; awaiting your visual approval.",
+      "preview": "batch-review-r2/death/preview-4x.gif",
+      "contact_sheet": "batch-review-r2/death/contact-sheet.png",
+      "approved_sha256": "cbdfca2ac5a93dc3dfa52969f6369665fb41f1cb08509375b055144ec85e49d0"
+    },
+    "swipe_down": {
+      "frames": [
+        "clips/swipe_down-1789143835224102900/000.png",
+        "clips/swipe_down-1789143835224102900/001.png",
+        "clips/swipe_down-1789143835224102900/002.png",
+        "clips/swipe_down-1789143835224102900/003.png",
+        "clips/swipe_down-1789143835224102900/004.png",
+        "clips/swipe_down-1789143835224102900/005.png",
+        "clips/swipe_down-1789143835224102900/006.png",
+        "clips/swipe_down-1789143835224102900/007.png",
+        "clips/swipe_down-1789143835224102900/008.png",
+        "clips/swipe_down-1789143835224102900/009.png",
+        "clips/swipe_down-1789143835224102900/010.png",
+        "clips/swipe_down-1789143835224102900/011.png",
+        "clips/swipe_down-1789143835224102900/012.png",
+        "clips/swipe_down-1789143835224102900/013.png",
+        "clips/swipe_down-1789143835224102900/014.png",
+        "clips/swipe_down-1789143835224102900/015.png"
+      ],
+      "fps": 20,
+      "loop": false,
+      "pivot": [
+        56,
+        40
+      ],
+      "concept_sha256": "c130b813655d7f4be662d0829d5baa55e24d42fd541d960fd31dc669a0eb86eb",
+      "review_notes": "Both-claw forward lunge: crouch, simultaneous reach, landing and recovery. Replaces the one-arm swipe. Revision 3, awaiting your review.",
+      "label": "claw lunge down",
+      "preview": "refinement-r3/swipe_down/preview-4x.gif",
+      "contact_sheet": "refinement-r3/swipe_down/contact-sheet.png",
+      "approved_sha256": "068f1f944285886a017267a3a1e75b598f065956800ab388ae4fac79aa3ad867"
+    },
+    "swipe_right": {
+      "frames": [
+        "clips/swipe_right-1789143835104799200/000.png",
+        "clips/swipe_right-1789143835104799200/001.png",
+        "clips/swipe_right-1789143835104799200/002.png",
+        "clips/swipe_right-1789143835104799200/003.png",
+        "clips/swipe_right-1789143835104799200/004.png",
+        "clips/swipe_right-1789143835104799200/005.png",
+        "clips/swipe_right-1789143835104799200/006.png",
+        "clips/swipe_right-1789143835104799200/007.png",
+        "clips/swipe_right-1789143835104799200/008.png",
+        "clips/swipe_right-1789143835104799200/009.png",
+        "clips/swipe_right-1789143835104799200/010.png",
+        "clips/swipe_right-1789143835104799200/011.png",
+        "clips/swipe_right-1789143835104799200/012.png",
+        "clips/swipe_right-1789143835104799200/013.png",
+        "clips/swipe_right-1789143835104799200/014.png",
+        "clips/swipe_right-1789143835104799200/015.png"
+      ],
+      "fps": 20,
+      "loop": false,
+      "pivot": [
+        56,
+        40
+      ],
+      "concept_sha256": "c130b813655d7f4be662d0829d5baa55e24d42fd541d960fd31dc669a0eb86eb",
+      "review_notes": "Both-claw forward lunge: crouch, simultaneous reach, landing and recovery. Replaces the one-arm swipe. Revision 3, awaiting your review.",
+      "label": "claw lunge right",
+      "preview": "refinement-r3/swipe_right/preview-4x.gif",
+      "contact_sheet": "refinement-r3/swipe_right/contact-sheet.png",
+      "approved_sha256": "577025876dc49ec76b75ab096d5900699bd102d84aa1680d70d555021ca2e94b"
+    },
+    "swipe_up": {
+      "frames": [
+        "clips/swipe_up-1789143835292287500/000.png",
+        "clips/swipe_up-1789143835292287500/001.png",
+        "clips/swipe_up-1789143835292287500/002.png",
+        "clips/swipe_up-1789143835292287500/003.png",
+        "clips/swipe_up-1789143835292287500/004.png",
+        "clips/swipe_up-1789143835292287500/005.png",
+        "clips/swipe_up-1789143835292287500/006.png",
+        "clips/swipe_up-1789143835292287500/007.png",
+        "clips/swipe_up-1789143835292287500/008.png",
+        "clips/swipe_up-1789143835292287500/009.png",
+        "clips/swipe_up-1789143835292287500/010.png",
+        "clips/swipe_up-1789143835292287500/011.png",
+        "clips/swipe_up-1789143835292287500/012.png",
+        "clips/swipe_up-1789143835292287500/013.png",
+        "clips/swipe_up-1789143835292287500/014.png",
+        "clips/swipe_up-1789143835292287500/015.png"
+      ],
+      "fps": 20,
+      "loop": false,
+      "pivot": [
+        56,
+        40
+      ],
+      "concept_sha256": "c130b813655d7f4be662d0829d5baa55e24d42fd541d960fd31dc669a0eb86eb",
+      "review_notes": "Both-claw forward lunge: crouch, simultaneous reach, landing and recovery. Replaces the one-arm swipe. Revision 3, awaiting your review.",
+      "label": "claw lunge up",
+      "preview": "refinement-r3/swipe_up/preview-4x.gif",
+      "contact_sheet": "refinement-r3/swipe_up/contact-sheet.png",
+      "approved_sha256": "b8928b9c16d73056d6655f359f246a51e0fe46952b6fe313b4a06b3258039397"
+    },
+    "walk_down": {
+      "frames": [
+        "clips/walk_down-1789141824138800700/000.png",
+        "clips/walk_down-1789141824138800700/001.png",
+        "clips/walk_down-1789141824138800700/002.png",
+        "clips/walk_down-1789141824138800700/003.png",
+        "clips/walk_down-1789141824138800700/004.png",
+        "clips/walk_down-1789141824138800700/005.png",
+        "clips/walk_down-1789141824138800700/006.png",
+        "clips/walk_down-1789141824138800700/007.png",
+        "clips/walk_down-1789141824138800700/008.png",
+        "clips/walk_down-1789141824138800700/009.png",
+        "clips/walk_down-1789141824138800700/010.png",
+        "clips/walk_down-1789141824138800700/011.png",
+        "clips/walk_down-1789141824138800700/012.png",
+        "clips/walk_down-1789141824138800700/013.png",
+        "clips/walk_down-1789141824138800700/014.png",
+        "clips/walk_down-1789141824138800700/015.png"
+      ],
+      "fps": 20,
+      "loop": true,
+      "pivot": [
+        56,
+        40
+      ],
+      "concept_sha256": "c130b813655d7f4be662d0829d5baa55e24d42fd541d960fd31dc669a0eb86eb",
+      "review_notes": "Review batch 2: Complete leg poses, ordered support exchange, grounded feet. Review gait and tail overlap. Prepared and checked at native resolution; awaiting your visual approval.",
+      "preview": "batch-review-r2/walk_down/preview-4x.gif",
+      "contact_sheet": "batch-review-r2/walk_down/contact-sheet.png",
+      "approved_sha256": "37a04b08fd8f55bff1254b33188bf0b655233f3ecd0c7a438c6a0e50edb17135"
+    },
+    "walk_up": {
+      "frames": [
+        "clips/walk_up-1789143835047706100/000.png",
+        "clips/walk_up-1789143835047706100/001.png",
+        "clips/walk_up-1789143835047706100/002.png",
+        "clips/walk_up-1789143835047706100/003.png",
+        "clips/walk_up-1789143835047706100/004.png",
+        "clips/walk_up-1789143835047706100/005.png",
+        "clips/walk_up-1789143835047706100/006.png",
+        "clips/walk_up-1789143835047706100/007.png",
+        "clips/walk_up-1789143835047706100/008.png",
+        "clips/walk_up-1789143835047706100/009.png",
+        "clips/walk_up-1789143835047706100/010.png",
+        "clips/walk_up-1789143835047706100/011.png",
+        "clips/walk_up-1789143835047706100/012.png",
+        "clips/walk_up-1789143835047706100/013.png",
+        "clips/walk_up-1789143835047706100/014.png",
+        "clips/walk_up-1789143835047706100/015.png",
+        "clips/walk_up-1789143835047706100/016.png",
+        "clips/walk_up-1789143835047706100/017.png",
+        "clips/walk_up-1789143835047706100/018.png",
+        "clips/walk_up-1789143835047706100/019.png"
+      ],
+      "fps": 25,
+      "loop": true,
+      "pivot": [
+        56,
+        40
+      ],
+      "concept_sha256": "c130b813655d7f4be662d0829d5baa55e24d42fd541d960fd31dc669a0eb86eb",
+      "review_notes": "20-frame cycle at 25 FPS (0.8 seconds). Stable body artwork, complete legs and constant-size feet; controlled motion replaces the changing generated poses. Check at 1x and 4x. Revision 3, awaiting your review.",
+      "preview": "refinement-r3/walk_up/preview-4x.gif",
+      "contact_sheet": "refinement-r3/walk_up/contact-sheet.png",
+      "approved_sha256": "8006eb2cc78044047dcaa2b3203684ce0a3ba063b22d8ca6a49f6f41676c71ec"
+    },
+    "walk_left": {
+      "frames": [
+        "clips/walk_left-1789141824224126700/000.png",
+        "clips/walk_left-1789141824224126700/001.png",
+        "clips/walk_left-1789141824224126700/002.png",
+        "clips/walk_left-1789141824224126700/003.png",
+        "clips/walk_left-1789141824224126700/004.png",
+        "clips/walk_left-1789141824224126700/005.png",
+        "clips/walk_left-1789141824224126700/006.png",
+        "clips/walk_left-1789141824224126700/007.png"
+      ],
+      "fps": 10,
+      "loop": true,
+      "pivot": [
+        48,
+        32
+      ],
+      "concept_sha256": "c130b813655d7f4be662d0829d5baa55e24d42fd541d960fd31dc669a0eb86eb",
+      "review_notes": "Review batch 2: mirrored from the approved side cycle. Prepared and checked at native resolution; awaiting your visual approval.",
+      "preview": "batch-review-r2/walk_left/preview-4x.gif",
+      "contact_sheet": "batch-review-r2/walk_left/contact-sheet.png",
+      "approved_sha256": "208cd33524bec5a4f537d29e08db1d1e78011d140c4cd25673ec1ab743f0eec9"
+    },
+    "run_left": {
+      "frames": [
+        "clips/run_left-1789141824259684700/000.png",
+        "clips/run_left-1789141824259684700/001.png",
+        "clips/run_left-1789141824259684700/002.png",
+        "clips/run_left-1789141824259684700/003.png",
+        "clips/run_left-1789141824259684700/004.png",
+        "clips/run_left-1789141824259684700/005.png",
+        "clips/run_left-1789141824259684700/006.png",
+        "clips/run_left-1789141824259684700/007.png",
+        "clips/run_left-1789141824259684700/008.png",
+        "clips/run_left-1789141824259684700/009.png",
+        "clips/run_left-1789141824259684700/010.png",
+        "clips/run_left-1789141824259684700/011.png",
+        "clips/run_left-1789141824259684700/012.png",
+        "clips/run_left-1789141824259684700/013.png",
+        "clips/run_left-1789141824259684700/014.png",
+        "clips/run_left-1789141824259684700/015.png"
+      ],
+      "fps": 25,
+      "loop": true,
+      "pivot": [
+        48,
+        32
+      ],
+      "concept_sha256": "c130b813655d7f4be662d0829d5baa55e24d42fd541d960fd31dc669a0eb86eb",
+      "review_notes": "Review batch 2: mirrored from the approved side cycle. Prepared and checked at native resolution; awaiting your visual approval.",
+      "preview": "batch-review-r2/run_left/preview-4x.gif",
+      "contact_sheet": "batch-review-r2/run_left/contact-sheet.png",
+      "approved_sha256": "b10d133a9b48a5f2571c6d51481eff1c76d8edd590673d11fadfc0ab3bfc1619"
+    },
+    "bite_left": {
+      "frames": [
+        "clips/bite_left-1789141824298549900/000.png",
+        "clips/bite_left-1789141824298549900/001.png",
+        "clips/bite_left-1789141824298549900/002.png",
+        "clips/bite_left-1789141824298549900/003.png",
+        "clips/bite_left-1789141824298549900/004.png",
+        "clips/bite_left-1789141824298549900/005.png",
+        "clips/bite_left-1789141824298549900/006.png",
+        "clips/bite_left-1789141824298549900/007.png",
+        "clips/bite_left-1789141824298549900/008.png",
+        "clips/bite_left-1789141824298549900/009.png",
+        "clips/bite_left-1789141824298549900/010.png",
+        "clips/bite_left-1789141824298549900/011.png",
+        "clips/bite_left-1789141824298549900/012.png",
+        "clips/bite_left-1789141824298549900/013.png",
+        "clips/bite_left-1789141824298549900/014.png",
+        "clips/bite_left-1789141824298549900/015.png"
+      ],
+      "fps": 20,
+      "loop": false,
+      "pivot": [
+        56,
+        40
+      ],
+      "concept_sha256": "c130b813655d7f4be662d0829d5baa55e24d42fd541d960fd31dc669a0eb86eb",
+      "review_notes": "Review batch 2: One-shot wind-up, strike and recovery; press Play to replay. Prepared and checked at native resolution; awaiting your visual approval.",
+      "preview": "batch-review-r2/bite_left/preview-4x.gif",
+      "contact_sheet": "batch-review-r2/bite_left/contact-sheet.png",
+      "approved_sha256": "d8af9bee93eb9faf7f7a06bbcbafbe6e5c4fb1306fdab747b6ff84ab5e583d43"
+    },
+    "swipe_left": {
+      "frames": [
+        "clips/swipe_left-1789143835164584100/000.png",
+        "clips/swipe_left-1789143835164584100/001.png",
+        "clips/swipe_left-1789143835164584100/002.png",
+        "clips/swipe_left-1789143835164584100/003.png",
+        "clips/swipe_left-1789143835164584100/004.png",
+        "clips/swipe_left-1789143835164584100/005.png",
+        "clips/swipe_left-1789143835164584100/006.png",
+        "clips/swipe_left-1789143835164584100/007.png",
+        "clips/swipe_left-1789143835164584100/008.png",
+        "clips/swipe_left-1789143835164584100/009.png",
+        "clips/swipe_left-1789143835164584100/010.png",
+        "clips/swipe_left-1789143835164584100/011.png",
+        "clips/swipe_left-1789143835164584100/012.png",
+        "clips/swipe_left-1789143835164584100/013.png",
+        "clips/swipe_left-1789143835164584100/014.png",
+        "clips/swipe_left-1789143835164584100/015.png"
+      ],
+      "fps": 20,
+      "loop": false,
+      "pivot": [
+        56,
+        40
+      ],
+      "concept_sha256": "c130b813655d7f4be662d0829d5baa55e24d42fd541d960fd31dc669a0eb86eb",
+      "review_notes": "Both-claw forward lunge: crouch, simultaneous reach, landing and recovery. Replaces the one-arm swipe. Revision 3, awaiting your review.",
+      "label": "claw lunge left",
+      "preview": "refinement-r3/swipe_left/preview-4x.gif",
+      "contact_sheet": "refinement-r3/swipe_left/contact-sheet.png",
+      "approved_sha256": "03a7a612bd7c8fcf52c0b165d1c1684750881dffe8e7e819c16296cbaa2fc45e"
+    },
+    "idle_down": {
+      "frames": [
+        "clips/idle_down-1789141824387975000/000.png",
+        "clips/idle_down-1789141824387975000/001.png",
+        "clips/idle_down-1789141824387975000/002.png",
+        "clips/idle_down-1789141824387975000/003.png",
+        "clips/idle_down-1789141824387975000/004.png",
+        "clips/idle_down-1789141824387975000/005.png",
+        "clips/idle_down-1789141824387975000/006.png",
+        "clips/idle_down-1789141824387975000/007.png"
+      ],
+      "fps": 8,
+      "loop": true,
+      "pivot": [
+        56,
+        40
+      ],
+      "concept_sha256": "c130b813655d7f4be662d0829d5baa55e24d42fd541d960fd31dc669a0eb86eb",
+      "review_notes": "Review batch 2: Breathing idle. Prepared and checked at native resolution; awaiting your visual approval.",
+      "preview": "batch-review-r2/idle_down/preview-4x.gif",
+      "contact_sheet": "batch-review-r2/idle_down/contact-sheet.png",
+      "approved_sha256": "f45be438b01d2ce793401dc2884dcc207fe5c0960cc9cbef7cafc871debea99e"
+    },
+    "idle_up": {
+      "frames": [
+        "clips/idle_up-1789141824423404400/000.png",
+        "clips/idle_up-1789141824423404400/001.png",
+        "clips/idle_up-1789141824423404400/002.png",
+        "clips/idle_up-1789141824423404400/003.png",
+        "clips/idle_up-1789141824423404400/004.png",
+        "clips/idle_up-1789141824423404400/005.png",
+        "clips/idle_up-1789141824423404400/006.png",
+        "clips/idle_up-1789141824423404400/007.png"
+      ],
+      "fps": 8,
+      "loop": true,
+      "pivot": [
+        56,
+        40
+      ],
+      "concept_sha256": "c130b813655d7f4be662d0829d5baa55e24d42fd541d960fd31dc669a0eb86eb",
+      "review_notes": "Review batch 2: Breathing idle. Prepared and checked at native resolution; awaiting your visual approval.",
+      "preview": "batch-review-r2/idle_up/preview-4x.gif",
+      "contact_sheet": "batch-review-r2/idle_up/contact-sheet.png",
+      "approved_sha256": "9d23b430662bc3814dbd06af0f450591a9f6f580e694518d4440a24f8d0dcf2a"
+    },
+    "idle_right": {
+      "frames": [
+        "clips/idle_right-1789141824461106100/000.png",
+        "clips/idle_right-1789141824461106100/001.png",
+        "clips/idle_right-1789141824461106100/002.png",
+        "clips/idle_right-1789141824461106100/003.png",
+        "clips/idle_right-1789141824461106100/004.png",
+        "clips/idle_right-1789141824461106100/005.png",
+        "clips/idle_right-1789141824461106100/006.png",
+        "clips/idle_right-1789141824461106100/007.png"
+      ],
+      "fps": 8,
+      "loop": true,
+      "pivot": [
+        56,
+        40
+      ],
+      "concept_sha256": "c130b813655d7f4be662d0829d5baa55e24d42fd541d960fd31dc669a0eb86eb",
+      "review_notes": "Review batch 2: Breathing idle. Prepared and checked at native resolution; awaiting your visual approval.",
+      "preview": "batch-review-r2/idle_right/preview-4x.gif",
+      "contact_sheet": "batch-review-r2/idle_right/contact-sheet.png",
+      "approved_sha256": "e872d60f6e7632e0c3e5e7b1c1b747290632ec7a90e1856900102af5d68aff5c"
+    },
+    "idle_left": {
+      "frames": [
+        "clips/idle_left-1789141824495300400/000.png",
+        "clips/idle_left-1789141824495300400/001.png",
+        "clips/idle_left-1789141824495300400/002.png",
+        "clips/idle_left-1789141824495300400/003.png",
+        "clips/idle_left-1789141824495300400/004.png",
+        "clips/idle_left-1789141824495300400/005.png",
+        "clips/idle_left-1789141824495300400/006.png",
+        "clips/idle_left-1789141824495300400/007.png"
+      ],
+      "fps": 8,
+      "loop": true,
+      "pivot": [
+        56,
+        40
+      ],
+      "concept_sha256": "c130b813655d7f4be662d0829d5baa55e24d42fd541d960fd31dc669a0eb86eb",
+      "review_notes": "Review batch 2: Breathing idle. Prepared and checked at native resolution; awaiting your visual approval.",
+      "preview": "batch-review-r2/idle_left/preview-4x.gif",
+      "contact_sheet": "batch-review-r2/idle_left/contact-sheet.png",
+      "approved_sha256": "4374bf097b85653c22995d31512e3d7ca19581046dda182950e6e1b46f0c6282"
+    }
+  },
+  "requests": [
+    {
+      "type": "walk_right",
+      "notes": "Refined eight-frame walk approved in chat.",
+      "status": "approved"
+    },
+    {
+      "type": "run_right",
+      "status": "approved",
+      "notes": "Sixteen-frame side run approved in chat."
+    },
+    {
+      "type": "run_down",
+      "status": "ready_for_review",
+      "notes": "Front/rear run candidate awaiting visual approval."
+    },
+    {
+      "type": "run_up",
+      "status": "ready_for_review",
+      "notes": "Front/rear run candidate awaiting visual approval."
+    }
+  ],
+  "history": [
+    {
+      "event": "concept_added",
+      "file": "concept-1788890543080858000.png",
+      "time": 1788890543.0844154
+    },
+    {
+      "event": "concept_added",
+      "file": "concept-1788890570448379800.png",
+      "time": 1788890570.4506032
+    },
+    {
+      "event": "approve_concept",
+      "notes": "User approved the lean slate-blue design in Codex chat on 2026-09-08.",
+      "time": 1788890735.4257734
+    },
+    {
+      "event": "request_walk",
+      "notes": "",
+      "time": 1788890735.4916677
+    },
+    {
+      "event": "walk_refined",
+      "time": 1788892769.0215018,
+      "notes": "User requested secondary motion and extra leg transitions; revision 2 pending approval."
+    },
+    {
+      "event": "approve_clip",
+      "notes": "User approved refined walk in chat before requesting run.",
+      "time": 1788996017.8065262
+    },
+    {
+      "event": "run_pose_approved",
+      "time": 1788996017.8649306,
+      "file": "run-pose-r2-review.png",
+      "notes": "User approved corrected low pose and requested subtle breathing jaw motion."
+    },
+    {
+      "event": "run_refined",
+      "time": 1789002220.1880112,
+      "notes": "User requested more body swing and 10-12 frames. Previous six-frame clip retained."
+    },
+    {
+      "event": "run_16_frame_refinement",
+      "time": 1789011476.3093016,
+      "notes": "User accepted 16-frame plan; previous 12-frame version preserved."
+    },
+    {
+      "event": "approve_clip",
+      "notes": "User approved the sixteen-frame side run as about perfect and requested up/down next.",
+      "time": 1789025296.6607056
+    },
+    {
+      "event": "complete_animation_review_batch",
+      "time": 1789141824.5290792,
+      "notes": "19 clips added/revised; side approvals preserved; visual review remains pending."
+    },
+    {
+      "event": "approve_clip",
+      "notes": "User approved the character for game integration on 2026-09-14 after reviewing the rebuilt front/rear runs.",
+      "time": 1789384224.6611254
+    },
+    {
+      "event": "approve_clip",
+      "notes": "User approved the character for game integration on 2026-09-14 after reviewing the rebuilt front/rear runs.",
+      "time": 1789384225.3265598
+    },
+    {
+      "event": "approve_clip",
+      "notes": "User approved the character for game integration on 2026-09-14 after reviewing the rebuilt front/rear runs.",
+      "time": 1789384225.7345135
+    },
+    {
+      "event": "approve_clip",
+      "notes": "User approved the character for game integration on 2026-09-14 after reviewing the rebuilt front/rear runs.",
+      "time": 1789384226.1392353
+    },
+    {
+      "event": "approve_clip",
+      "notes": "User approved the character for game integration on 2026-09-14 after reviewing the rebuilt front/rear runs.",
+      "time": 1789384226.5254197
+    },
+    {
+      "event": "approve_clip",
+      "notes": "User approved the character for game integration on 2026-09-14 after reviewing the rebuilt front/rear runs.",
+      "time": 1789384226.9085896
+    },
+    {
+      "event": "approve_clip",
+      "notes": "User approved the character for game integration on 2026-09-14 after reviewing the rebuilt front/rear runs.",
+      "time": 1789384227.3443131
+    },
+    {
+      "event": "approve_clip",
+      "notes": "User approved the character for game integration on 2026-09-14 after reviewing the rebuilt front/rear runs.",
+      "time": 1789384227.7928386
+    },
+    {
+      "event": "approve_clip",
+      "notes": "User approved the character for game integration on 2026-09-14 after reviewing the rebuilt front/rear runs.",
+      "time": 1789384228.2819235
+    },
+    {
+      "event": "approve_clip",
+      "notes": "User approved the character for game integration on 2026-09-14 after reviewing the rebuilt front/rear runs.",
+      "time": 1789384228.7724757
+    },
+    {
+      "event": "approve_clip",
+      "notes": "User approved the character for game integration on 2026-09-14 after reviewing the rebuilt front/rear runs.",
+      "time": 1789384229.2399905
+    },
+    {
+      "event": "approve_clip",
+      "notes": "User approved the character for game integration on 2026-09-14 after reviewing the rebuilt front/rear runs.",
+      "time": 1789384229.7407272
+    },
+    {
+      "event": "approve_clip",
+      "notes": "User approved the character for game integration on 2026-09-14 after reviewing the rebuilt front/rear runs.",
+      "time": 1789384230.2607908
+    },
+    {
+      "event": "approve_clip",
+      "notes": "User approved the character for game integration on 2026-09-14 after reviewing the rebuilt front/rear runs.",
+      "time": 1789384230.736101
+    },
+    {
+      "event": "approve_clip",
+      "notes": "User approved the character for game integration on 2026-09-14 after reviewing the rebuilt front/rear runs.",
+      "time": 1789384231.2280407
+    },
+    {
+      "event": "approve_clip",
+      "notes": "User approved the character for game integration on 2026-09-14 after reviewing the rebuilt front/rear runs.",
+      "time": 1789384231.6818094
+    },
+    {
+      "event": "approve_clip",
+      "notes": "User approved the character for game integration on 2026-09-14 after reviewing the rebuilt front/rear runs.",
+      "time": 1789384232.1262708
+    },
+    {
+      "event": "approve_clip",
+      "notes": "User approved the character for game integration on 2026-09-14 after reviewing the rebuilt front/rear runs.",
+      "time": 1789384232.576394
+    },
+    {
+      "event": "approve_clip",
+      "notes": "User approved the character for game integration on 2026-09-14 after reviewing the rebuilt front/rear runs.",
+      "time": 1789384233.0426862
+    },
+    {
+      "event": "approve_clip",
+      "notes": "User approved the character for game integration on 2026-09-14 after reviewing the rebuilt front/rear runs.",
+      "time": 1789384233.4940817
+    },
+    {
+      "event": "approve_clip",
+      "notes": "User approved the character for game integration on 2026-09-14 after reviewing the rebuilt front/rear runs.",
+      "time": 1789384233.9784715
+    }
+  ],
+  "clip_versions": {
+    "walk_right": [
+      {
+        "frames": [
+          "clips/walk_right-1788891166367315600/000.png",
+          "clips/walk_right-1788891166367315600/001.png",
+          "clips/walk_right-1788891166367315600/002.png",
+          "clips/walk_right-1788891166367315600/003.png",
+          "clips/walk_right-1788891166367315600/004.png",
+          "clips/walk_right-1788891166367315600/005.png"
+        ],
+        "fps": 8,
+        "loop": true,
+        "pivot": [
+          48,
+          32
+        ],
+        "concept_sha256": "c130b813655d7f4be662d0829d5baa55e24d42fd541d960fd31dc669a0eb86eb",
+        "review_notes": "First motion test, not production-approved. Check support-leg exchange, foot sliding and the 6-to-1 seam. Native 96x64 trial canvas; master palette matching and final gameplay footprint remain for art review."
+      }
+    ],
+    "run_right": [
+      {
+        "frames": [
+          "clips/run_right-1788996017848168000/000.png",
+          "clips/run_right-1788996017848168000/001.png",
+          "clips/run_right-1788996017848168000/002.png",
+          "clips/run_right-1788996017848168000/003.png",
+          "clips/run_right-1788996017848168000/004.png",
+          "clips/run_right-1788996017848168000/005.png"
+        ],
+        "fps": 12,
+        "loop": true,
+        "pivot": [
+          48,
+          32
+        ],
+        "concept_sha256": "c130b813655d7f4be662d0829d5baa55e24d42fd541d960fd31dc669a0eb86eb",
+        "review_notes": "Low pursuit run test: six poses at 12 fps with a small open/close jaw cycle. Check leg exchange and foot contact before approval. Pose approved in chat; animation pending."
+      },
+      {
+        "frames": [
+          "clips/run_right-1789002310620930600/000.png",
+          "clips/run_right-1789002310620930600/001.png",
+          "clips/run_right-1789002310620930600/002.png",
+          "clips/run_right-1789002310620930600/003.png",
+          "clips/run_right-1789002310620930600/004.png",
+          "clips/run_right-1789002310620930600/005.png",
+          "clips/run_right-1789002310620930600/006.png",
+          "clips/run_right-1789002310620930600/007.png",
+          "clips/run_right-1789002310620930600/008.png",
+          "clips/run_right-1789002310620930600/009.png",
+          "clips/run_right-1789002310620930600/010.png",
+          "clips/run_right-1789002310620930600/011.png"
+        ],
+        "fps": 20,
+        "loop": true,
+        "pivot": [
+          48,
+          32
+        ],
+        "concept_sha256": "c130b813655d7f4be662d0829d5baa55e24d42fd541d960fd31dc669a0eb86eb",
+        "review_notes": "12-frame revision: six added leg transitions, torso rock, delayed head and tail sway, breathing jaw. 20 fps / 0.6 second loop. Review naturalness and foot exchange; not yet approved."
+      }
+    ],
+    "run_down": [
+      {
+        "frames": [
+          "clips/run_down-1789026046321768400/000.png",
+          "clips/run_down-1789026046321768400/001.png",
+          "clips/run_down-1789026046321768400/002.png",
+          "clips/run_down-1789026046321768400/003.png",
+          "clips/run_down-1789026046321768400/004.png",
+          "clips/run_down-1789026046321768400/005.png",
+          "clips/run_down-1789026046321768400/006.png",
+          "clips/run_down-1789026046321768400/007.png",
+          "clips/run_down-1789026046321768400/008.png",
+          "clips/run_down-1789026046321768400/009.png",
+          "clips/run_down-1789026046321768400/010.png",
+          "clips/run_down-1789026046321768400/011.png",
+          "clips/run_down-1789026046321768400/012.png",
+          "clips/run_down-1789026046321768400/013.png",
+          "clips/run_down-1789026046321768400/014.png",
+          "clips/run_down-1789026046321768400/015.png"
+        ],
+        "fps": 25,
+        "loop": true,
+        "pivot": [
+          48,
+          32
+        ],
+        "concept_sha256": "c130b813655d7f4be662d0829d5baa55e24d42fd541d960fd31dc669a0eb86eb",
+        "review_notes": "First directional review: 16 frames at 25 fps. Eight generated keys with Aseprite-controlled foot-depth exchange and body sway. Check anatomy, perspective, hand/foot overlap and tail occlusion. Not yet approved."
+      },
+      {
+        "frames": [
+          "clips/run_down-1789141823907839300/000.png",
+          "clips/run_down-1789141823907839300/001.png",
+          "clips/run_down-1789141823907839300/002.png",
+          "clips/run_down-1789141823907839300/003.png",
+          "clips/run_down-1789141823907839300/004.png",
+          "clips/run_down-1789141823907839300/005.png",
+          "clips/run_down-1789141823907839300/006.png",
+          "clips/run_down-1789141823907839300/007.png",
+          "clips/run_down-1789141823907839300/008.png",
+          "clips/run_down-1789141823907839300/009.png",
+          "clips/run_down-1789141823907839300/010.png",
+          "clips/run_down-1789141823907839300/011.png",
+          "clips/run_down-1789141823907839300/012.png",
+          "clips/run_down-1789141823907839300/013.png",
+          "clips/run_down-1789141823907839300/014.png",
+          "clips/run_down-1789141823907839300/015.png"
+        ],
+        "fps": 25,
+        "loop": true,
+        "pivot": [
+          56,
+          40
+        ],
+        "concept_sha256": "c130b813655d7f4be662d0829d5baa55e24d42fd541d960fd31dc669a0eb86eb",
+        "review_notes": "Review batch 2: Complete leg poses, ordered support exchange, grounded feet. Review gait and tail overlap. Prepared and checked at native resolution; awaiting your visual approval. Visual reservation: the lifted leg still has strong perspective foreshortening; compare its readability against the walk.",
+        "preview": "batch-review-r2/run_down/preview-4x.gif",
+        "contact_sheet": "batch-review-r2/run_down/contact-sheet.png"
+      },
+      {
+        "frames": [
+          "clips/run_down-1789143834926602300/000.png",
+          "clips/run_down-1789143834926602300/001.png",
+          "clips/run_down-1789143834926602300/002.png",
+          "clips/run_down-1789143834926602300/003.png",
+          "clips/run_down-1789143834926602300/004.png",
+          "clips/run_down-1789143834926602300/005.png",
+          "clips/run_down-1789143834926602300/006.png",
+          "clips/run_down-1789143834926602300/007.png",
+          "clips/run_down-1789143834926602300/008.png",
+          "clips/run_down-1789143834926602300/009.png",
+          "clips/run_down-1789143834926602300/010.png",
+          "clips/run_down-1789143834926602300/011.png",
+          "clips/run_down-1789143834926602300/012.png",
+          "clips/run_down-1789143834926602300/013.png",
+          "clips/run_down-1789143834926602300/014.png",
+          "clips/run_down-1789143834926602300/015.png",
+          "clips/run_down-1789143834926602300/016.png",
+          "clips/run_down-1789143834926602300/017.png",
+          "clips/run_down-1789143834926602300/018.png",
+          "clips/run_down-1789143834926602300/019.png"
+        ],
+        "fps": 25,
+        "loop": true,
+        "pivot": [
+          56,
+          40
+        ],
+        "concept_sha256": "c130b813655d7f4be662d0829d5baa55e24d42fd541d960fd31dc669a0eb86eb",
+        "review_notes": "20-frame cycle at 25 FPS (0.8 seconds). Stable body artwork, complete legs and constant-size feet; controlled motion replaces the changing generated poses. Check at 1x and 4x. Revision 3, awaiting your review.",
+        "preview": "refinement-r3/run_down/preview-4x.gif",
+        "contact_sheet": "refinement-r3/run_down/contact-sheet.png"
+      },
+      {
+        "frames": [
+          "clips/run_down-1789343322910595900/000.png",
+          "clips/run_down-1789343322910595900/001.png",
+          "clips/run_down-1789343322910595900/002.png",
+          "clips/run_down-1789343322910595900/003.png",
+          "clips/run_down-1789343322910595900/004.png",
+          "clips/run_down-1789343322910595900/005.png",
+          "clips/run_down-1789343322910595900/006.png",
+          "clips/run_down-1789343322910595900/007.png",
+          "clips/run_down-1789343322910595900/008.png",
+          "clips/run_down-1789343322910595900/009.png",
+          "clips/run_down-1789343322910595900/010.png",
+          "clips/run_down-1789343322910595900/011.png",
+          "clips/run_down-1789343322910595900/012.png",
+          "clips/run_down-1789343322910595900/013.png",
+          "clips/run_down-1789343322910595900/014.png",
+          "clips/run_down-1789343322910595900/015.png",
+          "clips/run_down-1789343322910595900/016.png",
+          "clips/run_down-1789343322910595900/017.png",
+          "clips/run_down-1789343322910595900/018.png",
+          "clips/run_down-1789343322910595900/019.png"
+        ],
+        "fps": 36,
+        "loop": true,
+        "pivot": [
+          56,
+          40
+        ],
+        "concept_sha256": "c130b813655d7f4be662d0829d5baa55e24d42fd541d960fd31dc669a0eb86eb",
+        "review_notes": "Revision 4: 20 frames at 36 FPS, 0.56 seconds per cycle (previously 0.8 seconds). Stronger leg drive and body dip; complete rigid-size feet. Front run adds counter-swinging arms. Awaiting your visual review.",
+        "preview": "refinement-r4/run_down/preview-4x.gif",
+        "contact_sheet": "refinement-r4/run_down/contact-sheet.png"
+      }
+    ],
+    "run_up": [
+      {
+        "frames": [
+          "clips/run_up-1789026046545418500/000.png",
+          "clips/run_up-1789026046545418500/001.png",
+          "clips/run_up-1789026046545418500/002.png",
+          "clips/run_up-1789026046545418500/003.png",
+          "clips/run_up-1789026046545418500/004.png",
+          "clips/run_up-1789026046545418500/005.png",
+          "clips/run_up-1789026046545418500/006.png",
+          "clips/run_up-1789026046545418500/007.png",
+          "clips/run_up-1789026046545418500/008.png",
+          "clips/run_up-1789026046545418500/009.png",
+          "clips/run_up-1789026046545418500/010.png",
+          "clips/run_up-1789026046545418500/011.png",
+          "clips/run_up-1789026046545418500/012.png",
+          "clips/run_up-1789026046545418500/013.png",
+          "clips/run_up-1789026046545418500/014.png",
+          "clips/run_up-1789026046545418500/015.png"
+        ],
+        "fps": 25,
+        "loop": true,
+        "pivot": [
+          48,
+          32
+        ],
+        "concept_sha256": "c130b813655d7f4be662d0829d5baa55e24d42fd541d960fd31dc669a0eb86eb",
+        "review_notes": "First directional review: 16 frames at 25 fps. Eight generated keys with Aseprite-controlled foot-depth exchange and body sway. Check anatomy, perspective, hand/foot overlap and tail occlusion. Not yet approved."
+      },
+      {
+        "frames": [
+          "clips/run_up-1789141823962657900/000.png",
+          "clips/run_up-1789141823962657900/001.png",
+          "clips/run_up-1789141823962657900/002.png",
+          "clips/run_up-1789141823962657900/003.png",
+          "clips/run_up-1789141823962657900/004.png",
+          "clips/run_up-1789141823962657900/005.png",
+          "clips/run_up-1789141823962657900/006.png",
+          "clips/run_up-1789141823962657900/007.png",
+          "clips/run_up-1789141823962657900/008.png",
+          "clips/run_up-1789141823962657900/009.png",
+          "clips/run_up-1789141823962657900/010.png",
+          "clips/run_up-1789141823962657900/011.png",
+          "clips/run_up-1789141823962657900/012.png",
+          "clips/run_up-1789141823962657900/013.png",
+          "clips/run_up-1789141823962657900/014.png",
+          "clips/run_up-1789141823962657900/015.png"
+        ],
+        "fps": 25,
+        "loop": true,
+        "pivot": [
+          56,
+          40
+        ],
+        "concept_sha256": "c130b813655d7f4be662d0829d5baa55e24d42fd541d960fd31dc669a0eb86eb",
+        "review_notes": "Review batch 2: Complete leg poses, ordered support exchange, grounded feet. Review gait and tail overlap. Prepared and checked at native resolution; awaiting your visual approval.",
+        "preview": "batch-review-r2/run_up/preview-4x.gif",
+        "contact_sheet": "batch-review-r2/run_up/contact-sheet.png"
+      },
+      {
+        "frames": [
+          "clips/run_up-1789143834987992500/000.png",
+          "clips/run_up-1789143834987992500/001.png",
+          "clips/run_up-1789143834987992500/002.png",
+          "clips/run_up-1789143834987992500/003.png",
+          "clips/run_up-1789143834987992500/004.png",
+          "clips/run_up-1789143834987992500/005.png",
+          "clips/run_up-1789143834987992500/006.png",
+          "clips/run_up-1789143834987992500/007.png",
+          "clips/run_up-1789143834987992500/008.png",
+          "clips/run_up-1789143834987992500/009.png",
+          "clips/run_up-1789143834987992500/010.png",
+          "clips/run_up-1789143834987992500/011.png",
+          "clips/run_up-1789143834987992500/012.png",
+          "clips/run_up-1789143834987992500/013.png",
+          "clips/run_up-1789143834987992500/014.png",
+          "clips/run_up-1789143834987992500/015.png",
+          "clips/run_up-1789143834987992500/016.png",
+          "clips/run_up-1789143834987992500/017.png",
+          "clips/run_up-1789143834987992500/018.png",
+          "clips/run_up-1789143834987992500/019.png"
+        ],
+        "fps": 25,
+        "loop": true,
+        "pivot": [
+          56,
+          40
+        ],
+        "concept_sha256": "c130b813655d7f4be662d0829d5baa55e24d42fd541d960fd31dc669a0eb86eb",
+        "review_notes": "20-frame cycle at 25 FPS (0.8 seconds). Stable body artwork, complete legs and constant-size feet; controlled motion replaces the changing generated poses. Check at 1x and 4x. Revision 3, awaiting your review.",
+        "preview": "refinement-r3/run_up/preview-4x.gif",
+        "contact_sheet": "refinement-r3/run_up/contact-sheet.png"
+      },
+      {
+        "frames": [
+          "clips/run_up-1789343322985218500/000.png",
+          "clips/run_up-1789343322985218500/001.png",
+          "clips/run_up-1789343322985218500/002.png",
+          "clips/run_up-1789343322985218500/003.png",
+          "clips/run_up-1789343322985218500/004.png",
+          "clips/run_up-1789343322985218500/005.png",
+          "clips/run_up-1789343322985218500/006.png",
+          "clips/run_up-1789343322985218500/007.png",
+          "clips/run_up-1789343322985218500/008.png",
+          "clips/run_up-1789343322985218500/009.png",
+          "clips/run_up-1789343322985218500/010.png",
+          "clips/run_up-1789343322985218500/011.png",
+          "clips/run_up-1789343322985218500/012.png",
+          "clips/run_up-1789343322985218500/013.png",
+          "clips/run_up-1789343322985218500/014.png",
+          "clips/run_up-1789343322985218500/015.png",
+          "clips/run_up-1789343322985218500/016.png",
+          "clips/run_up-1789343322985218500/017.png",
+          "clips/run_up-1789343322985218500/018.png",
+          "clips/run_up-1789343322985218500/019.png"
+        ],
+        "fps": 36,
+        "loop": true,
+        "pivot": [
+          56,
+          40
+        ],
+        "concept_sha256": "c130b813655d7f4be662d0829d5baa55e24d42fd541d960fd31dc669a0eb86eb",
+        "review_notes": "Revision 4: 20 frames at 36 FPS, 0.56 seconds per cycle (previously 0.8 seconds). Stronger leg drive and body dip; complete rigid-size feet. Front run adds counter-swinging arms. Awaiting your visual review.",
+        "preview": "refinement-r4/run_up/preview-4x.gif",
+        "contact_sheet": "refinement-r4/run_up/contact-sheet.png"
+      },
+      {
+        "frames": [
+          "clips/run_up-1789344432145814600/000.png",
+          "clips/run_up-1789344432145814600/001.png",
+          "clips/run_up-1789344432145814600/002.png",
+          "clips/run_up-1789344432145814600/003.png",
+          "clips/run_up-1789344432145814600/004.png",
+          "clips/run_up-1789344432145814600/005.png",
+          "clips/run_up-1789344432145814600/006.png",
+          "clips/run_up-1789344432145814600/007.png",
+          "clips/run_up-1789344432145814600/008.png",
+          "clips/run_up-1789344432145814600/009.png",
+          "clips/run_up-1789344432145814600/010.png",
+          "clips/run_up-1789344432145814600/011.png",
+          "clips/run_up-1789344432145814600/012.png",
+          "clips/run_up-1789344432145814600/013.png",
+          "clips/run_up-1789344432145814600/014.png",
+          "clips/run_up-1789344432145814600/015.png",
+          "clips/run_up-1789344432145814600/016.png",
+          "clips/run_up-1789344432145814600/017.png",
+          "clips/run_up-1789344432145814600/018.png",
+          "clips/run_up-1789344432145814600/019.png"
+        ],
+        "fps": 36,
+        "loop": true,
+        "pivot": [
+          56,
+          40
+        ],
+        "concept_sha256": "c130b813655d7f4be662d0829d5baa55e24d42fd541d960fd31dc669a0eb86eb",
+        "preview": "refinement-r5/run_up/preview-4x.gif",
+        "contact_sheet": "refinement-r5/run_up/contact-sheet.png",
+        "review_notes": "Revision 5: upper thighs overlap behind the pelvis to close the moving hip seam. Preserves 20 frames at 36 FPS. Awaiting visual review."
+      }
+    ],
+    "walk_up": [
+      {
+        "frames": [
+          "clips/walk_up-1789141824182099900/000.png",
+          "clips/walk_up-1789141824182099900/001.png",
+          "clips/walk_up-1789141824182099900/002.png",
+          "clips/walk_up-1789141824182099900/003.png",
+          "clips/walk_up-1789141824182099900/004.png",
+          "clips/walk_up-1789141824182099900/005.png",
+          "clips/walk_up-1789141824182099900/006.png",
+          "clips/walk_up-1789141824182099900/007.png",
+          "clips/walk_up-1789141824182099900/008.png",
+          "clips/walk_up-1789141824182099900/009.png",
+          "clips/walk_up-1789141824182099900/010.png",
+          "clips/walk_up-1789141824182099900/011.png",
+          "clips/walk_up-1789141824182099900/012.png",
+          "clips/walk_up-1789141824182099900/013.png",
+          "clips/walk_up-1789141824182099900/014.png",
+          "clips/walk_up-1789141824182099900/015.png"
+        ],
+        "fps": 20,
+        "loop": true,
+        "pivot": [
+          56,
+          40
+        ],
+        "concept_sha256": "c130b813655d7f4be662d0829d5baa55e24d42fd541d960fd31dc669a0eb86eb",
+        "review_notes": "Review batch 2: Complete leg poses, ordered support exchange, grounded feet. Review gait and tail overlap. Prepared and checked at native resolution; awaiting your visual approval.",
+        "preview": "batch-review-r2/walk_up/preview-4x.gif",
+        "contact_sheet": "batch-review-r2/walk_up/contact-sheet.png"
+      }
+    ],
+    "swipe_right": [
+      {
+        "frames": [
+          "clips/swipe_right-1789141824049592100/000.png",
+          "clips/swipe_right-1789141824049592100/001.png",
+          "clips/swipe_right-1789141824049592100/002.png",
+          "clips/swipe_right-1789141824049592100/003.png",
+          "clips/swipe_right-1789141824049592100/004.png",
+          "clips/swipe_right-1789141824049592100/005.png",
+          "clips/swipe_right-1789141824049592100/006.png",
+          "clips/swipe_right-1789141824049592100/007.png",
+          "clips/swipe_right-1789141824049592100/008.png",
+          "clips/swipe_right-1789141824049592100/009.png",
+          "clips/swipe_right-1789141824049592100/010.png",
+          "clips/swipe_right-1789141824049592100/011.png",
+          "clips/swipe_right-1789141824049592100/012.png",
+          "clips/swipe_right-1789141824049592100/013.png",
+          "clips/swipe_right-1789141824049592100/014.png",
+          "clips/swipe_right-1789141824049592100/015.png"
+        ],
+        "fps": 20,
+        "loop": false,
+        "pivot": [
+          56,
+          40
+        ],
+        "concept_sha256": "c130b813655d7f4be662d0829d5baa55e24d42fd541d960fd31dc669a0eb86eb",
+        "review_notes": "Review batch 2: One-shot wind-up, strike and recovery; press Play to replay. Prepared and checked at native resolution; awaiting your visual approval.",
+        "preview": "batch-review-r2/swipe_right/preview-4x.gif",
+        "contact_sheet": "batch-review-r2/swipe_right/contact-sheet.png"
+      }
+    ],
+    "swipe_left": [
+      {
+        "frames": [
+          "clips/swipe_left-1789141824341539500/000.png",
+          "clips/swipe_left-1789141824341539500/001.png",
+          "clips/swipe_left-1789141824341539500/002.png",
+          "clips/swipe_left-1789141824341539500/003.png",
+          "clips/swipe_left-1789141824341539500/004.png",
+          "clips/swipe_left-1789141824341539500/005.png",
+          "clips/swipe_left-1789141824341539500/006.png",
+          "clips/swipe_left-1789141824341539500/007.png",
+          "clips/swipe_left-1789141824341539500/008.png",
+          "clips/swipe_left-1789141824341539500/009.png",
+          "clips/swipe_left-1789141824341539500/010.png",
+          "clips/swipe_left-1789141824341539500/011.png",
+          "clips/swipe_left-1789141824341539500/012.png",
+          "clips/swipe_left-1789141824341539500/013.png",
+          "clips/swipe_left-1789141824341539500/014.png",
+          "clips/swipe_left-1789141824341539500/015.png"
+        ],
+        "fps": 20,
+        "loop": false,
+        "pivot": [
+          56,
+          40
+        ],
+        "concept_sha256": "c130b813655d7f4be662d0829d5baa55e24d42fd541d960fd31dc669a0eb86eb",
+        "review_notes": "Review batch 2: One-shot wind-up, strike and recovery; press Play to replay. Prepared and checked at native resolution; awaiting your visual approval.",
+        "preview": "batch-review-r2/swipe_left/preview-4x.gif",
+        "contact_sheet": "batch-review-r2/swipe_left/contact-sheet.png"
+      }
+    ],
+    "swipe_down": [
+      {
+        "frames": [
+          "clips/swipe_down-1789141824006647800/000.png",
+          "clips/swipe_down-1789141824006647800/001.png",
+          "clips/swipe_down-1789141824006647800/002.png",
+          "clips/swipe_down-1789141824006647800/003.png",
+          "clips/swipe_down-1789141824006647800/004.png",
+          "clips/swipe_down-1789141824006647800/005.png",
+          "clips/swipe_down-1789141824006647800/006.png",
+          "clips/swipe_down-1789141824006647800/007.png",
+          "clips/swipe_down-1789141824006647800/008.png",
+          "clips/swipe_down-1789141824006647800/009.png",
+          "clips/swipe_down-1789141824006647800/010.png",
+          "clips/swipe_down-1789141824006647800/011.png",
+          "clips/swipe_down-1789141824006647800/012.png",
+          "clips/swipe_down-1789141824006647800/013.png",
+          "clips/swipe_down-1789141824006647800/014.png",
+          "clips/swipe_down-1789141824006647800/015.png"
+        ],
+        "fps": 20,
+        "loop": false,
+        "pivot": [
+          56,
+          40
+        ],
+        "concept_sha256": "c130b813655d7f4be662d0829d5baa55e24d42fd541d960fd31dc669a0eb86eb",
+        "review_notes": "Review batch 2: One-shot wind-up, strike and recovery; press Play to replay. Prepared and checked at native resolution; awaiting your visual approval.",
+        "preview": "batch-review-r2/swipe_down/preview-4x.gif",
+        "contact_sheet": "batch-review-r2/swipe_down/contact-sheet.png"
+      }
+    ],
+    "swipe_up": [
+      {
+        "frames": [
+          "clips/swipe_up-1789141824092953400/000.png",
+          "clips/swipe_up-1789141824092953400/001.png",
+          "clips/swipe_up-1789141824092953400/002.png",
+          "clips/swipe_up-1789141824092953400/003.png",
+          "clips/swipe_up-1789141824092953400/004.png",
+          "clips/swipe_up-1789141824092953400/005.png",
+          "clips/swipe_up-1789141824092953400/006.png",
+          "clips/swipe_up-1789141824092953400/007.png",
+          "clips/swipe_up-1789141824092953400/008.png",
+          "clips/swipe_up-1789141824092953400/009.png",
+          "clips/swipe_up-1789141824092953400/010.png",
+          "clips/swipe_up-1789141824092953400/011.png",
+          "clips/swipe_up-1789141824092953400/012.png",
+          "clips/swipe_up-1789141824092953400/013.png",
+          "clips/swipe_up-1789141824092953400/014.png",
+          "clips/swipe_up-1789141824092953400/015.png"
+        ],
+        "fps": 20,
+        "loop": false,
+        "pivot": [
+          56,
+          40
+        ],
+        "concept_sha256": "c130b813655d7f4be662d0829d5baa55e24d42fd541d960fd31dc669a0eb86eb",
+        "review_notes": "Review batch 2: One-shot wind-up, strike and recovery; press Play to replay. Prepared and checked at native resolution; awaiting your visual approval.",
+        "preview": "batch-review-r2/swipe_up/preview-4x.gif",
+        "contact_sheet": "batch-review-r2/swipe_up/contact-sheet.png"
+      }
+    ]
+  }
+}

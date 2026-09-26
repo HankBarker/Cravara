@@ -1,0 +1,562 @@
+WorkerThreadPool: 16 threads, 4 max low-priority.
+Godot Engine v4.6.1.stable.official.14d19694e - https://godotengine.org
+TextServer: Added interface "Dummy"
+TextServer: Added interface "ICU / HarfBuzz / Graphite (Built-in)"
+Unrecognized output string "misc2" in mapping:
+030000000d0f00000202000000000000,Horipad O Nintendo Switch 2 Controller,a:b1,b:b0,back:b8,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b12,leftshoulder:b4,leftstick:b10,lefttrigger:b6,leftx:a0,lefty:a1,misc1:b13,misc2:b14,rightshoulder:b5,rightstick:b11,righttrigger:b7,rightx:a2,righty:a3,start:b9,x:b3,y:b2,platform:Windows,
+Unrecognized output string "misc2" in mapping:
+030000000d0f00009601000000000000,Horipad Steam,a:b0,b:b1,back:b10,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b12,leftshoulder:b6,leftstick:b13,lefttrigger:b8,leftx:a0,lefty:a1,misc2:b2,paddle1:b5,paddle2:b15,paddle3:b18,paddle4:b19,rightshoulder:b7,rightstick:b14,righttrigger:b9,rightx:a3,righty:a4,start:b11,x:b3,y:b4,platform:Windows,
+Unrecognized output string "misc2" in mapping:
+030000007e0500006920000000000000,Nintendo Switch 2 Pro Controller,a:b0,b:b1,back:b14,dpdown:b8,dpleft:b10,dpright:b9,dpup:b11,guide:b16,leftshoulder:b12,leftstick:b15,lefttrigger:b13,leftx:a0,lefty:a1~,misc1:b17,misc2:b20,paddle1:b18,paddle2:b19,rightshoulder:b4,rightstick:b7,righttrigger:b5,rightx:a2,righty:a3~,start:b6,x:b2,y:b3,platform:Windows,
+Native OpenGL API detected: 3.3: ATI Technologies Inc. - AMD Radeon RX 7700S
+SDL: Init OK!
+Using "winink" pen tablet driver...
+Shader 'CanvasSdfShaderGLES3' SHA256: 49195b146eb1109ba360e0793e4cd57f5813d9eb62d61d13a175928e02ff29a3
+Shader 'SkeletonShaderGLES3' SHA256: 80470cb263543c32fddc4c8f1325a4bc8da2928d6649264d400340bb9972e639
+Shader 'ParticlesShaderGLES3' SHA256: 4d70e05bcacec9c1f08da392231248bbe687efce00390e7cd40cc057af684918
+Shader 'ParticlesCopyShaderGLES3' SHA256: b40fb0aab8d0ac7b8b83f2e52eda90ade90b1c082402b050959c35c24a8749dc
+Shader 'CopyShaderGLES3' SHA256: f16ec50c8b41c3dbd41e46e0c9b4b2579a399c46977d78a9fec0d698d61677f1
+Shader 'CubemapFilterShaderGLES3' SHA256: b2b2605005bc7cc34421e084966380674822f04e320c7776f183b2532a4cebec
+Shader 'GlowShaderGLES3' SHA256: 65ba7a57948fd8ed9e81c74875e3d507e18dd9121ecdbe570318f82031172ba1
+Shader 'PostShaderGLES3' SHA256: a980d279dca768aca6ad7aab25573098b87a7f573377e8f2def72eb2f0f726cb
+Shader 'FeedShaderGLES3' SHA256: 0eb55779fb2a1462bea61ba3ba75fa655bcf5fcc439e393f686a7499f6ab310c
+Shader 'CanvasShaderGLES3' SHA256: 0b652919b7f1ca54f8706ee9a72ee7755c9c5b09bcb8b25b7c69a4ca0f7e50c7
+Shader 'CanvasOcclusionShaderGLES3' SHA256: 36df161a75dcff290f5830d01b5ea0806b39f7e975b3f44163ad7d406471a9d0
+Shader 'SceneShaderGLES3' SHA256: dbbb1b04e2cc430cc69d97f4c25b771a9a693040559e2a2cb19f9df4dd6bb55f
+Shader 'SkyShaderGLES3' SHA256: 0dd380c753812ddd7e5c7df32b07ada3fb0a6e33d120a1fbf36419e9396f7270
+OpenGL API 3.3.0 Core Profile Context 24.10.36.04.250109 - Compatibility - Using Device: ATI Technologies Inc. - AMD Radeon RX 7700S
+WASAPI: Activated output_device using IAudioClient3 interface
+WASAPI: wFormatTag = 65534
+WASAPI: nChannels = 2
+WASAPI: nSamplesPerSec = 48000
+WASAPI: nAvgBytesPerSec = 384000
+WASAPI: nBlockAlign = 8
+WASAPI: wBitsPerSample = 32
+WASAPI: cbSize = 22
+WASAPI: mix_rate = 48000
+WASAPI: fundamental_period_frames = 480
+WASAPI: min_period_frames = 480
+WASAPI: max_period_frames = 480
+WASAPI: selected a period frame size of 480
+WASAPI: detected 2 channels
+WASAPI: audio buffer frames: 480 calculated latency: 10ms
+
+TextServer: Primary interface set to: "ICU / HarfBuzz / Graphite (Built-in)".
+CORE API HASH: 75400357
+EDITOR API HASH: 3012763406
+SceneTreeFTI: traversal method DEFAULT
+Loading resource: res://Autoloads/SignalBus.gd
+Loading resource: res://Autoloads/ItemDB.gd
+Loading resource: res://Player/Scripts/InventoryManager.gd
+Loading resource: res://Scripts/CraftingManager.gd
+Loading resource: res://Scripts/DropAnimationUtil.gd
+Loading resource: res://Autoloads/GameSettings.gd
+Loading resource: res://Autoloads/TimeCycle.gd
+Loading resource: res://Autoloads/SaveManager.gd
+Loaded system CA certificates
+Loading resource: res://Tests/WardrobeEditorPass7.tscn
+Loading resource: res://Tests/wardrobe_editor_pass7.gd
+Loading resource: res://Forest/fonts/AlegreyaSans.ttf
+Loading resource: res://.godot/imported/AlegreyaSans.ttf-f6e14874cc7fc6dadd1de429a4e53714.fontdata
+Loading resource: res://Forest/fonts/IMFellEnglish.ttf
+Loading resource: res://.godot/imported/IMFellEnglish.ttf-06b73b1529a2f9ebe0e6eae87e001d02.fontdata
+Loading resource: res://Player/player.tscn
+Loading resource: res://Player/Scripts/player.gd
+Loading resource: res://Items/DroppedItem.tscn
+Loading resource: res://Items/DroppedItem.gd
+Loading resource: res://Sprites/Base Character/Unarmed_Death_full.png
+Loading resource: res://.godot/imported/Unarmed_Death_full.png-7aaac3ad31db6358a8aed6a89b9039b5.ctex
+Loading resource: res://Sprites/Base Character/Unarmed_Idle_full.png
+Loading resource: res://.godot/imported/Unarmed_Idle_full.png-2ed31d2369af76f3dac9ec4970adb31c.ctex
+Loading resource: res://Sprites/Base Character/Sword_attack_full.png
+Loading resource: res://.godot/imported/Sword_attack_full.png-9c64201dc2024de7cbf7b7692de6ab07.ctex
+Loading resource: res://Sprites/Base Character/Unarmed_Hurt_full.png
+Loading resource: res://.godot/imported/Unarmed_Hurt_full.png-b2eeb85bd119897c80962f4d49f10dc7.ctex
+Loading resource: res://Sprites/Base Character/Unarmed_Walk_full.png
+Loading resource: res://.godot/imported/Unarmed_Walk_full.png-2eb2adc41410eeffb71ae60f44a8303c.ctex
+Loading resource: res://Sprites/Base Character/Unarmed_Run_full.png
+Loading resource: res://.godot/imported/Unarmed_Run_full.png-d94b6342f7fd1050d30ac807dc41df29.ctex
+Loading resource: res://Player/Scripts/camera_2d.gd
+Loading resource: res://Items/Data/basic_axe.tres
+Loading resource: res://Items/Icons/basic_axe_icon.png
+Loading resource: res://.godot/imported/basic_axe_icon.png-c5a6d214dc82d8a37919e5fc5e5f9f06.ctex
+Loading resource: res://Forest/art/v2/item-basic_axe.png
+Loading resource: res://.godot/imported/item-basic_axe.png-2539e5458105c33bdcdeece3741804f7.ctex
+Loading resource: res://Items/Data/basic_pickaxe.tres
+Loading resource: res://Items/Icons/basic_pickaxe_icon.png
+Loading resource: res://.godot/imported/basic_pickaxe_icon.png-98e935d490e2a34efd4a281e10c18e82.ctex
+Loading resource: res://Forest/art/v2/item-basic_pickaxe.png
+Loading resource: res://.godot/imported/item-basic_pickaxe.png-474e2416c8ed973ef1ea9f5e6183d381.ctex
+Loading resource: res://Items/Data/berry.tres
+Loading resource: res://Forest/art/v2/item-berry.png
+Loading resource: res://.godot/imported/item-berry.png-e1303a88045b09874174c6ca45dd121d.ctex
+Loading resource: res://Items/Data/berry_compote.tres
+Loading resource: res://Forest/art/v6/item-berry_compote.png
+Loading resource: res://.godot/imported/item-berry_compote.png-e9e27e5b604ba5c45b92729e209859b4.ctex
+Loading resource: res://Items/Data/berry_seed.tres
+Loading resource: res://Forest/art/v6/item-berry_seed.png
+Loading resource: res://.godot/imported/item-berry_seed.png-af611f72490d4252fbeaf30d70c6e3d6.ctex
+Loading resource: res://Items/Data/bone_arrow.tres
+Loading resource: res://Forest/art/v6/item-bone_arrow.png
+Loading resource: res://.godot/imported/item-bone_arrow.png-115b1e651000f979d73144a18eeb50fb.ctex
+Loading resource: res://Items/Data/bone_chestplate.tres
+Loading resource: res://Forest/equipment/art/wardrobe/icons/bone_chestplate.png
+Loading resource: res://.godot/imported/bone_chestplate.png-6150e733a6db2f0211de2193c5249d26.ctex
+Loading resource: res://Items/Data/bone_dagger.tres
+Loading resource: res://Forest/art/v2/item-bone_dagger.png
+Loading resource: res://.godot/imported/item-bone_dagger.png-e0b617c9b9daf1cf19175f1b623d1fe9.ctex
+Loading resource: res://Items/Data/bone_helmet.tres
+Loading resource: res://Forest/equipment/art/wardrobe/icons/bone_helmet.png
+Loading resource: res://.godot/imported/bone_helmet.png-05da92af7577455df54e0ff297387724.ctex
+Loading resource: res://Items/Data/bone_leggings.tres
+Loading resource: res://Forest/equipment/art/wardrobe/icons/bone_leggings.png
+Loading resource: res://.godot/imported/bone_leggings.png-1c29c33f6662fd4464933254d13589de.ctex
+Loading resource: res://Items/Data/bucket.tres
+Loading resource: res://Forest/art/v2/item-bucket.png
+Loading resource: res://.godot/imported/item-bucket.png-29a98bf7231ae728673d4387f9d66377.ctex
+Loading resource: res://Items/Data/campfire.tres
+Loading resource: res://Forest/art/v5/item-campfire.png
+Loading resource: res://.godot/imported/item-campfire.png-ee3f7fb935200b6f157b9351945916f8.ctex
+Loading resource: res://Items/Data/chest.tres
+Loading resource: res://Forest/art/v5/item-chest.png
+Loading resource: res://.godot/imported/item-chest.png-5e0dd4991e8d8144ef31dd01324a94d6.ctex
+Loading resource: res://Items/Data/cooked_fish.tres
+Loading resource: res://Forest/art/v5/item-cooked_fish.png
+Loading resource: res://.godot/imported/item-cooked_fish.png-0c3c503b54e6f6dac29106578c3a7ff6.ctex
+Loading resource: res://Items/Data/cooked_meat.tres
+Loading resource: res://Forest/art/v2/item-cooked_meat.png
+Loading resource: res://.godot/imported/item-cooked_meat.png-6315faa1bb9afd9377c5431c14031bed.ctex
+Loading resource: res://Items/Data/crystal_axe.tres
+Loading resource: res://Forest/art/v6/item-crystal_axe.png
+Loading resource: res://.godot/imported/item-crystal_axe.png-eb9dd15ac7f8162beaf924ddf9422557.ctex
+Loading resource: res://Items/Data/crystal_chestplate.tres
+Loading resource: res://Forest/equipment/art/wardrobe/icons/crystal_chestplate.png
+Loading resource: res://.godot/imported/crystal_chestplate.png-c5d458b80cecafa4d1e5aafd980dccef.ctex
+Loading resource: res://Items/Data/crystal_flask.tres
+Loading resource: res://Forest/art/v5/item-crystal_flask.png
+Loading resource: res://.godot/imported/item-crystal_flask.png-e15c76434995e9c26cea2e56f2b1fb9b.ctex
+Loading resource: res://Items/Data/crystal_helmet.tres
+Loading resource: res://Forest/equipment/art/wardrobe/icons/crystal_helmet.png
+Loading resource: res://.godot/imported/crystal_helmet.png-6276313b27a98f90fef82e13d0df4dd6.ctex
+Loading resource: res://Items/Data/crystal_leggings.tres
+Loading resource: res://Forest/equipment/art/wardrobe/icons/crystal_leggings.png
+Loading resource: res://.godot/imported/crystal_leggings.png-579217132135821b6c6fab3e81514d76.ctex
+Loading resource: res://Items/Data/crystal_pendant.tres
+Loading resource: res://Forest/art/v2/item-crystal_pendant.png
+Loading resource: res://.godot/imported/item-crystal_pendant.png-f38a144b3d808dd52a307b00b4c2a6b1.ctex
+Loading resource: res://Items/Data/crystal_pickaxe.tres
+Loading resource: res://Forest/art/v6/item-crystal_pickaxe.png
+Loading resource: res://.godot/imported/item-crystal_pickaxe.png-7adc214e50905c88ac5d7d74bcbf2bf5.ctex
+Loading resource: res://Items/Data/crystal_shard.tres
+Loading resource: res://Forest/art/v2/item-crystal_shard.png
+Loading resource: res://.godot/imported/item-crystal_shard.png-30256403f3b2fde61a5d5db1f355a8a9.ctex
+Loading resource: res://Items/Data/dodo_egg.tres
+Loading resource: res://Forest/art/v6/item-dodo_egg.png
+Loading resource: res://.godot/imported/item-dodo_egg.png-f441128b5f583ad517a39bd028912d7c.ctex
+Loading resource: res://Items/Data/fishing_rod.tres
+Loading resource: res://Forest/art/fishing/fishing_rod.png
+Loading resource: res://.godot/imported/fishing_rod.png-4e59d24f2cd1552af85abdc6ff1ca4c8.ctex
+Loading resource: res://Items/Data/forest_omelet.tres
+Loading resource: res://Forest/art/v6/item-forest_omelet.png
+Loading resource: res://.godot/imported/item-forest_omelet.png-752908f7af4842872bb7bce9676c99b3.ctex
+Loading resource: res://Items/Data/garden_hoe.tres
+Loading resource: res://Forest/art/v6/item-garden_hoe.png
+Loading resource: res://.godot/imported/item-garden_hoe.png-ae658c305442787f85727d4d8a165d89.ctex
+Loading resource: res://Items/Data/hide_bed.tres
+Loading resource: res://Forest/art/v4/hide_bed_item.png
+Loading resource: res://.godot/imported/hide_bed_item.png-f0f90fc1b0080f5d4fda7665b64ce96f.ctex
+Loading resource: res://Items/Data/hunter_charm.tres
+Loading resource: res://Forest/art/v2/item-hunter_charm.png
+Loading resource: res://.godot/imported/item-hunter_charm.png-f065fccd5477fad0bf747ac5409c3b18.ctex
+Loading resource: res://Items/Data/lantern.tres
+Loading resource: res://Forest/art/v2/item-lantern.png
+Loading resource: res://.godot/imported/item-lantern.png-074826a207c66d5f495cca30df6e319c.ctex
+Loading resource: res://Items/Data/leather_chestplate.tres
+Loading resource: res://Forest/equipment/art/wardrobe/icons/leather_chestplate.png
+Loading resource: res://.godot/imported/leather_chestplate.png-848e03af9b1658380bc24f976a0bf866.ctex
+Loading resource: res://Items/Data/leather_helmet.tres
+Loading resource: res://Forest/equipment/art/wardrobe/icons/leather_helmet.png
+Loading resource: res://.godot/imported/leather_helmet.png-327844618db853a42f0bf4b181e86806.ctex
+Loading resource: res://Items/Data/leather_leggings.tres
+Loading resource: res://Forest/equipment/art/wardrobe/icons/leather_leggings.png
+Loading resource: res://.godot/imported/leather_leggings.png-038368ea4fca97dc2841f5ee0496cdba.ctex
+Loading resource: res://Items/Data/log.tres
+Loading resource: res://Items/Icons/log_icon.png
+Loading resource: res://.godot/imported/log_icon.png-2c9b1ea908fdc608316f65ee3e06f8e7.ctex
+Loading resource: res://Forest/art/v2/item-log.png
+Loading resource: res://.godot/imported/item-log.png-b543d393759b169f5d08a17e81ed0a97.ctex
+Loading resource: res://Items/Data/moonscale.tres
+Loading resource: res://Forest/art/fishing/moonscale.png
+Loading resource: res://.godot/imported/moonscale.png-81a6d2ddba50cbe1345a205d74299d4b.ctex
+Loading resource: res://Items/Data/mushroom.tres
+Loading resource: res://Forest/art/v5/mushroom_item.png
+Loading resource: res://.godot/imported/mushroom_item.png-ee562b330dfb1aeca2233b38fc6c676a.ctex
+Loading resource: res://Items/Data/mushroom_potion.tres
+Loading resource: res://Forest/art/v5/item-mushroom_potion.png
+Loading resource: res://.godot/imported/item-mushroom_potion.png-f69228c864cef75620cd4d4719eed110.ctex
+Loading resource: res://Items/Data/mushroom_spore.tres
+Loading resource: res://Forest/art/v6/item-mushroom_spore.png
+Loading resource: res://.godot/imported/item-mushroom_spore.png-cecf04c16b1aaf1247f9162e04c95653.ctex
+Loading resource: res://Items/Data/net.tres
+Loading resource: res://Forest/art/v2/item-net.png
+Loading resource: res://.godot/imported/item-net.png-3bff1de79f62e2faf307b6b8b74e4c96.ctex
+Loading resource: res://Items/Data/plank.tres
+Loading resource: res://Items/Icons/plank_icon.png
+Loading resource: res://.godot/imported/plank_icon.png-aa9aaf80fb86cab25f6740e060fcf517.ctex
+Loading resource: res://Forest/art/v2/item-plank.png
+Loading resource: res://.godot/imported/item-plank.png-d660dfe11dee6382dbbb58094a0f587d.ctex
+Loading resource: res://Items/Data/plant_fiber.tres
+Loading resource: res://Forest/art/v2/item-plant_fiber.png
+Loading resource: res://.godot/imported/item-plant_fiber.png-2e3cf57f4c712317fce41a34dae6b365.ctex
+Loading resource: res://Items/Data/prism_crystal.tres
+Loading resource: res://Forest/art/v6/item-prism_crystal.png
+Loading resource: res://.godot/imported/item-prism_crystal.png-f90bc9a4f64a29a52915e35c03d18f20.ctex
+Loading resource: res://Items/Data/raptor_fang.tres
+Loading resource: res://Forest/art/v2/item-raptor_fang.png
+Loading resource: res://.godot/imported/item-raptor_fang.png-41ed7e17a2f514cf6f70e45aa1bff820.ctex
+Loading resource: res://Items/Data/reed_bow.tres
+Loading resource: res://Forest/art/v6/item-reed_bow.png
+Loading resource: res://.godot/imported/item-reed_bow.png-f69387403b966a0b0952e9a3a2e61f10.ctex
+Loading resource: res://Items/Data/reed_perch.tres
+Loading resource: res://Forest/art/fishing/reed_perch.png
+Loading resource: res://.godot/imported/reed_perch.png-bd87fbe8cbc2c55b73223033e33c13cf.ctex
+Loading resource: res://Items/Data/river_totem.tres
+Loading resource: res://Forest/art/v2/item-river_totem.png
+Loading resource: res://.godot/imported/item-river_totem.png-1e603d3f7ffba21f19ca0900c0a282c9.ctex
+Loading resource: res://Items/Data/shardfin.tres
+Loading resource: res://Forest/art/fishing/shardfin.png
+Loading resource: res://.godot/imported/shardfin.png-79264ad22623c350ffc4e654afa5288d.ctex
+Loading resource: res://Items/Data/shard_sword.tres
+Loading resource: res://Forest/art/v6/item-shard_sword.png
+Loading resource: res://.godot/imported/item-shard_sword.png-a579e97e5840fd7318a042cff41b651d.ctex
+Loading resource: res://Items/Data/stego_saddle.tres
+Loading resource: res://Forest/creatures/equipment/stego_saddle.svg
+Loading resource: res://.godot/imported/stego_saddle.svg-00d1e49d229957f9c1d2e156f85109eb.ctex
+Loading resource: res://Items/Data/stone.tres
+Loading resource: res://Items/Icons/stone_icon.png
+Loading resource: res://.godot/imported/stone_icon.png-4b299072944662c0dc536d52217d4a5c.ctex
+Loading resource: res://Forest/art/v2/item-stone.png
+Loading resource: res://.godot/imported/item-stone.png-15defd7a36c0f42ceb71a355f6feba78.ctex
+Loading resource: res://Items/Data/tent.tres
+Loading resource: res://Forest/art/v5/tent_item.png
+Loading resource: res://.godot/imported/tent_item.png-56be914f2a2434afdf9dc9e67e6e752b.ctex
+Loading resource: res://Items/Data/thatch_roof.tres
+Loading resource: res://Forest/art/v3/roof_item.png
+Loading resource: res://.godot/imported/roof_item.png-6696e1d34fb9614caa61aee8c0979f72.ctex
+Loading resource: res://Items/Data/torch.tres
+Loading resource: res://Items/Icons/torch_icon.png
+Loading resource: res://.godot/imported/torch_icon.png-fa0fea132aa67d118f6f70ff610b7eb4.ctex
+Loading resource: res://Forest/art/v2/item-torch.png
+Loading resource: res://.godot/imported/item-torch.png-5044ce8e3d19b21b07f7e3de0b1a8c2f.ctex
+Loading resource: res://Items/Data/trex_meat.tres
+Loading resource: res://Items/Icons/trex_meat_icon.png
+Loading resource: res://.godot/imported/trex_meat_icon.png-1812c77dde7562bb30dd15a1a80f6f5b.ctex
+Loading resource: res://Forest/art/v2/item-trex_meat.png
+Loading resource: res://.godot/imported/item-trex_meat.png-ead7b4cbcc31106dd822be9623f93762.ctex
+Loading resource: res://Items/Data/trex_scale.tres
+Loading resource: res://Items/Icons/trex_scale_icon.png
+Loading resource: res://.godot/imported/trex_scale_icon.png-f7516df3fe27bcb373de5cfbf7f22217.ctex
+Loading resource: res://Forest/art/v2/item-trex_scale.png
+Loading resource: res://.godot/imported/item-trex_scale.png-a4e4e5b0d4be1ea959beda2243cb980a.ctex
+Loading resource: res://Items/Data/trike_saddle.tres
+Loading resource: res://Forest/creatures/equipment/trike_saddle.svg
+Loading resource: res://.godot/imported/trike_saddle.svg-f52fe0246c1d5d1b15e76390a3e169eb.ctex
+Loading resource: res://Items/Data/water_bucket.tres
+Loading resource: res://Forest/art/v2/item-water_bucket.png
+Loading resource: res://.godot/imported/item-water_bucket.png-0186a427f85d7a297e3827b8e3ec752c.ctex
+Loading resource: res://Items/Data/water_flask.tres
+Loading resource: res://Forest/art/v5/item-water_flask.png
+Loading resource: res://.godot/imported/item-water_flask.png-519d9937f9fa720405f5de7eb4535fdb.ctex
+Loading resource: res://Items/Data/wood_door.tres
+Loading resource: res://Forest/art/v3/door_item.png
+Loading resource: res://.godot/imported/door_item.png-d2b754a1cb7d345d34f14c7f767c53fb.ctex
+Loading resource: res://Items/Data/wood_floor.tres
+Loading resource: res://Forest/art/v2/item-wood_floor.png
+Loading resource: res://.godot/imported/item-wood_floor.png-bd0aed3e9c16106119c98beece9c9218.ctex
+Loading resource: res://Items/Data/wood_wall.tres
+Loading resource: res://Forest/art/v2/item-wood_wall.png
+Loading resource: res://.godot/imported/item-wood_wall.png-48fd87b77412549e0aa6ba33a14b3cc0.ctex
+Loading resource: res://Items/Data/workbench.tres
+Loading resource: res://Items/Icons/workbench_icon.png
+Loading resource: res://.godot/imported/workbench_icon.png-c04d9974b3061da51c5e1143472a01b2.ctex
+Loading resource: res://Forest/art/v5/item-workbench.png
+Loading resource: res://.godot/imported/item-workbench.png-66ccf3d4a89336099f7db18f02924aec.ctex
+📦 ItemDB loaded 62 items: basic_axe, basic_pickaxe, berry, berry_compote, berry_seed, bone_arrow, bone_chestplate, bone_dagger, bone_helmet, bone_leggings, bucket, campfire, chest, cooked_fish, cooked_meat, crystal_axe, crystal_chestplate, crystal_flask, crystal_helmet, crystal_leggings, crystal_pendant, crystal_pickaxe, crystal_shard, dodo_egg, fishing_rod, forest_omelet, garden_hoe, hide_bed, hunter_charm, lantern, leather_chestplate, leather_helmet, leather_leggings, log, moonscale, mushroom, mushroom_potion, mushroom_spore, net, plank, plant_fiber, prism_crystal, raptor_fang, reed_bow, reed_perch, river_totem, shardfin, shard_sword, stego_saddle, stone, tent, thatch_roof, torch, trex_meat, trex_scale, trike_saddle, water_bucket, water_flask, wood_door, wood_floor, wood_wall, workbench
+Loading resource: res://Forest/equipment/art/actions/axe_down.png
+Loading resource: res://.godot/imported/axe_down.png-0e2a527d2a49367999fad5e4a9539df8.ctex
+Loading resource: res://Forest/equipment/art/actions/axe_up.png
+Loading resource: res://.godot/imported/axe_up.png-1383cab9ccefc0ccd0d492e45146348c.ctex
+Loading resource: res://Forest/equipment/art/actions/axe_left.png
+Loading resource: res://.godot/imported/axe_left.png-758ae867b28e793be51a42a350d09873.ctex
+Loading resource: res://Forest/equipment/art/actions/axe_right.png
+Loading resource: res://.godot/imported/axe_right.png-79767887e29bf2d7bdd55956e85db382.ctex
+Loading resource: res://Forest/equipment/art/actions/pickaxe_down.png
+Loading resource: res://.godot/imported/pickaxe_down.png-680d719b98b3923a6d67059a414c3df8.ctex
+Loading resource: res://Forest/equipment/art/actions/pickaxe_up.png
+Loading resource: res://.godot/imported/pickaxe_up.png-a332f09817ea965b8e01aef3e913a793.ctex
+Loading resource: res://Forest/equipment/art/actions/pickaxe_left.png
+Loading resource: res://.godot/imported/pickaxe_left.png-4017b88f9832eb340d2f9916f2e12f1f.ctex
+Loading resource: res://Forest/equipment/art/actions/pickaxe_right.png
+Loading resource: res://.godot/imported/pickaxe_right.png-775cdf4dddedad3a77c16add4afa57e6.ctex
+Loading resource: res://Forest/equipment/art/actions/weapon_down.png
+Loading resource: res://.godot/imported/weapon_down.png-587f743de7dbf12d1be97bc7a1059cfd.ctex
+Loading resource: res://Forest/equipment/art/actions/weapon_up.png
+Loading resource: res://.godot/imported/weapon_up.png-2be8cba8b2c4ea19e6f97d2491253368.ctex
+Loading resource: res://Forest/equipment/art/actions/weapon_left.png
+Loading resource: res://.godot/imported/weapon_left.png-3025598d596aac9461056b4bc56b5554.ctex
+Loading resource: res://Forest/equipment/art/actions/weapon_right.png
+Loading resource: res://.godot/imported/weapon_right.png-b12a09bd9ced93637a0096882ac70bc3.ctex
+Loading resource: res://Forest/equipment/art/actions/sword_down.png
+Loading resource: res://.godot/imported/sword_down.png-1a42f955f48ab509314065eef7a14568.ctex
+Loading resource: res://Forest/equipment/art/actions/sword_up.png
+Loading resource: res://.godot/imported/sword_up.png-b9df1bd89565df19a877c26451788dd5.ctex
+Loading resource: res://Forest/equipment/art/actions/sword_left.png
+Loading resource: res://.godot/imported/sword_left.png-692e72e9f44ce007125bef6943de46cf.ctex
+Loading resource: res://Forest/equipment/art/actions/sword_right.png
+Loading resource: res://.godot/imported/sword_right.png-f04680f5b16a78a6704ac4cdaa864c1b.ctex
+Loading resource: res://Forest/equipment/art/actions/bow_draw_down.png
+Loading resource: res://.godot/imported/bow_draw_down.png-0f0a8eae90a0923f9a227ef95a0df1a1.ctex
+Loading resource: res://Forest/equipment/art/actions/bow_draw_up.png
+Loading resource: res://.godot/imported/bow_draw_up.png-f78e7a3cf31b4968e466efdb7b3eb044.ctex
+Loading resource: res://Forest/equipment/art/actions/bow_draw_left.png
+Loading resource: res://.godot/imported/bow_draw_left.png-9977321935b3e3fb0abbdf3aded522d3.ctex
+Loading resource: res://Forest/equipment/art/actions/bow_draw_right.png
+Loading resource: res://.godot/imported/bow_draw_right.png-2dff0ae46dce5556197d344b39358a18.ctex
+Loading resource: res://Forest/equipment/art/actions/bow_release_down.png
+Loading resource: res://.godot/imported/bow_release_down.png-9394c1cb08a03972efe5fcc772c16943.ctex
+Loading resource: res://Forest/equipment/art/actions/bow_release_up.png
+Loading resource: res://.godot/imported/bow_release_up.png-1d09bf2d018cf6b79d956b576c2fb09c.ctex
+Loading resource: res://Forest/equipment/art/actions/bow_release_left.png
+Loading resource: res://.godot/imported/bow_release_left.png-6cad52ded095990185f29f2e0e86cf26.ctex
+Loading resource: res://Forest/equipment/art/actions/bow_release_right.png
+Loading resource: res://.godot/imported/bow_release_right.png-fcfe4dc9207f53dc03d07058ba6937a5.ctex
+Loading resource: res://Forest/equipment/art/actions/fishing_cast_down.png
+Loading resource: res://.godot/imported/fishing_cast_down.png-d6bd56faf4c5ec506025aefdd035e2d4.ctex
+Loading resource: res://Forest/equipment/art/actions/fishing_cast_up.png
+Loading resource: res://.godot/imported/fishing_cast_up.png-a5de86f5c3d69fc246c4eccba81bd50a.ctex
+Loading resource: res://Forest/equipment/art/actions/fishing_cast_left.png
+Loading resource: res://.godot/imported/fishing_cast_left.png-570b3b035913e8bc5b5c8698766c4cb7.ctex
+Loading resource: res://Forest/equipment/art/actions/fishing_cast_right.png
+Loading resource: res://.godot/imported/fishing_cast_right.png-7a6d45b40a07d44818b9828cb5b3e910.ctex
+Loading resource: res://Forest/equipment/art/actions/fishing_reel_down.png
+Loading resource: res://.godot/imported/fishing_reel_down.png-3054851b08a91553d058cf4aff65c16b.ctex
+Loading resource: res://Forest/equipment/art/actions/fishing_reel_up.png
+Loading resource: res://.godot/imported/fishing_reel_up.png-b8026a3d2671c6850dde71c7a96fbe2a.ctex
+Loading resource: res://Forest/equipment/art/actions/fishing_reel_left.png
+Loading resource: res://.godot/imported/fishing_reel_left.png-0a2bea87b158d1bd4789e440f8d74f79.ctex
+Loading resource: res://Forest/equipment/art/actions/fishing_reel_right.png
+Loading resource: res://.godot/imported/fishing_reel_right.png-cee497a7b7ccdd696dcadfc9efada3c7.ctex
+Loading resource: res://Forest/equipment/art/actions/hoe_down.png
+Loading resource: res://.godot/imported/hoe_down.png-e7b09387c1d174d527917d8248785055.ctex
+Loading resource: res://Forest/equipment/art/actions/hoe_up.png
+Loading resource: res://.godot/imported/hoe_up.png-a73f8e37dbf1415de1aa1304ecab82ea.ctex
+Loading resource: res://Forest/equipment/art/actions/hoe_left.png
+Loading resource: res://.godot/imported/hoe_left.png-e6f88fdde02a121987dfa752cccf6ee3.ctex
+Loading resource: res://Forest/equipment/art/actions/hoe_right.png
+Loading resource: res://.godot/imported/hoe_right.png-468b8f423c59a6305b45d5a05c6e447c.ctex
+Loading resource: res://Forest/equipment/art/actions/net_down.png
+Loading resource: res://.godot/imported/net_down.png-b1ea17fd9dd37fbfac32225bc0267592.ctex
+Loading resource: res://Forest/equipment/art/actions/net_up.png
+Loading resource: res://.godot/imported/net_up.png-57b6ca0d374805ff4ee72ef6a4ab4f4a.ctex
+Loading resource: res://Forest/equipment/art/actions/net_left.png
+Loading resource: res://.godot/imported/net_left.png-89dd82ab29ba80b44583257852f1452c.ctex
+Loading resource: res://Forest/equipment/art/actions/net_right.png
+Loading resource: res://.godot/imported/net_right.png-b78897c5ad8837e19c41f45a6ec27c4d.ctex
+Loading resource: res://Forest/equipment/art/actions/bucket_down.png
+Loading resource: res://.godot/imported/bucket_down.png-f21b30f2a095954302d762b96ff0f26d.ctex
+Loading resource: res://Forest/equipment/art/actions/bucket_up.png
+Loading resource: res://.godot/imported/bucket_up.png-aa040534f8c1f28dcafd6afbc8bdc890.ctex
+Loading resource: res://Forest/equipment/art/actions/bucket_left.png
+Loading resource: res://.godot/imported/bucket_left.png-79b9fd03295f5897250b466aceb87bc4.ctex
+Loading resource: res://Forest/equipment/art/actions/bucket_right.png
+Loading resource: res://.godot/imported/bucket_right.png-32e06b8f5b072d4cddd3efa805e43baf.ctex
+Loading resource: res://Forest/equipment/art/actions/pet_down.png
+Loading resource: res://.godot/imported/pet_down.png-0955c3e0baee40d668c4caefbdf22599.ctex
+Loading resource: res://Forest/equipment/art/actions/pet_up.png
+Loading resource: res://.godot/imported/pet_up.png-51d02a563b51150b83e1af954215d668.ctex
+Loading resource: res://Forest/equipment/art/actions/pet_left.png
+Loading resource: res://.godot/imported/pet_left.png-d1811b6086bc18a86bb430234efff198.ctex
+Loading resource: res://Forest/equipment/art/actions/pet_right.png
+Loading resource: res://.godot/imported/pet_right.png-8aaf3f75b492fc77eadd37374acb4e22.ctex
+Loading resource: res://Forest/equipment/art/actions/pickup_down.png
+Loading resource: res://.godot/imported/pickup_down.png-ab8f05dd2b70613a8b7042201bce163f.ctex
+Loading resource: res://Forest/equipment/art/actions/pickup_up.png
+Loading resource: res://.godot/imported/pickup_up.png-2bd09cef54cfe5dee250f30e1a966621.ctex
+Loading resource: res://Forest/equipment/art/actions/pickup_left.png
+Loading resource: res://.godot/imported/pickup_left.png-8c6c8ea2f70f8557b174c61a5ad6cb3c.ctex
+Loading resource: res://Forest/equipment/art/actions/pickup_right.png
+Loading resource: res://.godot/imported/pickup_right.png-f576043ea030ec6870d091aa5e492e57.ctex
+PASS Creator initializes normalized choices
+PASS Appearance page hides wardrobe selectors
+PASS Button fits native editor: Appearance
+PASS Button fits native editor: Wardrobe
+PASS Button fits native editor: <
+PASS Button fits native editor: >
+PASS Button fits native editor: <
+PASS Button fits native editor: >
+PASS Button fits native editor: <
+PASS Button fits native editor: >
+PASS Button fits native editor: <
+PASS Button fits native editor: >
+PASS Button fits native editor: <
+PASS Button fits native editor: >
+PASS Button fits native editor: Current
+PASS Button fits native editor: <
+PASS Button fits native editor: >
+PASS Button fits native editor: <
+PASS Button fits native editor: >
+PASS Button fits native editor: <
+PASS Button fits native editor: >
+PASS Button fits native editor: Leather
+PASS Button fits native editor: Bone
+PASS Button fits native editor: Crystal
+PASS Button fits native editor: Turn preview
+PASS Button fits native editor: Idle >
+PASS Button fits native editor: Preview: clothing
+PASS Button fits native editor: Reset
+PASS Button fits native editor: Cancel
+PASS Button fits native editor: Begin journey
+PASS Wardrobe tab switches editable controls
+Loading resource: res://Forest/audio/leather/equip-gear.ogg
+Loading resource: res://.godot/imported/equip-gear.ogg-695d282e10af9426a79c5bcf1ab17ac9.oggvorbisstr
+Loading resource: res://Forest/equipment/art/wardrobe/leather_chest_down.png
+Loading resource: res://.godot/imported/leather_chest_down.png-01b3f5a682712a1748dee86d4d21c5e7.ctex
+Loading resource: res://Forest/equipment/art/wardrobe/leather_legs_down.png
+Loading resource: res://.godot/imported/leather_legs_down.png-bb34dd344984e56c66dd108776987eab.ctex
+Loading resource: res://Forest/equipment/art/wardrobe/leather_head_down.png
+Loading resource: res://.godot/imported/leather_head_down.png-43896c7b5b8974c24937680c107e2b17.ctex
+Loading resource: res://Forest/equipment/art/wardrobe/leather_chest_left.png
+Loading resource: res://.godot/imported/leather_chest_left.png-e6ffe750a5d12115d85f79375abd9caa.ctex
+Loading resource: res://Forest/equipment/art/wardrobe/leather_legs_left.png
+Loading resource: res://.godot/imported/leather_legs_left.png-1199b67416ad6f180e0337b470248e36.ctex
+Loading resource: res://Forest/equipment/art/wardrobe/leather_head_left.png
+Loading resource: res://.godot/imported/leather_head_left.png-422a12c223d1404eba32c1f3b622d19c.ctex
+Loading resource: res://Forest/equipment/art/wardrobe/leather_chest_right.png
+Loading resource: res://.godot/imported/leather_chest_right.png-7230904db51c50e797a25c2804ccc494.ctex
+Loading resource: res://Forest/equipment/art/wardrobe/leather_legs_right.png
+Loading resource: res://.godot/imported/leather_legs_right.png-a3a6c12d12874bba2c961e462a8fa1bd.ctex
+Loading resource: res://Forest/equipment/art/wardrobe/leather_head_right.png
+Loading resource: res://.godot/imported/leather_head_right.png-93e075bccd91745c21c37b7b37574140.ctex
+Loading resource: res://Forest/equipment/art/wardrobe/leather_chest_up.png
+Loading resource: res://.godot/imported/leather_chest_up.png-95370995e234601883954feacb71de7a.ctex
+Loading resource: res://Forest/equipment/art/wardrobe/leather_legs_up.png
+Loading resource: res://.godot/imported/leather_legs_up.png-b78c9322abd6e42d79362312ccf4e8de.ctex
+Loading resource: res://Forest/equipment/art/wardrobe/leather_head_up.png
+Loading resource: res://.godot/imported/leather_head_up.png-1c196f56fba4f7bedf092ab663b3c027.ctex
+PASS Complete leather outfit resolves real independent items
+PASS Removing helmet preserves body and legs
+PASS Outfit preview cannot modify appearance or inventory
+PASS Clothing-only hides all preview armor
+PASS Motion exists: idle_down
+PASS Motion exists: idle_left
+PASS Motion exists: idle_up
+PASS Motion exists: idle_right
+PASS Only active motion is composited: idle
+PASS Motion exists: walk_down
+PASS Motion exists: walk_left
+PASS Motion exists: walk_up
+PASS Motion exists: walk_right
+PASS Only active motion is composited: walk
+PASS Motion exists: run_down
+PASS Motion exists: run_left
+PASS Motion exists: run_up
+PASS Motion exists: run_right
+PASS Only active motion is composited: run
+PASS Motion exists: axe_down
+PASS Motion exists: axe_left
+PASS Motion exists: axe_up
+PASS Motion exists: axe_right
+PASS Only active motion is composited: axe
+PASS Motion exists: pickaxe_down
+PASS Motion exists: pickaxe_left
+PASS Motion exists: pickaxe_up
+PASS Motion exists: pickaxe_right
+PASS Only active motion is composited: pickaxe
+PASS Motion exists: sword_down
+PASS Motion exists: sword_left
+PASS Motion exists: sword_up
+PASS Motion exists: sword_right
+PASS Only active motion is composited: sword
+PASS Motion exists: bow_draw_down
+PASS Motion exists: bow_draw_left
+PASS Motion exists: bow_draw_up
+PASS Motion exists: bow_draw_right
+PASS Only active motion is composited: bow_draw
+PASS Motion exists: fishing_cast_down
+PASS Motion exists: fishing_cast_left
+PASS Motion exists: fishing_cast_up
+PASS Motion exists: fishing_cast_right
+PASS Only active motion is composited: fishing_cast
+PASS Motion exists: pet_down
+PASS Motion exists: pet_left
+PASS Motion exists: pet_up
+PASS Motion exists: pet_right
+PASS Only active motion is composited: pet
+PASS Preview source identities are cached
+Loading resource: res://Forest/equipment/art/wardrobe/hair_ponytail_down.png
+Loading resource: res://.godot/imported/hair_ponytail_down.png-464d895d95f5e9d563384f46b9c7ef71.ctex
+Loading resource: res://Forest/equipment/art/wardrobe/hair_ponytail_left.png
+Loading resource: res://.godot/imported/hair_ponytail_left.png-3e64740a993f72958164fe6220cb3aff.ctex
+Loading resource: res://Forest/equipment/art/wardrobe/hair_ponytail_right.png
+Loading resource: res://.godot/imported/hair_ponytail_right.png-04b737e1b8fd93add659ee0b2cced0dd.ctex
+Loading resource: res://Forest/equipment/art/wardrobe/hair_ponytail_up.png
+Loading resource: res://.godot/imported/hair_ponytail_up.png-76e2a9ad7382756905f66d7916f378b8.ctex
+Loading resource: res://Forest/equipment/art/wardrobe/crystal_chest_down.png
+Loading resource: res://.godot/imported/crystal_chest_down.png-c86655c3dced07c922a418ffb24a53ce.ctex
+Loading resource: res://Forest/equipment/art/wardrobe/crystal_legs_down.png
+Loading resource: res://.godot/imported/crystal_legs_down.png-174206d371b3337473f909cbe90c8818.ctex
+Loading resource: res://Forest/equipment/art/wardrobe/crystal_head_down.png
+Loading resource: res://.godot/imported/crystal_head_down.png-64453e758f7302ce2bf57f88cddcac01.ctex
+Loading resource: res://Forest/equipment/art/wardrobe/crystal_chest_left.png
+Loading resource: res://.godot/imported/crystal_chest_left.png-906e152199ded6894c163bc14349ffd8.ctex
+Loading resource: res://Forest/equipment/art/wardrobe/crystal_legs_left.png
+Loading resource: res://.godot/imported/crystal_legs_left.png-78f2c60ec0507457d31cd458e9dc836f.ctex
+Loading resource: res://Forest/equipment/art/wardrobe/crystal_head_left.png
+Loading resource: res://.godot/imported/crystal_head_left.png-104cf963ee3ae6c961f85579a6169e21.ctex
+Loading resource: res://Forest/equipment/art/wardrobe/crystal_chest_right.png
+Loading resource: res://.godot/imported/crystal_chest_right.png-9d18c904078930e7e8d2b3b3bb66525b.ctex
+Loading resource: res://Forest/equipment/art/wardrobe/crystal_legs_right.png
+Loading resource: res://.godot/imported/crystal_legs_right.png-764c06bcdb007c114028875bb192b48f.ctex
+Loading resource: res://Forest/equipment/art/wardrobe/crystal_head_right.png
+Loading resource: res://.godot/imported/crystal_head_right.png-87ebdd5215e3e7aa41478906e587b9b5.ctex
+Loading resource: res://Forest/equipment/art/wardrobe/crystal_chest_up.png
+Loading resource: res://.godot/imported/crystal_chest_up.png-d77d73df4d0976558940f5063589754e.ctex
+Loading resource: res://Forest/equipment/art/wardrobe/crystal_legs_up.png
+Loading resource: res://.godot/imported/crystal_legs_up.png-389f5d81eaebeff3f5da039c818cd226.ctex
+Loading resource: res://Forest/equipment/art/wardrobe/crystal_head_up.png
+Loading resource: res://.godot/imported/crystal_head_up.png-af83a17eba59fceccd40759d72a96316.ctex
+PASS Full crystal outfit resolves
+Loading resource: res://Forest/equipment/art/wardrobe/bone_head_down.png
+Loading resource: res://.godot/imported/bone_head_down.png-c7685afe178e730ce9530088f229457c.ctex
+Loading resource: res://Forest/equipment/art/wardrobe/bone_head_left.png
+Loading resource: res://.godot/imported/bone_head_left.png-1ee17f3a861fce25b252fa6e2d5e6f2f.ctex
+Loading resource: res://Forest/equipment/art/wardrobe/bone_head_right.png
+Loading resource: res://.godot/imported/bone_head_right.png-3a37a010e62b0425d16fb6ee1e239d85.ctex
+Loading resource: res://Forest/equipment/art/wardrobe/bone_head_up.png
+Loading resource: res://.godot/imported/bone_head_up.png-146a0821a21e45f0ebdb3549a3553f6a.ctex
+PASS Three materials mix independently
+PASS Save emits appearance only, never wardrobe state
+PASS All preview actions preserve inventory
+WARDROBE_EDITOR_PASS7: 85 checks, 0 failures
+XR: Clearing primary interface
+XR: Removed interface "Native mobile"
+XR: Removed interface "OpenXR"
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2641)
+Leaked instance: AudioStreamPlaybackOggVorbis:9223372181709261237 - Reference count: 1
+Leaked instance: OggPacketSequencePlayback:9223372186910198206 - Reference count: 1
+Leaked instance: OggPacketSequencePlayback:9223372181726038463 - Reference count: 1
+Leaked instance: AudioStreamPlaybackOggVorbis:9223372194476722640 - Reference count: 1
+Leaked instance: OggPacketSequencePlayback:9223372194493499857 - Reference count: 1
+Leaked instance: OggPacketSequence:9223372139984325076 - Reference count: 9
+Leaked instance: AudioStreamOggVorbis:9223372140001102293 - Reference count: 4
+Leaked instance: AudioStreamPlaybackOggVorbis:9223372186893421022 - Reference count: 1
+Leaked instance: AudioStreamPlaybackOggVorbis:9223372189711993311 - Reference count: 1
+Leaked instance: OggPacketSequencePlayback:9223372189728770559 - Reference count: 1
+Hint: Leaked instances typically happen when nodes are removed from the scene tree (with `remove_child()`) but not freed (with `free()` or `queue_free()`).
+ERROR: 2 resources still in use at exit.
+   at: clear (core/io/resource.cpp:805)
+Resource still in use: res://Forest/audio/leather/equip-gear.ogg::OggPacketSequence_xee5c (OggPacketSequence)
+Resource still in use: res://Forest/audio/leather/equip-gear.ogg (AudioStreamOggVorbis)
+Orphan StringName: SFX (static: 0, total: 8)
+StringName: 1 unclaimed string names at exit.

@@ -1,0 +1,87 @@
+{
+ "key": "allo",
+ "species": "allo",
+ "canvas": [
+  112,
+  84
+ ],
+ "ground": 77,
+ "origin": {
+  "side": [
+   24,
+   32
+  ],
+  "down": [
+   24,
+   32
+  ],
+  "up": [
+   24,
+   37
+  ]
+ },
+ "clips": {
+  "idle": {
+   "fps": 6,
+   "loop": true,
+   "frames": 8
+  },
+  "walk": {
+   "fps": 9,
+   "loop": true,
+   "frames": 8
+  },
+  "run": {
+   "fps": 13,
+   "loop": true,
+   "frames": 8
+  },
+  "bite": {
+   "fps": 14,
+   "loop": false,
+   "frames": 9,
+   "hit": 5,
+   "hit_view": {
+    "side": 5,
+    "down": 5,
+    "up": 5
+   }
+  },
+  "chomp": {
+   "fps": 12,
+   "loop": false,
+   "frames": 13,
+   "hit": 5,
+   "hit_view": {
+    "side": 5,
+    "down": 5,
+    "up": 5
+   }
+  },
+  "roar": {
+   "fps": 10,
+   "loop": false,
+   "frames": 13
+  },
+  "hurt": {
+   "fps": 12,
+   "loop": false,
+   "frames": 5
+  },
+  "death": {
+   "fps": 10,
+   "loop": false,
+   "frames": 13
+  },
+  "look": {
+   "fps": 7,
+   "loop": false,
+   "frames": 13
+  },
+  "stalk": {
+   "fps": 6,
+   "loop": true,
+   "frames": 8
+  }
+ }
+}

@@ -1,0 +1,3 @@
+job 68e80fec-9ab1-4af7-8bf9-f1b385af40e1
+SAVED 1 frames to C:\Cravera\art\dino-v2\new\parasaur\redraw\tmp_scratch_11
+wrote C:\Cravera\art\dino-v2\new\parasaur\redraw\scratch_11.png

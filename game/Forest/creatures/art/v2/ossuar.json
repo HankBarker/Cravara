@@ -1,0 +1,77 @@
+{
+ "key": "ossuar",
+ "species": "ossuar",
+ "canvas": [
+  136,
+  104
+ ],
+ "ground": 97,
+ "origin": {
+  "side": [
+   26,
+   34
+  ],
+  "down": [
+   26,
+   34
+  ],
+  "up": [
+   26,
+   37
+  ]
+ },
+ "clips": {
+  "idle": {
+   "fps": 6,
+   "loop": true,
+   "frames": 8
+  },
+  "walk": {
+   "fps": 9,
+   "loop": true,
+   "frames": 8
+  },
+  "run": {
+   "fps": 13,
+   "loop": true,
+   "frames": 8
+  },
+  "bite": {
+   "fps": 14,
+   "loop": false,
+   "frames": 9,
+   "hit": 6,
+   "hit_view": {
+    "side": 6,
+    "down": 5,
+    "up": 5
+   }
+  },
+  "chomp": {
+   "fps": 12,
+   "loop": false,
+   "frames": 13,
+   "hit": 7,
+   "hit_view": {
+    "side": 7,
+    "down": 7,
+    "up": 7
+   }
+  },
+  "roar": {
+   "fps": 10,
+   "loop": false,
+   "frames": 13
+  },
+  "hurt": {
+   "fps": 12,
+   "loop": false,
+   "frames": 5
+  },
+  "death": {
+   "fps": 10,
+   "loop": false,
+   "frames": 13
+  }
+ }
+}

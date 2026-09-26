@@ -1,0 +1,183 @@
+{
+ "parts": {
+  "head_down": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "head_down_blink": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "torso_down": {
+   "origin": [
+    26,
+    29
+   ]
+  },
+  "pauldron_m_down": {
+   "origin": [
+    35,
+    26
+   ],
+   "shoulder": [
+    36.8,
+    30.6
+   ]
+  },
+  "pauldron_o_down": {
+   "origin": [
+    21,
+    25
+   ],
+   "shoulder": [
+    27.2,
+    30.6
+   ]
+  },
+  "boot_m_down": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "boot_o_down": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "head_up": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "torso_up": {
+   "origin": [
+    27,
+    28
+   ]
+  },
+  "pauldron_m_up": {
+   "origin": [
+    36,
+    25
+   ],
+   "shoulder": [
+    37.0,
+    30.4
+   ]
+  },
+  "pauldron_o_up": {
+   "origin": [
+    23,
+    25
+   ],
+   "shoulder": [
+    27.0,
+    30.4
+   ]
+  },
+  "boot_m_up": {
+   "pivot": [
+    1.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "boot_o_up": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "head_side": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "head_side_blink": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "torso_side": {
+   "origin": [
+    27,
+    29
+   ]
+  },
+  "pauldron_m_side": {
+   "origin": [
+    25,
+    27
+   ],
+   "shoulder": [
+    30.2,
+    30.8
+   ]
+  },
+  "boot_m_side": {
+   "pivot": [
+    3.2,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  }
+ },
+ "materials": {
+  "arm_upper": [
+   "378370",
+   "4d9a7d",
+   "69c297",
+   "83dfae",
+   "bbebca"
+  ],
+  "arm_lower": [
+   "0e3c36",
+   "1d5c53",
+   "378370",
+   "4d9a7d",
+   "59b492"
+  ],
+  "leg_upper": [
+   "1d5c53",
+   "2b7468",
+   "4d9a7d",
+   "69c297",
+   "83dfae"
+  ],
+  "leg_lower": [
+   "1d5c53",
+   "2b7468",
+   "4d9a7d",
+   "69c297",
+   "83dfae"
+  ]
+ },
+ "name": "Moonscale Tidecaller"
+}

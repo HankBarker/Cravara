@@ -1,0 +1,66 @@
+{
+ "idle_side": {
+  "job": "54942982-fa64-4d00-9a90-d3dbb3af351c",
+  "tool": "animate_image_pixminimax",
+  "seed": 12748170,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stands still in a relaxed pose; its body rises and falls very slightly and its tail sways a little. It stays in place, facing right.",
+  "frames": 9,
+  "submitted": 1790306110.9520257,
+  "finished": 1790306286.1134503,
+  "score": {
+   "bright": 0,
+   "area": 1.01,
+   "wide": 1.0
+  }
+ },
+ "walk_side": {
+  "job": "c0db3ccf-8b16-4865-99cb-1ae9f5223dec",
+  "tool": "animate_image",
+  "seed": 3660691,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Walks in place: its legs step one after the other, its body bobs gently with each step and its tail sways. It stays in place, facing right.",
+  "frames": 9,
+  "submitted": 1790306113.9020572,
+  "finished": 1790306221.8307774,
+  "score": {
+   "bright": 1,
+   "area": 1.01,
+   "wide": 1.08
+  }
+ },
+ "run_side": {
+  "job": "6a422fd6-862c-4e0e-b86c-059d3265416f",
+  "tool": "animate_image_pixminimax",
+  "seed": 9576668,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Runs in place on its short legs, flapping its little wings. It stays in place, facing right.",
+  "frames": 9,
+  "submitted": 1790306115.5916047,
+  "finished": 1790306356.1739187,
+  "score": {
+   "bright": 1,
+   "area": 1.07,
+   "wide": 1.0
+  }
+ },
+ "eat_side": {
+  "job": "879d4bad-7e24-4158-a51a-7c42aea4fc71",
+  "tool": "animate_image_pixminimax",
+  "seed": 220957,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Pecks at the ground twice to eat seeds, then straightens up. It stays in place, facing right.",
+  "frames": 13,
+  "submitted": 1790306116.9296966,
+  "finished": 1790306403.5322218,
+  "score": {
+   "bright": 0,
+   "area": 1.01,
+   "wide": 1.08
+  }
+ }
+}

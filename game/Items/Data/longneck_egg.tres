@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/art/items/longneck_egg.png" id="2"]
+[resource]
+script = ExtResource("1")
+id = "longneck_egg"
+name = "Longneck Egg"
+description = "A great pale-blue egg from a longneck nest. It needs a long, warm wait in an incubator."
+icon = ExtResource("2")
+max_stack = 10
+rarity = "rare"
+consumable = true
+hunger_value = 16
+food_satiation_seconds = 20.0

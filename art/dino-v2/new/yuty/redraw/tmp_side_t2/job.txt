@@ -1,0 +1,11 @@
+02425d55-8fe1-4dad-af19-61d5aad9a3f0
+status: completed
+id: 02425d55-8fe1-4dad-af19-61d5aad9a3f0
+job_id: 02425d55-8fe1-4dad-af19-61d5aad9a3f0
+frames: 1
+transparent: yes
+asset_id: b998a65d-f0ad-5ef4-b477-0162d145179b
+asset_type: image
+asset_status: saved
+gallery: saved to your PixelLab gallery (pixellab.ai/create)
+download: https://api.pixellab.ai/mcp/images/02425d55-8fe1-4dad-af19-61d5aad9a3f0/download

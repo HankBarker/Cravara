@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/art/items/seared_morsel.png" id="2"]
+[resource]
+script = ExtResource("1")
+id = "seared_morsel"
+name = "Seared Morsel"
+description = "A bite of meat, seared on a stick."
+icon = ExtResource("2")
+max_stack = 30
+consumable = true
+hunger_value = 30
+food_satiation_seconds = 60.0
+healing_total = 8.0
+healing_duration = 10.0

@@ -432,6 +432,123 @@ func rng_for_chunk(world_seed: int, c: Vector2i) -> RandomNumberGenerator:
 
 ---
 
+## 8. The forest as it ships (2026-09)
+
+The forest is a finite, seeded 112x112-cell map (now the western half of a 224x112 world: see the Bonelands below) (`Forest/ForestWorld.gd`, `EXTENT = 56`, 16px cells,
+seed 726151). `_generate()` draws terrain from one FastNoiseLite plus a seeded RNG (river, lake,
+paths, moss, outcrops, a jittered 4-cell grid of trees/rocks/bushes/ferns, the authored camp), and
+saves are **diffs against the seed** (`mined`, `placed`, `water_edits`, `floors`, `roofs`, `doors`,
+`chests`, `damage`, `caches`). `restore()` regenerates, then replays the diffs.
+
+**The ground picture** (`Forest/ground/`, a look only; `terrain` stays the gameplay truth):
+- `ForestGround.gd` writes one texel per cell (`r` kind: 0 grass, 1 dirt, 2 water, 3 moss, 4 sand,
+  5 tilled soil, 6 flagstones; `g` water depth; `b` flags river/wet) and bakes two SubViewports
+  once per edit: `ground_bake.gdshader` (organic region edges from bilinear cell weights + per-kind
+  noise wobble, grass lips and shadows over paths, earth banks above water, dithered moss seams,
+  furrowed soil, running-bond flagstones, detail stamps from `art/stamps.png`) and
+  `water_field.gdshader` (shore distance + depth) that the live `water.gdshader` animates (depth
+  bands, caustics, drifting glints, foam, stepped at 10fps). After any terrain/water/soil edit call
+  `surface.rebuild()`; `ForestWorld` does for its own edits.
+- Visual-only layers on the world: `ground_style` (cell -> `"sand"` along noisy stretches of shore,
+  `"stone"` flagstones in an oval under paved ruins) and `tilled` (Gardening's `_sync_soil` ->
+  `set_soil`).
+- `ForestFlora.gd`: one MultiMesh of swaying tufts/blossoms (`flora.gdshader`, ~8k instances,
+  scattered by hash so it needs no saving), hidden on water, floors, tilled beds and any prop's
+  cell; the keeper and nearby creatures bend it. Props sway via `sway.gdshader` (`ForestProp.SWAY`).
+- Art: `tools/world/make_ground_art.py` cuts stamps and flora from the craftpix packs in
+  `assets_raw`. Shader gotcha: a `const` may not shadow a built-in (`LIGHT`), hence `W_*` names.
+
+**Points of interest** (`ForestWorld.SITES`, placed by `_place_points_of_interest()` at the end of
+`_generate()`): seven sites (Star Temple, Old Watchtower, Hall of the First Builders, Moot Circle,
+Grove Shrine, Wolf Idol, Fallen Stones), each a main ruin/idol (`ForestProp.LANDMARKS`, solid at the
+base, never dismantled), companion pieces (`_find_beside`: framing offsets, then rings out to 9
+cells), an ancient `cache` (opens once with E; loot `world/Loot.gd`, always 2-5 `ancient_coin`),
+relic mounds and meadow `roots` (dig with the garden hoe: `is_dig_spot`/`dig_at`, remembered in
+`mined`). Carvings: `lore_at[cell]` -> `world/Lore.gd` id; E opens the session's `show_lore`, the
+journal lists them (milestones `lore_<id>`; `cache` and `valuable` when coins turn up, the
+merchant's cue). Rules that keep old saves safe, enforced by `Tests/world_poi_suite.gd`:
+- Placement is deterministic and draws no RNG before the seeded props (hashes and noise only).
+- No POI prop sits on a cell that held a seeded prop, so no saved `mined`/`damage` can hit one;
+  only brush in a ruin's footprint is cleared. Sites keep >= 18 cells from spawn, >= 8 from the
+  shrine/tribe camp, >= 14 from each other, and every find stays <= `EXTENT - 5` from the centre.
+- The suite loads both recorded old journeys (`art/forest-pass4`, `art/forest-pass6`) and, read
+  only, the player's own pre-POI save, and checks none of their edits lands on a POI.
+- New items: `tools/world/make_items.py` (Raven icons) writes `ancient_coin`, `sky_idol`,
+  `fossil_bone`, `wild_tuber`, `baked_tuber` (.tres; campfire recipe in `CraftingManager`). POI art:
+  `tools/world/make_poi_art.py` -> `Forest/art/poi/`.
+
+**The Bonelands (pass 10): the world doubled east.** `BOUNDS = Rect2i(-56,-56,224,112)`,
+`BONELANDS = Rect2i(56,-56,112,112)`; ask `world.bounds()`, `region_of(c)` ("forest"/"bonelands")
+and `on_edge(c)` (the outer wall ring: never mined or built on, "The wilds go on beyond here, one
+day.") instead of `EXTENT`. `_generate_bonelands()` runs **after everything else, from its own RNG
+and noise** (`world_seed ^ 0x5B0E`; even its props' art variants, which `_spawn_prop` draws from
+`rng`, come from a swapped-in stream, `^ 0x5B0F`, so the forest's generator ends where it always
+did and the Bonelands don't shift when the forest's ruins change: world_poi_suite's pre-POI world
+caught that), so the forest's original square stays cell for cell what old saves expect: `Tests/legacy_world_signature.gd` hashes it for three seeds against
+`Tests/fixtures/legacy_world_signature.json` (the bonelands suite checks it every run). It takes
+down the forest's east wall (x = 55), lays a dry wash (terrain 1) winding east, waterholes
+(terrain 2) where the noise is low, outcrops of wall and crystal (`ore` 28%) where it's high, sand
+`ground_style` fading in over the first 10 columns (green stays round the water), then scatters on a
+5-cell grid: trees, bushes and ferns on the green; boulders, `bone_pile` (decor) and `relic` mounds
+on the sand; cattails by the water. Stone there is **sandstone**: `ForestProp.sandstone` (set in
+`_spawn_prop` for wall/ore/rock inside `BONELANDS`) swaps in `art/bonelands/sand_*.png`, recoloured
+from the mossy originals by `tools/world/make_bonelands_art.py` (exact colour map; crystal blues
+kept so a vein still reads as a vein). Everything sized to the world uses the bounds: the ground
+bake (`ForestGround.origin/cells`, shaders take `ivec2 canvas_px/world_offset`, the terrain include
+`ivec2 map_size/map_origin`), the map overlay, the creature leash (`_outside_world`). Hand-authored
+for now; once there are three or four regions they can be generated outward (Hank's plan). Suite:
+`Tests/BonelandsSuite.tscn` (legacy signature, determinism, bounds, open seam and walkable reach,
+edge ring, sandstone, wash/waterholes/fade, scatter, wildlife, an old journey gaining the new
+wildlife once). Look: `Tests/BonelandsLookCapture.tscn` -> `art/world-v2/bonelands-*.png`.
+
+**The wilds (pass 11): three new regions round the old map.** `BOUNDS = Rect2i(-168,-140,336,276)`
+(92,736 cells, ~3.7x pass 10). `GLASSMERE = Rect2i(-168,-56,112,112)` (west),
+`PALE_HILLS = Rect2i(-168,-140,336,84)` (the whole north), `DUNES = Rect2i(-168,56,336,80)` (the whole
+south); `OLD_BOUNDS = Rect2i(-56,-56,224,112)` is the pass-10 map, and the Bonelands keep their east
+rim via `_old_edge`. `region_of(c)` answers forest/bonelands/glassmere/pale_hills/dunes;
+`Forest/world/Regions.gd` holds names, a one-line blurb (the first-visit banner) and map colours.
+`Forest/world/WildsGen.gd` runs **after** the forest and the Bonelands with its own RNG swapped into
+`w.rng` (`world_seed ^ 0x7711`), so both old squares stay cell for cell (the legacy signature now
+covers the forest interior `Rect2i(-54,-54,108,109)` and the Bonelands interior
+`Rect2i(56,-54,111,109)`, POIs filtered to each area; fixture in `Tests/fixtures/`).
+- **Glassmere:** an ellipse lake round `lake_centre (-116,-2)` with four islands; a BFS from the
+  shore gives each water cell its depth, and depth >= 3 is `w.deep` (a StaticBody2D on layer 32:
+  walkers' masks include 32; the keeper drops it while boating and takes layer 64, the shore, so a
+  boat can't sail onto land). The piranha bay (`w.piranha`, `w.piranha_bay`) is the shallows of the
+  south-east shore. Beaches, the Fishers' Shrine (lore `glass_isle`), lily pads, reeds, clam beds.
+- **Pale Hills:** a winding road (`road_y(x)`), ponds, chalk outcrops (`ForestProp.chalk` swaps
+  `art/pass11/chalk_*` like sandstone), 12 `pale_crystal` (power 2), pines and birches, the Last
+  Keeper's Camp (E: lore `keeper_journal`) and the Pale Waystone (lore `pale_road`).
+- **Dunes:** oases, sandstone, sand fading in over 9 rows, cacti (fruit), dead trees, bone heaps,
+  relics, mesas, the Ossuary (`w.ossuary`, the second boss's ring) and the Kingstone to its west
+  (lore `buried_king`, which unlocks the Grave Horn recipe).
+- `_open_seams()` takes the old rim's walls/ore off rows y=-56,-55,55 and columns x=-56,-55.
+- Nests (`Forest/world/Nesting.gd`) are placed after all of it from `world_seed ^ 0x4E57`.
+- Pass 13 ore veins and far crystal (`Forest/world/Minerals.gd`) come last, from `world_seed ^ 0x0E5E`
+  for the cells and `^ 0x0E5F` swapped into `world.rng` for the art variants.
+- **Every post-pass that calls `_spawn_prop` must swap its own RNG into `world.rng`** (and put the
+  forest's back): `_spawn_prop` draws `variant` from `world.rng`. Minerals first used a private RNG
+  for its cells only, so its 380 props' variants shifted with whatever the ruins drew before them
+  (`Tests/WorldPOISuite.tscn`, which regenerates the world without ruins, caught it).
+
+**Rendering a world this size** (pass 11; 11,000 props and ~180 beasts at ~11 ms):
+- `ForestGround` bakes the ground in 32-cell chunks near the view (`BAKES_PER_FRAME 2`,
+  `MARGIN 320` px ahead, dropped past `KEEP 900`); `rebuild_cells(cells)` re-bakes the chunks an
+  edit touches.
+- `ForestFlora` is a Node2D of per-chunk MultiMesh patches (`refresh_cells`).
+- `ForestWorld._cull_props()` hides props in 16-cell squares outside the view plus `CULL_MARGIN 420`
+  (every 0.25 s): the renderer walks every *visible* CanvasItem each frame, so hiding far props is
+  what keeps the frame cheap.
+- Lighting and the workbench scan look at a window of cells round the keeper only.
+- Creatures: see dinosaurs.md "Performance (pass 11)".
+
+**Review tools.** `res://Tests/WorldLookCapture.tscn` (rendered) shoots the camp, trail, ford, river,
+lake, shore, moss, tribe camp, every POI and every carved companion piece to
+`art/world-v2/look-*.png`, then benchmarks a busy meadow **with vsync off** (otherwise it only
+measures the monitor's refresh: this machine has 59Hz and 165Hz displays).
+
+---
+
 ## How this maps to Cravera
 
 Prioritized, concrete upgrades.
@@ -473,3 +590,89 @@ Prioritized, concrete upgrades.
 - [Core Keeper world generation — Core Keeper Wiki](https://corekeeper.atma.gg/en/World)
 - [Terraria world generation — tModLoader / Terraria Wiki](https://hackmd.io/@tModLoader/HJUiVKXzu)
 - [Stardew Valley uses hand-authored maps — GamesRadar](https://www.gamesradar.com/games/simulation/stardew-valley-creator-wanted-the-mines-to-be-like-terraria-but-it-was-way-too-ambitious-in-the-end-should-have-been-an-entire-game-on-its-own/)
+
+## Pass 12: the bog, the barren dunes, the ashen Pale Lands, villages (Hank's direction)
+See `vision.md` for why.
+
+- **Glassmere → the Mirefen Bog** (region id still `glassmere`). `WildsGen._glassmere()` keeps a
+  dark central mere (`e < 0.86`: deep water, so the boat and Old Maw keep working).
+  - A marsh ring (`e < 1.4`) holds black pools (pool noise < −0.24) and mud flats
+    (`ground_style "mud"`, drawn as dirt). Mud replaces the beaches.
+  - Props: reeds and cattails at the water's edge, dead and bog trees, ferns and toadstools, lily
+    pads on 30% of still water, clams by the mere's isles. No palms.
+  - Shaders take a `bog_area` uniform (fading in over the easternmost 12 columns): the water goes
+    peaty green-brown (`water.gdshader`) and the ground dark olive with black mud
+    (`ground_bake.gdshader`).
+- **The Sunscar Dunes, barren.**
+  - `ground_style "hardpan"` (bare dirt) flats break through the sand deeper in (badlands noise
+    > 0.34).
+  - The props lean to rock, dead trees, bone piles and mesas; the oases' green edges are sparse.
+  - The flora on sand is mostly bare: a few sprigs and dry scrub (`ForestFlora._scatter`).
+- **The Pale Hills → the Pale Lands.** They are pale with ash from the mountain beyond (Embercrack
+  Ridge, to come).
+  - Ground: the `pale_area` blend in the ground shader is ash-grey with dark cinder specks.
+  - Grass: the flora shader greys it dead (`pale_area` there too).
+  - Trees and brush: `ForestProp.ashen` draws them with `fx/ashen.gdshader`, grey and dusted pale
+    on top, and still (no sway).
+  - The edge text points north to the smouldering mountain.
+- **Region air** (`fx/RegionAir.gd`, presets `ash` and `mire`, one node each on the session):
+  - **Grade.** A screen grade on CanvasLayer 5 under the HUD (`fx/region_grade.gdshader`):
+    desaturate toward the air's tint, a haze thickening up the screen and darkening with night, and
+    in the Pale Lands the mountain's orange glow on the northern edge after dark. It strengthens
+    with depth into the region.
+  - **Particles:** ash and embers, or soft mist puffs (a radial gradient texture; untextured
+    particles draw squares), plus fireflies at night.
+  - **The ash hush:** `Ambience.hush` fades the insects out and pitches the wind down, the music is
+    ducked, and the mountain rumbles now and then.
+  - **First visit** (milestone `pale_dread`): a synthesised toll (`tools/audio/make_pale_audio.py`),
+    a pitched-down roar, and a warning about the ash.
+- **The keeper's ash** (`ForestPlayer.ash`) fills over 70 s in the Pale Lands, reduced by
+  `ash_guard`:
+  - Sail-skin Veil 0.6, Sunward wraps 0.5, Ashmane Mantle or a tamed Ashmane 1.0.
+  - It clears under a roof or by a tent (`world.sheltered_at`) and outside the region.
+  - Full: CHOKING (−2 hp every 1.25 s) and slower. The HUD row reads "ASH n%".
+- **Villages:** `WildsGen._villages()` lays the Sunward oasis and the Ashen war camp from their
+  own RNG, lists them in `world.villages` and marks them on the map (teal and red).
+
+## Pass 15: ring worlds, micro places, caves (Hank: "like Core Keeper... randomized in placement")
+
+- **Two layouts** (`world/Layout.gd`), picked per journey and saved (`world.layout_kind`,
+  `world_seed`):
+  - **legacy**: the fixed boxes every journey before pass 15 was made in (seed 726151). Never
+    change what it generates: old saves' edits are stored against it. `Tests/legacy_world_signature.gd`
+    hashes the forest and Bonelands squares against `Tests/fixtures/legacy_world_signature.json`;
+    `world_poi_suite` checks the match. A new prop kind placed by a post-pass (nests, veins, seams,
+    wild crops, cave mouths...) must go in the signature's `ADDED` list.
+  - **rings**: every new journey (the menu sets a random seed; tests use `--rings SEED`). 420x420
+    cells: the plains inside `PLAINS` 76 (the edge wanders per angle via a LUT), the bog and the
+    dunes facing each other out to `MIDDLE` 150, the Pale Lands and Bonelands beyond; lands turned
+    by the seed, borders bent by warp noise. A per-cell land grid and a from_inner cache are built
+    once (~180 ms); `land_index(c)` and `from_inner(c)` are array reads.
+- `world/RingsGen.gd` lays each land (plains -> mirefen -> dunes -> pale -> bonelands -> rim ->
+  villages -> red meadow, haven, oases -> ruins). Every step swaps in its own RNG, so a land's
+  content doesn't shift when another land changes.
+- **Micro places** (`world.micro` cell -> index into `MICRO`, `micro_at` name -> centre): the red
+  meadow, Stillwater haven (a village; hunters won't enter: `ForestCreature.in_haven`), oases.
+- **The land map texture** (`ForestGround._land_map`, one texel a cell over `render_bounds()`):
+  r = land index (5 = caves), g = cells in from the land's inner edge, b = micro index. The ground
+  bake, water and flora shaders read it (`land_of`, `micro_of` helpers) for the bog murk, ash,
+  crimson grass and the cave floor. Built from a PackedByteArray in one pass.
+- **Caves** (`world/Caves.gd`): two per land (`PLAN`), kinds hollow / warren / grotto / explorer /
+  lair. Insides are carved into a strip of cells east of `bounds()` (`render_bounds()` includes it;
+  `region_of` returns "caves" there; `deep_rock` is never breakable). Each cave carves with its own
+  RNG (`world_seed ^ hash(id)`) before its mouth is placed; a mouth needs open ground in its land (a
+  ring world may clear scrub round it, a legacy world never clears seeded props). E at the mouth /
+  the shaft travels (`ForestPlaytest.cave_travel`). `world/CaveLife.gd` peoples them once a journey
+  (skip caves with no mouth).
+- **Big hunters are spread** in a new ring world (`ForestPlaytest._spread_hunters`: rex, carno, allo,
+  yuty, spino at least 480 px apart, each moved within its own land). The wildlife tables still place
+  by the old world's compass arcs, which put three allosaurs, the carno and a rex on one another's
+  ground in the dunes: endless rival fights, each run at full rate far off (~1 ms a frame).
+- **Frame cost** (PerfProbe, same hour): a ring world averaged ~1.3x the old world's frame time
+  (~17-19 ms against ~12-15 ms), worst at the villages (21-24 ms). Not one hotspot: denser content
+  (27k props against 15k, 64k nodes against 37k) and more beasts near the villages. Next: profile in
+  the editor.
+- **Boot cost** (ring world, `--gen-timing`): generation ~2.9 s (the Pale Lands and Bonelands spawn
+  ~15k of the ~23k props; each prop node costs ~100 us), ground 0.5 s, flora 1.1 s. `Forest/Boot.gd`
+  pumps window events between steps so Windows doesn't flag "Not Responding"; input is held off
+  with `get_tree().root.gui_disable_input` until the boot frame ends.

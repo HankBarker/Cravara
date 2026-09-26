@@ -1,0 +1,11 @@
+2867b28c-b25e-4d12-a5be-999a0a75b9c4
+status: completed
+id: 2867b28c-b25e-4d12-a5be-999a0a75b9c4
+job_id: 2867b28c-b25e-4d12-a5be-999a0a75b9c4
+frames: 1
+transparent: yes
+asset_id: 9d5cde28-21ef-5434-b973-6cc3a3a2eadc
+asset_type: image
+asset_status: saved
+gallery: saved to your PixelLab gallery (pixellab.ai/create)
+download: https://api.pixellab.ai/mcp/images/2867b28c-b25e-4d12-a5be-999a0a75b9c4/download

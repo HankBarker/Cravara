@@ -1,0 +1,879 @@
+Godot Engine v4.6.1.stable.official.14d19694e - https://godotengine.org
+
+ERROR: Resource file not found: res://Forest/equipment/art/wardrobe/icons/bone_chestplate.png (expected type: Texture2D)
+   at: _load (core/io/resource_loader.cpp:351)
+   GDScript backtrace (most recent call first):
+       [0] _register_file (res://Autoloads/ItemDB.gd:37)
+       [1] _load_all (res://Autoloads/ItemDB.gd:31)
+       [2] _ready (res://Autoloads/ItemDB.gd:19)
+ERROR: res://Items/Data/bone_chestplate.tres:11 - Parse Error: [ext_resource] referenced non-existent resource at: res://Forest/equipment/art/wardrobe/icons/bone_chestplate.png.
+   at: _printerr (scene/resources/resource_format_text.cpp:40)
+   GDScript backtrace (most recent call first):
+       [0] _register_file (res://Autoloads/ItemDB.gd:37)
+       [1] _load_all (res://Autoloads/ItemDB.gd:31)
+       [2] _ready (res://Autoloads/ItemDB.gd:19)
+ERROR: res://Items/Data/bone_chestplate.tres:11 - Parse Error: [ext_resource] referenced non-existent resource at: res://Forest/equipment/art/wardrobe/icons/bone_chestplate.png.
+   at: _printerr (scene/resources/resource_format_text.cpp:40)
+   GDScript backtrace (most recent call first):
+       [0] _register_file (res://Autoloads/ItemDB.gd:37)
+       [1] _load_all (res://Autoloads/ItemDB.gd:31)
+       [2] _ready (res://Autoloads/ItemDB.gd:19)
+ERROR: Failed loading resource: res://Items/Data/bone_chestplate.tres.
+   at: _load (core/io/resource_loader.cpp:343)
+   GDScript backtrace (most recent call first):
+       [0] _register_file (res://Autoloads/ItemDB.gd:37)
+       [1] _load_all (res://Autoloads/ItemDB.gd:31)
+       [2] _ready (res://Autoloads/ItemDB.gd:19)
+WARNING: ItemDB: res://Items/Data/bone_chestplate.tres is not an Item resource
+   at: push_warning (core/variant/variant_utility.cpp:1034)
+   GDScript backtrace (most recent call first):
+       [0] _register_file (res://Autoloads/ItemDB.gd:46)
+       [1] _load_all (res://Autoloads/ItemDB.gd:31)
+       [2] _ready (res://Autoloads/ItemDB.gd:19)
+ERROR: Resource file not found: res://Forest/equipment/art/wardrobe/icons/bone_helmet.png (expected type: Texture2D)
+   at: _load (core/io/resource_loader.cpp:351)
+   GDScript backtrace (most recent call first):
+       [0] _register_file (res://Autoloads/ItemDB.gd:37)
+       [1] _load_all (res://Autoloads/ItemDB.gd:31)
+       [2] _ready (res://Autoloads/ItemDB.gd:19)
+ERROR: res://Items/Data/bone_helmet.tres:11 - Parse Error: [ext_resource] referenced non-existent resource at: res://Forest/equipment/art/wardrobe/icons/bone_helmet.png.
+   at: _printerr (scene/resources/resource_format_text.cpp:40)
+   GDScript backtrace (most recent call first):
+       [0] _register_file (res://Autoloads/ItemDB.gd:37)
+       [1] _load_all (res://Autoloads/ItemDB.gd:31)
+       [2] _ready (res://Autoloads/ItemDB.gd:19)
+ERROR: res://Items/Data/bone_helmet.tres:11 - Parse Error: [ext_resource] referenced non-existent resource at: res://Forest/equipment/art/wardrobe/icons/bone_helmet.png.
+   at: _printerr (scene/resources/resource_format_text.cpp:40)
+   GDScript backtrace (most recent call first):
+       [0] _register_file (res://Autoloads/ItemDB.gd:37)
+       [1] _load_all (res://Autoloads/ItemDB.gd:31)
+       [2] _ready (res://Autoloads/ItemDB.gd:19)
+ERROR: Failed loading resource: res://Items/Data/bone_helmet.tres.
+   at: _load (core/io/resource_loader.cpp:343)
+   GDScript backtrace (most recent call first):
+       [0] _register_file (res://Autoloads/ItemDB.gd:37)
+       [1] _load_all (res://Autoloads/ItemDB.gd:31)
+       [2] _ready (res://Autoloads/ItemDB.gd:19)
+WARNING: ItemDB: res://Items/Data/bone_helmet.tres is not an Item resource
+   at: push_warning (core/variant/variant_utility.cpp:1034)
+   GDScript backtrace (most recent call first):
+       [0] _register_file (res://Autoloads/ItemDB.gd:46)
+       [1] _load_all (res://Autoloads/ItemDB.gd:31)
+       [2] _ready (res://Autoloads/ItemDB.gd:19)
+ERROR: Resource file not found: res://Forest/equipment/art/wardrobe/icons/bone_leggings.png (expected type: Texture2D)
+   at: _load (core/io/resource_loader.cpp:351)
+   GDScript backtrace (most recent call first):
+       [0] _register_file (res://Autoloads/ItemDB.gd:37)
+       [1] _load_all (res://Autoloads/ItemDB.gd:31)
+       [2] _ready (res://Autoloads/ItemDB.gd:19)
+ERROR: res://Items/Data/bone_leggings.tres:11 - Parse Error: [ext_resource] referenced non-existent resource at: res://Forest/equipment/art/wardrobe/icons/bone_leggings.png.
+   at: _printerr (scene/resources/resource_format_text.cpp:40)
+   GDScript backtrace (most recent call first):
+       [0] _register_file (res://Autoloads/ItemDB.gd:37)
+       [1] _load_all (res://Autoloads/ItemDB.gd:31)
+       [2] _ready (res://Autoloads/ItemDB.gd:19)
+ERROR: res://Items/Data/bone_leggings.tres:11 - Parse Error: [ext_resource] referenced non-existent resource at: res://Forest/equipment/art/wardrobe/icons/bone_leggings.png.
+   at: _printerr (scene/resources/resource_format_text.cpp:40)
+   GDScript backtrace (most recent call first):
+       [0] _register_file (res://Autoloads/ItemDB.gd:37)
+       [1] _load_all (res://Autoloads/ItemDB.gd:31)
+       [2] _ready (res://Autoloads/ItemDB.gd:19)
+ERROR: Failed loading resource: res://Items/Data/bone_leggings.tres.
+   at: _load (core/io/resource_loader.cpp:343)
+   GDScript backtrace (most recent call first):
+       [0] _register_file (res://Autoloads/ItemDB.gd:37)
+       [1] _load_all (res://Autoloads/ItemDB.gd:31)
+       [2] _ready (res://Autoloads/ItemDB.gd:19)
+WARNING: ItemDB: res://Items/Data/bone_leggings.tres is not an Item resource
+   at: push_warning (core/variant/variant_utility.cpp:1034)
+   GDScript backtrace (most recent call first):
+       [0] _register_file (res://Autoloads/ItemDB.gd:46)
+       [1] _load_all (res://Autoloads/ItemDB.gd:31)
+       [2] _ready (res://Autoloads/ItemDB.gd:19)
+ERROR: Resource file not found: res://Forest/equipment/art/wardrobe/icons/crystal_chestplate.png (expected type: Texture2D)
+   at: _load (core/io/resource_loader.cpp:351)
+   GDScript backtrace (most recent call first):
+       [0] _register_file (res://Autoloads/ItemDB.gd:37)
+       [1] _load_all (res://Autoloads/ItemDB.gd:31)
+       [2] _ready (res://Autoloads/ItemDB.gd:19)
+ERROR: res://Items/Data/crystal_chestplate.tres:11 - Parse Error: [ext_resource] referenced non-existent resource at: res://Forest/equipment/art/wardrobe/icons/crystal_chestplate.png.
+   at: _printerr (scene/resources/resource_format_text.cpp:40)
+   GDScript backtrace (most recent call first):
+       [0] _register_file (res://Autoloads/ItemDB.gd:37)
+       [1] _load_all (res://Autoloads/ItemDB.gd:31)
+       [2] _ready (res://Autoloads/ItemDB.gd:19)
+ERROR: res://Items/Data/crystal_chestplate.tres:11 - Parse Error: [ext_resource] referenced non-existent resource at: res://Forest/equipment/art/wardrobe/icons/crystal_chestplate.png.
+   at: _printerr (scene/resources/resource_format_text.cpp:40)
+   GDScript backtrace (most recent call first):
+       [0] _register_file (res://Autoloads/ItemDB.gd:37)
+       [1] _load_all (res://Autoloads/ItemDB.gd:31)
+       [2] _ready (res://Autoloads/ItemDB.gd:19)
+ERROR: Failed loading resource: res://Items/Data/crystal_chestplate.tres.
+   at: _load (core/io/resource_loader.cpp:343)
+   GDScript backtrace (most recent call first):
+       [0] _register_file (res://Autoloads/ItemDB.gd:37)
+       [1] _load_all (res://Autoloads/ItemDB.gd:31)
+       [2] _ready (res://Autoloads/ItemDB.gd:19)
+WARNING: ItemDB: res://Items/Data/crystal_chestplate.tres is not an Item resource
+   at: push_warning (core/variant/variant_utility.cpp:1034)
+   GDScript backtrace (most recent call first):
+       [0] _register_file (res://Autoloads/ItemDB.gd:46)
+       [1] _load_all (res://Autoloads/ItemDB.gd:31)
+       [2] _ready (res://Autoloads/ItemDB.gd:19)
+ERROR: Resource file not found: res://Forest/equipment/art/wardrobe/icons/crystal_helmet.png (expected type: Texture2D)
+   at: _load (core/io/resource_loader.cpp:351)
+   GDScript backtrace (most recent call first):
+       [0] _register_file (res://Autoloads/ItemDB.gd:37)
+       [1] _load_all (res://Autoloads/ItemDB.gd:31)
+       [2] _ready (res://Autoloads/ItemDB.gd:19)
+ERROR: res://Items/Data/crystal_helmet.tres:11 - Parse Error: [ext_resource] referenced non-existent resource at: res://Forest/equipment/art/wardrobe/icons/crystal_helmet.png.
+   at: _printerr (scene/resources/resource_format_text.cpp:40)
+   GDScript backtrace (most recent call first):
+       [0] _register_file (res://Autoloads/ItemDB.gd:37)
+       [1] _load_all (res://Autoloads/ItemDB.gd:31)
+       [2] _ready (res://Autoloads/ItemDB.gd:19)
+ERROR: res://Items/Data/crystal_helmet.tres:11 - Parse Error: [ext_resource] referenced non-existent resource at: res://Forest/equipment/art/wardrobe/icons/crystal_helmet.png.
+   at: _printerr (scene/resources/resource_format_text.cpp:40)
+   GDScript backtrace (most recent call first):
+       [0] _register_file (res://Autoloads/ItemDB.gd:37)
+       [1] _load_all (res://Autoloads/ItemDB.gd:31)
+       [2] _ready (res://Autoloads/ItemDB.gd:19)
+ERROR: Failed loading resource: res://Items/Data/crystal_helmet.tres.
+   at: _load (core/io/resource_loader.cpp:343)
+   GDScript backtrace (most recent call first):
+       [0] _register_file (res://Autoloads/ItemDB.gd:37)
+       [1] _load_all (res://Autoloads/ItemDB.gd:31)
+       [2] _ready (res://Autoloads/ItemDB.gd:19)
+WARNING: ItemDB: res://Items/Data/crystal_helmet.tres is not an Item resource
+   at: push_warning (core/variant/variant_utility.cpp:1034)
+   GDScript backtrace (most recent call first):
+       [0] _register_file (res://Autoloads/ItemDB.gd:46)
+       [1] _load_all (res://Autoloads/ItemDB.gd:31)
+       [2] _ready (res://Autoloads/ItemDB.gd:19)
+ERROR: Resource file not found: res://Forest/equipment/art/wardrobe/icons/crystal_leggings.png (expected type: Texture2D)
+   at: _load (core/io/resource_loader.cpp:351)
+   GDScript backtrace (most recent call first):
+       [0] _register_file (res://Autoloads/ItemDB.gd:37)
+       [1] _load_all (res://Autoloads/ItemDB.gd:31)
+       [2] _ready (res://Autoloads/ItemDB.gd:19)
+ERROR: res://Items/Data/crystal_leggings.tres:11 - Parse Error: [ext_resource] referenced non-existent resource at: res://Forest/equipment/art/wardrobe/icons/crystal_leggings.png.
+   at: _printerr (scene/resources/resource_format_text.cpp:40)
+   GDScript backtrace (most recent call first):
+       [0] _register_file (res://Autoloads/ItemDB.gd:37)
+       [1] _load_all (res://Autoloads/ItemDB.gd:31)
+       [2] _ready (res://Autoloads/ItemDB.gd:19)
+ERROR: res://Items/Data/crystal_leggings.tres:11 - Parse Error: [ext_resource] referenced non-existent resource at: res://Forest/equipment/art/wardrobe/icons/crystal_leggings.png.
+   at: _printerr (scene/resources/resource_format_text.cpp:40)
+   GDScript backtrace (most recent call first):
+       [0] _register_file (res://Autoloads/ItemDB.gd:37)
+       [1] _load_all (res://Autoloads/ItemDB.gd:31)
+       [2] _ready (res://Autoloads/ItemDB.gd:19)
+ERROR: Failed loading resource: res://Items/Data/crystal_leggings.tres.
+   at: _load (core/io/resource_loader.cpp:343)
+   GDScript backtrace (most recent call first):
+       [0] _register_file (res://Autoloads/ItemDB.gd:37)
+       [1] _load_all (res://Autoloads/ItemDB.gd:31)
+       [2] _ready (res://Autoloads/ItemDB.gd:19)
+WARNING: ItemDB: res://Items/Data/crystal_leggings.tres is not an Item resource
+   at: push_warning (core/variant/variant_utility.cpp:1034)
+   GDScript backtrace (most recent call first):
+       [0] _register_file (res://Autoloads/ItemDB.gd:46)
+       [1] _load_all (res://Autoloads/ItemDB.gd:31)
+       [2] _ready (res://Autoloads/ItemDB.gd:19)
+📦 ItemDB loaded 56 items: basic_axe, basic_pickaxe, berry, berry_compote, berry_seed, bone_arrow, bone_dagger, bucket, campfire, chest, cooked_fish, cooked_meat, crystal_axe, crystal_flask, crystal_pendant, crystal_pickaxe, crystal_shard, dodo_egg, fishing_rod, forest_omelet, garden_hoe, hide_bed, hunter_charm, lantern, leather_chestplate, leather_helmet, leather_leggings, log, moonscale, mushroom, mushroom_potion, mushroom_spore, net, plank, plant_fiber, prism_crystal, raptor_fang, reed_bow, reed_perch, river_totem, shardfin, shard_sword, stego_saddle, stone, tent, thatch_roof, torch, trex_meat, trex_scale, trike_saddle, water_bucket, water_flask, wood_door, wood_floor, wood_wall, workbench
+PERF default_skin_ms=132.307
+PERF custom_skin_ms=215.031
+PASS invalid saved choices normalize to stable defaults
+PASS same appearance uses frame cache
+PASS customization keys isolate cached frames
+PASS source textures remain unchanged after all wardrobe variants
+PASS down custom appearance changes actual pixels
+PASS down cropped hair differs from swept hair
+PASS right custom appearance changes actual pixels
+PASS right cropped hair differs from swept hair
+PASS left custom appearance changes actual pixels
+PASS left cropped hair differs from swept hair
+PASS up custom appearance changes actual pixels
+PASS up cropped hair differs from swept hair
+PASS axe_down has eight authored frames
+PASS axe_down preserves real gameplay duration
+PASS axe_down frame 0 has grip and exact head silhouette
+PASS axe_down frame 1 has grip and exact head silhouette
+PASS axe_down frame 2 has grip and exact head silhouette
+PASS axe_down frame 3 has grip and exact head silhouette
+PASS axe_down frame 4 has grip and exact head silhouette
+PASS axe_down frame 5 has grip and exact head silhouette
+PASS axe_down frame 6 has grip and exact head silhouette
+PASS axe_down frame 7 has grip and exact head silhouette
+PASS axe_down helmet follows all eight head silhouettes
+PASS axe_down contains actual changed anatomy poses
+PASS axe_down is distinct from every other action sheet
+PASS pickaxe_down has eight authored frames
+PASS pickaxe_down preserves real gameplay duration
+PASS pickaxe_down frame 0 has grip and exact head silhouette
+PASS pickaxe_down frame 1 has grip and exact head silhouette
+PASS pickaxe_down frame 2 has grip and exact head silhouette
+PASS pickaxe_down frame 3 has grip and exact head silhouette
+PASS pickaxe_down frame 4 has grip and exact head silhouette
+PASS pickaxe_down frame 5 has grip and exact head silhouette
+PASS pickaxe_down frame 6 has grip and exact head silhouette
+PASS pickaxe_down frame 7 has grip and exact head silhouette
+PASS pickaxe_down helmet follows all eight head silhouettes
+PASS pickaxe_down contains actual changed anatomy poses
+PASS pickaxe_down is distinct from every other action sheet
+PASS weapon_down has eight authored frames
+PASS weapon_down preserves real gameplay duration
+PASS weapon_down frame 0 has grip and exact head silhouette
+PASS weapon_down frame 1 has grip and exact head silhouette
+PASS weapon_down frame 2 has grip and exact head silhouette
+PASS weapon_down frame 3 has grip and exact head silhouette
+PASS weapon_down frame 4 has grip and exact head silhouette
+PASS weapon_down frame 5 has grip and exact head silhouette
+PASS weapon_down frame 6 has grip and exact head silhouette
+PASS weapon_down frame 7 has grip and exact head silhouette
+PASS weapon_down helmet follows all eight head silhouettes
+PASS weapon_down contains actual changed anatomy poses
+PASS weapon_down is distinct from every other action sheet
+PASS sword_down has eight authored frames
+PASS sword_down preserves real gameplay duration
+PASS sword_down frame 0 has grip and exact head silhouette
+PASS sword_down frame 1 has grip and exact head silhouette
+PASS sword_down frame 2 has grip and exact head silhouette
+PASS sword_down frame 3 has grip and exact head silhouette
+PASS sword_down frame 4 has grip and exact head silhouette
+PASS sword_down frame 5 has grip and exact head silhouette
+PASS sword_down frame 6 has grip and exact head silhouette
+PASS sword_down frame 7 has grip and exact head silhouette
+PASS sword_down helmet follows all eight head silhouettes
+PASS sword_down contains actual changed anatomy poses
+PASS sword_down is distinct from every other action sheet
+PASS bow_draw_down has eight authored frames
+PASS bow_draw_down preserves real gameplay duration
+PASS bow_draw_down frame 0 has grip and exact head silhouette
+PASS bow_draw_down frame 1 has grip and exact head silhouette
+PASS bow_draw_down frame 2 has grip and exact head silhouette
+PASS bow_draw_down frame 3 has grip and exact head silhouette
+PASS bow_draw_down frame 4 has grip and exact head silhouette
+PASS bow_draw_down frame 5 has grip and exact head silhouette
+PASS bow_draw_down frame 6 has grip and exact head silhouette
+PASS bow_draw_down frame 7 has grip and exact head silhouette
+PASS bow_draw_down helmet follows all eight head silhouettes
+PASS bow_draw_down contains actual changed anatomy poses
+PASS bow_draw_down is distinct from every other action sheet
+PASS bow_release_down has eight authored frames
+PASS bow_release_down preserves real gameplay duration
+PASS bow_release_down frame 0 has grip and exact head silhouette
+PASS bow_release_down frame 1 has grip and exact head silhouette
+PASS bow_release_down frame 2 has grip and exact head silhouette
+PASS bow_release_down frame 3 has grip and exact head silhouette
+PASS bow_release_down frame 4 has grip and exact head silhouette
+PASS bow_release_down frame 5 has grip and exact head silhouette
+PASS bow_release_down frame 6 has grip and exact head silhouette
+PASS bow_release_down frame 7 has grip and exact head silhouette
+PASS bow_release_down helmet follows all eight head silhouettes
+PASS bow_release_down contains actual changed anatomy poses
+PASS bow_release_down is distinct from every other action sheet
+PASS fishing_cast_down has eight authored frames
+PASS fishing_cast_down preserves real gameplay duration
+PASS fishing_cast_down frame 0 has grip and exact head silhouette
+PASS fishing_cast_down frame 1 has grip and exact head silhouette
+PASS fishing_cast_down frame 2 has grip and exact head silhouette
+PASS fishing_cast_down frame 3 has grip and exact head silhouette
+PASS fishing_cast_down frame 4 has grip and exact head silhouette
+PASS fishing_cast_down frame 5 has grip and exact head silhouette
+PASS fishing_cast_down frame 6 has grip and exact head silhouette
+PASS fishing_cast_down frame 7 has grip and exact head silhouette
+PASS fishing_cast_down helmet follows all eight head silhouettes
+PASS fishing_cast_down contains actual changed anatomy poses
+PASS fishing_cast_down is distinct from every other action sheet
+PASS fishing_reel_down has eight authored frames
+PASS fishing_reel_down preserves real gameplay duration
+PASS fishing_reel_down frame 0 has grip and exact head silhouette
+PASS fishing_reel_down frame 1 has grip and exact head silhouette
+PASS fishing_reel_down frame 2 has grip and exact head silhouette
+PASS fishing_reel_down frame 3 has grip and exact head silhouette
+PASS fishing_reel_down frame 4 has grip and exact head silhouette
+PASS fishing_reel_down frame 5 has grip and exact head silhouette
+PASS fishing_reel_down frame 6 has grip and exact head silhouette
+PASS fishing_reel_down frame 7 has grip and exact head silhouette
+PASS fishing_reel_down helmet follows all eight head silhouettes
+PASS fishing_reel_down contains actual changed anatomy poses
+PASS fishing_reel_down is distinct from every other action sheet
+PASS hoe_down has eight authored frames
+PASS hoe_down preserves real gameplay duration
+PASS hoe_down frame 0 has grip and exact head silhouette
+PASS hoe_down frame 1 has grip and exact head silhouette
+PASS hoe_down frame 2 has grip and exact head silhouette
+PASS hoe_down frame 3 has grip and exact head silhouette
+PASS hoe_down frame 4 has grip and exact head silhouette
+PASS hoe_down frame 5 has grip and exact head silhouette
+PASS hoe_down frame 6 has grip and exact head silhouette
+PASS hoe_down frame 7 has grip and exact head silhouette
+PASS hoe_down helmet follows all eight head silhouettes
+PASS hoe_down contains actual changed anatomy poses
+PASS hoe_down is distinct from every other action sheet
+PASS net_down has eight authored frames
+PASS net_down preserves real gameplay duration
+PASS net_down frame 0 has grip and exact head silhouette
+PASS net_down frame 1 has grip and exact head silhouette
+PASS net_down frame 2 has grip and exact head silhouette
+PASS net_down frame 3 has grip and exact head silhouette
+PASS net_down frame 4 has grip and exact head silhouette
+PASS net_down frame 5 has grip and exact head silhouette
+PASS net_down frame 6 has grip and exact head silhouette
+PASS net_down frame 7 has grip and exact head silhouette
+PASS net_down helmet follows all eight head silhouettes
+PASS net_down contains actual changed anatomy poses
+PASS net_down is distinct from every other action sheet
+PASS bucket_down has eight authored frames
+PASS bucket_down preserves real gameplay duration
+PASS bucket_down frame 0 has grip and exact head silhouette
+PASS bucket_down frame 1 has grip and exact head silhouette
+PASS bucket_down frame 2 has grip and exact head silhouette
+PASS bucket_down frame 3 has grip and exact head silhouette
+PASS bucket_down frame 4 has grip and exact head silhouette
+PASS bucket_down frame 5 has grip and exact head silhouette
+PASS bucket_down frame 6 has grip and exact head silhouette
+PASS bucket_down frame 7 has grip and exact head silhouette
+PASS bucket_down helmet follows all eight head silhouettes
+PASS bucket_down contains actual changed anatomy poses
+PASS bucket_down is distinct from every other action sheet
+PASS pet_down has eight authored frames
+PASS pet_down preserves real gameplay duration
+PASS pet_down frame 0 has grip and exact head silhouette
+PASS pet_down frame 1 has grip and exact head silhouette
+PASS pet_down frame 2 has grip and exact head silhouette
+PASS pet_down frame 3 has grip and exact head silhouette
+PASS pet_down frame 4 has grip and exact head silhouette
+PASS pet_down frame 5 has grip and exact head silhouette
+PASS pet_down frame 6 has grip and exact head silhouette
+PASS pet_down frame 7 has grip and exact head silhouette
+PASS pet_down helmet follows all eight head silhouettes
+PASS pet_down contains actual changed anatomy poses
+PASS pet_down is distinct from every other action sheet
+PASS pickup_down has eight authored frames
+PASS pickup_down preserves real gameplay duration
+PASS pickup_down frame 0 has grip and exact head silhouette
+PASS pickup_down frame 1 has grip and exact head silhouette
+PASS pickup_down frame 2 has grip and exact head silhouette
+PASS pickup_down frame 3 has grip and exact head silhouette
+PASS pickup_down frame 4 has grip and exact head silhouette
+PASS pickup_down frame 5 has grip and exact head silhouette
+PASS pickup_down frame 6 has grip and exact head silhouette
+PASS pickup_down frame 7 has grip and exact head silhouette
+PASS pickup_down helmet follows all eight head silhouettes
+PASS pickup_down contains actual changed anatomy poses
+PASS pickup_down is distinct from every other action sheet
+PASS axe_right has eight authored frames
+PASS axe_right preserves real gameplay duration
+PASS axe_right frame 0 has grip and exact head silhouette
+PASS axe_right frame 1 has grip and exact head silhouette
+PASS axe_right frame 2 has grip and exact head silhouette
+PASS axe_right frame 3 has grip and exact head silhouette
+PASS axe_right frame 4 has grip and exact head silhouette
+PASS axe_right frame 5 has grip and exact head silhouette
+PASS axe_right frame 6 has grip and exact head silhouette
+PASS axe_right frame 7 has grip and exact head silhouette
+PASS axe_right helmet follows all eight head silhouettes
+PASS axe_right contains actual changed anatomy poses
+PASS axe_right is distinct from every other action sheet
+PASS pickaxe_right has eight authored frames
+PASS pickaxe_right preserves real gameplay duration
+PASS pickaxe_right frame 0 has grip and exact head silhouette
+PASS pickaxe_right frame 1 has grip and exact head silhouette
+PASS pickaxe_right frame 2 has grip and exact head silhouette
+PASS pickaxe_right frame 3 has grip and exact head silhouette
+PASS pickaxe_right frame 4 has grip and exact head silhouette
+PASS pickaxe_right frame 5 has grip and exact head silhouette
+PASS pickaxe_right frame 6 has grip and exact head silhouette
+PASS pickaxe_right frame 7 has grip and exact head silhouette
+PASS pickaxe_right helmet follows all eight head silhouettes
+PASS pickaxe_right contains actual changed anatomy poses
+PASS pickaxe_right is distinct from every other action sheet
+PASS weapon_right has eight authored frames
+PASS weapon_right preserves real gameplay duration
+PASS weapon_right frame 0 has grip and exact head silhouette
+PASS weapon_right frame 1 has grip and exact head silhouette
+PASS weapon_right frame 2 has grip and exact head silhouette
+PASS weapon_right frame 3 has grip and exact head silhouette
+PASS weapon_right frame 4 has grip and exact head silhouette
+PASS weapon_right frame 5 has grip and exact head silhouette
+PASS weapon_right frame 6 has grip and exact head silhouette
+PASS weapon_right frame 7 has grip and exact head silhouette
+PASS weapon_right helmet follows all eight head silhouettes
+PASS weapon_right contains actual changed anatomy poses
+PASS weapon_right is distinct from every other action sheet
+PASS sword_right has eight authored frames
+PASS sword_right preserves real gameplay duration
+PASS sword_right frame 0 has grip and exact head silhouette
+PASS sword_right frame 1 has grip and exact head silhouette
+PASS sword_right frame 2 has grip and exact head silhouette
+PASS sword_right frame 3 has grip and exact head silhouette
+PASS sword_right frame 4 has grip and exact head silhouette
+PASS sword_right frame 5 has grip and exact head silhouette
+PASS sword_right frame 6 has grip and exact head silhouette
+PASS sword_right frame 7 has grip and exact head silhouette
+PASS sword_right helmet follows all eight head silhouettes
+PASS sword_right contains actual changed anatomy poses
+PASS sword_right is distinct from every other action sheet
+PASS bow_draw_right has eight authored frames
+PASS bow_draw_right preserves real gameplay duration
+PASS bow_draw_right frame 0 has grip and exact head silhouette
+PASS bow_draw_right frame 1 has grip and exact head silhouette
+PASS bow_draw_right frame 2 has grip and exact head silhouette
+PASS bow_draw_right frame 3 has grip and exact head silhouette
+PASS bow_draw_right frame 4 has grip and exact head silhouette
+PASS bow_draw_right frame 5 has grip and exact head silhouette
+PASS bow_draw_right frame 6 has grip and exact head silhouette
+PASS bow_draw_right frame 7 has grip and exact head silhouette
+PASS bow_draw_right helmet follows all eight head silhouettes
+PASS bow_draw_right contains actual changed anatomy poses
+PASS bow_draw_right is distinct from every other action sheet
+PASS bow_release_right has eight authored frames
+PASS bow_release_right preserves real gameplay duration
+PASS bow_release_right frame 0 has grip and exact head silhouette
+PASS bow_release_right frame 1 has grip and exact head silhouette
+PASS bow_release_right frame 2 has grip and exact head silhouette
+PASS bow_release_right frame 3 has grip and exact head silhouette
+PASS bow_release_right frame 4 has grip and exact head silhouette
+PASS bow_release_right frame 5 has grip and exact head silhouette
+PASS bow_release_right frame 6 has grip and exact head silhouette
+PASS bow_release_right frame 7 has grip and exact head silhouette
+PASS bow_release_right helmet follows all eight head silhouettes
+PASS bow_release_right contains actual changed anatomy poses
+PASS bow_release_right is distinct from every other action sheet
+PASS fishing_cast_right has eight authored frames
+PASS fishing_cast_right preserves real gameplay duration
+PASS fishing_cast_right frame 0 has grip and exact head silhouette
+PASS fishing_cast_right frame 1 has grip and exact head silhouette
+PASS fishing_cast_right frame 2 has grip and exact head silhouette
+PASS fishing_cast_right frame 3 has grip and exact head silhouette
+PASS fishing_cast_right frame 4 has grip and exact head silhouette
+PASS fishing_cast_right frame 5 has grip and exact head silhouette
+PASS fishing_cast_right frame 6 has grip and exact head silhouette
+PASS fishing_cast_right frame 7 has grip and exact head silhouette
+PASS fishing_cast_right helmet follows all eight head silhouettes
+PASS fishing_cast_right contains actual changed anatomy poses
+PASS fishing_cast_right is distinct from every other action sheet
+PASS fishing_reel_right has eight authored frames
+PASS fishing_reel_right preserves real gameplay duration
+PASS fishing_reel_right frame 0 has grip and exact head silhouette
+PASS fishing_reel_right frame 1 has grip and exact head silhouette
+PASS fishing_reel_right frame 2 has grip and exact head silhouette
+PASS fishing_reel_right frame 3 has grip and exact head silhouette
+PASS fishing_reel_right frame 4 has grip and exact head silhouette
+PASS fishing_reel_right frame 5 has grip and exact head silhouette
+PASS fishing_reel_right frame 6 has grip and exact head silhouette
+PASS fishing_reel_right frame 7 has grip and exact head silhouette
+PASS fishing_reel_right helmet follows all eight head silhouettes
+PASS fishing_reel_right contains actual changed anatomy poses
+PASS fishing_reel_right is distinct from every other action sheet
+PASS hoe_right has eight authored frames
+PASS hoe_right preserves real gameplay duration
+PASS hoe_right frame 0 has grip and exact head silhouette
+PASS hoe_right frame 1 has grip and exact head silhouette
+PASS hoe_right frame 2 has grip and exact head silhouette
+PASS hoe_right frame 3 has grip and exact head silhouette
+PASS hoe_right frame 4 has grip and exact head silhouette
+PASS hoe_right frame 5 has grip and exact head silhouette
+PASS hoe_right frame 6 has grip and exact head silhouette
+PASS hoe_right frame 7 has grip and exact head silhouette
+PASS hoe_right helmet follows all eight head silhouettes
+PASS hoe_right contains actual changed anatomy poses
+PASS hoe_right is distinct from every other action sheet
+PASS net_right has eight authored frames
+PASS net_right preserves real gameplay duration
+PASS net_right frame 0 has grip and exact head silhouette
+PASS net_right frame 1 has grip and exact head silhouette
+PASS net_right frame 2 has grip and exact head silhouette
+PASS net_right frame 3 has grip and exact head silhouette
+PASS net_right frame 4 has grip and exact head silhouette
+PASS net_right frame 5 has grip and exact head silhouette
+PASS net_right frame 6 has grip and exact head silhouette
+PASS net_right frame 7 has grip and exact head silhouette
+PASS net_right helmet follows all eight head silhouettes
+PASS net_right contains actual changed anatomy poses
+PASS net_right is distinct from every other action sheet
+PASS bucket_right has eight authored frames
+PASS bucket_right preserves real gameplay duration
+PASS bucket_right frame 0 has grip and exact head silhouette
+PASS bucket_right frame 1 has grip and exact head silhouette
+PASS bucket_right frame 2 has grip and exact head silhouette
+PASS bucket_right frame 3 has grip and exact head silhouette
+PASS bucket_right frame 4 has grip and exact head silhouette
+PASS bucket_right frame 5 has grip and exact head silhouette
+PASS bucket_right frame 6 has grip and exact head silhouette
+PASS bucket_right frame 7 has grip and exact head silhouette
+PASS bucket_right helmet follows all eight head silhouettes
+PASS bucket_right contains actual changed anatomy poses
+PASS bucket_right is distinct from every other action sheet
+PASS pet_right has eight authored frames
+PASS pet_right preserves real gameplay duration
+PASS pet_right frame 0 has grip and exact head silhouette
+PASS pet_right frame 1 has grip and exact head silhouette
+PASS pet_right frame 2 has grip and exact head silhouette
+PASS pet_right frame 3 has grip and exact head silhouette
+PASS pet_right frame 4 has grip and exact head silhouette
+PASS pet_right frame 5 has grip and exact head silhouette
+PASS pet_right frame 6 has grip and exact head silhouette
+PASS pet_right frame 7 has grip and exact head silhouette
+PASS pet_right helmet follows all eight head silhouettes
+PASS pet_right contains actual changed anatomy poses
+PASS pet_right is distinct from every other action sheet
+PASS pickup_right has eight authored frames
+PASS pickup_right preserves real gameplay duration
+PASS pickup_right frame 0 has grip and exact head silhouette
+PASS pickup_right frame 1 has grip and exact head silhouette
+PASS pickup_right frame 2 has grip and exact head silhouette
+PASS pickup_right frame 3 has grip and exact head silhouette
+PASS pickup_right frame 4 has grip and exact head silhouette
+PASS pickup_right frame 5 has grip and exact head silhouette
+PASS pickup_right frame 6 has grip and exact head silhouette
+PASS pickup_right frame 7 has grip and exact head silhouette
+PASS pickup_right helmet follows all eight head silhouettes
+PASS pickup_right contains actual changed anatomy poses
+PASS pickup_right is distinct from every other action sheet
+PASS axe_left has eight authored frames
+PASS axe_left preserves real gameplay duration
+PASS axe_left frame 0 has grip and exact head silhouette
+PASS axe_left frame 1 has grip and exact head silhouette
+PASS axe_left frame 2 has grip and exact head silhouette
+PASS axe_left frame 3 has grip and exact head silhouette
+PASS axe_left frame 4 has grip and exact head silhouette
+PASS axe_left frame 5 has grip and exact head silhouette
+PASS axe_left frame 6 has grip and exact head silhouette
+PASS axe_left frame 7 has grip and exact head silhouette
+PASS axe_left helmet follows all eight head silhouettes
+PASS axe_left contains actual changed anatomy poses
+PASS axe_left is distinct from every other action sheet
+PASS pickaxe_left has eight authored frames
+PASS pickaxe_left preserves real gameplay duration
+PASS pickaxe_left frame 0 has grip and exact head silhouette
+PASS pickaxe_left frame 1 has grip and exact head silhouette
+PASS pickaxe_left frame 2 has grip and exact head silhouette
+PASS pickaxe_left frame 3 has grip and exact head silhouette
+PASS pickaxe_left frame 4 has grip and exact head silhouette
+PASS pickaxe_left frame 5 has grip and exact head silhouette
+PASS pickaxe_left frame 6 has grip and exact head silhouette
+PASS pickaxe_left frame 7 has grip and exact head silhouette
+PASS pickaxe_left helmet follows all eight head silhouettes
+PASS pickaxe_left contains actual changed anatomy poses
+PASS pickaxe_left is distinct from every other action sheet
+PASS weapon_left has eight authored frames
+PASS weapon_left preserves real gameplay duration
+PASS weapon_left frame 0 has grip and exact head silhouette
+PASS weapon_left frame 1 has grip and exact head silhouette
+PASS weapon_left frame 2 has grip and exact head silhouette
+PASS weapon_left frame 3 has grip and exact head silhouette
+PASS weapon_left frame 4 has grip and exact head silhouette
+PASS weapon_left frame 5 has grip and exact head silhouette
+PASS weapon_left frame 6 has grip and exact head silhouette
+PASS weapon_left frame 7 has grip and exact head silhouette
+PASS weapon_left helmet follows all eight head silhouettes
+PASS weapon_left contains actual changed anatomy poses
+PASS weapon_left is distinct from every other action sheet
+PASS sword_left has eight authored frames
+PASS sword_left preserves real gameplay duration
+PASS sword_left frame 0 has grip and exact head silhouette
+PASS sword_left frame 1 has grip and exact head silhouette
+PASS sword_left frame 2 has grip and exact head silhouette
+PASS sword_left frame 3 has grip and exact head silhouette
+PASS sword_left frame 4 has grip and exact head silhouette
+PASS sword_left frame 5 has grip and exact head silhouette
+PASS sword_left frame 6 has grip and exact head silhouette
+PASS sword_left frame 7 has grip and exact head silhouette
+PASS sword_left helmet follows all eight head silhouettes
+PASS sword_left contains actual changed anatomy poses
+PASS sword_left is distinct from every other action sheet
+PASS bow_draw_left has eight authored frames
+PASS bow_draw_left preserves real gameplay duration
+PASS bow_draw_left frame 0 has grip and exact head silhouette
+PASS bow_draw_left frame 1 has grip and exact head silhouette
+PASS bow_draw_left frame 2 has grip and exact head silhouette
+PASS bow_draw_left frame 3 has grip and exact head silhouette
+PASS bow_draw_left frame 4 has grip and exact head silhouette
+PASS bow_draw_left frame 5 has grip and exact head silhouette
+PASS bow_draw_left frame 6 has grip and exact head silhouette
+PASS bow_draw_left frame 7 has grip and exact head silhouette
+PASS bow_draw_left helmet follows all eight head silhouettes
+PASS bow_draw_left contains actual changed anatomy poses
+PASS bow_draw_left is distinct from every other action sheet
+PASS bow_release_left has eight authored frames
+PASS bow_release_left preserves real gameplay duration
+PASS bow_release_left frame 0 has grip and exact head silhouette
+PASS bow_release_left frame 1 has grip and exact head silhouette
+PASS bow_release_left frame 2 has grip and exact head silhouette
+PASS bow_release_left frame 3 has grip and exact head silhouette
+PASS bow_release_left frame 4 has grip and exact head silhouette
+PASS bow_release_left frame 5 has grip and exact head silhouette
+PASS bow_release_left frame 6 has grip and exact head silhouette
+PASS bow_release_left frame 7 has grip and exact head silhouette
+PASS bow_release_left helmet follows all eight head silhouettes
+PASS bow_release_left contains actual changed anatomy poses
+PASS bow_release_left is distinct from every other action sheet
+PASS fishing_cast_left has eight authored frames
+PASS fishing_cast_left preserves real gameplay duration
+PASS fishing_cast_left frame 0 has grip and exact head silhouette
+PASS fishing_cast_left frame 1 has grip and exact head silhouette
+PASS fishing_cast_left frame 2 has grip and exact head silhouette
+PASS fishing_cast_left frame 3 has grip and exact head silhouette
+PASS fishing_cast_left frame 4 has grip and exact head silhouette
+PASS fishing_cast_left frame 5 has grip and exact head silhouette
+PASS fishing_cast_left frame 6 has grip and exact head silhouette
+PASS fishing_cast_left frame 7 has grip and exact head silhouette
+PASS fishing_cast_left helmet follows all eight head silhouettes
+PASS fishing_cast_left contains actual changed anatomy poses
+PASS fishing_cast_left is distinct from every other action sheet
+PASS fishing_reel_left has eight authored frames
+PASS fishing_reel_left preserves real gameplay duration
+PASS fishing_reel_left frame 0 has grip and exact head silhouette
+PASS fishing_reel_left frame 1 has grip and exact head silhouette
+PASS fishing_reel_left frame 2 has grip and exact head silhouette
+PASS fishing_reel_left frame 3 has grip and exact head silhouette
+PASS fishing_reel_left frame 4 has grip and exact head silhouette
+PASS fishing_reel_left frame 5 has grip and exact head silhouette
+PASS fishing_reel_left frame 6 has grip and exact head silhouette
+PASS fishing_reel_left frame 7 has grip and exact head silhouette
+PASS fishing_reel_left helmet follows all eight head silhouettes
+PASS fishing_reel_left contains actual changed anatomy poses
+PASS fishing_reel_left is distinct from every other action sheet
+PASS hoe_left has eight authored frames
+PASS hoe_left preserves real gameplay duration
+PASS hoe_left frame 0 has grip and exact head silhouette
+PASS hoe_left frame 1 has grip and exact head silhouette
+PASS hoe_left frame 2 has grip and exact head silhouette
+PASS hoe_left frame 3 has grip and exact head silhouette
+PASS hoe_left frame 4 has grip and exact head silhouette
+PASS hoe_left frame 5 has grip and exact head silhouette
+PASS hoe_left frame 6 has grip and exact head silhouette
+PASS hoe_left frame 7 has grip and exact head silhouette
+PASS hoe_left helmet follows all eight head silhouettes
+PASS hoe_left contains actual changed anatomy poses
+PASS hoe_left is distinct from every other action sheet
+PASS net_left has eight authored frames
+PASS net_left preserves real gameplay duration
+PASS net_left frame 0 has grip and exact head silhouette
+PASS net_left frame 1 has grip and exact head silhouette
+PASS net_left frame 2 has grip and exact head silhouette
+PASS net_left frame 3 has grip and exact head silhouette
+PASS net_left frame 4 has grip and exact head silhouette
+PASS net_left frame 5 has grip and exact head silhouette
+PASS net_left frame 6 has grip and exact head silhouette
+PASS net_left frame 7 has grip and exact head silhouette
+PASS net_left helmet follows all eight head silhouettes
+PASS net_left contains actual changed anatomy poses
+PASS net_left is distinct from every other action sheet
+PASS bucket_left has eight authored frames
+PASS bucket_left preserves real gameplay duration
+PASS bucket_left frame 0 has grip and exact head silhouette
+PASS bucket_left frame 1 has grip and exact head silhouette
+PASS bucket_left frame 2 has grip and exact head silhouette
+PASS bucket_left frame 3 has grip and exact head silhouette
+PASS bucket_left frame 4 has grip and exact head silhouette
+PASS bucket_left frame 5 has grip and exact head silhouette
+PASS bucket_left frame 6 has grip and exact head silhouette
+PASS bucket_left frame 7 has grip and exact head silhouette
+PASS bucket_left helmet follows all eight head silhouettes
+PASS bucket_left contains actual changed anatomy poses
+PASS bucket_left is distinct from every other action sheet
+PASS pet_left has eight authored frames
+PASS pet_left preserves real gameplay duration
+PASS pet_left frame 0 has grip and exact head silhouette
+PASS pet_left frame 1 has grip and exact head silhouette
+PASS pet_left frame 2 has grip and exact head silhouette
+PASS pet_left frame 3 has grip and exact head silhouette
+PASS pet_left frame 4 has grip and exact head silhouette
+PASS pet_left frame 5 has grip and exact head silhouette
+PASS pet_left frame 6 has grip and exact head silhouette
+PASS pet_left frame 7 has grip and exact head silhouette
+PASS pet_left helmet follows all eight head silhouettes
+PASS pet_left contains actual changed anatomy poses
+PASS pet_left is distinct from every other action sheet
+PASS pickup_left has eight authored frames
+PASS pickup_left preserves real gameplay duration
+PASS pickup_left frame 0 has grip and exact head silhouette
+PASS pickup_left frame 1 has grip and exact head silhouette
+PASS pickup_left frame 2 has grip and exact head silhouette
+PASS pickup_left frame 3 has grip and exact head silhouette
+PASS pickup_left frame 4 has grip and exact head silhouette
+PASS pickup_left frame 5 has grip and exact head silhouette
+PASS pickup_left frame 6 has grip and exact head silhouette
+PASS pickup_left frame 7 has grip and exact head silhouette
+PASS pickup_left helmet follows all eight head silhouettes
+PASS pickup_left contains actual changed anatomy poses
+PASS pickup_left is distinct from every other action sheet
+PASS axe_up has eight authored frames
+PASS axe_up preserves real gameplay duration
+PASS axe_up frame 0 has grip and exact head silhouette
+PASS axe_up frame 1 has grip and exact head silhouette
+PASS axe_up frame 2 has grip and exact head silhouette
+PASS axe_up frame 3 has grip and exact head silhouette
+PASS axe_up frame 4 has grip and exact head silhouette
+PASS axe_up frame 5 has grip and exact head silhouette
+PASS axe_up frame 6 has grip and exact head silhouette
+PASS axe_up frame 7 has grip and exact head silhouette
+PASS axe_up helmet follows all eight head silhouettes
+PASS axe_up contains actual changed anatomy poses
+PASS axe_up is distinct from every other action sheet
+PASS pickaxe_up has eight authored frames
+PASS pickaxe_up preserves real gameplay duration
+PASS pickaxe_up frame 0 has grip and exact head silhouette
+PASS pickaxe_up frame 1 has grip and exact head silhouette
+PASS pickaxe_up frame 2 has grip and exact head silhouette
+PASS pickaxe_up frame 3 has grip and exact head silhouette
+PASS pickaxe_up frame 4 has grip and exact head silhouette
+PASS pickaxe_up frame 5 has grip and exact head silhouette
+PASS pickaxe_up frame 6 has grip and exact head silhouette
+PASS pickaxe_up frame 7 has grip and exact head silhouette
+PASS pickaxe_up helmet follows all eight head silhouettes
+PASS pickaxe_up contains actual changed anatomy poses
+PASS pickaxe_up is distinct from every other action sheet
+PASS weapon_up has eight authored frames
+PASS weapon_up preserves real gameplay duration
+PASS weapon_up frame 0 has grip and exact head silhouette
+PASS weapon_up frame 1 has grip and exact head silhouette
+PASS weapon_up frame 2 has grip and exact head silhouette
+PASS weapon_up frame 3 has grip and exact head silhouette
+PASS weapon_up frame 4 has grip and exact head silhouette
+PASS weapon_up frame 5 has grip and exact head silhouette
+PASS weapon_up frame 6 has grip and exact head silhouette
+PASS weapon_up frame 7 has grip and exact head silhouette
+PASS weapon_up helmet follows all eight head silhouettes
+PASS weapon_up contains actual changed anatomy poses
+PASS weapon_up is distinct from every other action sheet
+PASS sword_up has eight authored frames
+PASS sword_up preserves real gameplay duration
+PASS sword_up frame 0 has grip and exact head silhouette
+PASS sword_up frame 1 has grip and exact head silhouette
+PASS sword_up frame 2 has grip and exact head silhouette
+PASS sword_up frame 3 has grip and exact head silhouette
+PASS sword_up frame 4 has grip and exact head silhouette
+PASS sword_up frame 5 has grip and exact head silhouette
+PASS sword_up frame 6 has grip and exact head silhouette
+PASS sword_up frame 7 has grip and exact head silhouette
+PASS sword_up helmet follows all eight head silhouettes
+PASS sword_up contains actual changed anatomy poses
+PASS sword_up is distinct from every other action sheet
+PASS bow_draw_up has eight authored frames
+PASS bow_draw_up preserves real gameplay duration
+PASS bow_draw_up frame 0 has grip and exact head silhouette
+PASS bow_draw_up frame 1 has grip and exact head silhouette
+PASS bow_draw_up frame 2 has grip and exact head silhouette
+PASS bow_draw_up frame 3 has grip and exact head silhouette
+PASS bow_draw_up frame 4 has grip and exact head silhouette
+PASS bow_draw_up frame 5 has grip and exact head silhouette
+PASS bow_draw_up frame 6 has grip and exact head silhouette
+PASS bow_draw_up frame 7 has grip and exact head silhouette
+PASS bow_draw_up helmet follows all eight head silhouettes
+PASS bow_draw_up contains actual changed anatomy poses
+PASS bow_draw_up is distinct from every other action sheet
+PASS bow_release_up has eight authored frames
+PASS bow_release_up preserves real gameplay duration
+PASS bow_release_up frame 0 has grip and exact head silhouette
+PASS bow_release_up frame 1 has grip and exact head silhouette
+PASS bow_release_up frame 2 has grip and exact head silhouette
+PASS bow_release_up frame 3 has grip and exact head silhouette
+PASS bow_release_up frame 4 has grip and exact head silhouette
+PASS bow_release_up frame 5 has grip and exact head silhouette
+PASS bow_release_up frame 6 has grip and exact head silhouette
+PASS bow_release_up frame 7 has grip and exact head silhouette
+PASS bow_release_up helmet follows all eight head silhouettes
+PASS bow_release_up contains actual changed anatomy poses
+PASS bow_release_up is distinct from every other action sheet
+PASS fishing_cast_up has eight authored frames
+PASS fishing_cast_up preserves real gameplay duration
+PASS fishing_cast_up frame 0 has grip and exact head silhouette
+PASS fishing_cast_up frame 1 has grip and exact head silhouette
+PASS fishing_cast_up frame 2 has grip and exact head silhouette
+PASS fishing_cast_up frame 3 has grip and exact head silhouette
+PASS fishing_cast_up frame 4 has grip and exact head silhouette
+PASS fishing_cast_up frame 5 has grip and exact head silhouette
+PASS fishing_cast_up frame 6 has grip and exact head silhouette
+PASS fishing_cast_up frame 7 has grip and exact head silhouette
+PASS fishing_cast_up helmet follows all eight head silhouettes
+PASS fishing_cast_up contains actual changed anatomy poses
+PASS fishing_cast_up is distinct from every other action sheet
+PASS fishing_reel_up has eight authored frames
+PASS fishing_reel_up preserves real gameplay duration
+PASS fishing_reel_up frame 0 has grip and exact head silhouette
+PASS fishing_reel_up frame 1 has grip and exact head silhouette
+PASS fishing_reel_up frame 2 has grip and exact head silhouette
+PASS fishing_reel_up frame 3 has grip and exact head silhouette
+PASS fishing_reel_up frame 4 has grip and exact head silhouette
+PASS fishing_reel_up frame 5 has grip and exact head silhouette
+PASS fishing_reel_up frame 6 has grip and exact head silhouette
+PASS fishing_reel_up frame 7 has grip and exact head silhouette
+PASS fishing_reel_up helmet follows all eight head silhouettes
+PASS fishing_reel_up contains actual changed anatomy poses
+PASS fishing_reel_up is distinct from every other action sheet
+PASS hoe_up has eight authored frames
+PASS hoe_up preserves real gameplay duration
+PASS hoe_up frame 0 has grip and exact head silhouette
+PASS hoe_up frame 1 has grip and exact head silhouette
+PASS hoe_up frame 2 has grip and exact head silhouette
+PASS hoe_up frame 3 has grip and exact head silhouette
+PASS hoe_up frame 4 has grip and exact head silhouette
+PASS hoe_up frame 5 has grip and exact head silhouette
+PASS hoe_up frame 6 has grip and exact head silhouette
+PASS hoe_up frame 7 has grip and exact head silhouette
+PASS hoe_up helmet follows all eight head silhouettes
+PASS hoe_up contains actual changed anatomy poses
+PASS hoe_up is distinct from every other action sheet
+PASS net_up has eight authored frames
+PASS net_up preserves real gameplay duration
+PASS net_up frame 0 has grip and exact head silhouette
+PASS net_up frame 1 has grip and exact head silhouette
+PASS net_up frame 2 has grip and exact head silhouette
+PASS net_up frame 3 has grip and exact head silhouette
+PASS net_up frame 4 has grip and exact head silhouette
+PASS net_up frame 5 has grip and exact head silhouette
+PASS net_up frame 6 has grip and exact head silhouette
+PASS net_up frame 7 has grip and exact head silhouette
+PASS net_up helmet follows all eight head silhouettes
+PASS net_up contains actual changed anatomy poses
+PASS net_up is distinct from every other action sheet
+PASS bucket_up has eight authored frames
+PASS bucket_up preserves real gameplay duration
+PASS bucket_up frame 0 has grip and exact head silhouette
+PASS bucket_up frame 1 has grip and exact head silhouette
+PASS bucket_up frame 2 has grip and exact head silhouette
+PASS bucket_up frame 3 has grip and exact head silhouette
+PASS bucket_up frame 4 has grip and exact head silhouette
+PASS bucket_up frame 5 has grip and exact head silhouette
+PASS bucket_up frame 6 has grip and exact head silhouette
+PASS bucket_up frame 7 has grip and exact head silhouette
+PASS bucket_up helmet follows all eight head silhouettes
+PASS bucket_up contains actual changed anatomy poses
+PASS bucket_up is distinct from every other action sheet
+PASS pet_up has eight authored frames
+PASS pet_up preserves real gameplay duration
+PASS pet_up frame 0 has grip and exact head silhouette
+PASS pet_up frame 1 has grip and exact head silhouette
+PASS pet_up frame 2 has grip and exact head silhouette
+PASS pet_up frame 3 has grip and exact head silhouette
+PASS pet_up frame 4 has grip and exact head silhouette
+PASS pet_up frame 5 has grip and exact head silhouette
+PASS pet_up frame 6 has grip and exact head silhouette
+PASS pet_up frame 7 has grip and exact head silhouette
+PASS pet_up helmet follows all eight head silhouettes
+PASS pet_up contains actual changed anatomy poses
+PASS pet_up is distinct from every other action sheet
+PASS pickup_up has eight authored frames
+PASS pickup_up preserves real gameplay duration
+PASS pickup_up frame 0 has grip and exact head silhouette
+PASS pickup_up frame 1 has grip and exact head silhouette
+PASS pickup_up frame 2 has grip and exact head silhouette
+PASS pickup_up frame 3 has grip and exact head silhouette
+PASS pickup_up frame 4 has grip and exact head silhouette
+PASS pickup_up frame 5 has grip and exact head silhouette
+PASS pickup_up frame 6 has grip and exact head silhouette
+PASS pickup_up frame 7 has grip and exact head silhouette
+PASS pickup_up helmet follows all eight head silhouettes
+PASS pickup_up contains actual changed anatomy poses
+PASS pickup_up is distinct from every other action sheet
+PASS mounted rider reflects current saved appearance, with distinct cache entry
+PERF mounted_action_build_ms=5.853
+PASS mounted aiming uses actual custom hero action pose
+PASS skin preview cache is bounded after repeated customization
+PASS mounted action cache is bounded across repeated frames and appearances
+CHARACTER_PASS6 assertions=692 failures=0

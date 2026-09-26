@@ -1,0 +1,133 @@
+{
+ "parts": {
+  "head_down": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "head_down_blink": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "torso_down": {
+   "origin": [
+    26,
+    29
+   ]
+  },
+  "boot_m_down": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "boot_o_down": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "head_up": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "torso_up": {
+   "origin": [
+    27,
+    28
+   ]
+  },
+  "boot_m_up": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "boot_o_up": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "head_side": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "head_side_blink": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "torso_side": {
+   "origin": [
+    26,
+    29
+   ]
+  },
+  "boot_m_side": {
+   "pivot": [
+    2.2,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  }
+ },
+ "materials": {
+  "arm_upper": [
+   "262312",
+   "3e3e20",
+   "56552b",
+   "848041",
+   "a29c52"
+  ],
+  "arm_lower": [
+   "3e3e20",
+   "56552b",
+   "848041",
+   "a69f54",
+   "bdb881"
+  ],
+  "leg_upper": [
+   "3e3e20",
+   "56552b",
+   "848041",
+   "a69f54",
+   "bdb881"
+  ],
+  "leg_lower": [
+   "3e3e20",
+   "56552b",
+   "848041",
+   "a69f54",
+   "bdb881"
+  ]
+ },
+ "name": "Plateback"
+}

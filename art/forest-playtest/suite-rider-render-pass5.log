@@ -1,0 +1,59 @@
+﻿Godot Engine v4.6.1.stable.official.14d19694e - https://godotengine.org
+OpenGL API 3.3.0 Core Profile Context 24.10.36.04.250109 - Compatibility - Using Device: ATI Technologies Inc. - AMD Radeon RX 7700S
+
+≡ƒôª ItemDB loaded 249 items: allo_cleaver, allo_egg, allo_tooth, alpha_crest, ancient_coin, anky_plate, apex_signet, ashen_chestplate, ashen_helmet, ashen_leggings, ashglass, ashglass_eye, ashglass_knife, ashmane_fur, ashmane_mantle, ash_char, ash_tuft, baked_tuber, basic_axe, basic_pickaxe, beast_treat, berry, berry_compote, berry_seed, big_gate, bloodfang, bloody_bait, boat, bogiron_band, bogiron_harpoon, bogwood, bogwood_floor, bogwood_wall, bog_iron, bonegill, bone_arrow, bone_chestplate, bone_crown, bone_dagger, bone_helmet, bone_leggings, bucket, bulwark_charm, cactus_fruit, cactus_jelly, campfire, carno_horn, chest, claw_bracelet, club_knuckle, club_maul, compy_trove, cooked_fish, cooked_meat, cooking_pot, crest_horn, crest_whistle, crystal_axe, crystal_chestplate, crystal_flask, crystal_floor, crystal_heart, crystal_helmet, crystal_leggings, crystal_pendant, crystal_pickaxe, crystal_shard, crystal_wall, deino_claw, dodo_egg, dodo_plume, ember_chili, ember_pepper, fang_necklace, fang_sabre, fen_pike, fishers_chowder, fishing_rod, foragers_salad, forest_omelet, fossil_bone, frill_buckle, frill_guard, frostjaw, fur_wrap, garden_hoe, glass_pearl, gourd_porridge, gourd_seed, grave_horn, haunch, haunch_roast, hide_bed, hitching_post, horn_chestplate, horn_guard, horn_helmet, horn_leggings, horn_spear, hunters_stew, hunter_charm, incubator, keepers_locket, lantern, lead_rope, leather_chestplate, leather_helmet, leather_leggings, log, longneck_bell, longneck_egg, longneck_hide, lotus_broth, lucky_coin, lystro_egg, marrow_gourd, maw_charm, maw_tooth, melon_cooler, melon_seed, miners_pie, mirefang_tooth, mirelotus, mire_eel, moonscale, moonstone_ring, morsel, moss_chestplate, moss_helmet, moss_leggings, mushroom, mushroom_potion, mushroom_spore, mushroom_stew, net, oasis_carp, old_bone, old_compass, palewood, palewood_floor, palewood_wall, pale_crystal, parasaur_crest, parasaur_egg, pepper_steak, plank, plant_fiber, plate_chestplate, plate_helmet, plate_leggings, plate_maul, plate_pendant, prime_meat, prime_steak, prism_crystal, proto_frill, quiver_strap, raider_club, raptor_egg, raptor_fang, raptor_hide, redgrain, redgrain_loaf, reed_bow, reed_claw, reed_perch, rex_chestplate, rex_helmet, rex_leggings, river_totem, rustiron, rustjaw_sabre, rust_buckler, rust_catfish, rust_chestplate, rust_helmet, rust_leggings, rust_signet, saddlebag, sailking_fin, sail_scale, sail_veil, sandblade_plume, sandstone, sandstone_floor, sandstone_wall, scale_bracer, scarhorn_lance, scarhorn_tip, seared_morsel, shardfin, shard_sword, sickle_claw, sickle_toe, skyfang_shard, sky_idol, slate_roof, sleeper_fang, spinesail_glaive, spine_torc, spino_spine, stego_egg, stego_plate, stego_saddle, stone, stone_door, stone_floor, stone_wall, sucho_claw, sunfin, sunsail_brooch, sunstone, sunstone_amulet, sunstone_maul, sunward_chestplate, sunward_helmet, sunward_leggings, sun_melon, sun_sail, tail_spike, tent, thatch_roof, tide_chestplate, tide_helmet, tide_leggings, titan_pot_roast, titan_rib, titan_roast, tooth_ring, torch, trex_meat, trex_scale, trike_egg, trike_hide, trike_horn, trike_saddle, tuber_mash, tusk_charm, tyrant_eye, tyrant_fang, wanderers_step, water_bucket, water_flask, wayfarer_anklet, wild_tuber, wood_door, wood_floor, wood_wall, workbench
+PASS captured hero-basic-cloth.png
+PASS down seated rider is reposed from the standing hero
+PASS down seated rider wears the helmet on its head { "pixels": 223, "inside": 1.0 }
+PASS right seated rider is reposed from the standing hero
+PASS right seated rider wears the helmet on its head { "pixels": 211, "inside": 1.0 }
+PASS left seated rider is reposed from the standing hero
+PASS left seated rider wears the helmet on its head { "pixels": 211, "inside": 1.0 }
+PASS up seated rider is reposed from the standing hero
+PASS up seated rider wears the helmet on its head { "pixels": 196, "inside": 1.0 }
+PASS four-direction source identity and dark helmet comparison exported
+PASS stego mounts actual rendered player
+PASS stego saddle overlay and rider are active
+PASS stego seated, helmeted rider is visible in the mount's current frame (174 px added, head drawn)
+PASS stego actual side pose retained at capture
+POSE stego side creature=walk_side rider=idle_right seat=(3.0, -26.0)
+PASS captured mounted-stego-side.png
+PASS stego true left-facing source cel
+PASS captured mounted-stego-left.png
+PASS stego true up facing
+PASS captured mounted-stego-up.png
+PASS stego true down facing
+PASS captured mounted-stego-down.png
+PASS stego rendered mounted attack begins
+PASS stego real strike animation visible
+PASS captured mounted-stego-attack.png
+PASS stego native animation contact sheet saved
+PASS stego root F route feeds and heals mounted animal
+PASS stego dismounts after actual movement
+PASS trike mounts actual rendered player
+PASS trike saddle overlay and rider are active
+PASS trike seated, helmeted rider is visible in the mount's current frame (303 px added, head drawn)
+PASS trike actual side pose retained at capture
+POSE trike side creature=walk_side rider=idle_right seat=(-3.0, -32.0)
+PASS captured mounted-trike-side.png
+PASS trike true left-facing source cel
+PASS captured mounted-trike-left.png
+PASS trike true up facing
+PASS captured mounted-trike-up.png
+PASS trike true down facing
+PASS captured mounted-trike-down.png
+PASS trike rendered mounted attack begins
+PASS trike real strike animation visible
+PASS captured mounted-trike-attack.png
+PASS trike native animation contact sheet saved
+PASS trike root F route feeds and heals mounted animal
+PASS trike dismounts after actual movement
+PASS root locate creates tracking marker for selected animal
+PASS locator canvas marker is visible
+PASS locator label reports live tile distance
+PASS offscreen locator stays within visible HUD bounds
+PASS captured companion-locator-offscreen.png
+PASS locator survives target and player movement and refreshes distance
+PASS moving target distance remains accurate
+PASS target removal cleans up tracking marker and its UI
+RIDER_PASS5_RENDER_QA assertions=52 failures=0

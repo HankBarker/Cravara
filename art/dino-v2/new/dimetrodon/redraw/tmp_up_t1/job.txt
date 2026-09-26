@@ -1,0 +1,11 @@
+d9700d25-4221-4501-ae98-982950240ea8
+status: completed
+id: d9700d25-4221-4501-ae98-982950240ea8
+job_id: d9700d25-4221-4501-ae98-982950240ea8
+frames: 1
+transparent: yes
+asset_id: 67cc2602-5a11-5168-92b3-5020aff936cf
+asset_type: image
+asset_status: saved
+gallery: saved to your PixelLab gallery (pixellab.ai/create)
+download: https://api.pixellab.ai/mcp/images/d9700d25-4221-4501-ae98-982950240ea8/download

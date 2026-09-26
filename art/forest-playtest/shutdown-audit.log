@@ -1,0 +1,153 @@
+WorkerThreadPool: 16 threads, 4 max low-priority.
+Godot Engine v4.6.1.stable.official.14d19694e - https://godotengine.org
+TextServer: Added interface "Dummy"
+TextServer: Added interface "ICU / HarfBuzz / Graphite (Built-in)"
+Unrecognized output string "misc2" in mapping:
+030000000d0f00000202000000000000,Horipad O Nintendo Switch 2 Controller,a:b1,b:b0,back:b8,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b12,leftshoulder:b4,leftstick:b10,lefttrigger:b6,leftx:a0,lefty:a1,misc1:b13,misc2:b14,rightshoulder:b5,rightstick:b11,righttrigger:b7,rightx:a2,righty:a3,start:b9,x:b3,y:b2,platform:Windows,
+Unrecognized output string "misc2" in mapping:
+030000000d0f00009601000000000000,Horipad Steam,a:b0,b:b1,back:b10,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b12,leftshoulder:b6,leftstick:b13,lefttrigger:b8,leftx:a0,lefty:a1,misc2:b2,paddle1:b5,paddle2:b15,paddle3:b18,paddle4:b19,rightshoulder:b7,rightstick:b14,righttrigger:b9,rightx:a3,righty:a4,start:b11,x:b3,y:b4,platform:Windows,
+Unrecognized output string "misc2" in mapping:
+030000007e0500006920000000000000,Nintendo Switch 2 Pro Controller,a:b0,b:b1,back:b14,dpdown:b8,dpleft:b10,dpright:b9,dpup:b11,guide:b16,leftshoulder:b12,leftstick:b15,lefttrigger:b13,leftx:a0,lefty:a1~,misc1:b17,misc2:b20,paddle1:b18,paddle2:b19,rightshoulder:b4,rightstick:b7,righttrigger:b5,rightx:a2,righty:a3~,start:b6,x:b2,y:b3,platform:Windows,
+Using "default" pen tablet driver...
+
+TextServer: Primary interface set to: "ICU / HarfBuzz / Graphite (Built-in)".
+CORE API HASH: 75400357
+EDITOR API HASH: 3012763406
+SceneTreeFTI: traversal method DEFAULT
+Loading resource: res://Autoloads/SignalBus.gd
+Loading resource: res://Autoloads/ItemDB.gd
+Loading resource: res://Player/Scripts/InventoryManager.gd
+Loading resource: res://Scripts/CraftingManager.gd
+Loading resource: res://UI/DragController.gd
+Loading resource: res://Scripts/DropAnimationUtil.gd
+Loading resource: res://Autoloads/GameSettings.gd
+Loading resource: res://Autoloads/TimeCycle.gd
+Loading resource: res://Autoloads/SaveManager.gd
+Loaded system CA certificates
+Loading resource: res://Forest/ForestPlaytest.tscn
+Loading resource: res://Forest/ForestPlaytest.gd
+Loading resource: res://Player/player.tscn
+Loading resource: res://Player/Scripts/player.gd
+Loading resource: res://Items/DroppedItem.tscn
+Loading resource: res://Items/DroppedItem.gd
+Loading resource: res://Sprites/Base Character/Unarmed_Death_full.png
+Loading resource: res://.godot/imported/Unarmed_Death_full.png-7aaac3ad31db6358a8aed6a89b9039b5.ctex
+Loading resource: res://Sprites/Base Character/Unarmed_Idle_full.png
+Loading resource: res://.godot/imported/Unarmed_Idle_full.png-2ed31d2369af76f3dac9ec4970adb31c.ctex
+Loading resource: res://Sprites/Base Character/Sword_attack_full.png
+Loading resource: res://.godot/imported/Sword_attack_full.png-9c64201dc2024de7cbf7b7692de6ab07.ctex
+Loading resource: res://Sprites/Base Character/Unarmed_Hurt_full.png
+Loading resource: res://.godot/imported/Unarmed_Hurt_full.png-b2eeb85bd119897c80962f4d49f10dc7.ctex
+Loading resource: res://Sprites/Base Character/Unarmed_Walk_full.png
+Loading resource: res://.godot/imported/Unarmed_Walk_full.png-2eb2adc41410eeffb71ae60f44a8303c.ctex
+Loading resource: res://Sprites/Base Character/Unarmed_Run_full.png
+Loading resource: res://.godot/imported/Unarmed_Run_full.png-d94b6342f7fd1050d30ac807dc41df29.ctex
+Loading resource: res://Player/Scripts/camera_2d.gd
+Loading resource: res://Forest/fonts/Tiny5-Regular.ttf
+Loading resource: res://.godot/imported/Tiny5-Regular.ttf-67cbaaf9bfae8a94eac3747210260bfb.fontdata
+Loading resource: res://Items/Data/basic_axe.tres
+Loading resource: res://Items/Icons/basic_axe_icon.png
+Loading resource: res://.godot/imported/basic_axe_icon.png-c5a6d214dc82d8a37919e5fc5e5f9f06.ctex
+Loading resource: res://Items/Data/basic_pickaxe.tres
+Loading resource: res://Items/Icons/basic_pickaxe_icon.png
+Loading resource: res://.godot/imported/basic_pickaxe_icon.png-98e935d490e2a34efd4a281e10c18e82.ctex
+Loading resource: res://Items/Data/berry.tres
+Loading resource: res://Items/Data/bone_dagger.tres
+Loading resource: res://Items/Data/bucket.tres
+Loading resource: res://Items/Data/campfire.tres
+Loading resource: res://Items/Data/chest.tres
+Loading resource: res://Items/Data/cooked_meat.tres
+Loading resource: res://Items/Data/crystal_shard.tres
+Loading resource: res://Items/Data/leather_chestplate.tres
+Loading resource: res://Items/Data/leather_helmet.tres
+Loading resource: res://Items/Data/leather_leggings.tres
+Loading resource: res://Items/Data/log.tres
+Loading resource: res://Items/Icons/log_icon.png
+Loading resource: res://.godot/imported/log_icon.png-2c9b1ea908fdc608316f65ee3e06f8e7.ctex
+Loading resource: res://Items/Data/net.tres
+Loading resource: res://Items/Data/plank.tres
+Loading resource: res://Items/Icons/plank_icon.png
+Loading resource: res://.godot/imported/plank_icon.png-aa9aaf80fb86cab25f6740e060fcf517.ctex
+Loading resource: res://Items/Data/plant_fiber.tres
+Loading resource: res://Items/Data/raptor_fang.tres
+Loading resource: res://Items/Data/stone.tres
+Loading resource: res://Items/Icons/stone_icon.png
+Loading resource: res://.godot/imported/stone_icon.png-4b299072944662c0dc536d52217d4a5c.ctex
+Loading resource: res://Items/Data/torch.tres
+Loading resource: res://Items/Icons/torch_icon.png
+Loading resource: res://.godot/imported/torch_icon.png-fa0fea132aa67d118f6f70ff610b7eb4.ctex
+Loading resource: res://Items/Data/trex_meat.tres
+Loading resource: res://Items/Icons/trex_meat_icon.png
+Loading resource: res://.godot/imported/trex_meat_icon.png-1812c77dde7562bb30dd15a1a80f6f5b.ctex
+Loading resource: res://Items/Data/trex_scale.tres
+Loading resource: res://Items/Icons/trex_scale_icon.png
+Loading resource: res://.godot/imported/trex_scale_icon.png-f7516df3fe27bcb373de5cfbf7f22217.ctex
+Loading resource: res://Items/Data/water_bucket.tres
+Loading resource: res://Items/Data/wood_floor.tres
+Loading resource: res://Items/Data/wood_wall.tres
+Loading resource: res://Items/Data/workbench.tres
+Loading resource: res://Items/Icons/workbench_icon.png
+Loading resource: res://.godot/imported/workbench_icon.png-c04d9974b3061da51c5e1143472a01b2.ctex
+📦 ItemDB loaded 25 items: basic_axe, basic_pickaxe, berry, bone_dagger, bucket, campfire, chest, cooked_meat, crystal_shard, leather_chestplate, leather_helmet, leather_leggings, log, net, plank, plant_fiber, raptor_fang, stone, torch, trex_meat, trex_scale, water_bucket, wood_floor, wood_wall, workbench
+Loading resource: res://Forest/ForestWorld.gd
+Loading resource: res://WorldObjects/Images/Objects.png
+Loading resource: res://.godot/imported/Objects.png-8a1af70a51c52cbd0e73810c6d312d02.ctex
+Loading resource: res://UI/ForestHUD.gd
+Loading resource: res://Forest/creatures/ForestCreature.gd
+Loading resource: res://Forest/creatures/art/dodo_frames.tres
+Loading resource: res://Forest/creatures/art/dodo.png
+Loading resource: res://.godot/imported/dodo.png-0d58ab8d3f7d6383cded7c5d1ce73d97.ctex
+Loading resource: res://Forest/creatures/art/dodo_down.png
+Loading resource: res://.godot/imported/dodo_down.png-451880f191ff3b03fdc99e732928efdd.ctex
+Loading resource: res://Forest/creatures/art/dodo_up.png
+Loading resource: res://.godot/imported/dodo_up.png-10f0cb585d5786d3016e52cd4737a27e.ctex
+Loading resource: res://Forest/creatures/art/trike_frames.tres
+Loading resource: res://Forest/creatures/art/trike.png
+Loading resource: res://.godot/imported/trike.png-2db84de71a83e48c303248d9d4833bd9.ctex
+Loading resource: res://Forest/creatures/art/trike_down.png
+Loading resource: res://.godot/imported/trike_down.png-7c2542add1330787988073536467611e.ctex
+Loading resource: res://Forest/creatures/art/trike_up.png
+Loading resource: res://.godot/imported/trike_up.png-b4db35d7b04999b3e0e42e5b21f5d0d6.ctex
+Loading resource: res://Forest/creatures/art/stego_frames.tres
+Loading resource: res://Forest/creatures/art/stego.png
+Loading resource: res://.godot/imported/stego.png-4f6d1dc7c4222e8c85e5c4d6539f38e7.ctex
+Loading resource: res://Forest/creatures/art/stego_down.png
+Loading resource: res://.godot/imported/stego_down.png-cc3d71ec4edf9789eff1cfdb81ede8a4.ctex
+Loading resource: res://Forest/creatures/art/stego_up.png
+Loading resource: res://.godot/imported/stego_up.png-aafa4785b342079003e3b9e6a491b9b0.ctex
+Loading resource: res://Forest/creatures/art/longneck_frames.tres
+Loading resource: res://Forest/creatures/art/longneck.png
+Loading resource: res://.godot/imported/longneck.png-1682a47fef90ee668373850b0196cd39.ctex
+Loading resource: res://Forest/creatures/art/longneck_down.png
+Loading resource: res://.godot/imported/longneck_down.png-ddce080348b14177e044ef3b6e530c89.ctex
+Loading resource: res://Forest/creatures/art/longneck_up.png
+Loading resource: res://.godot/imported/longneck_up.png-294e022666d097f0be07896bf0db9020.ctex
+Loading resource: res://Forest/creatures/art/raptor_frames.tres
+Loading resource: res://Forest/creatures/art/raptor.png
+Loading resource: res://.godot/imported/raptor.png-9a1fa8e9e915f38aa8f5963d9f5fc5cf.ctex
+Loading resource: res://Forest/creatures/art/raptor_down.png
+Loading resource: res://.godot/imported/raptor_down.png-b56eeeaf34407dc26066a8f40598dd76.ctex
+Loading resource: res://Forest/creatures/art/raptor_up.png
+Loading resource: res://.godot/imported/raptor_up.png-4167c47f34104c22866078774f2385c8.ctex
+Loading resource: res://Forest/creatures/art/rex_frames.tres
+Loading resource: res://Forest/creatures/art/rex.png
+Loading resource: res://.godot/imported/rex.png-5a79b4092bdcbe14e4905ae687423e99.ctex
+Loading resource: res://Forest/creatures/art/rex_down.png
+Loading resource: res://.godot/imported/rex_down.png-8a89b2c7c4f3b4f25a7a694a74c0f967.ctex
+Loading resource: res://Forest/creatures/art/rex_up.png
+Loading resource: res://.godot/imported/rex_up.png-1db2f84072cf13ee562ab71efed34bbf.ctex
+Loading resource: res://Forest/audio/forest-plains.mp3
+Loading resource: res://.godot/imported/forest-plains.mp3-15877860cc1bde92e8756d54969c7ca0.mp3str
+XR: Clearing primary interface
+XR: Removed interface "Native mobile"
+XR: Removed interface "OpenXR"
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2641)
+Leaked instance: AudioStreamPlaybackMP3:9223372245764678961 - Reference count: 1
+Leaked instance: AudioStreamMP3:9223372245714347315 - Reference count: 1
+Hint: Leaked instances typically happen when nodes are removed from the scene tree (with `remove_child()`) but not freed (with `free()` or `queue_free()`).
+ERROR: 1 resources still in use at exit.
+   at: clear (core/io/resource.cpp:805)
+Resource still in use: res://Forest/audio/forest-plains.mp3 (AudioStreamMP3)
+Orphan StringName: Music (static: 0, total: 2)
+StringName: 1 unclaimed string names at exit.

@@ -1,0 +1,11 @@
+44297472-d188-47c6-93b5-26181b078e1c
+status: completed
+id: 44297472-d188-47c6-93b5-26181b078e1c
+job_id: 44297472-d188-47c6-93b5-26181b078e1c
+frames: 1
+transparent: yes
+asset_id: b3dc0a20-5a42-5090-9481-73c0441a358e
+asset_type: image
+asset_status: saved
+gallery: saved to your PixelLab gallery (pixellab.ai/create)
+download: https://api.pixellab.ai/mcp/images/44297472-d188-47c6-93b5-26181b078e1c/download

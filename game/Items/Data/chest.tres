@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Item" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "chest"
+name = "Chest"
+description = "Storage for 18 items. Right-click to place. Stand near it and press E to open."
+icon_generator = "chest"
+max_stack = 5
+rarity = "common"
+placeable = true
+place_scene = "res://WorldObjects/Chest.tscn"

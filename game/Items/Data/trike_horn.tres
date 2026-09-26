@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/art/items/trike_horn.png" id="2"]
+[resource]
+script = ExtResource("1")
+id = "trike_horn"
+name = "Trike Horn"
+description = "A triceratops brow horn, heavy as a stone. Spear points and Hornguard helms."
+icon = ExtResource("2")
+max_stack = 20
+rarity = "rare"

@@ -1,0 +1,81 @@
+{
+ "key": "parasaur",
+ "species": "parasaur",
+ "canvas": [
+  112,
+  88
+ ],
+ "ground": 81,
+ "origin": {
+  "side": [
+   18,
+   30
+  ],
+  "down": [
+   18,
+   30
+  ],
+  "up": [
+   18,
+   33
+  ]
+ },
+ "clips": {
+  "idle": {
+   "fps": 6,
+   "loop": true,
+   "frames": 8
+  },
+  "walk": {
+   "fps": 9,
+   "loop": true,
+   "frames": 8
+  },
+  "run": {
+   "fps": 13,
+   "loop": true,
+   "frames": 8
+  },
+  "eat": {
+   "fps": 8,
+   "loop": false,
+   "frames": 13
+  },
+  "stomp": {
+   "fps": 12,
+   "loop": false,
+   "frames": 13,
+   "hit": 8,
+   "hit_view": {
+    "side": 8,
+    "down": 8,
+    "up": 10
+   }
+  },
+  "roar": {
+   "fps": 10,
+   "loop": false,
+   "frames": 13
+  },
+  "hurt": {
+   "fps": 12,
+   "loop": false,
+   "frames": 5
+  },
+  "death": {
+   "fps": 10,
+   "loop": false,
+   "frames": 13
+  },
+  "look": {
+   "fps": 7,
+   "loop": false,
+   "frames": 13
+  },
+  "rest": {
+   "fps": 6,
+   "loop": false,
+   "frames": 13
+  }
+ }
+}

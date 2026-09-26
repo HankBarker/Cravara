@@ -1,0 +1,2217 @@
+{
+ "version": 2,
+ "rest": {
+  "down": {
+   "neck": [
+    32.0,
+    29.0
+   ],
+   "belt": [
+    36.5,
+    37.0
+   ],
+   "shoulder_m": [
+    36.8,
+    30.6
+   ],
+   "shoulder_o": [
+    27.2,
+    30.6
+   ],
+   "hand_m": [
+    39.3,
+    35.4
+   ],
+   "hand_o": [
+    24.7,
+    35.4
+   ],
+   "hip_m": [
+    35.0,
+    37.6
+   ],
+   "hip_o": [
+    29.0,
+    37.6
+   ],
+   "foot_m": [
+    35.0,
+    41.0
+   ],
+   "foot_o": [
+    29.0,
+    41.0
+   ]
+  },
+  "up": {
+   "neck": [
+    32.0,
+    28.4
+   ],
+   "belt": [
+    27.5,
+    37.0
+   ],
+   "shoulder_m": [
+    37.0,
+    30.4
+   ],
+   "shoulder_o": [
+    27.0,
+    30.4
+   ],
+   "hand_m": [
+    39.6,
+    35.2
+   ],
+   "hand_o": [
+    24.4,
+    35.2
+   ],
+   "hip_m": [
+    35.0,
+    37.6
+   ],
+   "hip_o": [
+    29.0,
+    37.6
+   ],
+   "foot_m": [
+    35.0,
+    41.0
+   ],
+   "foot_o": [
+    29.0,
+    41.0
+   ]
+  },
+  "side": {
+   "neck": [
+    32.0,
+    29.0
+   ],
+   "belt": [
+    33.5,
+    37.0
+   ],
+   "shoulder_m": [
+    30.2,
+    30.8
+   ],
+   "shoulder_o": [
+    33.4,
+    30.6
+   ],
+   "hand_m": [
+    30.4,
+    36.3
+   ],
+   "hand_o": [
+    33.8,
+    36.0
+   ],
+   "hip_m": [
+    31.2,
+    37.6
+   ],
+   "hip_o": [
+    32.8,
+    37.6
+   ],
+   "foot_m": [
+    31.2,
+    41.0
+   ],
+   "foot_o": [
+    32.8,
+    41.0
+   ]
+  }
+ },
+ "metrics": {
+  "arm_upper": 2.8,
+  "arm_lower": 2.8,
+  "arm_radius": 1.0,
+  "leg_upper": 1.7,
+  "leg_lower": 1.7,
+  "leg_radius": 1.45,
+  "hand_radius": 1.0
+ },
+ "ramps": {
+  "skin": [
+   "a55c2d",
+   "eca052",
+   "f9bc6d",
+   "fec480",
+   "ffce83"
+  ],
+  "trousers": [
+   "2e1a0f",
+   "422811",
+   "503618",
+   "624016",
+   "774f24"
+  ],
+  "leather": [
+   "2e1a0f",
+   "422811",
+   "5a3919",
+   "774f24",
+   "946432"
+  ]
+ },
+ "outline": "220907",
+ "appearance_ramps": {
+  "skin_warm": [
+   "a55c2d",
+   "eca052",
+   "f9bc6d",
+   "fec480",
+   "ffce83"
+  ],
+  "skin_sand": [
+   "8a5a3c",
+   "cf9c6c",
+   "e8b989",
+   "f5d0a4",
+   "fde6c8"
+  ],
+  "skin_umber": [
+   "3d2014",
+   "6a3c26",
+   "8c583e",
+   "a8714c",
+   "c08a62"
+  ],
+  "skin_rose": [
+   "7a4038",
+   "b87466",
+   "cd9b87",
+   "e2b8a5",
+   "f2d3c4"
+  ],
+  "hair_chestnut": [
+   "2e140c",
+   "52261a",
+   "74382a",
+   "8d5135",
+   "b0714a"
+  ],
+  "hair_charcoal": [
+   "141418",
+   "25262c",
+   "35373f",
+   "4a4d57",
+   "676b76"
+  ],
+  "hair_silver": [
+   "4f5a57",
+   "748480",
+   "98a8a3",
+   "b8c5be",
+   "dde7e2"
+  ],
+  "cloth_ochre": [
+   "4a3314",
+   "7a5623",
+   "a07232",
+   "bd9248",
+   "d9b56a"
+  ],
+  "cloth_river": [
+   "1b3338",
+   "2c5058",
+   "427078",
+   "558f98",
+   "7bb3b8"
+  ],
+  "cloth_clay": [
+   "4a2219",
+   "74382a",
+   "985040",
+   "b8684f",
+   "d48c70"
+  ],
+  "trousers_earth": [
+   "2e1a0f",
+   "422811",
+   "503618",
+   "624016",
+   "774f24"
+  ],
+  "trousers_slate": [
+   "1c222b",
+   "2e3845",
+   "404d5d",
+   "57697b",
+   "73889b"
+  ],
+  "trousers_olive": [
+   "22271a",
+   "363f28",
+   "4b5637",
+   "65704c",
+   "838f68"
+  ]
+ },
+ "parts": {
+  "base/head_down": {
+   "origin": [
+    22,
+    14
+   ]
+  },
+  "base/head_down_blink": {
+   "origin": [
+    22,
+    14
+   ]
+  },
+  "base/torso_down": {
+   "origin": [
+    26,
+    29
+   ]
+  },
+  "base/boot_m_down": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "base/boot_o_down": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "base/head_up": {
+   "origin": [
+    24,
+    14
+   ]
+  },
+  "base/torso_up": {
+   "origin": [
+    27,
+    28
+   ]
+  },
+  "base/boot_m_up": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "base/boot_o_up": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "base/head_side": {
+   "origin": [
+    23,
+    14
+   ]
+  },
+  "base/head_side_blink": {
+   "origin": [
+    23,
+    14
+   ]
+  },
+  "base/torso_side": {
+   "origin": [
+    26,
+    29
+   ]
+  },
+  "base/boot_m_side": {
+   "pivot": [
+    2.2,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/ashen/head_down": {
+   "origin": [
+    24,
+    13
+   ]
+  },
+  "sets/ashen/head_down_blink": {
+   "origin": [
+    24,
+    13
+   ]
+  },
+  "sets/ashen/torso_down": {
+   "origin": [
+    27,
+    29
+   ]
+  },
+  "sets/ashen/boot_m_down": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/ashen/boot_o_down": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/ashen/head_up": {
+   "origin": [
+    24,
+    13
+   ]
+  },
+  "sets/ashen/torso_up": {
+   "origin": [
+    27,
+    28
+   ]
+  },
+  "sets/ashen/boot_m_up": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/ashen/boot_o_up": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/ashen/head_side": {
+   "origin": [
+    22,
+    13
+   ]
+  },
+  "sets/ashen/head_side_blink": {
+   "origin": [
+    22,
+    13
+   ]
+  },
+  "sets/ashen/torso_side": {
+   "origin": [
+    25,
+    29
+   ]
+  },
+  "sets/ashen/boot_m_side": {
+   "pivot": [
+    2.2,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/bone/head_down": {
+   "origin": [
+    25,
+    14
+   ]
+  },
+  "sets/bone/head_down_blink": {
+   "origin": [
+    25,
+    14
+   ]
+  },
+  "sets/bone/torso_down": {
+   "origin": [
+    26,
+    29
+   ]
+  },
+  "sets/bone/pauldron_m_down": {
+   "origin": [
+    35,
+    26
+   ],
+   "shoulder": [
+    36.8,
+    30.6
+   ]
+  },
+  "sets/bone/pauldron_o_down": {
+   "origin": [
+    23,
+    26
+   ],
+   "shoulder": [
+    27.2,
+    30.6
+   ]
+  },
+  "sets/bone/boot_m_down": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/bone/boot_o_down": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/bone/head_up": {
+   "origin": [
+    24,
+    14
+   ]
+  },
+  "sets/bone/torso_up": {
+   "origin": [
+    27,
+    27
+   ]
+  },
+  "sets/bone/pauldron_m_up": {
+   "origin": [
+    35,
+    26
+   ],
+   "shoulder": [
+    37.0,
+    30.4
+   ]
+  },
+  "sets/bone/pauldron_o_up": {
+   "origin": [
+    23,
+    26
+   ],
+   "shoulder": [
+    27.0,
+    30.4
+   ]
+  },
+  "sets/bone/boot_m_up": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/bone/boot_o_up": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/bone/head_side": {
+   "origin": [
+    23,
+    14
+   ]
+  },
+  "sets/bone/head_side_blink": {
+   "origin": [
+    23,
+    14
+   ]
+  },
+  "sets/bone/torso_side": {
+   "origin": [
+    27,
+    29
+   ]
+  },
+  "sets/bone/pauldron_m_side": {
+   "origin": [
+    26,
+    26
+   ],
+   "shoulder": [
+    30.2,
+    30.8
+   ]
+  },
+  "sets/bone/boot_m_side": {
+   "pivot": [
+    2.2,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/crystal/head_down": {
+   "origin": [
+    25,
+    13
+   ]
+  },
+  "sets/crystal/head_down_blink": {
+   "origin": [
+    25,
+    13
+   ]
+  },
+  "sets/crystal/torso_down": {
+   "origin": [
+    26,
+    29
+   ]
+  },
+  "sets/crystal/pauldron_m_down": {
+   "origin": [
+    36,
+    27
+   ],
+   "shoulder": [
+    36.8,
+    30.6
+   ]
+  },
+  "sets/crystal/pauldron_o_down": {
+   "origin": [
+    22,
+    27
+   ],
+   "shoulder": [
+    27.2,
+    30.6
+   ]
+  },
+  "sets/crystal/boot_m_down": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/crystal/boot_o_down": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/crystal/head_up": {
+   "origin": [
+    25,
+    13
+   ]
+  },
+  "sets/crystal/torso_up": {
+   "origin": [
+    27,
+    28
+   ]
+  },
+  "sets/crystal/pauldron_m_up": {
+   "origin": [
+    35,
+    27
+   ],
+   "shoulder": [
+    37.0,
+    30.4
+   ]
+  },
+  "sets/crystal/pauldron_o_up": {
+   "origin": [
+    23,
+    27
+   ],
+   "shoulder": [
+    27.0,
+    30.4
+   ]
+  },
+  "sets/crystal/boot_m_up": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/crystal/boot_o_up": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/crystal/head_side": {
+   "origin": [
+    25,
+    13
+   ]
+  },
+  "sets/crystal/head_side_blink": {
+   "origin": [
+    25,
+    13
+   ]
+  },
+  "sets/crystal/torso_side": {
+   "origin": [
+    27,
+    29
+   ]
+  },
+  "sets/crystal/pauldron_m_side": {
+   "origin": [
+    25,
+    27
+   ],
+   "shoulder": [
+    30.2,
+    30.8
+   ]
+  },
+  "sets/crystal/boot_m_side": {
+   "pivot": [
+    3.2,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/horn/head_down": {
+   "origin": [
+    22,
+    13
+   ]
+  },
+  "sets/horn/head_down_blink": {
+   "origin": [
+    22,
+    13
+   ]
+  },
+  "sets/horn/torso_down": {
+   "origin": [
+    26,
+    29
+   ]
+  },
+  "sets/horn/boot_m_down": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/horn/boot_o_down": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/horn/head_up": {
+   "origin": [
+    22,
+    13
+   ]
+  },
+  "sets/horn/torso_up": {
+   "origin": [
+    27,
+    28
+   ]
+  },
+  "sets/horn/boot_m_up": {
+   "pivot": [
+    3.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/horn/boot_o_up": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/horn/head_side": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "sets/horn/head_side_blink": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "sets/horn/torso_side": {
+   "origin": [
+    26,
+    29
+   ]
+  },
+  "sets/horn/boot_m_side": {
+   "pivot": [
+    2.2,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/leather/head_down": {
+   "origin": [
+    24,
+    14
+   ]
+  },
+  "sets/leather/head_down_blink": {
+   "origin": [
+    24,
+    14
+   ]
+  },
+  "sets/leather/torso_down": {
+   "origin": [
+    26,
+    29
+   ]
+  },
+  "sets/leather/pauldron_m_down": {
+   "origin": [
+    34,
+    27
+   ],
+   "shoulder": [
+    36.8,
+    30.6
+   ]
+  },
+  "sets/leather/pauldron_o_down": {
+   "origin": [
+    23,
+    27
+   ],
+   "shoulder": [
+    27.2,
+    30.6
+   ]
+  },
+  "sets/leather/boot_m_down": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/leather/boot_o_down": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/leather/head_up": {
+   "origin": [
+    25,
+    14
+   ]
+  },
+  "sets/leather/torso_up": {
+   "origin": [
+    27,
+    28
+   ]
+  },
+  "sets/leather/pauldron_m_up": {
+   "origin": [
+    36,
+    27
+   ],
+   "shoulder": [
+    37.0,
+    30.4
+   ]
+  },
+  "sets/leather/pauldron_o_up": {
+   "origin": [
+    24,
+    27
+   ],
+   "shoulder": [
+    27.0,
+    30.4
+   ]
+  },
+  "sets/leather/boot_m_up": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/leather/boot_o_up": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/leather/head_side": {
+   "origin": [
+    23,
+    14
+   ]
+  },
+  "sets/leather/head_side_blink": {
+   "origin": [
+    23,
+    14
+   ]
+  },
+  "sets/leather/torso_side": {
+   "origin": [
+    26,
+    29
+   ]
+  },
+  "sets/leather/pauldron_m_side": {
+   "origin": [
+    26,
+    28
+   ],
+   "shoulder": [
+    30.2,
+    30.8
+   ]
+  },
+  "sets/leather/boot_m_side": {
+   "pivot": [
+    2.2,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/moss/head_down": {
+   "origin": [
+    24,
+    13
+   ]
+  },
+  "sets/moss/head_down_blink": {
+   "origin": [
+    24,
+    13
+   ]
+  },
+  "sets/moss/torso_down": {
+   "origin": [
+    26,
+    29
+   ]
+  },
+  "sets/moss/pauldron_m_down": {
+   "origin": [
+    35,
+    26
+   ],
+   "shoulder": [
+    36.8,
+    30.6
+   ]
+  },
+  "sets/moss/pauldron_o_down": {
+   "origin": [
+    22,
+    26
+   ],
+   "shoulder": [
+    27.2,
+    30.6
+   ]
+  },
+  "sets/moss/boot_m_down": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/moss/boot_o_down": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/moss/head_up": {
+   "origin": [
+    24,
+    13
+   ]
+  },
+  "sets/moss/torso_up": {
+   "origin": [
+    27,
+    28
+   ]
+  },
+  "sets/moss/pauldron_m_up": {
+   "origin": [
+    34,
+    26
+   ],
+   "shoulder": [
+    37.0,
+    30.4
+   ]
+  },
+  "sets/moss/pauldron_o_up": {
+   "origin": [
+    22,
+    26
+   ],
+   "shoulder": [
+    27.0,
+    30.4
+   ]
+  },
+  "sets/moss/boot_m_up": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/moss/boot_o_up": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/moss/head_side": {
+   "origin": [
+    24,
+    13
+   ]
+  },
+  "sets/moss/head_side_blink": {
+   "origin": [
+    24,
+    13
+   ]
+  },
+  "sets/moss/torso_side": {
+   "origin": [
+    27,
+    29
+   ]
+  },
+  "sets/moss/pauldron_m_side": {
+   "origin": [
+    26,
+    27
+   ],
+   "shoulder": [
+    30.2,
+    30.8
+   ]
+  },
+  "sets/moss/boot_m_side": {
+   "pivot": [
+    3.2,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/plate/head_down": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "sets/plate/head_down_blink": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "sets/plate/torso_down": {
+   "origin": [
+    26,
+    29
+   ]
+  },
+  "sets/plate/boot_m_down": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/plate/boot_o_down": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/plate/head_up": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "sets/plate/torso_up": {
+   "origin": [
+    27,
+    28
+   ]
+  },
+  "sets/plate/boot_m_up": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/plate/boot_o_up": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/plate/head_side": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "sets/plate/head_side_blink": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "sets/plate/torso_side": {
+   "origin": [
+    26,
+    29
+   ]
+  },
+  "sets/plate/boot_m_side": {
+   "pivot": [
+    2.2,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/rex/head_down": {
+   "origin": [
+    24,
+    14
+   ]
+  },
+  "sets/rex/head_down_blink": {
+   "origin": [
+    24,
+    14
+   ]
+  },
+  "sets/rex/torso_down": {
+   "origin": [
+    26,
+    29
+   ]
+  },
+  "sets/rex/pauldron_m_down": {
+   "origin": [
+    36,
+    26
+   ],
+   "shoulder": [
+    36.8,
+    30.6
+   ]
+  },
+  "sets/rex/pauldron_o_down": {
+   "origin": [
+    22,
+    26
+   ],
+   "shoulder": [
+    27.2,
+    30.6
+   ]
+  },
+  "sets/rex/boot_m_down": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/rex/boot_o_down": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/rex/head_up": {
+   "origin": [
+    25,
+    14
+   ]
+  },
+  "sets/rex/torso_up": {
+   "origin": [
+    27,
+    28
+   ]
+  },
+  "sets/rex/pauldron_m_up": {
+   "origin": [
+    35,
+    26
+   ],
+   "shoulder": [
+    37.0,
+    30.4
+   ]
+  },
+  "sets/rex/pauldron_o_up": {
+   "origin": [
+    22,
+    26
+   ],
+   "shoulder": [
+    27.0,
+    30.4
+   ]
+  },
+  "sets/rex/boot_m_up": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/rex/boot_o_up": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/rex/head_side": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "sets/rex/head_side_blink": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "sets/rex/torso_side": {
+   "origin": [
+    27,
+    29
+   ]
+  },
+  "sets/rex/pauldron_m_side": {
+   "origin": [
+    26,
+    27
+   ],
+   "shoulder": [
+    30.2,
+    30.8
+   ]
+  },
+  "sets/rex/boot_m_side": {
+   "pivot": [
+    2.2,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/rust/head_down": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "sets/rust/head_down_blink": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "sets/rust/torso_down": {
+   "origin": [
+    26,
+    29
+   ]
+  },
+  "sets/rust/boot_m_down": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/rust/boot_o_down": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/rust/head_up": {
+   "origin": [
+    24,
+    14
+   ]
+  },
+  "sets/rust/torso_up": {
+   "origin": [
+    27,
+    28
+   ]
+  },
+  "sets/rust/boot_m_up": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/rust/boot_o_up": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/rust/head_side": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "sets/rust/head_side_blink": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "sets/rust/torso_side": {
+   "origin": [
+    26,
+    29
+   ]
+  },
+  "sets/rust/boot_m_side": {
+   "pivot": [
+    2.2,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/sunward/head_down": {
+   "origin": [
+    23,
+    14
+   ]
+  },
+  "sets/sunward/head_down_blink": {
+   "origin": [
+    23,
+    14
+   ]
+  },
+  "sets/sunward/torso_down": {
+   "origin": [
+    26,
+    29
+   ]
+  },
+  "sets/sunward/boot_m_down": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/sunward/boot_o_down": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/sunward/head_up": {
+   "origin": [
+    24,
+    14
+   ]
+  },
+  "sets/sunward/torso_up": {
+   "origin": [
+    27,
+    28
+   ]
+  },
+  "sets/sunward/boot_m_up": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/sunward/boot_o_up": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/sunward/head_side": {
+   "origin": [
+    23,
+    14
+   ]
+  },
+  "sets/sunward/head_side_blink": {
+   "origin": [
+    23,
+    14
+   ]
+  },
+  "sets/sunward/torso_side": {
+   "origin": [
+    23,
+    29
+   ]
+  },
+  "sets/sunward/boot_m_side": {
+   "pivot": [
+    2.2,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/tide/head_down": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "sets/tide/head_down_blink": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "sets/tide/torso_down": {
+   "origin": [
+    26,
+    29
+   ]
+  },
+  "sets/tide/pauldron_m_down": {
+   "origin": [
+    35,
+    26
+   ],
+   "shoulder": [
+    36.8,
+    30.6
+   ]
+  },
+  "sets/tide/pauldron_o_down": {
+   "origin": [
+    21,
+    25
+   ],
+   "shoulder": [
+    27.2,
+    30.6
+   ]
+  },
+  "sets/tide/boot_m_down": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/tide/boot_o_down": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/tide/head_up": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "sets/tide/torso_up": {
+   "origin": [
+    27,
+    28
+   ]
+  },
+  "sets/tide/pauldron_m_up": {
+   "origin": [
+    36,
+    25
+   ],
+   "shoulder": [
+    37.0,
+    30.4
+   ]
+  },
+  "sets/tide/pauldron_o_up": {
+   "origin": [
+    23,
+    25
+   ],
+   "shoulder": [
+    27.0,
+    30.4
+   ]
+  },
+  "sets/tide/boot_m_up": {
+   "pivot": [
+    1.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/tide/boot_o_up": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/tide/head_side": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "sets/tide/head_side_blink": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "sets/tide/torso_side": {
+   "origin": [
+    27,
+    29
+   ]
+  },
+  "sets/tide/pauldron_m_side": {
+   "origin": [
+    25,
+    27
+   ],
+   "shoulder": [
+    30.2,
+    30.8
+   ]
+  },
+  "sets/tide/boot_m_side": {
+   "pivot": [
+    3.2,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "hair/cropped_down": {
+   "origin": [
+    24,
+    14
+   ]
+  },
+  "hair/cropped_down_blink": {
+   "origin": [
+    24,
+    14
+   ]
+  },
+  "hair/cropped_up": {
+   "origin": [
+    24,
+    14
+   ]
+  },
+  "hair/cropped_side": {
+   "origin": [
+    24,
+    14
+   ]
+  },
+  "hair/cropped_side_blink": {
+   "origin": [
+    24,
+    14
+   ]
+  },
+  "hair/tied_down": {
+   "origin": [
+    24,
+    14
+   ]
+  },
+  "hair/tied_down_blink": {
+   "origin": [
+    24,
+    14
+   ]
+  },
+  "hair/tied_up": {
+   "origin": [
+    24,
+    14
+   ]
+  },
+  "hair/tied_side": {
+   "origin": [
+    22,
+    14
+   ]
+  },
+  "hair/tied_side_blink": {
+   "origin": [
+    22,
+    14
+   ]
+  },
+  "hair/braid_down": {
+   "origin": [
+    22,
+    14
+   ]
+  },
+  "hair/braid_down_blink": {
+   "origin": [
+    22,
+    14
+   ]
+  },
+  "hair/braid_up": {
+   "origin": [
+    24,
+    14
+   ]
+  },
+  "hair/braid_side": {
+   "origin": [
+    23,
+    14
+   ]
+  },
+  "hair/braid_side_blink": {
+   "origin": [
+    23,
+    14
+   ]
+  },
+  "hair/curly_down": {
+   "origin": [
+    22,
+    13
+   ]
+  },
+  "hair/curly_down_blink": {
+   "origin": [
+    22,
+    13
+   ]
+  },
+  "hair/curly_up": {
+   "origin": [
+    23,
+    14
+   ]
+  },
+  "hair/curly_side": {
+   "origin": [
+    22,
+    14
+   ]
+  },
+  "hair/curly_side_blink": {
+   "origin": [
+    22,
+    14
+   ]
+  },
+  "hair/ponytail_down": {
+   "origin": [
+    25,
+    13
+   ]
+  },
+  "hair/ponytail_down_blink": {
+   "origin": [
+    25,
+    13
+   ]
+  },
+  "hair/ponytail_up": {
+   "origin": [
+    25,
+    14
+   ]
+  },
+  "hair/ponytail_side": {
+   "origin": [
+    20,
+    13
+   ]
+  },
+  "hair/ponytail_side_blink": {
+   "origin": [
+    20,
+    13
+   ]
+  }
+ },
+ "sets": {
+  "ashen": {
+   "arm_upper": [
+    "1f1410",
+    "32251b",
+    "42372c",
+    "6a5b4e",
+    "867563"
+   ],
+   "arm_lower": [
+    "1f1410",
+    "32251b",
+    "574130",
+    "6a5b4e",
+    "867563"
+   ],
+   "leg_upper": [
+    "1f1410",
+    "32251b",
+    "574130",
+    "6a5b4e",
+    "867563"
+   ],
+   "leg_lower": [
+    "1f1410",
+    "32251b",
+    "574130",
+    "6a5b4e",
+    "867563"
+   ]
+  },
+  "bone": {
+   "arm_lower": [
+    "33090d",
+    "501512",
+    "822e2d",
+    "af4840",
+    "c0675a"
+   ],
+   "leg_upper": [
+    "937c48",
+    "a8996e",
+    "c9bd91",
+    "d6caa0",
+    "efe8c1"
+   ],
+   "leg_lower": [
+    "937c48",
+    "a8996e",
+    "c9bd91",
+    "d6caa0",
+    "efe8c1"
+   ]
+  },
+  "crystal": {
+   "arm_upper": [
+    "4b7277",
+    "5f9194",
+    "93abb0",
+    "c0c5cc",
+    "eef1ee"
+   ],
+   "arm_lower": [
+    "5f9194",
+    "93abb0",
+    "c0c5cc",
+    "eef1ee",
+    "fafafa"
+   ],
+   "leg_upper": [
+    "0a424c",
+    "0e616b",
+    "1c8e8f",
+    "29bfb2",
+    "21dfc1"
+   ],
+   "leg_lower": [
+    "0a424c",
+    "0e616b",
+    "1c8e8f",
+    "29bfb2",
+    "21dfc1"
+   ]
+  },
+  "horn": {
+   "arm_upper": [
+    "a93d2a",
+    "d05231",
+    "ea6d3a",
+    "ec9868",
+    "efbd93"
+   ],
+   "arm_lower": [
+    "1c0b07",
+    "2b160d",
+    "452b17",
+    "6c482f",
+    "c0482e"
+   ],
+   "leg_upper": [
+    "452b17",
+    "8a3122",
+    "c0482e",
+    "ea6d3a",
+    "eb9362"
+   ],
+   "leg_lower": [
+    "452b17",
+    "8a3122",
+    "c0482e",
+    "ea6d3a",
+    "eb9362"
+   ]
+  },
+  "leather": {
+   "arm_upper": [
+    "694421",
+    "906434",
+    "b07f43",
+    "d29d58",
+    "dbbe86"
+   ],
+   "arm_lower": [
+    "3c2011",
+    "563219",
+    "7d532a",
+    "9f743d",
+    "c08e4e"
+   ],
+   "leg_upper": [
+    "3c2011",
+    "563219",
+    "7d532a",
+    "9f743d",
+    "c08e4e"
+   ],
+   "leg_lower": [
+    "3c2011",
+    "563219",
+    "7d532a",
+    "9f743d",
+    "c08e4e"
+   ]
+  },
+  "moss": {
+   "arm_upper": [
+    "2e4b1b",
+    "486829",
+    "5e8737",
+    "81b344",
+    "a5c56e"
+   ],
+   "arm_lower": [
+    "4f3e20",
+    "6a5a2e",
+    "96794a",
+    "b29a67",
+    "c4b78e"
+   ],
+   "leg_upper": [
+    "091c0a",
+    "142f11",
+    "2a4e20",
+    "437531",
+    "5e8737"
+   ],
+   "leg_lower": [
+    "091c0a",
+    "142f11",
+    "2a4e20",
+    "437531",
+    "5e8737"
+   ]
+  },
+  "plate": {
+   "arm_upper": [
+    "262312",
+    "3e3e20",
+    "56552b",
+    "848041",
+    "a29c52"
+   ],
+   "arm_lower": [
+    "3e3e20",
+    "56552b",
+    "848041",
+    "a69f54",
+    "bdb881"
+   ],
+   "leg_upper": [
+    "3e3e20",
+    "56552b",
+    "848041",
+    "a69f54",
+    "bdb881"
+   ],
+   "leg_lower": [
+    "3e3e20",
+    "56552b",
+    "848041",
+    "a69f54",
+    "bdb881"
+   ]
+  },
+  "rex": {
+   "arm_upper": [
+    "352817",
+    "5f4125",
+    "81643f",
+    "a27d4e",
+    "cb8d5b"
+   ],
+   "arm_lower": [
+    "0a2a1b",
+    "154829",
+    "15683b",
+    "249251",
+    "31b463"
+   ],
+   "leg_upper": [
+    "154829",
+    "15683b",
+    "249251",
+    "31b463",
+    "51cc78"
+   ],
+   "leg_lower": [
+    "154829",
+    "15683b",
+    "249251",
+    "31b463",
+    "51cc78"
+   ]
+  },
+  "rust": {
+   "arm_upper": [
+    "330f0d",
+    "4d2017",
+    "8a3b28",
+    "ac5338",
+    "c26542"
+   ],
+   "arm_lower": [
+    "21100f",
+    "341f19",
+    "54392b",
+    "70533b",
+    "896d56"
+   ],
+   "leg_upper": [
+    "330f0d",
+    "4d2017",
+    "8a3b28",
+    "ac5338",
+    "c26542"
+   ],
+   "leg_lower": [
+    "330f0d",
+    "4d2017",
+    "8a3b28",
+    "ac5338",
+    "c26542"
+   ]
+  },
+  "sunward": {
+   "arm_upper": [
+    "8e6539",
+    "9b8455",
+    "b79e68",
+    "d8c389",
+    "e6e0ba"
+   ],
+   "arm_lower": [
+    "2c1208",
+    "43240f",
+    "50381e",
+    "6f5632",
+    "8d7448"
+   ],
+   "leg_upper": [
+    "8e6539",
+    "9b8455",
+    "b79e68",
+    "d8c389",
+    "e6e0ba"
+   ],
+   "leg_lower": [
+    "8e6539",
+    "9b8455",
+    "b79e68",
+    "d8c389",
+    "e6e0ba"
+   ]
+  },
+  "tide": {
+   "arm_upper": [
+    "378370",
+    "4d9a7d",
+    "69c297",
+    "83dfae",
+    "bbebca"
+   ],
+   "arm_lower": [
+    "0e3c36",
+    "1d5c53",
+    "378370",
+    "4d9a7d",
+    "59b492"
+   ],
+   "leg_upper": [
+    "1d5c53",
+    "2b7468",
+    "4d9a7d",
+    "69c297",
+    "83dfae"
+   ],
+   "leg_lower": [
+    "1d5c53",
+    "2b7468",
+    "4d9a7d",
+    "69c297",
+    "83dfae"
+   ]
+  }
+ },
+ "hair_styles": {
+  "cropped": true,
+  "tied": true,
+  "braid": true,
+  "curly": true,
+  "ponytail": true
+ }
+}

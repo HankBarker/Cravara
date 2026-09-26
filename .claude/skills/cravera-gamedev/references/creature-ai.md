@@ -448,3 +448,37 @@ density climbs.
 - Reynolds steering behaviors (seek/flee/arrive/wander/pursue): https://www.red3d.com/cwr/steer/
 - ARK breeding, stat inheritance (55%) & mutation (7.31%): https://ark.fandom.com/wiki/Breeding and https://ark.fandom.com/wiki/Mutations
 - LimboAI (HSM + Behavior Trees for Godot 4): https://github.com/limbonaut/limboai
+
+## Pass 13: not everything chases you (Hank: "every dinosaur is trying to chase me down")
+- **Noticing is not hunting.** `_wild_target`: a hungry hunter (`sated <= 0`, or the rex) takes the
+  keeper inside `NOTICE`; a fed one only inside `DANGER`. A hungry hunter prefers wild prey up to a
+  third further off than the keeper. Past `TERRITORY` (+90 while chasing) it lets the quarry go and
+  walks home.
+- **The telegraph** before every attack on the keeper, a companion or a tribesman: `ALERT_TIME` per
+  species with the display clip and the "!" (see dinosaurs.md). Tribesmen: `ALERT` with the raised
+  fists (cheer), each a beat apart.
+- **Herbivores ward off:** a `COMFORT` ring warning display (and a trike's stand-your-ground taming
+  way hangs off it); provoked, they give up after `WARD_LEASH`/`WARD_GAP`. A keeper running by makes
+  a grazer stop and look up (`_look_time`).
+- **Babies and nests** react to interaction (`CreatureLife.disturbed`) and theft (`rob`), not to
+  proximity.
+- **Siege:** a hunter stuck against the keeper's building (`_watch_stuck`) looks for what's in the
+  way (`_find_blocker`) and bashes through (`_tick_siege`, `SIEGE_SECONDS`).
+- **Water hunters:** `AQUATIC` pace in water, `DEEP_WADERS` (the spinosaur) walk into the deep mere,
+  `LURK` (the Suchomimus) keeps to the shallows by home.
+- **Grazing rhythm:** in `_wander_velocity` a grazer (`BODY.idle == "eat"`, not a predator) stops on
+  half its legs (others 38%) and a stop pulls `_idle_timer` down to 0.3-1 s, so a herd left alone
+  bites every stop instead of mostly walking (`_resting_behaviour` only counts down while still).
+- **Taming ways must survive the AI.** Any way that needs the keeper close to a *predator* has to
+  switch off its keeper targeting (`keeper_reach = 0` in `_wild_target`): earned respect/dodge, kin
+  armour, and a dimetrodon while `_bask_time > 0` (by day). A hungry dimetrodon noticed the keeper at
+  54-77 px, a fed one at 42-60, and feeding needs < 49 px: the basking way was unreachable until the
+  code review caught it.
+- **Offerings:** `Offering.claimed_by` is one beast's claim. Whoever lets the food go (the kin
+  armour came off) must clear its own claim, or the food sits claimed until it times out (60 s)
+  and blocks setting another down.
+- **Individuals in tests:** genes shift notice (temper 0.85-1.2), pace and harm (thick hide 0.92).
+  Tests that measure exact damage, notice rings or pace give the beast plain genes first:
+  `c.set_genes({})` (`Genes.clean({})` stays `{}`: no temperament, no shader).
+- Tests: `Tests/Pass13Suite.tscn` (incl. a live siege), `Tests/HuntSuite.tscn` (updated),
+  `Tests/DinoBehaviourCapture.tscn` (the pack is hungry now).

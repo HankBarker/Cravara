@@ -1,0 +1,307 @@
+# The folk, housing and stone building
+
+Terraria-style townsfolk for the forest. There is no village: each person is
+found somewhere in the wilds, moves into a house the keeper builds, and helps
+the keeper along. Hank's brief (2026-09-24): the guide spawns right beside
+the keeper and has no house of his own. The others are "randomly found": in
+their own little hut, stranded, or locked in a cage. Each arrival pops a
+message ("X is ready to move in"). Folk can be moved between houses, houses
+have requirements, and you can talk with everyone. They should look unique
+while keeping the established style.
+
+## Who, when, where (`game/Forest/folk/Folk.gd`, data only)
+
+| id | name, title | arrives | found (one picked per world) | services |
+|---|---|---|---|---|
+| guide | Orrin, the Wayfinder | `start`: beside the keeper on a new journey, and on an older journey's first load | never (he keeps to the camp fire) | help (next step from milestones), recipes ("what can I make with…"), lore |
+| merchant | Tamsin, the Trader | `cache`: the first ancient cache opened (milestone `cache`) | stranded, hut | trade: buys and sells for `ancient_coin`, plus two rare pieces that change at each dawn |
+| warden | Kaya, the Beast-Warden | `tames:2`: two dinosaurs trust you (the count of tames, or the tamed alive now) | caged, hut, stranded | advice (every beast: food, trust, riding), tend (heal hurt companions, 1 coin each), trade (saddles, nets, arrows) |
+
+Lines are in `greet`, `chat`, `lore`, `found_line[kind]` and `ready_line`.
+Prices: `STOCK`, `RARE`, `BUYS`, `TEND_PRICE`.
+
+## Stages (`FolkManager.gd`: one node under the session, `session.folk`)
+
+`camp` (at the first camp fire, roaming 56 px), `wild` (at their site),
+`ready` (met, waiting for a house), `home` (living in a room). The flow:
+
+- `arrive(id)`: the guide goes beside the keeper. Anyone else gets a hash-picked
+  circumstance and `place_site(id, kind)`, and a HUD banner says "X has come
+  to the wilds" with the direction. The map marks everyone (violet).
+- Talking to someone `wild` calls `meet(id)` → `ready` (banner). A caged one
+  must be freed first ("Break the trap open" → `release(id)`: the trap becomes
+  `folk_cage_open`).
+- `settle()` runs every second. Anyone whose house stopped being valid loses it
+  (toast) and goes to `camp`. Then anyone `ready`, and any non-guide at `camp`,
+  moves into the nearest vacant valid room (banner the first time).
+- The "Your home" page: move into a free house, swap houses with someone
+  (`swap(a, b)`; nobody is put out in the cold), or leave (`leave_home`).
+- `serialize()` / `restore(data)`: stages, sites, homes, positions, `day`,
+  `tames`. No folk data means an older journey, which gets its guide.
+  `restore` resets `day`/`tames` first.
+
+### Where someone is found (`site_for(id, kind)`)
+
+Meadow or moss 18–34 cells from camp, no ruin within 10 cells, no water under
+the site's drawing or within 12 px of it, and the cell in front can be walked
+to from camp. That is a BFS from (0,0) with `is_blocked_at`, where water can be
+waded. Where they stand (`spot_at`) must be open, except in a trap.
+
+- First choice: nothing is drawn over the spot (`_clear_for_find`).
+- Fallback: only `BRUSH` (trees, rocks, bushes…) overlaps, and the spot is out
+  of the keeper's sight. `place_site` clears it and records it in
+  `world.mined`, so it stays cleared after a save.
+- Ranking is hashed per world seed and person, so it is deterministic.
+- Never fall back to a fixed cell in a real world. The suite checks every kind
+  for everyone.
+
+## Housing (`Housing.gd`, static)
+
+A room is a 4-way flood fill from a floor cell, bounded by `WALLS` (wood or
+stone walls and doors). It is a home when all of these hold:
+
+- it is closed (the fill never escapes)
+- 6–60 tiles
+- at least one door in its boundary
+- a roof over every tile
+- a light: a torch or campfire inside
+- a bed: a hide bed inside
+
+`room_at(world, cell)` → `{key, cells, valid, checks[{id,label,ok}], doors,
+stone, centre}`. `survey(world)` finds every room. `describe(room)` gives
+"Stone house, 12 tiles, west of the first camp".
+
+- Room keys are the smallest cell ("x,y"). A rebuilt room with the same
+  corner keeps its key.
+- Roofs fade only over the room the keeper stands in:
+  `ForestWorld.is_roof_open(cell)`, a roof-to-roof flood from the keeper's
+  cell, cached per frame and keeper cell.
+- **Roofs are drawn whole** (pass 10, `Forest/ForestRoofs.gd`, z 8,
+  `light_mask 0` so torch shadows never blotch them): each patch of joined
+  roof tiles is one roof sitting on the wall tops, with overhangs that know
+  the walls beside it (`WALL_SIDE`, `WALL_BACK`, `WALL_FRONT`, lips), a
+  back slope, ridge, front slope and eave of uneven slates or straw. The
+  tiles keep their durability and fade; `_draw` uses the patch's lowest
+  alpha. Placing the last wall of a closed room with a roof item fills its
+  whole roof (`interact_at`). Look: `Tests/RoofLookCapture.tscn`.
+- **What a click hits** (`ForestWorld._target_cell`, pass 10): a roof that
+  isn't open (from outside), then the frontmost placed prop whose target
+  rect holds the point (a bed before the floor or wall behind it), then the
+  prop on the cell, the canopy search, then the floor. Inside a house the
+  keeper breaks the bed, then the floor below; never the roof overhead.
+
+## Stone building
+
+Items `stone_wall`, `stone_floor`, `stone_door`, `slate_roof` (`.tres`, icons
+in `Forest/art/items/`). Recipes are workbench-gated (category Building) in
+`CraftingManager`. Art comes from `tools/world/make_stone_art.py`. The kind
+lists are `Prop.WALLS/DOORS/FLOORS/ROOFS`. `STRUCTURE_HP` is: stone wall 10,
+stone floor 6, stone door 8, slate roof 5.
+
+- Floors and roofs save their kind as the 4th element; older saves load as
+  timber and thatch.
+- Code that builds for the keeper must also set `world.placed[c]` and
+  `props[c].is_placed`, or the build vanishes on load.
+
+## Talking (`UI/FolkDialogue.gd`, CanvasLayer 28)
+
+Pass 10: **a compact panel that never pauses** (Hank: never be stuck in a
+talk screen while something attacks). It sits in the left column
+(`ORIGIN (6,48)`, `WIDTH 176`); the keeper moves, fights and uses the
+hotbar while it is open. It closes itself when the keeper walks more than
+`REACH` (76 px) from the speaker, and when the satchel, map or any other
+overlay opens. `panel_rect()` is its area. It holds:
+
+- the portrait (the first idle-down frame)
+- the name in IM Fell, the title in mint caps
+- typewriter words at 70 chars/s
+- the page: talk (two columns of buttons: Chat, What next?, Recipes, A
+  story, Trade, The beasts, Tend beasts, Home, Goodbye), recipes (7-column
+  icon grid), trade (Buy / Sell tabs), advice, house (Move in here / Swap
+  with X / Leave house)
+- **script mode** (`open_script(folk_id, manager, lines, from_step,
+  on_done)`): Orrin's first words after the opening story. E goes on, Esc
+  skips; walking off keeps the place (`script_step`, saved as the guide's
+  `intro_step`) and talking again resumes it. The context hint reads
+  "E  Go on   Esc  Skip".
+
+E goes to whichever is nearest: a folk member (within 40 px of the feet), a
+companion or a camp object (`ForestPlaytest._folk_first`). A camp object the
+keeper aims at comes first. Nothing happens while mounted. The context hint
+reads "E  Talk to X" or "E  Free X" (and "E  Goodbye" while talking). E or
+Esc closes the panel; Esc steps back to the talk page first.
+
+**The opening** (pass 10, `Forest/intro/IntroCutscene.gd`, CanvasLayer 60):
+a new expedition started from the menu (meta `forest_intro`) plays eight
+painted plates (`intro/art/0N-*.png`, PixelLab Pro) with narration over the
+title theme: the green world, the star that fell, the first builders, their
+carving WHAT FALLS FROM THE SKY MUST BE KEPT, the Keepers, the last one
+going north past the Pale Hills. Space/Enter/E/click reveals then moves on;
+hold Esc 1 s to skip; it swallows all input. Then `_awaken` fades in, the
+keeper walks out of the first tent (`FIRST_TENT`), and Orrin, waiting
+outside, starts his `CAST.guide.intro` lines ("Easy, easy. You're awake…
+I saw you come down last night… what falls from the sky must be kept… A
+Keeper."). Suite: `Tests/IntroSuite.tscn`.
+
+## Tasks (pass 11: `Forest/quests/QuestData.gd`, `QuestManager.gd`)
+Each of the folk gives tasks one at a time, in order: Orrin (`guide`) sends the keeper exploring and
+at the bosses, Tamsin (`trader`) wants the new lands' goods, Kaya (`warden`) wants eggs, hatchlings
+and new beasts tamed. A task is `{id, giver, title, needs?, ask, done, goals[], reward{}}`.
+- `needs` gates it: `region:<id>` (the world has that region), `species:<id>` (in
+  `ForestCreature.SPECIES`), `item:<id>` (in ItemDB). A task whose needs aren't met yet is skipped
+  over for now, not lost.
+- Goal types: `have` (in the pack; `take: true` hands them over), `craft`, `lore` (carvings read),
+  `house` (valid homes), `defeat` (species; a boss beaten before the task was taken counts via its
+  milestone: alpha, ossuar, maw), `region`, `visit`, `bones`, `egg`, `hatch`, `grow`, `dig`,
+  `fish`, `tame` (`ids`: any of them, lifetime or now).
+- Tallies come from SignalBus (item_crafted, creature_defeated, creature_tamed, region_entered,
+  nest_robbed, egg_hatched, creature_grew, relic_dug, fish_caught, bones_searched,
+  place_visited). A `creature_defeated` sender only needs a `species` property (Old Maw sends
+  `maw`).
+- The talk panel has a Tasks page (accept, hand in; the reward bursts out at the keeper); a `!`
+  or `?` bobs over the giver's head (`FolkActor.task_mark`); the HUD lists taken tasks with their
+  goal lines (`ForestHUD.show_tasks`). Saved as `quests` (state and tallies).
+
+## Folk & houses panel (`UI/FolkHousesPanel.gd`, H or the pause menu)
+
+The Terraria housing menu, drawn in the session overlay (kind `houses`):
+
+- head-and-shoulders buttons for everyone who has arrived (16×16 crops of
+  the portrait)
+- a status line: lives in… / ready / camps by the fire / waits in the wilds,
+  with the direction / caught in a trap
+- every room, nearest the camp first, with who lives there
+- "Needs: …" in ember for rooms that aren't homes yet: the builder's
+  checklist
+- "Move in" (a free house) and "Swap" (someone else's, when the picked person
+  has a home)
+- "Leave the house"
+
+`open(session, selected)` rebuilds after each action.
+
+## Art
+
+- **Characters.** PixelLab `create_character_pro_flash`, 32×32 with the Keeper's
+  south view as the style reference (6 generations each). Then
+  `animate_character` with `walking-8-frames` and `breathing-idle`
+  (1 generation per direction, max 8 concurrent jobs). Import with
+  `python tools/folk/import_folk.py <id>`: it keeps the raw zip in
+  `art/folk/source/<id>/` and writes `Forest/folk/art/<id>/sheet.png` +
+  `sheet.json` (rows idle/walk × down/up/left/right, `foot` = the ground
+  pixel). The download needs no auth, and a 423 means animations are still
+  running (it retries). `FolkActor.frames_for(id)` builds SpriteFrames from the
+  sheet.
+- **Sites.** Made by `tools/folk/make_folk_art.py`:
+  - the hut: the rocky pack's `House.png`
+  - the stranded camp: a front-on PixelLab map object, kept in
+    `art/folk/source/sites/camp2.png`. Ask for "front view … facing the
+    camera straight on", view `low top-down`, or it comes out isometric and
+    clashes.
+  - the cage: code-drawn and see-through, so the trapped person shows. The
+    AI cages came out solid.
+- **Physics and shadows.** `POI_SOLID` gives solid footings (hut, camp tent,
+  closed cage). `POI_HEIGHT` sets how tall the outline shadow is, and
+  `POI_SHADOW` holds flat ones (the open cage). The folk stand on the
+  keeper's two-layer contact shadow (`FolkActor._draw_shadow`, hidden while
+  wading).
+
+## Tests and captures
+
+- `tools/playtest_forest.ps1 -FolkPreview` (`--folk-playtest`, no-save runs
+  only) is the hands-on check. It adds:
+  - a cache beside the camp (open it and Tamsin comes)
+  - two extra dodos nearby (tame two and Kaya comes)
+  - two stone houses' worth of kit, coins and sellable finds
+
+- `res://Tests/FolkSuite.tscn` (headless, in `tools/verify_forest.ps1` as
+  `folk`) covers:
+  - stone building and its saves
+  - every housing rule and a closet
+  - arrivals, and that sites are dry, reachable and clear
+  - the trap
+  - moving in, eviction and re-housing
+  - swaps, and roofs opening per house
+  - trade (two different rare pieces every day), tending, recipes
+  - dialogue pages and sizing, E-to-talk
+  - save/load, and an old journey getting Orrin
+- `res://Tests/FolkLookCapture.tscn` (rendered) writes `art/folk/look-*.png`
+  and `look-sheet.png`.
+
+- Suites written before the folk run with `--no-folk` (their `UserArgs` in
+  `verify_forest.ps1`: ui-pass2, interaction-pass4). Orrin stands 22 px from
+  the keeper at the start and rightly takes E presses they aim at companions
+  farther off. `FolkManager.enabled` is false under that flag: nobody
+  arrives and nothing is raised. Add it to a new suite only if the folk are
+  truly in the way, and keep the folk in everything else.
+
+## Gotchas
+
+- Never name a method `free()` on a Node script: it shadows `Object.free`.
+  That is why it's `release()`.
+- Values from untyped nodes (`manager.who_lives_in(...)`, `world.serialize()`)
+  need explicit types: `var x: String = …`. `:=` fails with "Cannot infer the
+  type".
+- `meet()` calls `settle()` at once: with a free house, the person moves
+  straight in (stage `home`, not `ready`).
+- Banners queue, one at a time for about 6 s each. Several arrivals in a row
+  show in order.
+
+## Tribes (pass 12): the Sunward and the Ashen
+The wilds' people (`game/Forest/tribes/`). They are separate from the folk: never housed, never
+saved (only their memory is).
+
+- **`Tribes.gd`** holds the data:
+  - Tribes: `sunward` (desert nomads who trade) and `ashen` (raiders).
+  - `LOOKS`: every look a tribesman can wear. A look is a rig set per slot, an appearance and a
+    held weapon.
+  - `CLIPS` per role (melee, archer, trader, chief). `ROLES` gives each role's hp, damage, reach,
+    cooldown, walk/run pace and bow range.
+  - `LOOT`, the Sunward `STOCK`/`BUYS`, their `LINES`, and `CAST` (the trader in the folk dialogue).
+- **Art.** The tribes' dress is two **rig sets** (`sunward`, `ashen`), made with PixelLab
+  `create_character_state` from the keeper's base character → `extract_parts.py` →
+  `build_rig.py`, just like armour. So every tribesman moves with the keeper's own clips.
+  `Tests/tribe_bake.gd` (headless `--script`) renders each look's clips from the rig into strips:
+  `Forest/tribes/art/<look>/<clip>_<facing>.png`, `clips.json` and `portrait.png` (with an
+  archer's bowstring). `TribeArt.gd` loads them as one shared SpriteFrames per look; left is right
+  mirrored. Rebake after changing a set or a look.
+- **`Tribesman.gd`** (CharacterBody2D on the beasts' layer 2, group `tribesmen`):
+  - **Villagers** potter near home. A **band's leader** walks to goals and the rest follow in a
+    loose file.
+  - **Raiders** come for the keeper on sight (NOTICE 170, 300 once the band has cried out), but not
+    a keeper in the whole Ashen dress (`SetBonus.disguised`) unless struck. **The Sunward** fight
+    only what hurts them. Striking one turns its band and the village folk within 220 px; the
+    tribe won't trade for `ANGER` seconds.
+  - A band out **hunting** runs down small game (`GAME`), then rests.
+  - **Melee:** the blow lands at 45% of the sword clip. **Archers** keep 56 px to their range and
+    shoot `TribeArrow` along the ground feet-to-feet, drawn at chest height. The keeper's body is a
+    feet box, so arrows aimed at the chest flew over it. A friendly arrow passes the keeper and
+    their beasts by.
+  - Badly hurt, anyone but a chief flees. Everyone barks a few words. A health bar shows when hurt.
+- **Tribe beasts** are ForestCreatures with `master` set to a tribesman (meta `tribe_beast`). They
+  keep to their master and fight its foe. A raider's beast also takes the keeper, unless the
+  keeper is disguised. They go wild when the master falls, and are never saved.
+- **`TribeKeeper.gd`** (session, group `tribe_keeper`):
+  - Peoples `world.villages` from `WildsGen._villages()`: the Sunward oasis by a dune oasis, and
+    the Ashen war camp in the Pale Lands' east. The villages have tents, a stall and totems
+    (`tools/world/make_tribe_art.py`, pixflux), a campfire and beasts. It does this in
+    `_prepare_bosses()`, on every new journey and load.
+  - A camp wiped out stays empty for `EMPTY_FOR`.
+  - Bands set out every 70–150 s, per `REGION_BANDS`. They spawn 460–700 px off in the keeper's
+    region: the forest only gets Sunward hunters after 20 minutes, and Ashen raids at night after
+    Skarn. They walk goal to goal and melt away when left 1300 px behind. The limit is 2 at once.
+- **Barter** runs through the folk dialogue. `Folk.info` and `FolkActor.portrait` answer `tribe_*`
+  ids. `TribeTrade.gd` (a RefCounted) answers the manager's calls, so `FolkDialogue.manager` and
+  `open()` take an `Object`, not a `Node`: typed `Node`, E at Ishka threw a type error and the
+  dialogue never opened, while the suite (calling TribeTrade directly) passed. The Home button
+  shows only for managers with `rooms()`. The trade page's sell tab shows for any manager with
+  `buys_for()`.
+- **Arrows** (`TribeArrow`) take the archer's tribe and friendliness at the draw: they never hit
+  the tribe or its beasts, and still fly true after the archer falls.
+- **Beasts:** wild hunters take tribesmen as prey (`_wild_target` scans group `tribesmen`).
+  DinoMoves' `_candidates` adds the target tribesman, and other tribesmen caught in a wild beast's
+  blow.
+- **Tests:** `Tests/TribeSuite.tscn` (38 checks, including opening trade through the real
+  dialogue). Keep test spots cleared of wildlife (2000 px: compy swarms run far) and old tribe
+  beasts. Every sub-test uses the same patch of dunes: `_clear_folk()` stops tribesmen, beasts and
+  arrows as well as freeing them, or a node freed at a frame's start swings or shoots once more
+  into the next test.

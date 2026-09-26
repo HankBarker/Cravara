@@ -1,0 +1,74 @@
+﻿Godot Engine v4.6.1.stable.official.14d19694e - https://godotengine.org
+OpenGL API 3.3.0 Core Profile Context 24.10.36.04.250109 - Compatibility - Using Device: ATI Technologies Inc. - AMD Radeon RX 7700S
+
+≡ƒôª ItemDB loaded 249 items: allo_cleaver, allo_egg, allo_tooth, alpha_crest, ancient_coin, anky_plate, apex_signet, ashen_chestplate, ashen_helmet, ashen_leggings, ashglass, ashglass_eye, ashglass_knife, ashmane_fur, ashmane_mantle, ash_char, ash_tuft, baked_tuber, basic_axe, basic_pickaxe, beast_treat, berry, berry_compote, berry_seed, big_gate, bloodfang, bloody_bait, boat, bogiron_band, bogiron_harpoon, bogwood, bogwood_floor, bogwood_wall, bog_iron, bonegill, bone_arrow, bone_chestplate, bone_crown, bone_dagger, bone_helmet, bone_leggings, bucket, bulwark_charm, cactus_fruit, cactus_jelly, campfire, carno_horn, chest, claw_bracelet, club_knuckle, club_maul, compy_trove, cooked_fish, cooked_meat, cooking_pot, crest_horn, crest_whistle, crystal_axe, crystal_chestplate, crystal_flask, crystal_floor, crystal_heart, crystal_helmet, crystal_leggings, crystal_pendant, crystal_pickaxe, crystal_shard, crystal_wall, deino_claw, dodo_egg, dodo_plume, ember_chili, ember_pepper, fang_necklace, fang_sabre, fen_pike, fishers_chowder, fishing_rod, foragers_salad, forest_omelet, fossil_bone, frill_buckle, frill_guard, frostjaw, fur_wrap, garden_hoe, glass_pearl, gourd_porridge, gourd_seed, grave_horn, haunch, haunch_roast, hide_bed, hitching_post, horn_chestplate, horn_guard, horn_helmet, horn_leggings, horn_spear, hunters_stew, hunter_charm, incubator, keepers_locket, lantern, lead_rope, leather_chestplate, leather_helmet, leather_leggings, log, longneck_bell, longneck_egg, longneck_hide, lotus_broth, lucky_coin, lystro_egg, marrow_gourd, maw_charm, maw_tooth, melon_cooler, melon_seed, miners_pie, mirefang_tooth, mirelotus, mire_eel, moonscale, moonstone_ring, morsel, moss_chestplate, moss_helmet, moss_leggings, mushroom, mushroom_potion, mushroom_spore, mushroom_stew, net, oasis_carp, old_bone, old_compass, palewood, palewood_floor, palewood_wall, pale_crystal, parasaur_crest, parasaur_egg, pepper_steak, plank, plant_fiber, plate_chestplate, plate_helmet, plate_leggings, plate_maul, plate_pendant, prime_meat, prime_steak, prism_crystal, proto_frill, quiver_strap, raider_club, raptor_egg, raptor_fang, raptor_hide, redgrain, redgrain_loaf, reed_bow, reed_claw, reed_perch, rex_chestplate, rex_helmet, rex_leggings, river_totem, rustiron, rustjaw_sabre, rust_buckler, rust_catfish, rust_chestplate, rust_helmet, rust_leggings, rust_signet, saddlebag, sailking_fin, sail_scale, sail_veil, sandblade_plume, sandstone, sandstone_floor, sandstone_wall, scale_bracer, scarhorn_lance, scarhorn_tip, seared_morsel, shardfin, shard_sword, sickle_claw, sickle_toe, skyfang_shard, sky_idol, slate_roof, sleeper_fang, spinesail_glaive, spine_torc, spino_spine, stego_egg, stego_plate, stego_saddle, stone, stone_door, stone_floor, stone_wall, sucho_claw, sunfin, sunsail_brooch, sunstone, sunstone_amulet, sunstone_maul, sunward_chestplate, sunward_helmet, sunward_leggings, sun_melon, sun_sail, tail_spike, tent, thatch_roof, tide_chestplate, tide_helmet, tide_leggings, titan_pot_roast, titan_rib, titan_roast, tooth_ring, torch, trex_meat, trex_scale, trike_egg, trike_hide, trike_horn, trike_saddle, tuber_mash, tusk_charm, tyrant_eye, tyrant_fang, wanderers_step, water_bucket, water_flask, wayfarer_anklet, wild_tuber, wood_door, wood_floor, wood_wall, workbench
+FEEL walk start velocity.x per physics frame: [18.3, 36.7, 54.0, 54.0, 54.0, 54.0, 54.0, 54.0, 54.0, 54.0]
+FEEL PASS walk reaches exactly walk_speed 54 (accelerated, not snapped)
+FEEL PASS first walking frame is below full speed (acceleration)
+FEEL PASS camera stays locked while moving
+FEEL walk stop velocity.x per physics frame: [54.0, 30.7, 7.3, 0.0, 0.0, 0.0]  slide 0.6 px
+FEEL PASS walk brakes to a full stop within 6 frames
+FEEL PASS camera offset exactly zero while idle
+FEEL PASS sprint reaches exactly sprint_speed 88
+FEEL PASS adding Down to a rightward run keeps the right-facing view (hysteresis)
+FEEL PASS releasing Right turns to face down
+FEEL PASS adding Right to a downward run keeps the down-facing view
+FEEL dirt walk: 2 footfalls in 44 frames, last surface dirt
+FEEL PASS walking the camp path lands dirt footfalls
+FEEL PASS feel component attached, dry on grass
+FEEL grass run: 2 footfalls in 40 frames, last surface grass
+FEEL PASS running the meadow lands grass footfalls
+FEEL PASS timber floor reads as a wooden surface
+FEEL PASS boardwalk footfalls read as wood
+FEEL PASS found a clear river bank for the wading check
+FEEL PASS feet (sampled at +8) register entering water
+FEEL PASS wading speeds unchanged (walk 28 / sprint 36)
+FEEL wading velocity 36.0 px/s (sprint_speed 36)
+FEEL PASS waterline shader active while wading
+FEEL PASS leaving water clears the waterline
+FEEL PASS Satchel charm click opens the satchel
+FEEL PASS a second click (the pack's X) closes it
+FEEL PASS HUD charm keeps no keyboard focus after a click
+FEEL PASS Space does not re-press the Satchel charm
+FEEL PASS Space starts a dodge roll
+FEEL PASS roll grants i-frames from its first frame
+FEEL PASS a hit during the roll's i-frames is ignored
+FEEL roll lasted 24 physics frames and travelled 59.0 px
+FEEL PASS roll lasts ~0.4 s
+FEEL PASS roll ends vulnerable, straight back into walking
+FEEL PASS cooldown refuses an immediate second roll
+FEEL PASS still cooling down
+FEEL PASS a press late in the cooldown is buffered into a roll
+FEEL PASS no roll while the satchel is open (controls locked)
+FEEL PASS no roll during play_action
+FEEL PASS bone_dagger swing starts
+FEEL PASS bone_dagger swing damages the creature
+FEEL PASS bone_dagger hit triggers hitstop (time_scale dipped to 0.03)
+FEEL PASS time scale restored after hitstop
+FEEL PASS camera shake decays back to exactly zero
+FEEL PASS basic_axe swing starts
+FEEL PASS basic_axe swing damages the creature
+FEEL PASS basic_axe hit triggers hitstop (time_scale dipped to 0.03)
+FEEL PASS heavy axe hit kicks the camera
+FEEL PASS time scale restored after hitstop
+FEEL PASS camera shake decays back to exactly zero
+FEEL PASS hurt turns to face the attacker
+FEEL PASS i-frame blink semantics kept (modulate.a < 0.6 while flashing)
+FEEL PASS white flash is up on the hit
+FEEL hurt camera peak offset (-2.0, 0.0)
+FEEL PASS hurt shakes the camera
+FEEL PASS shake and flash fully decay
+FEEL PASS screen shake setting off: no camera offset
+FEEL PASS eating still succeeds synchronously
+FEEL PASS eat plays its clip without an action lock
+FEEL PASS walking cancels a gesture at once
+FEEL PASS craft gesture plays
+FEEL PASS craft returns to idle
+FEEL PASS place gesture plays
+FEEL PASS place returns to idle
+FEEL PASS interact gesture plays
+FEEL PASS interact returns to idle
+FEEL PASS cheer gesture plays
+FEEL PASS cheer returns to idle
+FEEL PASS no gesture while walking
+KEEPER_FEEL_CAPTURE cells=32 checks=62 failures=0
