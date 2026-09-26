@@ -227,7 +227,7 @@ def clean_clip(key, clip, view):
     names = sorted(n for n in os.listdir(raw) if n.endswith(".png") and n[:3].isdigit())
     if not names:
         return 0
-    pal = palette(SPEC["keys"][key]["species"])
+    pal = palette(SPEC["keys"][key].get("palette", SPEC["keys"][key]["species"]))
     cache = {}
     first = Image.open(first_frame(key, view)).convert("RGBA")
     ref_bottom = first.getbbox()[3]

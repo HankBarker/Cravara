@@ -12,7 +12,7 @@ const Folk = preload("res://Forest/folk/Folk.gd")
 const UI = preload("res://UI/SkyfangUI.gd")
 const SPEED := 26.0
 const NEAR := 56.0
-const SHADOW_COLOR := Color(0.03, 0.10, 0.09)
+const SHADOW_COLOR := Color(0.08, 0.05, 0.03)
 
 var id := ""
 var world: Node

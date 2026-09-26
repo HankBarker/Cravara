@@ -364,9 +364,11 @@ func test_roll() -> void:
 	await mouse(centre, true)
 	await mouse(centre, false)
 	check(scene.hud.is_open(), "Satchel charm click opens the satchel")
-	await mouse(centre, true)
-	await mouse(centre, false)
-	check(not scene.hud.is_open(), "second charm click closes it")
+	# Pass 14: the open pack's crafting scroll covers the charm; its X zips it shut.
+	var closer: Control = charm if charm.is_visible_in_tree() else scene.hud.pack_close_button
+	await mouse(closer.get_global_rect().get_center(), true)
+	await mouse(closer.get_global_rect().get_center(), false)
+	check(not scene.hud.is_open(), "a second click (the pack's X) closes it")
 	check(get_viewport().gui_get_focus_owner() == null, "HUD charm keeps no keyboard focus after a click")
 	await get_tree().process_frame
 	await get_tree().process_frame

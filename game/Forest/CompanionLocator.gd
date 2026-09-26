@@ -19,7 +19,7 @@ func _ready():
 	label=Label.new()
 	label.add_theme_font_size_override("font_size",9)
 	label.add_theme_color_override("font_color",Color("ffe1a0"))
-	label.add_theme_color_override("font_shadow_color",Color("182f2f"))
+	label.add_theme_color_override("font_shadow_color",Color("22170f"))
 	label.add_theme_constant_override("shadow_offset_y",1)
 	marker.add_child(label)
 

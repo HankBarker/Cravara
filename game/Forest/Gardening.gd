@@ -55,6 +55,11 @@ func use_at(target: Vector2, id: String) -> bool:
 		if plot.watered: notice.emit("This patch is already watered."); return false
 		if not world._exchange_bucket("water_bucket","bucket"): return false
 		plot.watered=true
+		# A Wide Can (Farming, pass 14): the patches beside it drink too.
+		var ws = get_tree().get_first_node_in_group("skills")
+		if ws and ws.value("soak") > 0.0:
+			for step in [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]:
+				if plots.has(c + step): plots[c + step].watered=true
 		_farming(1)
 		player.play_action("bucket",target)
 		AudioManager.play_sfx("harvest_plant")
@@ -70,9 +75,12 @@ func use_at(target: Vector2, id: String) -> bool:
 		var sk = get_tree().get_first_node_in_group("skills")
 		var extra := 0.0
 		if sk: extra = sk.value("harvest_extra")
+		# A Tusk Charm (pass 14): a share of a crop more (3 a harvest, so +20% is 0.6 of one).
+		extra += 3.0 * preload("res://Forest/items/Trinkets.gd").value(player, "harvest")
 		var count := 3 + int(floor(extra)) + (1 if randf() < fmod(extra, 1.0) else 0)
 		world._drop(CROPS[plot.seed]["yield"],count,center)
-		world._drop(plot.seed,1,center+Vector2(5,0))
+		# A Seed-saver (pass 14): now and then a second seed back.
+		world._drop(plot.seed,2 if sk and randf() < sk.value("seed_extra") else 1,center+Vector2(5,0))
 		plot.seed=""
 		plot.growth=0.0
 		plot.watered=sk != null and sk.value("keep_water") > 0.0

@@ -252,5 +252,131 @@
    "down": 6,
    "up": 5
   }
+ },
+ "raptor_crystal": {
+  "pounce": {
+   "side": {
+    "hit": 8,
+    "takeoff": 3
+   },
+   "down": {
+    "hit": 9,
+    "takeoff": 2
+   },
+   "up": {
+    "hit": 9,
+    "takeoff": 1
+   }
+  },
+  "slash": {
+   "side": 5,
+   "down": 5,
+   "up": 4
+  }
+ },
+ "trike_crystal": {
+  "gore": {
+   "side": 5,
+   "down": 5,
+   "up": 5
+  }
+ },
+ "stego_crystal": {
+  "tail_swing": {
+   "down": 5,
+   "side": 6,
+   "up": 5
+  },
+  "tail_swing_far": {
+   "side": 6
+  }
+ },
+ "longneck_crystal": {
+  "stomp": {
+   "side": 10,
+   "down": 10,
+   "up": 10
+  },
+  "tail_swing": {
+   "side": 7,
+   "down": 5,
+   "up": 3
+  },
+  "tail_swing_far": {
+   "side": 6
+  }
+ },
+ "parasaur_crystal": {
+  "stomp": {
+   "side": 8,
+   "down": 8,
+   "up": 10
+  }
+ },
+ "utah_crystal": {
+  "pounce": {
+   "side": {
+    "hit": 8,
+    "takeoff": 4
+   },
+   "down": {
+    "hit": 8,
+    "takeoff": 4
+   },
+   "up": {
+    "hit": 8,
+    "takeoff": 3
+   }
+  },
+  "slash": {
+   "side": 6,
+   "down": 5,
+   "up": 6
+  }
+ },
+ "deino_crystal": {
+  "pounce": {
+   "side": {
+    "hit": 8,
+    "takeoff": 3
+   },
+   "down": {
+    "hit": 9,
+    "takeoff": 4
+   },
+   "up": {
+    "hit": 9,
+    "takeoff": 4
+   }
+  },
+  "slash": {
+   "side": 5,
+   "down": 6,
+   "up": 5
+  }
+ },
+ "sucho_crystal": {
+  "bite": {
+   "side": 6,
+   "down": 5,
+   "up": 5
+  },
+  "chomp": {
+   "side": 6,
+   "down": 7,
+   "up": 8
+  }
+ },
+ "spino_crystal": {
+  "bite": {
+   "side": 6,
+   "down": 5,
+   "up": 4
+  },
+  "slash": {
+   "side": 6,
+   "down": 6,
+   "up": 5
+  }
  }
 }

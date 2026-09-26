@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/art/items/old_compass.png" id="2"]
+[resource]
+script = ExtResource("1")
+id = "old_compass"
+name = "Old Compass"
+description = "Its needle points somewhere that isn't north."
+icon = ExtResource("2")
+max_stack = 1
+rarity = "rare"
+equipment_slot = "trinket"
+effects = {
+"wisdom": 0.1
+}

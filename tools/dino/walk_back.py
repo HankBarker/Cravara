@@ -65,7 +65,8 @@ def masks(drawing, rig):
 
 
 def build(key, clip):
-    rig = RIG[key]
+    # A crystal-sick drawing (pass 14) stands like its clean kind.
+    rig = RIG.get(key) or RIG[key.replace("_crystal", "")]
     gait = GAIT[clip]
     drawing = Image.open(os.path.join(OUT, "first", "%s_up.png" % key)).convert("RGBA")
     src = drawing.load()

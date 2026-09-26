@@ -37,8 +37,8 @@ func _draw() -> void:
 	# Bronze casing with pointed ends around a dark bed.
 	draw_colored_polygon(PackedVector2Array([Vector2(3,0),Vector2(w-3,0),Vector2(w,floorf(h/2)),Vector2(w-3,h),Vector2(3,h),Vector2(0,floorf(h/2))]),Color("5c4a33"))
 	draw_colored_polygon(PackedVector2Array([Vector2(3,1),Vector2(w-3,1),Vector2(w-1,floorf(h/2)),Vector2(w-3,h-1),Vector2(3,h-1),Vector2(1,floorf(h/2))]),Color("aa986b"))
-	draw_rect(Rect2(3,1,inner,h-2),Color("0a1d1d"))
-	draw_rect(Rect2(3,h-2,inner,1),Color("162c2b"))
+	draw_rect(Rect2(3,1,inner,h-2),Color("1a120b"))
+	draw_rect(Rect2(3,h-2,inner,1),Color("2a1d13"))
 	if ghost > fill:
 		draw_rect(Rect2(3+fill,2,ghost-fill,h-4),tint.lerp(Color.WHITE,0.55))
 	if fill <= 0: return

@@ -12,7 +12,7 @@ var _ash_box: PanelContainer
 const ASH := Color("ddd6c6")
 var station_label: Label
 var detail: Label
-var recipe_list: VBoxContainer
+var recipe_list: Container
 var slots: Array[Control] = []
 var hotbar: Array[Control] = []
 var selected_category := "All"
@@ -46,10 +46,28 @@ var appearance_editor: CanvasLayer
 var skills_panel: Control
 var sort_button: Button
 var quick_stack_button: Button
+var pack_close_button: Button
+## Pass 14: the field pack's parts. The hotbar hides into the pack's first row
+## while it's open (the pouch in hand is marked beside its row).
+var _hotbar_frame: Control
+var _pouch_box: Control
+var _pouch_marker: Label
+var _candidates: Panel
+## The order wheel (hold Q): the one pointed at, and whether letting go of Q picks it.
+var _wheel: Control
+var _wheel_pick: Button = null
+var _wheel_hold := false
+## Where the pointer was when the wheel came up: nothing is picked until it
+## moves, so a tap-and-let-go of Q leaves the wheel up to be clicked.
+var _wheel_from := Vector2.INF
+var _wheel_moved := false
+var _wheel_outer: Array = []
+var _wheel_inner: Array = []
 const FRAME = preload("res://UI/CrystalFrame.gd")
 const METER = preload("res://UI/CrystalMeter.gd")
 ## The interface kit: fonts, palette, plaques, sockets and icons.
 const UI = preload("res://UI/SkyfangUI.gd")
+const SetBonus = preload("res://Forest/equipment/SetBonus.gd")
 var _heading_font: Font
 const INK := UI.INK
 const DARK := UI.DARK
@@ -83,9 +101,9 @@ func _ready() -> void:
 	add_child(root)
 	# One kit for every panel: carved slate, bronze, crystal, crisp pixel text.
 	root.theme = UI.theme()
-	_heading_font = UI.TITLE
+	_heading_font = UI.title_font()
 	_shade = ColorRect.new()
-	_shade.color = Color(0.02,0.09,0.08,0.48)
+	_shade.color = Color(0.06,0.04,0.02,0.45)
 	_shade.size = Vector2(480,270)
 	_shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(_shade)
@@ -168,18 +186,6 @@ func _button(parent: Node, text: String, pos: Vector2, dimensions: Vector2, call
 ## The status plate: a heart and a haunch, each with its crystal meter and the
 ## number itself. Region name top right; bleeding, toasts and the context line
 ## sit on soft dark backings so they read over the brightest meadow.
-## The keeper's breath (pass 13): a slim bar under the hunger bar, shown only
-## while it isn't full; ember while the keeper is winded (no sprinting).
-class BreathBar extends Control:
-	var value := 1.0
-	var winded := false
-	func _draw() -> void:
-		draw_rect(Rect2(0, 0, size.x, size.y), Color(0.04, 0.09, 0.09, 0.9))
-		var w := roundf((size.x - 2.0) * clampf(value, 0.0, 1.0))
-		if w > 0.0: draw_rect(Rect2(1, 1, w, size.y - 2.0), Color("e39a7f") if winded else Color("9fddbb"))
-
-var _breath: BreathBar
-var _breath_alpha := 0.0
 ## Where the lines under the status plate start (the gifts, a bleed, the ash).
 const UNDER_PLATE := 53.0
 
@@ -199,12 +205,6 @@ func _build_status() -> void:
 		var amount := _label(frame,"",Vector2(131,y+4),8,PAPER)
 		amount.size = Vector2(17,9)
 		status_values[name] = amount
-	_breath = BreathBar.new()
-	_breath.position = Vector2(28,36)
-	_breath.size = Vector2(100,4)
-	_breath.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_breath.modulate.a = 0.0
-	frame.add_child(_breath)
 	_region_plate = _backing(root,Vector4(7,1,7,2))
 	_region_label = _label(_region_plate,"The Skyfang Wilds",Vector2.ZERO,11,GOLD)
 	_region_plate.reset_size()
@@ -247,6 +247,7 @@ func _build_status() -> void:
 func _build_hotbar() -> void:
 	var frame := _panel(root,Vector2(113,235),Vector2(254,34))
 	frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_hotbar_frame = frame
 	for i in 8:
 		var slot := _slot(frame,i,Vector2(4+i*31,3),28)
 		hotbar.append(slot)
@@ -254,6 +255,7 @@ func _build_hotbar() -> void:
 	# Caps cycles five pouches of eight: a key cap and five crystal pips.
 	var pouch := _backing(root,Vector4(3,2,4,2))
 	pouch.position = Vector2(7,229)
+	_pouch_box = pouch
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation",2)
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -306,55 +308,72 @@ func _slot(parent: Node, index: int, pos: Vector2, pixels: int, source = null) -
 ## The socket a slot shows: lit crystal when it is the hotbar's choice, a
 ## brighter rim under the pointer.
 func slot_style(slot: Control, hovered := false) -> StyleBox:
-	if slot in hotbar and slot.slot_index == InventoryManager.selected_slot_index: return UI.box("slot_selected")
+	if slot.get("source") == null and slot.slot_index == InventoryManager.selected_slot_index and (slot in hotbar or slot in slots): return UI.box("slot_selected")
 	return UI.box("slot_hover" if hovered else "slot")
 
+## Pass 14: the keeper's field pack, laid out Terraria's way: the pack's
+## pockets top left (eight across, a pouch of eight to a row; the pouch in hand
+## is the hotbar), crafting beneath it, the gear down the right edge
+## (_build_equipment). It unzips over the world, which stays in view.
+const PACK_AT := Vector2(6, 54)
+const POCKET := 20
+const POCKET_STEP := 21
 func _build_inventory() -> void:
-	inventory_panel = _panel(root,Vector2(8,58),Vector2(211,176))
-	_label(inventory_panel,"FIELD SATCHEL",Vector2(12,7),10,GOLD)
-	_button(inventory_panel,"Gear",Vector2(162,7),Vector2(39,16),show_equipment)
-	sort_button=_button(inventory_panel,"Sort pack",Vector2(9,25),Vector2(67,14),func():
+	inventory_panel = _panel(root,PACK_AT,Vector2(184,140))
+	_label(inventory_panel,"Field Pack",Vector2(10,3),12,GOLD)
+	sort_button=_button(inventory_panel,"Sort",Vector2(88,6),Vector2(32,13),func():
 		var changed:=InventoryManager.sort_backpack()
-		show_toast("Backpack sorted; current hotbar protected" if changed else "Backpack is already sorted"))
-	sort_button.tooltip_text="Merge and sort backpack stacks. The current hotbar pouch stays exactly as it is."
-	quick_stack_button=_button(inventory_panel,"Stack nearby",Vector2(81,25),Vector2(120,14),func():
+		show_toast("Pack sorted; the pouch in hand stays as it is" if changed else "Your pack is already sorted"))
+	sort_button.tooltip_text="Merge and sort your pack. The pouch in hand (the hotbar row) stays exactly as it is."
+	quick_stack_button=_button(inventory_panel,"Stack",Vector2(123,6),Vector2(38,13),func():
 		var result:=InventoryManager.quick_stack_nearby(player)
-		show_toast("Stored %d items in %d chests; hotbar protected" % [result.moved,result.chests] if result.moved else "No matching chest space within reach and clear sight"))
-	quick_stack_button.tooltip_text="Store matching item types in nearby visible chests. Current hotbar stays with you."
-	for i in 35:
-		slots.append(_slot(inventory_panel,i,Vector2(9+(i%7)*28,39+(i/7)*24),23))
-	detail = _label(inventory_panel,"Gather. Craft. Make a home.",Vector2(10,159),7,MINT)
-	detail.size.x = 190
+		show_toast("Stored %d items in %d chests; the pouch in hand stays" % [result.moved,result.chests] if result.moved else "No chest in reach holds any of these"))
+	quick_stack_button.tooltip_text="Quick stack: everything a chest nearby already holds goes into it (chests in sight, within five tiles). The pouch in hand stays with you."
+	# Zip it shut (Tab, K or Esc do the same).
+	pack_close_button=_button(inventory_panel,"X",Vector2(164,6),Vector2(13,13),close_panels)
+	pack_close_button.tooltip_text="Close your pack [Tab]"
+	for i in InventoryManager.MAX_INVENTORY_SIZE:
+		slots.append(_slot(inventory_panel,i,Vector2(10+(i%8)*POCKET_STEP,22+(i/8)*POCKET_STEP),POCKET))
+	# The pouch in hand (the hotbar row): a brass mark beside it.
+	_pouch_marker = _label(inventory_panel,">",Vector2(3,27),8,GOLD)
+	detail = _label(inventory_panel,"Right-click wears or eats; Shift-click moves.",Vector2(10,128),8,MINT)
+	# Clip first: a label grows to its text until it clips, and then keeps that width.
 	detail.clip_text = true
-	recipes_panel = _panel(root,Vector2(224,58),Vector2(248,176))
-	_label(recipes_panel,"TRIBAL CRAFT",Vector2(12,7),10,GOLD)
-	station_label = _label(recipes_panel,"By hand",Vector2(136,10),7,MINT)
+	detail.size.x = 168
+	# Crafting: whatever the stations in reach allow (a workbench counts from
+	# five tiles off: stand by it and open your pack).
+	recipes_panel = _panel(root,Vector2(6,197),Vector2(320,70))
+	_label(recipes_panel,"Crafting",Vector2(10,3),12,GOLD)
+	station_label = _label(recipes_panel,"By hand",Vector2(78,8),8,MINT)
+	station_label.clip_text = true
+	station_label.size.x = 62
 	var search := LineEdit.new()
-	search.position = Vector2(7,30)
-	search.size = Vector2(151,17)
-	search.placeholder_text = "Find a recipe..."
+	search.position = Vector2(142,5)
+	search.placeholder_text = "Find..."
 	search.text_changed.connect(func(value): query=value; _refresh_recipes())
 	recipes_panel.add_child(search)
-	search.size = Vector2(151,17)
-	var filter := _button(recipes_panel,"Ready only",Vector2(163,30),Vector2(77,17),func(): craftable_only=not craftable_only; _refresh_recipes())
-	filter.toggle_mode = true
+	search.size = Vector2(66,14)
 	var selector := OptionButton.new()
 	selector.focus_mode = Control.FOCUS_NONE
-	selector.position = Vector2(7,50)
-	selector.size = Vector2(233,16)
+	selector.position = Vector2(211,5)
 	for category in CraftingManager.categories: selector.add_item(category)
 	selector.item_selected.connect(func(index): selected_category=CraftingManager.categories[index]; _refresh_recipes())
 	recipes_panel.add_child(selector)
-	selector.size = Vector2(233,16)
+	selector.size = Vector2(62,14)
+	var filter := _button(recipes_panel,"Ready",Vector2(276,5),Vector2(36,14),func(): craftable_only=not craftable_only; _refresh_recipes())
+	filter.toggle_mode = true
+	filter.tooltip_text = "Only what you can make now"
 	var scroll := ScrollContainer.new()
-	scroll.position = Vector2(7,71)
-	scroll.size = Vector2(233,98)
+	scroll.position = Vector2(8,22)
+	scroll.size = Vector2(305,44)
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	recipes_panel.add_child(scroll)
-	recipe_list = VBoxContainer.new()
-	recipe_list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	recipe_list.add_theme_constant_override("separation",3)
-	scroll.add_child(recipe_list)
+	var grid := GridContainer.new()
+	grid.columns = 14
+	grid.add_theme_constant_override("h_separation",1)
+	grid.add_theme_constant_override("v_separation",1)
+	scroll.add_child(grid)
+	recipe_list = grid
 	_refresh_recipes()
 
 func _process(delta: float) -> void:
@@ -372,15 +391,6 @@ func _process(delta: float) -> void:
 			status_values[name].add_theme_color_override("font_color",UI.EMBER if low else PAPER)
 		# News waits under an open panel (pass 13).
 		if is_instance_valid(_banner): _banner.visible = not is_open()
-		# Breath: shown while it isn't full, fading out once it is.
-		var breath: float = float(player.current_stamina) / maxf(1.0, float(player.max_stamina))
-		var winded: bool = player.get("winded") == true
-		_breath_alpha = move_toward(_breath_alpha, 1.0 if breath < 0.995 or winded else 0.0, delta * (6.0 if breath < 0.995 else 1.5))
-		if not is_equal_approx(_breath.value, breath) or _breath.winded != winded or not is_equal_approx(_breath.modulate.a, _breath_alpha):
-			_breath.value = breath
-			_breath.winded = winded
-			_breath.modulate.a = _breath_alpha
-			_breath.queue_redraw()
 		var bleeding: bool = player.get("bleed") != null and player.bleed.active()
 		_bleed_box.visible = bleeding
 		if bleeding: bleed_label.text = "BLEEDING  %ds" % ceili(player.bleed.time_left)
@@ -400,6 +410,7 @@ func _process(delta: float) -> void:
 	_toast_box.modulate.a = minf(1,_toast_time)
 	_toast_box.visible = _toast_time > 0 and toast.text != ""
 	if _toast_box.visible: _toast_box.position.y = _toast_top()
+	if is_instance_valid(command_panel) and is_instance_valid(_wheel): _tick_wheel()
 	_roster_tick -= delta
 	if roster_panel.visible and _roster_tick <= 0 and not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 		_roster_tick = 1.0
@@ -412,6 +423,13 @@ func _input(event: InputEvent) -> void:
 	if is_instance_valid(player) and player.get("respawning") == true: return
 	var session := get_tree().get_first_node_in_group("forest_session")
 	if session and is_instance_valid(session.get("fishing")) and session.fishing.is_active(): return
+	if event is InputEventKey and not event.pressed and _wheel_hold and (event.keycode == KEY_Q or event.physical_keycode == KEY_Q):
+		_wheel_hold = false
+		# Let go pointing at an order: that order. Let go without pointing:
+		# the wheel stays up, to be clicked (Esc closes it).
+		if is_instance_valid(_wheel_pick) and is_instance_valid(command_panel): _wheel_pick.emit_signal("pressed")
+		get_viewport().set_input_as_handled()
+		return
 	if not event is InputEventKey or not event.pressed or event.echo: return
 	var key: int = event.keycode if event.keycode != 0 else event.physical_keycode
 	var focus := get_viewport().gui_get_focus_owner()
@@ -460,26 +478,46 @@ func is_open() -> bool:
 
 func open_panels() -> void:
 	close_panels()
-	_shade.show()
 	inventory_panel.show()
 	recipes_panel.show()
-	AudioManager.play_sfx("satchel_open")
+	equipment_panel.show()
+	_set_pack_mode(true)
+	AudioManager.play_sfx("pack_unzip")
 	_unfold_satchel()
 	_refresh_recipes()
 	update_armor_display()
+
+## While the pack is open its first row is the hotbar: the bottom hotbar, the
+## pouch chip and the Satchel charm under the crafting bar step aside, and the
+## task list (behind the gear) fades.
+func _set_pack_mode(open: bool) -> void:
+	if is_instance_valid(_hotbar_frame): _hotbar_frame.visible = not open
+	if is_instance_valid(_pouch_box): _pouch_box.visible = not open
+	if not shortcut_buttons.is_empty(): shortcut_buttons[0].visible = GameSettings.shortcut_buttons_visible and not open
+	if is_instance_valid(_tasks_box): _tasks_box.modulate.a = 0.0 if open else 1.0
+
+## The see-through full panels (skills, companions) would show the charms
+## through them: they step aside while one is up.
+func _set_charms_aside(aside: bool) -> void:
+	for button in shortcut_buttons: button.visible = GameSettings.shortcut_buttons_visible and not aside
 
 func close_panels() -> void:
 	if is_instance_valid(appearance_editor):
 		appearance_editor._cancel()
 		appearance_editor=null
-	if _interface_ready and inventory_panel and inventory_panel.visible: AudioManager.play_sfx("satchel_close")
+	if _interface_ready and inventory_panel and inventory_panel.visible: AudioManager.play_sfx("pack_zip")
 	if is_instance_valid(_satchel_tween): _satchel_tween.kill()
-	if inventory_panel: inventory_panel.scale = Vector2.ONE
-	if recipes_panel: recipes_panel.scale = Vector2.ONE
+	for panel in [inventory_panel, recipes_panel, equipment_panel]:
+		if panel: panel.scale = Vector2.ONE
 	inventory_panel.hide()
 	recipes_panel.hide()
 	close_chest()
 	if equipment_panel: equipment_panel.hide()
+	if is_instance_valid(_candidates): _candidates.hide()
+	_set_pack_mode(false)
+	_set_charms_aside(false)
+	_wheel_hold = false
+	_wheel_pick = null
 	if roster_panel: roster_panel.hide()
 	if is_instance_valid(skills_panel): skills_panel.hide()
 	if _shade: _shade.hide()
@@ -683,6 +721,7 @@ func update_inventory_display() -> void:
 	for i in _pouch_pips.size():
 		_pouch_pips[i].texture = load(UI.ART + ("pip_lit.png" if i == pouch else "pip.png"))
 	if _hotbar_page: _hotbar_page.tooltip_text = "Caps Lock: next pouch of eight (pouch %d of 5)" % (pouch+1)
+	if is_instance_valid(_pouch_marker): _pouch_marker.position.y = 27 + pouch * POCKET_STEP
 	for slot in slots + hotbar + chest_slots:
 		var source = slot._get_source()
 		if not is_instance_valid(source) or slot.slot_index < 0 or slot.slot_index >= source.inventory.size(): continue
@@ -699,53 +738,38 @@ func _refresh_recipes() -> void:
 	for child in recipe_list.get_children():
 		recipe_list.remove_child(child)
 		child.queue_free()
-	station_label.text = "By hand" if CraftingManager.nearby_stations.is_empty() else "At " + CraftingManager.nearby_stations[0].capitalize()
+	station_label.text = "By hand" if CraftingManager.nearby_stations.is_empty() else "At the " + str(CraftingManager.nearby_stations[0]).replace("_"," ")
 	var recipes: Array = CraftingManager.get_recipes_by_category(selected_category).duplicate()
 	recipes.sort_custom(func(a,b): return CraftingManager.can_craft_recipe(a) and not CraftingManager.can_craft_recipe(b))
 	for recipe in recipes:
 		if not query.is_empty() and not recipe.name.to_lower().contains(query.to_lower()): continue
 		var available: bool = CraftingManager.can_craft_recipe(recipe)
 		if craftable_only and not available: continue
-		var row := Panel.new()
-		row.custom_minimum_size = Vector2(221,46)
-		row.add_theme_stylebox_override("panel",UI.box("card" if available else "card_dim"))
-		recipe_list.add_child(row)
-		var socket := Panel.new()
-		socket.position = Vector2(4,5)
-		socket.size = Vector2(26,26)
-		socket.add_theme_stylebox_override("panel",UI.box("slot"))
-		socket.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		row.add_child(socket)
-		var icon := TextureRect.new()
-		icon.position = Vector2(5,5)
-		icon.size = Vector2(24,24)
-		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		icon.texture = CraftingManager.get_item_icon(recipe.item_id)
-		icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		icon.position = Vector2(1,1)
-		socket.add_child(icon)
 		var quantity: int = recipe.get("quantity",1)
-		var recipe_name := _label(row,recipe.name + (" x%d" % quantity if quantity > 1 else ""),Vector2(35,5),8,PAPER if available else UI.DIM)
-		recipe_name.size.x = 130
-		recipe_name.clip_text = true
 		var ingredients: Array[String] = []
 		for id in recipe.ingredients:
-			ingredients.append("%s %d/%d" % [CraftingManager.get_ingredient_name(id).replace("Wood ","").replace("Plant ",""),InventoryManager.get_item_count(id),recipe.ingredients[id]])
-		var need := _label(row,", ".join(ingredients),Vector2(35,16),8,MINT if available else UI.EMBER)
-		need.size = Vector2(132,24)
-		need.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		need.clip_text = true
+			ingredients.append("%s %d/%d" % [CraftingManager.get_ingredient_name(id),InventoryManager.get_item_count(id),recipe.ingredients[id]])
 		var station: String = recipe.get("station","")
-		var where := _label(row,"BY HAND" if station == "" else station.to_upper(),Vector2(166,5),8,GOLD)
-		where.size.x = 50
-		where.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-		var craft := _button(row,"Craft",Vector2(172,26),Vector2(44,16),func():
+		var b := Button.new()
+		b.focus_mode = Control.FOCUS_NONE
+		b.custom_minimum_size = Vector2(POCKET,POCKET)
+		b.add_theme_stylebox_override("normal",UI.box("slot"))
+		b.add_theme_stylebox_override("hover",UI.box("slot_hover"))
+		b.add_theme_stylebox_override("pressed",UI.box("slot_selected"))
+		b.add_theme_stylebox_override("focus",StyleBoxEmpty.new())
+		b.icon = CraftingManager.get_item_icon(recipe.item_id)
+		b.expand_icon = true
+		b.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		b.add_theme_constant_override("icon_max_width",16)
+		# What can't be made yet shows faded.
+		b.modulate = Color.WHITE if available else Color(1,1,1,0.4)
+		b.set_meta("recipe",recipe.item_id)
+		b.name = "Recipe_" + str(recipe.item_id)
+		b.tooltip_text = "%s%s\n%s\n%s\n%s" % [recipe.name," x%d" % quantity if quantity > 1 else "",str(recipe.get("description","")),", ".join(ingredients),("Click to make it" if available else ("Needs the " + station.replace("_"," ") if station != "" and not station in CraftingManager.nearby_stations else "Not enough yet")) + ("" if station == "" else "  (" + station.replace("_"," ") + ")")]
+		b.pressed.connect(func():
 			if CraftingManager.try_craft(recipe.item_id): show_toast("Crafted %s x%d" % [recipe.name,quantity])
 			else: show_toast(CraftingManager.last_failure))
-		craft.disabled = not available
-		row.tooltip_text = preload("res://UI/ItemDetails.gd").text(ItemDB.make(recipe.item_id)) + "\n" + ", ".join(ingredients)
-		craft.tooltip_text = row.tooltip_text
+		recipe_list.add_child(b)
 
 func show_slot_tooltip_for(slot: Control) -> void:
 	var data: Dictionary = slot._get_source().inventory[slot.slot_index]
@@ -792,18 +816,87 @@ func is_chest_open_for(chest: Node) -> bool:
 	return _active_chest == chest
 
 func open_chest(chest: Node) -> void:
-	close_panels()
-	_shade.show()
+	open_panels()
 	_active_chest = chest
-	inventory_panel.show()
-	AudioManager.play_sfx("satchel_open")
-	recipes_panel.hide()
-	chest_panel = _panel(root,Vector2(224,58),Vector2(248,172))
-	_label(chest_panel,str(chest.get("bag_title")) if chest.get("bag_title") != null else "CAMP STORAGE",Vector2(12,7),10,GOLD)
-	_label(chest_panel,"Drag stacks or Shift-click to transfer.",Vector2(8,28),7)
+	var rows: int = ceili(float(chest.inventory.size()) / 9.0)
+	chest_panel = _panel(root,Vector2(194,54),Vector2(208,42+rows*POCKET_STEP))
+	var title := _label(chest_panel,str(chest.get("bag_title")) if chest.get("bag_title") != null else "Camp Storage",Vector2(10,3),12,GOLD)
+	title.size.x = 188
+	title.clip_text = true
+	var take := _button(chest_panel,"Take all",Vector2(9,21),Vector2(46,13),func(): _chest_move_all(true))
+	take.tooltip_text = "Everything in here into your pack"
+	var put := _button(chest_panel,"Put all",Vector2(58,21),Vector2(42,13),func(): _chest_move_all(false))
+	put.tooltip_text = "Everything in your pack in here (the pouch in hand stays with you)"
+	var stack := _button(chest_panel,"Stack",Vector2(103,21),Vector2(36,13),_chest_stack)
+	stack.tooltip_text = "Whatever this already holds, from your pack into it"
+	var sort := _button(chest_panel,"Sort",Vector2(142,21),Vector2(32,13),_chest_sort)
+	sort.tooltip_text = "Merge and sort what's in here"
 	for i in chest.inventory.size():
-		chest_slots.append(_slot(chest_panel,i,Vector2(8+(i%8)*29,42+(i/8)*29),26,chest))
+		chest_slots.append(_slot(chest_panel,i,Vector2(10+(i%9)*POCKET_STEP,37+(i/9)*POCKET_STEP),POCKET,chest))
 	chest.inventory_changed.connect(update_inventory_display)
+	update_inventory_display()
+
+## Take all (into the pack) or put all (out of the pack, the pouch in hand kept).
+func _chest_move_all(take: bool) -> void:
+	if not is_instance_valid(_active_chest): return
+	var source = _active_chest if take else InventoryManager
+	var target = InventoryManager if take else _active_chest
+	var keep: Array = [] if take else InventoryManager.get_hotbar_indices()
+	var moved := 0
+	var left := 0
+	for i in source.inventory.size():
+		if i in keep: continue
+		var entry: Dictionary = source.inventory[i]
+		if entry.item == null: continue
+		# Whatever fits goes (Terraria's way); the rest stays where it was.
+		var fit: int = mini(int(entry.quantity), int(target.capacity_for(entry.item)))
+		if fit > 0 and target.add_item(entry.item, fit):
+			moved += fit
+			source.inventory[i] = {"item":null,"quantity":0} if fit >= int(entry.quantity) else {"item":entry.item,"quantity":int(entry.quantity) - fit}
+		if fit < int(entry.quantity): left += 1
+	source.inventory_changed.emit()
+	target.inventory_changed.emit()
+	update_inventory_display()
+	if moved == 0 and left > 0: show_toast("No room for any of it")
+	elif left > 0: show_toast("Moved %d; %d stacks didn't fit" % [moved, left])
+
+## Whatever this chest already holds, from the pack (not the pouch in hand).
+func _chest_stack() -> void:
+	if not is_instance_valid(_active_chest): return
+	var have := {}
+	for entry in _active_chest.inventory:
+		if entry.item: have[entry.item.id] = true
+	var keep := InventoryManager.get_hotbar_indices()
+	var moved := 0
+	for i in InventoryManager.inventory.size():
+		var entry: Dictionary = InventoryManager.inventory[i]
+		if i in keep or entry.item == null or not have.has(entry.item.id): continue
+		var fit: int = mini(int(entry.quantity), int(_active_chest.capacity_for(entry.item)))
+		if fit > 0 and _active_chest.add_item(entry.item, fit):
+			moved += fit
+			InventoryManager.inventory[i] = {"item":null,"quantity":0} if fit >= int(entry.quantity) else {"item":entry.item,"quantity":int(entry.quantity) - fit}
+	InventoryManager.inventory_changed.emit()
+	_active_chest.inventory_changed.emit()
+	update_inventory_display()
+	show_toast("Stacked %d into it" % moved if moved else "Nothing in your pack matches what's in here")
+
+## Merge the chest's stacks and sort them by name.
+func _chest_sort() -> void:
+	if not is_instance_valid(_active_chest): return
+	var stacks: Array = []
+	for entry in _active_chest.inventory:
+		if entry.item == null: continue
+		var left: int = int(entry.quantity)
+		for stack in stacks:
+			if stack.item.id == entry.item.id:
+				var add := mini(left, maxi(0, int(stack.item.max_stack) - int(stack.quantity)))
+				stack.quantity += add
+				left -= add
+		if left > 0: stacks.append({"item":entry.item,"quantity":left})
+	stacks.sort_custom(func(a, b): return (a.item.name + "/" + a.item.id).naturalnocasecmp_to(b.item.name + "/" + b.item.id) < 0)
+	for i in _active_chest.inventory.size():
+		_active_chest.inventory[i] = stacks[i] if i < stacks.size() else {"item":null,"quantity":0}
+	_active_chest.inventory_changed.emit()
 	update_inventory_display()
 
 func close_chest() -> void:
@@ -847,64 +940,76 @@ func _exit_tree() -> void:
 	# DragController is an autoload; do not let it retain a freed slot across scenes.
 	DragController.end_drag()
 
+## Pass 14: the gear down the pack's right edge: head, body, legs and the
+## light in one column, five trinkets in the other. Right-click something in
+## the pack to wear it; click a worn piece to take it off; click an empty place
+## for a short list of what fits it.
+const GEAR_AT := Vector2(406, 54)
+const GEAR_SLOTS := [["head","Head",0,0],["chest","Body",0,1],["legs","Legs",0,2],["light","Light",0,3],
+	["trinket_0","Trinket I",1,0],["trinket_1","Trinket II",1,1],["trinket_2","Trinket III",1,2],["trinket_3","Trinket IV",1,3],["trinket_4","Trinket V",1,4]]
 func _build_equipment() -> void:
-	equipment_panel = _panel(root,Vector2(39,25),Vector2(402,211))
-	_label(equipment_panel,"KEEPER'S EQUIPMENT",Vector2(14,7),11,GOLD)
-	_button(equipment_panel,"Appearance",Vector2(254,7),Vector2(84,17),show_appearance)
-	_button(equipment_panel,"Close",Vector2(343,7),Vector2(46,17),close_panels)
-	var portrait_frame := _panel(equipment_panel,Vector2(12,33),Vector2(108,111))
-	portrait_frame.get_child(0).inset = true
-	if is_instance_valid(player) and player.has_method("create_portrait"):
-		var portrait: Control = player.create_portrait()
-		portrait.position = Vector2(10,6)
-		portrait_frame.add_child(portrait)
-	elif is_instance_valid(player) and player.animated_sprite:
-		var portrait := TextureRect.new()
-		portrait.position = Vector2(22,12)
-		portrait.size = Vector2(64,88)
-		portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		portrait.texture = player.animated_sprite.sprite_frames.get_frame_texture(player.animated_sprite.animation,0)
-		portrait.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		portrait_frame.add_child(portrait)
-	_label(equipment_panel,"WILDKEEPER",Vector2(33,147),8,GOLD)
-	equipment_summary = _label(equipment_panel,"",Vector2(13,163),8,MINT)
-	equipment_summary.size = Vector2(107,37)
-	equipment_summary.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	var targets := ["head","chest","legs","trinket_0","trinket_1","trinket_2","light"]
-	var names := ["Head","Chest","Legs","Trinket I","Trinket II","Trinket III","Light"]
-	for i in targets.size():
-		var target: String = targets[i]
-		var b := _button(equipment_panel,names[i],Vector2(130+(i%4)*64,34+(i/4)*31),Vector2(60,27),func():
-			_equipment_target=target
-			_refresh_equipment())
-		b.name = "Equip_"+target
-		b.set_meta("caption",names[i])
-		b.icon_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	equipment_panel = _panel(root,GEAR_AT,Vector2(70,142))
+	_label(equipment_panel,"Gear",Vector2(10,3),12,GOLD)
+	for entry in GEAR_SLOTS:
+		var target: String = entry[0]
+		var b := Button.new()
+		b.focus_mode = Control.FOCUS_NONE
+		b.name = "Equip_" + target
+		b.position = Vector2(10 + int(entry[2]) * 28, 22 + int(entry[3]) * POCKET_STEP)
+		b.set_meta("caption",entry[1])
+		b.add_theme_stylebox_override("normal",UI.box("slot"))
+		b.add_theme_stylebox_override("hover",UI.box("slot_hover"))
+		b.add_theme_stylebox_override("pressed",UI.box("slot_selected"))
+		b.add_theme_stylebox_override("focus",StyleBoxEmpty.new())
 		b.expand_icon = true
-		b.add_theme_constant_override("icon_max_width",14)
+		b.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		b.add_theme_constant_override("icon_max_width",16)
+		b.pressed.connect(func(): _gear_clicked(target))
+		b.gui_input.connect(func(event):
+			if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_RIGHT: _take_off(target))
+		equipment_panel.add_child(b)
+		b.size = Vector2(POCKET,POCKET)
 		armor_buttons[target] = b
-	equipment_hint = _label(equipment_panel,"",Vector2(132,99),8,GOLD)
-	_button(equipment_panel,"Unequip",Vector2(322,97),Vector2(64,18),func():
-		if player and player.has_method("unequip_to_inventory"):
-			if not player.unequip_to_inventory(_equipment_target): show_toast("No item equipped, or your satchel is full")
-			else: AudioManager.play_sfx("unequip_gear")
-			_refresh_equipment())
+	equipment_summary = _label(equipment_panel,"",Vector2(9,106),8,MINT)
+	equipment_summary.size = Vector2(24,20)
+	_button(equipment_panel,"Appearance",Vector2(6,126),Vector2(58,13),show_appearance)
+	# (The old gear screen's hint line; kept for callers that still set it.)
+	equipment_hint = _label(equipment_panel,"",Vector2(0,0),8,GOLD)
+	equipment_hint.hide()
+	# What fits an empty place: a short list beside the gear.
+	_candidates = _panel(root,Vector2(280,54),Vector2(124,104))
+	_label(_candidates,"Wear...",Vector2(10,3),12,GOLD)
 	var scroll := ScrollContainer.new()
-	scroll.position = Vector2(131,119)
-	scroll.size = Vector2(255,78)
+	scroll.position = Vector2(7,22)
+	scroll.size = Vector2(111,76)
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	equipment_panel.add_child(scroll)
+	_candidates.add_child(scroll)
 	equipment_list = VBoxContainer.new()
 	equipment_list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	equipment_list.add_theme_constant_override("separation",3)
+	equipment_list.add_theme_constant_override("separation",2)
 	scroll.add_child(equipment_list)
+	_candidates.hide()
+
+## A place in the gear clicked: take off what's there, or list what fits it.
+func _gear_clicked(target: String) -> void:
+	if not is_instance_valid(player): return
+	if player.get_equipment(target) != null:
+		_take_off(target)
+		return
+	_equipment_target = target
+	_candidates.show()
+	_refresh_equipment()
+
+func _take_off(target: String) -> void:
+	if not is_instance_valid(player) or player.get_equipment(target) == null: return
+	if player.unequip_to_inventory(target):
+		AudioManager.play_sfx("unequip_gear")
+		_refresh_equipment()
+		update_inventory_display()
+	else: show_toast("Your pack is full")
 
 func show_equipment() -> void:
-	close_panels()
-	_shade.show()
-	equipment_panel.show()
-	_refresh_equipment()
+	open_panels()
 
 func show_appearance() -> void:
 	if not is_instance_valid(player) or is_instance_valid(appearance_editor): return
@@ -922,12 +1027,13 @@ func _refresh_equipment() -> void:
 		var item: Item = player.get_equipment(target) if player.has_method("get_equipment") else player.equipped_armor.get(target)
 		var b: Button = armor_buttons[target]
 		b.icon = item.icon if item else null
-		b.text = b.get_meta("caption")
-		b.tooltip_text = preload("res://UI/ItemDetails.gd").text(item) if item else "Empty " + str(b.get_meta("caption"))
-		if target == _equipment_target: b.add_theme_stylebox_override("normal",UI.box("button_on",Vector4(4,3,4,2)))
-		else: b.remove_theme_stylebox_override("normal")
-	equipment_summary.text = player.get_equipment_summary().replace(" | ","\n") if player.has_method("get_equipment_summary") else "Armor protects you\nin the wilds."
-	equipment_hint.text = "Choose " + str(armor_buttons[_equipment_target].get_meta("caption")).to_lower()
+		b.text = ""
+		b.tooltip_text = (preload("res://UI/ItemDetails.gd").text(item) + "\nClick to take it off") if item else "%s: empty. Click for what fits (or right-click it in your pack)." % str(b.get_meta("caption"))
+		b.modulate = Color.WHITE if item else Color(1,1,1,0.7)
+	var defence: int = int(player.defense) + (SetBonus.defense_bonus(player) if SetBonus else 0)
+	equipment_summary.text = "DEF\n%d" % defence
+	equipment_summary.tooltip_text = player.get_equipment_summary() if player.has_method("get_equipment_summary") else ""
+	if not is_instance_valid(_candidates) or not _candidates.visible: return
 	_clear_children(equipment_list)
 	var count := 0
 	for i in InventoryManager.inventory.size():
@@ -937,22 +1043,28 @@ func _refresh_equipment() -> void:
 		var index := i
 		var b := Button.new()
 		b.focus_mode = Control.FOCUS_NONE
-		b.text = item.name + "  / Equip"
+		b.text = item.name
 		b.icon = item.icon
 		b.expand_icon = true
-		b.add_theme_constant_override("icon_max_width",19)
-		b.custom_minimum_size = Vector2(239,24)
+		b.clip_text = true
+		b.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		b.add_theme_constant_override("icon_max_width",14)
+		b.custom_minimum_size = Vector2(108,18)
 		b.tooltip_text = preload("res://UI/ItemDetails.gd").text(item)
 		b.pressed.connect(func():
 			if player.has_method("equip_from_inventory") and player.equip_from_inventory(index,_equipment_target):
 				AudioManager.play_sfx("equip_gear")
-				show_toast("Equipped " + item.name)
-			else: show_toast("Cannot equip this item here")
-			_refresh_equipment())
+				show_toast("Wearing " + item.name)
+				_candidates.hide()
+			else: show_toast("That can't go there")
+			_refresh_equipment()
+			update_inventory_display())
 		equipment_list.add_child(b)
 	if count == 0:
 		var empty := Label.new()
-		empty.text = "No matching gear in your satchel.\nCraft equipment at a workbench."
+		empty.text = "Nothing in your pack fits.\nCraft some at a workbench."
+		empty.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		empty.custom_minimum_size = Vector2(108,0)
 		empty.add_theme_color_override("font_color",MINT)
 		equipment_list.add_child(empty)
 
@@ -990,11 +1102,13 @@ func show_skills() -> void:
 	if not is_instance_valid(skills_panel): return
 	close_panels()
 	_shade.show()
+	_set_charms_aside(true)
 	skills_panel.open()
 
 func show_roster() -> void:
 	close_panels()
 	_shade.show()
+	_set_charms_aside(true)
 	roster_panel.show()
 	_refresh_roster()
 
@@ -1038,7 +1152,7 @@ func _refresh_roster() -> void:
 		var meter := METER.new()
 		meter.position = Vector2(50,31)
 		meter.size = Vector2(110,9)
-		meter.tint = Color("76c4a5")
+		meter.tint = Color("e08a74")
 		meter.value = 100.0*creature.health/maxi(1,creature.stats.hp)
 		row.add_child(meter)
 		_label(row,"%d / %d" % [creature.health,creature.stats.hp],Vector2(165,31),8)
@@ -1047,70 +1161,200 @@ func _refresh_roster() -> void:
 		_button(row,"Orders",Vector2(274,25),Vector2(52,18),func():
 			if is_instance_valid(target): show_companion_commands(target))
 
-func show_companion_commands(creature: Node = null) -> void:
+## Pass 14: orders on a wheel, ARK's way (hold Q): the orders round an oval
+## rim, the temperaments stacked in its middle, the rarer things in a row
+## beneath. Point at one and let go of Q, or click it. Small and see-through:
+## the world stays in view.
+const WHEEL_AT := Vector2(240, 120)
+## The wheel's middle in its own panel, and the oval the orders sit on.
+const WHEEL_MID := Vector2(116, 104)
+const WHEEL_RX := 84.0
+const WHEEL_RY := 58.0
+func show_companion_commands(creature: Node = null, from_hold := false) -> void:
 	if creature != null and (not is_instance_valid(creature) or not creature.tamed or creature.is_dead): return
 	close_panels()
-	_shade.show()
 	_command_target = creature
 	_command_is_group = creature == null
+	_wheel_hold = from_hold
+	_wheel_pick = null
+	_wheel_from = Vector2.INF
+	_wheel_moved = false
+	_wheel_outer.clear()
+	_wheel_inner.clear()
 	var mountable: bool = creature != null and creature.species in ["stego","trike"]
 	var worker: bool=creature!=null and creature.species in ["stego","trike","dodo"]
-	command_panel = _panel(root,Vector2(101,12 if worker else (25 if creature else 48)),Vector2(278,246 if worker else (220 if mountable else (196 if creature else 176))))
-	var title: String = creature.stats.name if creature != null else "ALL COMPANIONS"
-	var title_label := _label(command_panel,title,Vector2(13,8),10,GOLD)
-	title_label.size.x = 228
+	command_panel = Panel.new()
+	command_panel.add_theme_stylebox_override("panel",StyleBoxEmpty.new())
+	command_panel.position = WHEEL_AT - WHEEL_MID
+	command_panel.size = Vector2(232,184)
+	root.add_child(command_panel)
+	_wheel = OrderWheel.new()
+	_wheel.center = WHEEL_MID
+	_wheel.rx = WHEEL_RX
+	_wheel.ry = WHEEL_RY
+	_wheel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_wheel.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	command_panel.add_child(_wheel)
+	var title: String = creature.stats.name if creature != null else "All companions"
+	# The name, in the oval between the top orders and the temperaments.
+	var title_label := _label(command_panel,title,Vector2(0,WHEEL_MID.y - 36.0),8,GOLD)
+	title_label.size.x = 232
+	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title_label.clip_text = true
-	_button(command_panel,"X",Vector2(247,8),Vector2(18,17),close_panels)
-	_label(command_panel,"Choose an order",Vector2(13,31),9,MINT)
-	if mountable:
-		_label(command_panel,"Saddle fitted" if creature.saddle else "No saddle fitted",Vector2(163,32),8,GOLD)
+	# The rim: the orders, and a companion's own doings.
+	var rim: Array = []
 	var orders := ["follow","stay","guard","roam"]
-	var tips := ["Travel with you and wade through shallow water.","Remain exactly here until given another order.","Defend this location, within your chosen stance.","Wander close to this location."]
-	if worker:
-		orders.append_array(["work","return"])
-		tips.append_array(["Gather your specialty near your home and store it in the assigned chest.","Return to your work home."])
-	var columns:=3 if worker else 2
-	var button_width:=81 if worker else 123
-	for i in orders.size():
-		var order_name: String = orders[i]
-		var b := _button(command_panel,order_name.capitalize(),Vector2(13+(i%columns)*(button_width+5),48+(i/columns)*26),Vector2(button_width,23),func():_apply_companion_command("order",order_name))
-		b.tooltip_text = tips[i]
-		if creature != null and creature.order == order_name: b.add_theme_stylebox_override("normal",UI.box("button_on",Vector4(5,3,5,2)))
-	_label(command_panel,"Temperament",Vector2(13,104),9,MINT)
+	var tips := {"follow":"Travel with you and wade through shallow water.","stay":"Remain exactly here until given another order.","guard":"Defend this spot, within your chosen temperament.","roam":"Wander close to this spot.","work":"Gather your specialty near your home and store it in the assigned chest.","return":"Return to your work home."}
+	if worker: orders.append_array(["work","return"])
+	for order_name in orders:
+		var b := _wheel_button(order_name.capitalize(),func():_apply_companion_command("order",order_name))
+		b.tooltip_text = tips[order_name]
+		if creature != null and creature.order == order_name: b.add_theme_stylebox_override("normal",UI.box("button_on",Vector4(4,2,4,2)))
+		rim.append(b)
+	if creature:
+		if mountable:
+			rim.append(_wheel_button("Ride",func():
+				if is_instance_valid(creature) and creature.has_method("mount"):
+					if creature.mount(player): close_panels()
+					else: show_toast("Equip a saddle and move closer to ride")))
+		rim.append(_wheel_button("Care",func():show_companion_care(creature)))
+		rim.append(_wheel_button("Pet",func():_pet_companion(creature)))
+	for i in rim.size():
+		_place_on_wheel(rim[i], -PI/2 + TAU * float(i) / float(rim.size()))
+	_wheel_outer = rim
+	_wheel.slots = rim.size()
+	# In the middle, stacked: the temperaments.
 	for i in 3:
 		var stance_name: String = ["passive","neutral","aggressive"][i]
-		var b := _button(command_panel,stance_name.capitalize(),Vector2(13+i*86,122),Vector2(81,22),func():_apply_companion_command("stance",stance_name))
+		var b := _wheel_button(stance_name.capitalize(),func():_apply_companion_command("stance",stance_name))
 		b.tooltip_text = ["Never attack. Use this to withdraw safely.","Defend yourself and your keeper when attacked.","Seek nearby hostile wildlife."][i]
-		if creature != null and creature.get("stance") == stance_name: b.add_theme_stylebox_override("normal",UI.box("button_on",Vector4(5,3,5,2)))
+		if creature != null and creature.get("stance") == stance_name: b.add_theme_stylebox_override("normal",UI.box("button_on",Vector4(4,2,4,2)))
+		b.size.x = 58.0
+		b.position = WHEEL_MID + Vector2(-29.0, -22.0 + 15.0 * i)
+		_wheel_inner.append(b)
+	# Beneath: the rarer things.
+	var row: Array = []
 	if creature:
-		var row_y := 149
 		if worker:
-			_button(command_panel,"Set work home",Vector2(13,row_y),Vector2(123,21),func():
-				if is_instance_valid(creature): show_toast("Work home set" if creature.set_work_home() else "Cannot set work home here"))
-			_button(command_panel,"Assign chest",Vector2(141,row_y),Vector2(123,21),func():
-				if is_instance_valid(creature): show_toast("Nearby chest assigned" if creature.assign_nearest_work_chest() else "No suitable chest near work home"))
-			row_y+=27
+			row.append(_wheel_button("Set work home",func():
+				if is_instance_valid(creature): show_toast("Work home set" if creature.set_work_home() else "Cannot set work home here")))
+			row.append(_wheel_button("Assign chest",func():
+				if is_instance_valid(creature): show_toast("Nearby chest assigned" if creature.assign_nearest_work_chest() else "No suitable chest near work home")))
 		if mountable:
-			_button(command_panel,"Equip saddle",Vector2(13,row_y),Vector2(81,23),func():_equip_saddle(creature))
-			_button(command_panel,"Remove",Vector2(99,row_y),Vector2(81,23),func():
+			row.append(_wheel_button("Equip saddle",func():_equip_saddle(creature)))
+			row.append(_wheel_button("Remove",func():
 				if is_instance_valid(creature) and creature.has_method("unequip_saddle"):
 					if creature.unequip_saddle():
 						AudioManager.play_sfx("unequip_gear")
 						show_companion_commands(creature)
 						show_toast("Saddle removed")
-					else: show_toast("Cannot remove saddle; dismount and check satchel space"))
-			_button(command_panel,"Ride",Vector2(185,row_y),Vector2(81,23),func():
-				if is_instance_valid(creature) and creature.has_method("mount"):
-					if creature.mount(player): close_panels()
-					else: show_toast("Equip a saddle and move closer to ride"))
-			row_y += 27
-		_button(command_panel,"Locate companion",Vector2(13,row_y),Vector2(123,21),func():_locate_companion(creature))
-		_button(command_panel,"Back to bonds",Vector2(141,row_y),Vector2(123,21),show_roster)
-		_label(command_panel,"Esc closes without changing orders.",Vector2(13,row_y+26),7,GOLD)
-		_button(command_panel,"Care",Vector2(181,row_y+25),Vector2(40,16),func():show_companion_care(creature))
-		_button(command_panel,"Pet",Vector2(225,row_y+25),Vector2(39,16),func():_pet_companion(creature))
-	else:
-		_label(command_panel,"Click a command. Esc closes without changes.",Vector2(13,154),7,GOLD)
+					else: show_toast("Cannot remove saddle; dismount and check satchel space")))
+		row.append(_wheel_button("Locate companion",func():_locate_companion(creature)))
+		row.append(_wheel_button("Back to bonds",show_roster))
+	var line_y := 186.0
+	var widths: Array = []
+	for b in row: widths.append(b.size.x)
+	# Two lines when they won't fit in one.
+	var per_line: int = row.size() if row.size() <= 3 else ceili(row.size() / 2.0)
+	for i in row.size():
+		var line: int = i / maxi(1, per_line)
+		var first: int = line * per_line
+		var count: int = mini(per_line, row.size() - first)
+		var span := 0.0
+		for j in count: span += float(widths[first + j]) + 3.0
+		var left := WHEEL_MID.x - span / 2.0
+		for j in i - first: left += float(widths[first + j]) + 3.0
+		row[i].position = Vector2(left, line_y + line * 17.0)
+	if not row.is_empty(): command_panel.size.y = 186.0 + 17.0 * ceilf(float(row.size()) / maxf(1.0, float(per_line)))
+	var hint := _label(command_panel,"Point, let go of Q" if from_hold else "Click an order",Vector2(0,WHEEL_MID.y + 27.0),8,MINT)
+	hint.size.x = 232
+	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	hint.visible = creature == null or from_hold
+
+## A small leather tab for the wheel (a direct child of the panel: the tests
+## and the mouse find it by its text).
+func _wheel_button(text: String, action: Callable) -> Button:
+	var b := Button.new()
+	b.text = text
+	b.focus_mode = Control.FOCUS_NONE
+	b.pressed.connect(action)
+	b.pressed.connect(func(): AudioManager.play_sfx("equip_gear"))
+	command_panel.add_child(b)
+	b.size = Vector2(maxf(40.0, float(text.length()) * 5.0 + 10.0), 14)
+	return b
+
+func _place_on_wheel(b: Button, angle: float) -> void:
+	b.set_meta("angle", angle)
+	b.position = WHEEL_MID + Vector2(cos(angle) * WHEEL_RX, sin(angle) * WHEEL_RY) - b.size / 2.0
+
+## While the wheel is up: the order the pointer is toward (the rim, or the
+## temperaments nearer the middle), lit, and taken when Q is let go.
+func _tick_wheel() -> void:
+	if not is_instance_valid(command_panel) or not is_instance_valid(_wheel): return
+	var mouse: Vector2 = command_panel.get_local_mouse_position()
+	if _wheel_from == Vector2.INF: _wheel_from = mouse
+	if not _wheel_moved and mouse.distance_to(_wheel_from) > 4.0: _wheel_moved = true
+	var local: Vector2 = mouse - WHEEL_MID
+	# How far round the oval (1.0 on the rim the orders sit on).
+	var oval := Vector2(local.x / WHEEL_RX, local.y / WHEEL_RY)
+	var pick: Button = null
+	var best := INF
+	if not _wheel_moved: pass
+	elif absf(local.x) < 34.0 and absf(local.y) < 26.0:
+		# The middle: the temperament nearest the pointer.
+		for b in _wheel_inner:
+			if not is_instance_valid(b): continue
+			var gap: float = (b.position + b.size / 2.0).distance_to(mouse)
+			if gap < best:
+				best = gap
+				pick = b
+	# The rim (not down in the row of rarer things beneath the wheel).
+	elif oval.length() > 0.62 and oval.length() < 1.45 and local.y < 80.0:
+		for b in _wheel_outer:
+			if not is_instance_valid(b): continue
+			var diff: float = absf(wrapf(oval.angle() - float(b.get_meta("angle")), -PI, PI))
+			if diff < best:
+				best = diff
+				pick = b
+	if pick != _wheel_pick:
+		if is_instance_valid(_wheel_pick): _wheel_pick.remove_theme_stylebox_override("hover")
+		_wheel_pick = pick
+		for b in _wheel_outer + _wheel_inner:
+			if is_instance_valid(b): b.modulate = Color(1,1,1,1) if b == pick or pick == null else Color(1,1,1,0.7)
+	_wheel.pick_angle = float(pick.get_meta("angle")) if pick and pick in _wheel_outer else INF
+	_wheel.pick_rect = Rect2(pick.position - Vector2(2, 1), pick.size + Vector2(4, 2)) if pick and pick in _wheel_inner else Rect2()
+	_wheel.queue_redraw()
+
+## The wheel's backdrop: a see-through leather oval, a brass rim, and the
+## slice (or the temperament) the pointer is toward, lit.
+class OrderWheel extends Control:
+	var center := Vector2.ZERO
+	var rx := 84.0
+	var ry := 58.0
+	var slots := 4
+	var pick_angle := INF
+	var pick_rect := Rect2()
+
+	func _oval(sx: float, sy: float, a0 := 0.0, a1 := TAU, steps := 48) -> PackedVector2Array:
+		var pts := PackedVector2Array()
+		for k in steps + 1:
+			var a: float = a0 + (a1 - a0) * float(k) / float(steps)
+			pts.append(center + Vector2(cos(a) * sx, sin(a) * sy))
+		return pts
+
+	func _draw() -> void:
+		var disc := _oval(rx + 28.0, ry + 20.0)
+		draw_colored_polygon(disc, Color(0.11, 0.07, 0.045, 0.5))
+		draw_polyline(disc, Color(0.85, 0.66, 0.37, 0.7), 1.0)
+		draw_polyline(_oval(rx * 0.56, ry * 0.58), Color(0.85, 0.66, 0.37, 0.3), 1.0)
+		if pick_angle != INF:
+			var span: float = PI / float(maxi(slots, 1))
+			var outer := _oval((rx + 28.0) * 0.98, (ry + 20.0) * 0.98, pick_angle - span, pick_angle + span, 10)
+			var inner := _oval(rx * 0.58, ry * 0.6, pick_angle + span, pick_angle - span, 10)
+			outer.append_array(inner)
+			draw_colored_polygon(outer, Color(0.85, 0.66, 0.37, 0.2))
+		if pick_rect.has_area():
+			draw_rect(pick_rect, Color(0.85, 0.66, 0.37, 0.25))
 
 ## Pass 13: a companion's care. What it is (temperament, traits, a mutation's
 ## colour; its stats once the Sky-Fang lens is won), its saddlebags, the lead
@@ -1208,13 +1452,18 @@ func _clear_children(node: Node) -> void:
 
 func _unfold_satchel() -> void:
 	if is_instance_valid(_satchel_tween): _satchel_tween.kill()
+	# The flap drops open from the top, crafting rises from below, the gear
+	# swings in from the edge.
 	inventory_panel.pivot_offset = Vector2(inventory_panel.size.x/2,0)
-	recipes_panel.pivot_offset = Vector2(recipes_panel.size.x/2,0)
-	inventory_panel.scale = Vector2(1,0.07)
-	recipes_panel.scale = Vector2(1,0.07)
+	recipes_panel.pivot_offset = Vector2(0,recipes_panel.size.y)
+	equipment_panel.pivot_offset = Vector2(equipment_panel.size.x,0)
+	inventory_panel.scale = Vector2(1,0.06)
+	recipes_panel.scale = Vector2(1,0.06)
+	equipment_panel.scale = Vector2(0.06,1)
 	_satchel_tween = create_tween().set_parallel(true)
-	_satchel_tween.tween_property(inventory_panel,"scale",Vector2.ONE,0.22).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
-	_satchel_tween.tween_property(recipes_panel,"scale",Vector2.ONE,0.28).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
+	_satchel_tween.tween_property(inventory_panel,"scale",Vector2.ONE,0.2).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	_satchel_tween.tween_property(recipes_panel,"scale",Vector2.ONE,0.22).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT).set_delay(0.06)
+	_satchel_tween.tween_property(equipment_panel,"scale",Vector2.ONE,0.2).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT).set_delay(0.09)
 
 func _locate_companion(creature: Node) -> void:
 	var session := get_tree().get_first_node_in_group("forest_session")

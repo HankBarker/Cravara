@@ -75,9 +75,9 @@ func run():
 	InventoryManager.hotbar_start=32
 	InventoryManager.selected_slot_index=34
 	InventoryManager.inventory[34]={"item":ItemDB.make("berry"),"quantity":7}
-	var final_pouch:=snapshot(InventoryManager.inventory.slice(32,35))
+	var final_pouch:=snapshot(InventoryManager.inventory.slice(32,40))
 	InventoryManager.sort_backpack()
-	check(snapshot(InventoryManager.inventory.slice(32,35))==final_pouch and InventoryManager.selected_slot_index==34,"Three-slot final hotbar pouch remains protected")
+	check(snapshot(InventoryManager.inventory.slice(32,40))==final_pouch and InventoryManager.selected_slot_index==34,"The final pouch of eight remains protected")
 	clear_inventory()
 	InventoryManager.hotbar_start=0
 	InventoryManager.selected_slot_index=0
@@ -112,7 +112,8 @@ func run():
 	check(tip.contains("Damage") and tip.contains("Mining"),"Tool tooltip exposes actual damage and mining stats")
 	check(preload("res://UI/ItemDetails.gd").text(ItemDB.make("cooked_meat")).contains("Fullness"),"Food tooltip includes fullness duration")
 	await shot("01-sort-stack-stats")
-	await key(KEY_K)
+	# Pass 14: the gear is the open pack's right edge (K would close it).
+	if not hud.equipment_panel.visible: await key(KEY_K)
 	stage.player.equip_armor("head",ItemDB.make("leather_helmet"))
 	var initial_look: Dictionary=stage.player.appearance.duplicate()
 	var inv_before:=snapshot(InventoryManager.inventory)

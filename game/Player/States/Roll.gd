@@ -36,6 +36,7 @@ func update_state(delta):
 	# Quadratic brake: ~150 px/s on average, ~60 px (almost four tiles) in all.
 	player.velocity = direction * lerpf(PEAK_SPEED, END_SPEED, t * t) * speed_scale
 	player.move_with_knockback()
-	player.roll_invulnerable = elapsed < IFRAMES_UNTIL
+	var dodge: float = preload("res://Forest/items/Trinkets.gd").value(player, "dodge") if player.get("equipped_trinkets") != null else 0.0
+	player.roll_invulnerable = elapsed < IFRAMES_UNTIL * (1.0 + dodge)
 	if elapsed >= DURATION:
 		player.finish_roll()

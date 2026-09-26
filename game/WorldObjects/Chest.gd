@@ -66,7 +66,20 @@ func apply_save_data(data: Dictionary) -> void:
 		inventory[i] = {"item": null, "quantity": 0}
 	inventory_changed.emit()
 
+## Room this chest has for more of an item (its stacks' room plus empty slots).
+func capacity_for(item: Item) -> int:
+	if item == null: return 0
+	var room := 0
+	for slot in inventory:
+		if slot.item == null: room += item.max_stack
+		elif slot.item.id == item.id: room += maxi(0, item.max_stack - int(slot.quantity))
+	return room
+
+## All or nothing (pass 14), like InventoryManager.add_item: false means the
+## chest is untouched. (It used to keep what fitted and still say false, and
+## a caller that left its own stack alone on false made items from nothing.)
 func add_item(item: Item, quantity: int = 1) -> bool:
+	if item == null or quantity <= 0 or capacity_for(item) < quantity: return false
 	# Try stacking first
 	for i in inventory.size():
 		var slot = inventory[i]

@@ -21,6 +21,7 @@ const FLORA = preload("res://Forest/ground/ForestFlora.gd")
 const ROOFS = preload("res://Forest/ForestRoofs.gd")
 const Housing = preload("res://Forest/folk/Housing.gd")
 const Loot = preload("res://Forest/world/Loot.gd")
+const Trinkets = preload("res://Forest/items/Trinkets.gd")
 ## A cache was opened (cell, {item id: count}): the session notes what turned up.
 signal cache_opened(cell: Vector2i, loot: Dictionary)
 ## Points of interest: ruins of the first builders and the old tribe's carved
@@ -155,10 +156,12 @@ func _process(delta: float) -> void:
 	if not player or not CraftingManager.has_method("set_nearby_stations"): return
 	var stations: Array[String] = []
 	var here := to_cell(player.global_position)
-	for y in range(here.y - 5, here.y + 6):
-		for x in range(here.x - 5, here.x + 6):
+	# Pass 14: a station works as an area: within about five tiles of it, the
+	# pack's crafting has its recipes.
+	for y in range(here.y - 6, here.y + 7):
+		for x in range(here.x - 6, here.x + 7):
 			var p = props.get(Vector2i(x, y))
-			if is_instance_valid(p) and p.kind in ["workbench","campfire"] and p.global_position.distance_to(player.global_position) < 64:
+			if is_instance_valid(p) and p.kind in ["workbench","campfire"] and p.global_position.distance_to(player.global_position) < 88:
 				stations.append(p.kind)
 	CraftingManager.set_nearby_stations(stations)
 
@@ -640,6 +643,8 @@ func _open_cache(c: Vector2i, cache) -> bool:
 	cache.opened = true
 	cache.queue_redraw()
 	var loot: Dictionary = Loot.cache(c, world_seed)
+	var find := Loot.find("cache", c, world_seed, Trinkets.of(get_tree(), "luck"))
+	if find != "": loot[find] = 1
 	_burst(loot, Vector2(c * CELL) + Vector2(8, 10))
 	AudioManager.play_sfx("harvest_plant")
 	_notify("The ancient cache grinds open.")
@@ -656,6 +661,9 @@ func dig_at(pos: Vector2) -> bool:
 	if not props.has(c) or props[c].kind not in Prop.DIG_SPOTS: return false
 	var kind: String = props[c].kind
 	var loot: Dictionary = Loot.relic(c, world_seed) if kind == "relic" else Loot.roots(c, world_seed)
+	if kind == "relic":
+		var find := Loot.find("relic", c, world_seed, Trinkets.of(get_tree(), "luck"))
+		if find != "": loot[find] = 1
 	_remove_prop(c)
 	mined[c] = true
 	if kind == "relic": SignalBus.relic_dug.emit(c)
@@ -1383,6 +1391,8 @@ func _search_bones(c: Vector2i) -> bool:
 		loot["old_bone"] = 4 + h % 4
 		loot["fossil_bone"] = 1 + (1 if h % 3 == 0 else 0)
 		if h % 4 == 0: loot["ancient_coin"] = 2 + h % 3
+	var find := Loot.find("bones", c, world_seed, Trinkets.of(get_tree(), "luck"))
+	if find != "": loot[find] = 1
 	_burst(loot, Vector2(c * CELL) + Vector2(8, 10))
 	AudioManager.play_sfx("harvest_plant")
 	_notify("You pick through the old bones.")

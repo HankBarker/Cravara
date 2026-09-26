@@ -64,7 +64,7 @@ func run():
 	check(not player.equip_from_inventory(6,"light"), "stacked light swap rejected if previous lantern has no storage space")
 	check(player.equipped_light.id == "lantern" and InventoryManager.inventory[6].quantity == 5, "failed light swap conserves torch stack and equipped lantern")
 	clear_inventory()
-	check(player.equip_from_inventory(-1,"head") == false and player.equip_from_inventory(35,"head") == false, "invalid inventory indices rejected")
+	check(player.equip_from_inventory(-1,"head") == false and player.equip_from_inventory(InventoryManager.inventory.size(),"head") == false, "invalid inventory indices rejected")
 	put(0,"crystal_pendant")
 	put(1,"crystal_pendant")
 	put(2,"hunter_charm")
@@ -109,7 +109,7 @@ func run():
 	legacy.store_string(JSON.stringify(saved))
 	legacy.close()
 	check(scene._load_journey(LEGACY_PATH), "legacy journey lacking equipment section loads")
-	check(player.get_equipment("light") == null and player.equipped_trinkets == [null,null,null] and player.get_equipment("head") == null, "legacy load clears stale equipped accessories and armor")
+	check(player.get_equipment("light") == null and player.equipped_trinkets == [null,null,null,null,null] and player.get_equipment("head") == null, "legacy load clears stale equipped accessories and armor")
 	check(player.max_stamina == 100 and not player._carried_light.visible, "legacy load clears stale bonuses and light")
 	await get_tree().process_frame
 

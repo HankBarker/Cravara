@@ -5,6 +5,8 @@ signal cancelled
 const FRAME = preload("res://UI/CrystalFrame.gd")
 var fish: Dictionary
 var progress := 0.28
+## Seconds before the fish slips the hook (longer with a Long Line).
+var _time_limit := 24.0
 var cradle := 0.45
 var cradle_velocity := 0.0
 var fish_position := 0.5
@@ -26,12 +28,18 @@ func configure(profile: Dictionary, seed_value: int, on_left := true):
 
 func _ready():
 	layer=75
+	# Fishing stars (pass 14): a wider band to hold the fish in, longer before it slips.
+	var sk = get_tree().get_first_node_in_group("skills")
+	if sk:
+		fish=fish.duplicate()
+		fish.cradle=minf(0.3,float(fish.cradle)*(1.0+float(sk.value("fish_cradle"))))
+		_time_limit=24.0*(1.0+float(sk.value("fish_time")))
 	var root:=Control.new()
 	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	root.mouse_filter=Control.MOUSE_FILTER_STOP
 	add_child(root)
 	var shade:=ColorRect.new()
-	shade.color=Color(0.025,0.065,0.06,0.43)
+	shade.color=Color(0.06,0.04,0.02,0.43)
 	shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	root.add_child(shade)
 	var origin:=Vector2(8 if panel_on_left else 256,24)
@@ -41,7 +49,7 @@ func _ready():
 	root.add_child(frame)
 	root.theme=preload("res://UI/SkyfangUI.gd").theme()
 	title=_label(root,"RIVER FISHING",origin+Vector2(14,8),13)
-	title.add_theme_font_override("font",preload("res://Forest/fonts/IMFellEnglish.ttf"))
+	title.add_theme_font_override("font",preload("res://UI/SkyfangUI.gd").title_font())
 	title.add_theme_color_override("font_color",Color("dcc085"))
 	_label(root,str(fish.name),origin+Vector2(94,48),12)
 	_label(root,str(fish.difficulty)+" current",origin+Vector2(94,65),9)
@@ -61,7 +69,7 @@ func _ready():
 	for state in ["normal","hover","pressed","focus"]:
 		var style:=_rim()
 		style.set_content_margin_all(0)
-		if state=="hover": style.bg_color=Color("345948")
+		if state=="hover": style.bg_color=Color("4a3321")
 		close.add_theme_stylebox_override(state,style)
 	close.pressed.connect(_cancel)
 	root.add_child(close)
@@ -117,10 +125,12 @@ func _process(delta: float):
 	if cradle<=float(fish.cradle) or cradle>=1-float(fish.cradle): cradle_velocity*=0.35
 	fish_position=clampf(0.50+sin(elapsed*float(fish.speed)+_phase)*float(fish.range)+sin(elapsed*float(fish.speed)*2.3+_phase)*float(fish.dart),0.08,0.92)
 	inside=absf(cradle-fish_position)<=float(fish.cradle)
-	progress=clampf(progress+(float(fish.gain) if inside else -float(fish.loss))*delta,0,1)
+	# A Mirefang Tooth, a Bog-iron Band (pass 14): the fish tires sooner.
+	var knack: float = preload("res://Forest/items/Trinkets.gd").of(get_tree(), "fishing")
+	progress=clampf(progress+(float(fish.gain)*(1.0+knack) if inside else -float(fish.loss)*(1.0-knack*0.5))*delta,0,1)
 	status.text="Steady hands... %d%%" % int(progress*100) if inside else "The fish is slipping away... %d%%" % int(progress*100)
 	play_area.queue_redraw()
-	if progress>=1 or progress<=0 or elapsed>=24:
+	if progress>=1 or progress<=0 or elapsed>=_time_limit:
 		resolved=true
 		held=false
 		finished.emit(progress>=1)
@@ -133,19 +143,19 @@ func _draw_track():
 		play_area.draw_line(Vector2(35,y+4),Vector2(40,y+4),Color("285359"))
 	var h: float=float(fish.cradle)*2*116
 	var cradle_y: float=7+(1-cradle)*116-h/2
-	play_area.draw_rect(Rect2(10,roundf(cradle_y),30,roundf(h)),Color("4c986e") if inside else Color("346751"))
-	play_area.draw_rect(Rect2(10,roundf(cradle_y),30,roundf(h)),Color("c6df9e"),false)
+	play_area.draw_rect(Rect2(10,roundf(cradle_y),30,roundf(h)),Color("c9a063") if inside else Color("8a6d45"))
+	play_area.draw_rect(Rect2(10,roundf(cradle_y),30,roundf(h)),Color("f2e6c9"),false)
 	var icon: Texture2D=ItemDB.get_prototype(str(fish.id)).icon
 	var y: float=7+(1-fish_position)*116
 	play_area.draw_texture_rect(icon,Rect2(14,roundf(y)-6,23,12),false,Color(1,1,1,0.45 if waiting>0 else 1))
 	play_area.draw_style_box(_rim(),Rect2(57,0,14,129))
-	play_area.draw_rect(Rect2(60,4,8,121),Color("1c332b"))
+	play_area.draw_rect(Rect2(60,4,8,121),Color("2a1d13"))
 	play_area.draw_rect(Rect2(60,125-roundf(progress*121),8,roundf(progress*121)),Color("d0b46d"))
-	for notch in [30,60,90]: play_area.draw_line(Vector2(59,notch),Vector2(69,notch),Color("63806b"))
+	for notch in [30,60,90]: play_area.draw_line(Vector2(59,notch),Vector2(69,notch),Color("8a6d45"))
 
 func _rim() -> StyleBoxFlat:
 	var style:=StyleBoxFlat.new()
-	style.bg_color=Color("112725")
+	style.bg_color=Color("22170f")
 	style.border_color=Color("b79e69")
 	style.set_border_width_all(1)
 	style.set_corner_radius_all(3)

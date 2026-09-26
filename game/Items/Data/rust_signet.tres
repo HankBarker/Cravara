@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/art/items/rust_signet.png" id="2"]
+[resource]
+script = ExtResource("1")
+id = "rust_signet"
+name = "Rustback Signet"
+description = "A ring of rust-red allosaur scale."
+icon = ExtResource("2")
+max_stack = 1
+rarity = "epic"
+equipment_slot = "trinket"
+effects = {
+"melee": 0.08,
+"defense": 1
+}

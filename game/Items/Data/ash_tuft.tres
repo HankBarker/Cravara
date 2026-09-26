@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/art/items/ash_tuft.png" id="2"]
+[resource]
+script = ExtResource("1")
+id = "ash_tuft"
+name = "Ashen Mane Tuft"
+description = "A tuft of the Ashmane's mane. Snow and ash can't reach you."
+icon = ExtResource("2")
+max_stack = 1
+rarity = "epic"
+equipment_slot = "trinket"
+effects = {
+"cold": 1,
+"ash_guard": 0.5
+}

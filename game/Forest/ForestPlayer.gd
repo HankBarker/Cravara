@@ -11,7 +11,8 @@ var _swing_item: Item
 var _attack_target := Vector2.ZERO
 var respawning := false
 signal equipment_changed
-var equipped_trinkets: Array[Item] = [null, null, null]
+## Pass 14: five trinket slots (was three), Terraria's accessories.
+var equipped_trinkets: Array[Item] = [null, null, null, null, null]
 var equipped_light: Item = null
 var _carried_light: PointLight2D
 var _swing_duration := 0.3
@@ -93,58 +94,25 @@ func stop_action():
 	action_kind=""
 	if state not in ["dead","attack"]: switch_state("idle")
 
-# Pass 13: the legacy stamina fields hold the keeper's breath. Sprinting and
-# rolling spend it and a breather fills it again, so the long roads push back
-# ("everyone's too speedy"). Blows never wait on it (combat stays fluid:
-# has_stamina is always true for them), and hunger still pays for activity.
-const SPRINT_SECONDS := 9.0     # a full bar of flat-out running
-const BREATH_REFILL := 7.0      # seconds from empty to full at rest
-const BREATH_DELAY := 0.9       # the pause after running before it fills
-const ROLL_BREATH := 14.0
-const WINDED_UNTIL := 0.35      # run dry: no sprinting until back to this share
+# Pass 14: no breath. Sprinting and rolling are free again (Hank: "remove the
+# breath feature... the sprinting speed, I think it's about perfect"); the pace,
+# the going underfoot and hunger push back instead. The legacy stamina fields
+# stay full (old saves carry them).
 ## Walking pace and flat-out running (pass 13: from 76 and 125).
 const WALK := 54
 const SPRINT := 88
 ## Wading pace (before a river totem or the Tidecaller set).
 const WADE_WALK := 28
 const WADE_SPRINT := 36
-var winded := false
-var _breath_rest := 0.0
-var _breath_shown := -1.0
-
 func has_stamina(_amount: float) -> bool:
 	return true
 
 func consume_stamina(_amount: float):
 	spend_exertion(0.10)
 
-## Shift runs only with breath to spare (the run and walk states ask).
+## Shift runs (the run and walk states ask); not while rowing.
 func can_sprint() -> bool:
-	return not winded and current_stamina > 0.0 and not boating
-
-func spend_breath(amount: float) -> void:
-	current_stamina = maxf(0.0, current_stamina - amount)
-	_breath_rest = BREATH_DELAY
-	if current_stamina <= 0.0: winded = true
-	_show_breath()
-
-func _tick_stamina(delta: float):
-	var running := state == "run" and velocity.length() > 20.0 and not boating and not is_instance_valid(mounted_creature)
-	if running:
-		current_stamina = maxf(0.0, current_stamina - max_stamina / SPRINT_SECONDS * delta)
-		_breath_rest = BREATH_DELAY
-		if current_stamina <= 0.0: winded = true
-	else:
-		_breath_rest = maxf(0.0, _breath_rest - delta)
-		if _breath_rest <= 0.0:
-			current_stamina = minf(max_stamina, current_stamina + max_stamina / BREATH_REFILL * delta)
-	if winded and current_stamina >= max_stamina * WINDED_UNTIL: winded = false
-	_show_breath()
-
-func _show_breath() -> void:
-	if absf(current_stamina - _breath_shown) >= 0.5 or (current_stamina >= max_stamina and _breath_shown < max_stamina):
-		_breath_shown = current_stamina
-		SignalBus.player_stamina_changed.emit(current_stamina, max_stamina)
+	return not boating
 
 func spend_exertion(hunger_points: float):
 	if food_satiation_left > 0:
@@ -165,8 +133,10 @@ func _tick_hunger(delta: float):
 	var rate: float = {"idle":0.012, "walk":0.035, "sprint":0.16}[activity]
 	# Snowfall (pass 13): out under the open sky the cold makes the keeper hungrier.
 	var events = get_tree().get_first_node_in_group("world_events")
-	if events and events.cold() and forest_world and forest_world.has_method("to_cell") and not forest_world.roofs.has(forest_world.to_cell(global_position)):
+	if events and events.cold() and forest_world and forest_world.has_method("to_cell") and not forest_world.roofs.has(forest_world.to_cell(global_position)) and Trinkets.value(self, "cold") < 1.0:
 		rate *= 1.35
+	# A Dodo Plume (pass 14): hunger comes slower.
+	rate *= 1.0 - Trinkets.value(self, "hunger")
 	var satiety_speed: float = {"idle":0.5, "walk":1.0, "sprint":2.0}[activity]
 	var fed_time := minf(delta, food_satiation_left / satiety_speed)
 	food_satiation_left = maxf(0, food_satiation_left - delta * satiety_speed)
@@ -196,16 +166,20 @@ func take_damage(amount: int, attacker = null, knockback := 200.0):
 	var controller = mounted_creature._mount_controller if is_instance_valid(mounted_creature) else null
 	var gifts = _gifts()
 	var guard: int = gifts.defense_bonus() if gifts else 0
-	# A worn trinket can guard too (the Buried King's crown).
-	for trinket in equipped_trinkets:
-		if trinket: guard += trinket.defense
+	# A worn trinket can guard too (the Buried King's crown, a Rustfang Buckler).
+	guard += int(Trinkets.value(self, "defense"))
 	guard += SetBonus.defense_bonus(self)
-	# A Warden's calling (pass 13).
+	# Combat's Hardened and Warden stars.
 	var sk := _skills()
 	if sk: guard += int(sk.value("defence"))
 	# Hornguard: a tenth less harm, and blows barely shove.
 	amount = maxi(1, int(round(float(amount) * SetBonus.harm_mult(self))))
 	knockback *= SetBonus.knockback_mult(self)
+	# Pass 14 trinkets: steadiness (less shove), and thorns for whatever strikes up close.
+	knockback *= 1.0 - Trinkets.value(self, "steady")
+	var thorns := int(Trinkets.value(self, "thorns"))
+	if thorns > 0 and attacker is Node2D and is_instance_valid(attacker) and attacker != self and attacker.has_method("take_damage") and attacker.global_position.distance_to(global_position) < 56.0 and attacker.get("is_dead") != true:
+		attacker.call_deferred("take_damage", thorns, self, 60.0)
 	# Plateback: whatever strikes the keeper up close is cut by the spikes.
 	if SetBonus.bleeds(self) and attacker is Node2D and is_instance_valid(attacker) and attacker.has_method("apply_bleed") and attacker.global_position.distance_to(global_position) < 56.0:
 		attacker.apply_bleed(2.5, 3.0, self)
@@ -298,9 +272,7 @@ func _physics_process(delta):
 	_swing_time = maxf(0.0, _swing_time - delta)
 	if forest_world:
 		in_water = forest_world.is_water_at(global_position)
-	var wade_boost := SetBonus.wading_bonus(self)
-	for trinket in equipped_trinkets:
-		if trinket: wade_boost += trinket.wading_bonus
+	var wade_boost := SetBonus.wading_bonus(self) + Trinkets.value(self, "wading")
 	walk_speed = int(WADE_WALK + WALK * wade_boost) if in_water else WALK
 	sprint_speed = int(WADE_SPRINT + SPRINT * wade_boost) if in_water else SPRINT
 	if boating:
@@ -317,6 +289,8 @@ func _physics_process(delta):
 		set_speed *= SetBonus.sand_speed_mult(self)
 	# Choking on ash (or struck by an Ashmane's roar): slower.
 	set_speed *= ash_speed_mult()
+	# A Wayfarer's Anklet, a Sandblade Plume (pass 14).
+	set_speed *= 1.0 + Trinkets.value(self, "speed")
 	# The going (pass 13): the bog's mud drags at the feet, loose sand a little.
 	if forest_world and not boating and not in_water and forest_world.has_method("to_cell"):
 		match str(forest_world.ground_style.get(forest_world.to_cell(global_position), "")):
@@ -324,13 +298,12 @@ func _physics_process(delta):
 			"sand": set_speed *= 0.85
 		# Fresh snow underfoot, out in the open (a snowfall, pass 13).
 		var weather = get_tree().get_first_node_in_group("world_events")
-		if weather and weather.cold() and not forest_world.roofs.has(forest_world.to_cell(global_position)): set_speed *= 0.85
+		if weather and weather.cold() and not forest_world.roofs.has(forest_world.to_cell(global_position)) and Trinkets.value(self, "cold") < 1.0: set_speed *= 0.85
 	walk_speed = int(round(walk_speed * set_speed))
 	sprint_speed = int(round(sprint_speed * set_speed))
 	move_accel_scale = WATER_ACCEL_SCALE if in_water else 1.0
 	if controls_locked and state != "dead":
 		_tick_hunger(delta)
-		_tick_stamina(delta)
 		velocity = Vector2.ZERO
 		if state in ["walk", "run", "roll"]:
 			switch_state("idle")
@@ -403,6 +376,7 @@ func _forest_hit():
 		knack = int(floor(skills.value("gather_power")))
 		if prop.kind == "tree": knack += int(skills.value("tree_power"))
 		elif prop.kind in ["rock", "wall", "ore"] or str(forest_world.Prop.WILD.get(prop.kind, {}).get("tool", "")) == "pickaxe": knack += int(skills.value("stone_power"))
+	if is_instance_valid(prop): knack += int(Trinkets.value(self, "gather"))
 	var harvested: bool = forest_world.mine_at(_attack_target, tool, power, knack) if harvest_reachable else false
 	if harvested:
 		var material: String = forest_world.last_hit_material
@@ -421,6 +395,8 @@ func _forest_hit():
 	# Blows that bleed: the Plate Maul, or any blade in the Plateback set.
 	var bleed_dps: float = _swing_item.bleed_dps if _swing_item else 0.0
 	if SetBonus.bleeds(self): bleed_dps = maxf(bleed_dps, 2.5)
+	# A Plate Pendant, a Reedstalker Claw (pass 14): the trinkets' bleed adds on.
+	bleed_dps += Trinkets.value(self, "bleed")
 	var blow := blow_class()
 	var shape := blow_shape(blow)
 	var aim := global_position.direction_to(_attack_target)
@@ -430,11 +406,19 @@ func _forest_hit():
 	for n in hits.size():
 		var target: Node2D = hits[n]
 		var dealt := strike_damage(n, hits)
-		# Vitals: a stab now and then finds the spot.
-		if blow == "stab" and skills and randf() < skills.value("stab_crit"): dealt *= 2
+		# Vitals: a stab now and then finds the spot; a Sickle Toe or a Tyrant's
+		# Eye (pass 14) lets any blow land twice as hard now and then.
+		var crit: float = Trinkets.value(self, "crit") + (float(skills.value("stab_crit")) if blow == "stab" and skills else 0.0)
+		if crit > 0.0 and randf() < crit: dealt *= 2
 		var alive: bool = not target.is_dead
 		var plated: bool = blow == "smash" and skills and skills.value("smash_plates") > 0.0 and target.get("species") != null and target.PLATED.has(target.species)
-		target.take_damage(dealt + (int(target.PLATED[target.species]) if plated else 0), self, float(shape.knock))
+		target.take_damage(dealt + (int(target.PLATED[target.species]) if plated else 0), self, float(shape.knock) * (1.0 + Trinkets.value(self, "knock")))
+		# A Keeper's Locket (pass 14): a fallen foe gives back a little life.
+		if alive and target.is_dead:
+			var feast := int(Trinkets.value(self, "feast"))
+			if feast > 0:
+				current_health = mini(max_health, current_health + feast)
+				SignalBus.player_health_changed.emit(current_health, max_health)
 		if bool(shape.get("stagger", false)) and not target.is_dead and target.has_method("stagger"): target.stagger(0.4 + (skills.value("smash_stagger") if skills else 0.0))
 		if bleed_dps > 0.0 and not target.is_dead and target.has_method("apply_bleed"): target.apply_bleed(bleed_dps, 4.0, self)
 		_feel_creature_hit(target, dealt, tool)
@@ -472,8 +456,7 @@ func _skills() -> Node:
 ## The weapon, its charms, the companions' gifts and the armour set.
 func _base_blow_damage() -> int:
 	var damage: int = _swing_item.damage if _swing_item and state == "attack" else (InventoryManager.get_selected_item().damage if InventoryManager.get_selected_item() else 1)
-	for trinket in equipped_trinkets:
-		if trinket: damage += trinket.damage_bonus
+	damage += int(Trinkets.value(self, "damage"))
 	var gifts = _gifts()
 	if gifts: damage = int(round(float(damage) * gifts.damage_mult()))
 	return int(round(float(damage) * SetBonus.damage_mult(self)))
@@ -512,6 +495,11 @@ func strike_damage(n: int = 0, foes: Array = []) -> int:
 		else: bonus += skills.value("brawl_damage") * float(mini(near - 1, 3))
 		if current_health * 2 < max_health: bonus += skills.value("rage_damage")
 		mult *= 1.0 + bonus
+	# Pass 14 trinkets: a Rustback Signet's bite; a Sky-Fang Shard against crystal beasts.
+	var charm := Trinkets.value(self, "melee")
+	if n < foes.size() and is_instance_valid(foes[n]) and foes[n].has_method("is_crystal") and foes[n].is_crystal():
+		charm += Trinkets.value(self, "crystal_bane")
+	mult *= 1.0 + charm
 	return maxi(1, int(round(float(_base_blow_damage()) * mult)))
 
 ## Hostile beasts and raiders within this many px.
@@ -648,14 +636,20 @@ func get_equipment(slot: String) -> Item:
 	if slot == "light": return equipped_light
 	if slot.begins_with("trinket_"):
 		var index := int(slot.trim_prefix("trinket_"))
-		if index >= 0 and index < 3: return equipped_trinkets[index]
+		if index >= 0 and index < equipped_trinkets.size(): return equipped_trinkets[index]
 	return null
+
+## The trinket slots' names ("trinket_0" ...).
+static func trinket_slots() -> Array:
+	var out: Array = []
+	for i in Trinkets.SLOTS: out.append("trinket_%d" % i)
+	return out
 
 func can_equip(item: Item, slot: String) -> bool:
 	if not item: return false
 	if equipped_armor.has(slot): return item.armor_slot == slot
 	if slot == "light": return item.equipment_slot == "light" or item.id == "torch"
-	if slot in ["trinket_0", "trinket_1", "trinket_2"]:
+	if slot in trinket_slots():
 		if item.equipment_slot != "trinket": return false
 		for existing in equipped_trinkets:
 			if existing and existing.id == item.id: return false
@@ -695,7 +689,7 @@ func _set_equipment(slot: String, item: Item):
 		equip_armor(slot, item)
 		return
 	elif slot == "light": equipped_light = item
-	elif slot in ["trinket_0", "trinket_1", "trinket_2"]:
+	elif slot in trinket_slots():
 		equipped_trinkets[int(slot.trim_prefix("trinket_"))] = item
 	_refresh_equipment()
 
@@ -712,13 +706,20 @@ func _refresh_equipment():
 		_carried_light.visible = equipped_light != null
 		_carried_light.color = Color("a2f4da") if equipped_light and equipped_light.id == "lantern" else Color("ffce83")
 		_carried_light.energy = 1.0
-		_carried_light.texture_scale = 1.6 if equipped_light and equipped_light.id == "lantern" else 1.0
+		_carried_light.texture_scale = (1.6 if equipped_light and equipped_light.id == "lantern" else 1.0) * (1.0 + Trinkets.value(self, "light"))
+		# A Moonstone Ring glows even without a torch (pass 14).
+		if not _carried_light.visible and Trinkets.value(self, "light") > 0.0:
+			_carried_light.visible = true
+			_carried_light.color = Color("c9d8ff")
+			_carried_light.energy = 0.55
+			_carried_light.texture_scale = 0.7 * (1.0 + Trinkets.value(self, "light"))
 	_refresh_skin()
 	_update_armor_glow()
 	equipment_changed.emit()
 	SignalBus.player_stamina_changed.emit(current_stamina, max_stamina)
 
 const SetBonus = preload("res://Forest/equipment/SetBonus.gd")
+const Trinkets = preload("res://Forest/items/Trinkets.gd")
 
 ## The companions' gifts (Forest/life/Buffs.gd), if the session has them.
 func _gifts():
@@ -726,9 +727,7 @@ func _gifts():
 
 func get_active_weapon_damage() -> int:
 	var amount: int = super.get_active_weapon_damage()
-	for trinket in equipped_trinkets:
-		if trinket: amount += trinket.damage_bonus
-	return amount
+	return amount + int(Trinkets.value(self, "damage"))
 
 func get_equipment_summary() -> String:
 	var line := "Defense %d  |  Damage %d" % [defense + SetBonus.defense_bonus(self), int(round(get_active_weapon_damage() * SetBonus.damage_mult(self)))]
@@ -857,9 +856,7 @@ func consume_slot(source: Node, index: int) -> bool:
 
 ## How much of the ash the keeper's things keep out (0..1).
 func ash_guard() -> float:
-	var g := SetBonus.ash_guard(self)
-	for trinket in equipped_trinkets:
-		if trinket: g = maxf(g, float(trinket.ash_guard))
+	var g := maxf(SetBonus.ash_guard(self), Trinkets.value(self, "ash_guard"))
 	var gifts = _gifts()
 	if gifts and gifts.has_method("ash_guard"): g = maxf(g, gifts.ash_guard())
 	return clampf(g, 0.0, 1.0)
@@ -920,9 +917,7 @@ func _tick_recovery(delta: float):
 		effect.left -= delta
 	_food_healing = _food_healing.filter(func(e):return e.left>0)
 	if current_health<max_health:
-		var recovery := 0.6
-		for trinket in equipped_trinkets:
-			if trinket: recovery += trinket.recovery_bonus
+		var recovery := 0.6 + Trinkets.value(self, "regen")
 		if current_hunger>0: _regen_accum += recovery*delta*(_gifts().recovery_mult() if _gifts() else 1.0)*SetBonus.recovery_mult(self)
 		if _regen_accum>=1:
 			var healing := int(_regen_accum)
@@ -991,8 +986,6 @@ func request_roll() -> void:
 func can_roll() -> bool:
 	if respawning or controls_locked or action_time > 0.0 or is_instance_valid(mounted_creature): return false
 	if roll_cooldown > 0.0 or not states.has("roll"): return false
-	# A tumble takes breath; out of it, no roll.
-	if current_stamina < ROLL_BREATH * 0.5: return false
 	var session := get_tree().get_first_node_in_group("forest_session")
 	if session and is_instance_valid(session.get("fishing")) and session.fishing.is_active(): return false
 	# A swing can be cancelled into a roll after its contact, never in the windup.
@@ -1007,7 +1000,6 @@ func _try_start_roll() -> void:
 	if boating: return
 	if _roll_buffer > 0.0 and can_roll():
 		_roll_buffer = 0.0
-		spend_breath(ROLL_BREATH)
 		switch_state("roll")
 
 ## The held direction, or the facing when nothing is held.

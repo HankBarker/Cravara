@@ -148,18 +148,14 @@ func _panels() -> void:
 	var sk = scene.skills
 	for skill in ["combat", "taming", "gathering", "breeding"]:
 		sk.gain(skill, 700.0)
-	sk.learn("sweep_arc")
-	sk.learn("lore_pack")
+	for id in ["blade_sense", "sweep_arc", "calm_voice", "lore_pack"]: sk.learn(id)
 	scene.hud.visible = true
 	scene.hud.show_skills()
 	scene.hud.skills_panel.select("taming")
 	await wait(0.4)
 	await grab("skills")
-	# The perk tree itself, once the callings are chosen.
-	for skill in ["combat", "taming", "gathering", "breeding"]:
-		var tier_opts: Array = sk.CALLINGS[skill][5]
-		sk.choose(skill, 5, str(tier_opts[0]))
-	sk.learn("stab_quick")
+	# The constellation itself, a few more stars lit (pass 14).
+	for id in ["stab_quick", "riposte", "thrust_reach", "hardened"]: sk.learn(id)
 	scene.hud.skills_panel.select("combat")
 	await wait(0.3)
 	await grab("skills-tree")

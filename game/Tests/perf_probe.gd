@@ -14,6 +14,10 @@ extends Node2D
 ## laptop itself varies far more than the builds do (both measured 10-15 ms
 ## one morning, 15-45 ms that evening): compare against the previous commit
 ## checked out in a worktree, run back to back, not against old numbers.
+## Pass 14 (305 creatures, crystal-sick beasts, the trinkets' and skills' sums):
+## 22-24 ms averaged over the spots against pass 13's 25 ms, run alternately
+## the same evening. A fresh worktree's first run compiles every shader (it
+## read 20-80 ms): throw that one away.
 var scene
 var t_proc := 0
 var t_pre := 0

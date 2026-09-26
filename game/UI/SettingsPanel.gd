@@ -1,6 +1,9 @@
 extends CanvasLayer
 ## Reusable from title or pause. Caller owns pause state; changes preview live.
 signal closed
+## The hands a heading can be written in (GameSettings.heading_font).
+const HEADINGS := ["field", "old", "pixel"]
+const HEADING_NAMES := ["Field hand", "Old hand", "Pixel"]
 var panel: Panel
 var controls: Dictionary = {}
 var _baseline: Dictionary
@@ -13,7 +16,7 @@ func _ready() -> void:
 	_root.size = Vector2(480,270)
 	add_child(_root)
 	var shade := ColorRect.new()
-	shade.color = Color(0.01,0.04,0.035,0.85)
+	shade.color = Color(0.06,0.04,0.02,0.85)
 	shade.size = Vector2(480,270)
 	_root.add_child(shade)
 	panel = Panel.new()
@@ -26,26 +29,40 @@ func _ready() -> void:
 	panel.add_child(frame)
 	_root.theme = preload("res://UI/SkyfangUI.gd").theme()
 	var title := _label("The Keeper's Settings",Vector2(13,5),16)
-	title.add_theme_font_override("font",load("res://Forest/fonts/IMFellEnglish.ttf"))
-	_slider("master","Master volume",34,AudioManager.master_volume,AudioManager.set_master_volume)
-	_slider("music","Music",57,AudioManager.music_volume,AudioManager.set_music_volume)
-	_slider("sfx","Effects",80,AudioManager.sfx_volume,AudioManager.set_sfx_volume)
-	_label("Camera follow",Vector2(14,106))
+	title.add_theme_font_override("font",preload("res://UI/SkyfangUI.gd").title_font())
+	_slider("master","Master volume",30,AudioManager.master_volume,AudioManager.set_master_volume)
+	_slider("music","Music",50,AudioManager.music_volume,AudioManager.set_music_volume)
+	_slider("sfx","Effects",70,AudioManager.sfx_volume,AudioManager.set_sfx_volume)
+	_label("Camera follow",Vector2(14,94))
 	var camera := OptionButton.new()
-	camera.position = Vector2(157,102)
-	camera.size = Vector2(169,23)
+	camera.position = Vector2(157,90)
+	camera.size = Vector2(169,21)
 	camera.add_item("Tight / steady")
 	camera.add_item("Smooth / drifting")
 	camera.selected = 1 if GameSettings.camera_follow_mode == "smooth" else 0
 	camera.item_selected.connect(func(index):GameSettings.set_camera_follow("smooth" if index == 1 else "tight"))
 	panel.add_child(camera)
 	controls.camera = camera
-	_toggle("shadows","World shadows",130,GameSettings.shadows_enabled,GameSettings.set_shadows)
-	_toggle("fullscreen","Fullscreen",153,GameSettings.fullscreen,GameSettings.set_fullscreen)
-	_toggle("shortcuts","Corner shortcut buttons",176,GameSettings.shortcut_buttons_visible,GameSettings.set_shortcut_buttons)
-	_toggle("shake","Screen shake",199,GameSettings.screen_shake,GameSettings.set_screen_shake)
-	_button("Save & return",Vector2(14,226),Vector2(195,21),func():_close(true))
-	_button("Cancel",Vector2(216,226),Vector2(110,21),func():_close(false))
+	# Pass 14: the hand titles are written in (the title above shows it at once;
+	# panels opened afterwards use it).
+	_label("Headings",Vector2(14,117))
+	var headings := OptionButton.new()
+	headings.position = Vector2(157,113)
+	headings.size = Vector2(169,21)
+	for hand in HEADING_NAMES: headings.add_item(hand)
+	headings.selected = maxi(0, HEADINGS.find(GameSettings.heading_font))
+	headings.item_selected.connect(func(index):
+		GameSettings.set_heading_font(HEADINGS[index])
+		title.add_theme_font_override("font",preload("res://UI/SkyfangUI.gd").title_font()))
+	panel.add_child(headings)
+	controls.headings = headings
+	controls.title = title
+	_toggle("shadows","World shadows",138,GameSettings.shadows_enabled,GameSettings.set_shadows)
+	_toggle("fullscreen","Fullscreen",160,GameSettings.fullscreen,GameSettings.set_fullscreen)
+	_toggle("shortcuts","Corner shortcut buttons",182,GameSettings.shortcut_buttons_visible,GameSettings.set_shortcut_buttons)
+	_toggle("shake","Screen shake",204,GameSettings.screen_shake,GameSettings.set_screen_shake)
+	_button("Save & return",Vector2(14,229),Vector2(195,20),func():_close(true))
+	_button("Cancel",Vector2(216,229),Vector2(110,20),func():_close(false))
 	hide()
 
 func _label(text: String,pos: Vector2,size: int = 10) -> Label:
@@ -91,9 +108,10 @@ func _toggle(id: String,label: String,y: int,value: bool,callback: Callable) -> 
 	controls[id] = button
 
 func show_settings() -> void:
-	_baseline = {"master":AudioManager.master_volume,"music":AudioManager.music_volume,"sfx":AudioManager.sfx_volume,"camera":GameSettings.camera_follow_mode,"shadows":GameSettings.shadows_enabled,"fullscreen":GameSettings.fullscreen,"shortcuts":GameSettings.shortcut_buttons_visible,"shake":GameSettings.screen_shake}
+	_baseline = {"master":AudioManager.master_volume,"music":AudioManager.music_volume,"sfx":AudioManager.sfx_volume,"camera":GameSettings.camera_follow_mode,"shadows":GameSettings.shadows_enabled,"fullscreen":GameSettings.fullscreen,"shortcuts":GameSettings.shortcut_buttons_visible,"shake":GameSettings.screen_shake,"headings":GameSettings.heading_font}
 	for key in ["master","music","sfx"]: controls[key].value = _baseline[key]
 	controls.camera.select(1 if GameSettings.camera_follow_mode == "smooth" else 0)
+	controls.headings.select(maxi(0, HEADINGS.find(GameSettings.heading_font)))
 	controls.shadows.set_pressed_no_signal(GameSettings.shadows_enabled)
 	controls.fullscreen.set_pressed_no_signal(GameSettings.fullscreen)
 	controls.shadows.text = "On" if GameSettings.shadows_enabled else "Off"
@@ -119,6 +137,8 @@ func _close(save: bool) -> void:
 		GameSettings.set_shadows(_baseline.shadows)
 		GameSettings.set_shortcut_buttons(_baseline.shortcuts)
 		GameSettings.set_screen_shake(_baseline.shake)
+		GameSettings.set_heading_font(_baseline.headings)
+		controls.title.add_theme_font_override("font",preload("res://UI/SkyfangUI.gd").title_font())
 		if GameSettings.fullscreen != _baseline.fullscreen: GameSettings.set_fullscreen(_baseline.fullscreen)
 	hide()
 	closed.emit()

@@ -44,6 +44,8 @@ func run():
 	await settle()
 	await key(KEY_TAB)
 	check(hud.inventory_panel.visible,"Hidden shortcuts retain Tab")
+	# Pass 14: K toggles the pack (its gear is the right edge), so close it first.
+	await key(KEY_TAB)
 	await key(KEY_K)
 	check(hud.equipment_panel.visible,"Hidden shortcuts retain K")
 	await key(KEY_P)

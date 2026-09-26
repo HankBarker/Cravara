@@ -1,5 +1,102 @@
 # Cravera: The Skyfang Wilds
 
+## Fourteenth pass: the pack, trinkets, the sickness in the herds, skills among the stars
+
+**The breath is gone**
+1. **Sprint as long as you like.** Breath is gone, with its bar; sprinting and rolling cost nothing.
+   The sprint speed is unchanged.
+
+**The field pack (Terraria-style)**
+2. **Tab (or K) unzips your pack** over the world with a zip, and zips it shut. It's small and
+   see-through, so you can still see what's around you. It has no green any more: brown leather,
+   brass and stitching.
+3. **Forty pockets.** The top row is the pouch in hand (the hotbar). Right-click wears or eats;
+   Shift-click moves a stack between pack and chest. Sort and Stack sit on the pack's flap, and
+   Stack puts everything nearby chests already hold into them. An X zips it shut.
+4. **Crafting runs beneath the pack**: every recipe as an icon (click to make it), a search, a
+   category list and a "Ready" filter. A workbench counts from about five tiles off: stand near it
+   and open your pack.
+5. **Your gear runs down the right edge**: head, body, legs, light and **five trinket places**.
+   Left-click a place to see what fits, click a worn piece to take it off, or right-click it in your
+   pack to put it on.
+6. **At a chest**, its panel opens beside your pack with Take all, Put all, Stack and Sort. Put all
+   and Stack keep the pouch in hand.
+7. **Hold Q for the order wheel** (ARK's way): the orders round an oval rim, the temperaments
+   stacked in the middle, the rarer things beneath. Point at one and let go of Q; let go without
+   pointing and the wheel stays up to be clicked.
+8. **Headings** come in three hands (Settings: the field hand, the old hand, or pixel), and the
+   charms are leather and brass now.
+
+**Trinkets (Terraria's accessories)**
+9. **43 trinkets**, worn in the five places; their effects add up (to a cap). What they do:
+   - crits, bleeding cuts, knockback, steadiness (less shove), thorns
+   - health back when a foe falls, regeneration, slower hunger
+   - speed, longer dodges, wading
+   - cold, fire and ash guards
+   - arrow damage and faster draws
+   - companions striking harder and taking less harm
+   - light, luck, faster skill learning, and extra damage to crystal beasts
+10. **Beasts drop their own, rarely** (worth hunting for):
+    - a raptor's Sickle Toe (3%), a trike's Frill Guard, a stego's Thagomizer Spike (thorns,
+      knockback and defence)
+    - an allosaur's Rustback Signet (a ring) or Rustfang Buckler (a shield)
+    - the rex's Tyrant's Eye, the Sailking's Fin (12%), the Ashmane's Mane Tuft, a Sandblade Plume
+    - a crystal-sick beast can give a Sky-Fang Shard or, very rarely, a Crystal Heart
+11. **Chests hold them now and then**: an old cache about one in five, a relic mound one in eight,
+    great bones rarely. Luck raises the odds.
+12. **Parts do double duty.** A stego's spike is worn for knockback and defence; its plates make a
+    maul or a bleeding Plate Pendant. Allosaur teeth make a ring, and allosaur scale makes armour.
+    Crafted trinkets (a Fang Necklace, Horn Guard, Claw Bracelet, Spine Torc...) can be **tinkered**
+    two into one at the workbench, with a little crystal:
+    - Fang Necklace and Plate Pendant make the Bloodfang Necklace
+    - Horn Guard and Frill Guard make the Bulwark Charm
+    - Wayfarer's Anklet and Sandblade Plume make the Wanderer's Step
+    - Tyrant's Eye and Rustback Signet make the Apex Signet
+
+**The Sky-Fang's sickness in the herds**
+13. **Crystal beasts live among the clean ones.** Out past about 70 tiles from camp, some of every
+    herd and pack are sick, and more the further out you go (about a third at the world's rim; the
+    jungle, when it comes, will be overrun).
+14. **Two degrees of sickness:**
+    - **Skytouched**: the hide goes grey and cold, and pale crystal veins pulse through it. It has
+      15% more health and bites 10% harder.
+    - **Crystalback**: crystal has grown out through the hide. These are their own drawings for the
+      raptor, trike, stego, longneck (bronto), parasaur, Sandblade, deinonychus, Suchomimus and
+      spinosaur. It has 40% more health and bites 20% harder.
+15. Sick beasts drop Sky-Fang crystal (and now and then a prism, a shard or a heart).
+
+**Skills among the stars**
+16. **Seven skills now: Fishing joins** (catches teach it; so do the ones that get away).
+17. **Each skill is a constellation of 18 stars**, a true tree drawn as its own figure, Skyrim's way.
+    Combat is a sword, Archery a drawn bow, Taming a horned trike skull, Breeding an egg, Farming a
+    pitchfork, Gathering a crossed pick and axe, and Fishing a leaping fish on a line.
+    - Lit stars shine gold, stars ready to light pulse pale blue, the rest wait dim.
+    - A star opens at its level once a star it hangs from is lit; some hang from either of two.
+    - Click a star, then Light it (or click it again).
+18. **Two star points a level: everything can be lit.** A mastered skill (level 10) lights its whole
+    constellation. The old one-or-the-other callings are stars now (Duelist and Brawler, Hunter and
+    Skirmisher...), and a journey from before keeps what it chose and gets its missing points.
+19. **New stars**, among them:
+    - Combat: Hardened, Second Wind, Bloodletter, Thunderclap, Riposte.
+    - Archery: Light Feet, Stalker, Sky-Fang Heads, Trophy Hunter.
+    - Taming: Calm Voice, Iron Seat, War Cry, Herd-call.
+    - Breeding: Twin Clutch and Brood (twin eggs), Courtship, Wild Blood.
+    - Farming: the Wide Can (watering soaks the patches beside it), Seed-saver, Hearty Meals, Well
+      Fed.
+    - Gathering (the wanderer's way down the handles): Pathfinder, Iron Belly, Wader, Thick Skin
+      (cold), Night Eyes, Fire-walker, Ash-lungs.
+    - Fishing: Steady Line (a wider band), Long Line, Double Hook (a second fish), Still Water.
+
+**Beasts**
+20. **The Ashmane's side view** is redrawn: its face is no longer scrunched.
+21. **The Suchomimus carries a low olive ridge now**, not the spinosaur's banner of a sail, so the
+    two no longer read alike.
+22. **The Sandblades can be found.** The Bonelands' allosaurs were killing them off before a keeper
+    ever met one:
+    - the allosaurs and the Sandblades now leave each other be
+    - there are three packs of two or three, not two pairs
+    - if the last one falls, a new pack wanders in at a dawn, far from you (the deinonychus too)
+
 ## Thirteenth pass: a slower, fairer wild; skills, taming ways, beasts of their own
 
 **The feel: slower, and every fight telegraphed**

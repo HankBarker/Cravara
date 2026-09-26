@@ -12,6 +12,8 @@ var fullscreen := false
 var shortcut_buttons_visible := true
 var persistence_enabled := true
 var screen_shake := true   # transient camera trauma on hurt and heavy hits
+## Pass 14: the titles' font (SkyfangUI.HEADINGS): "field", "old" or "pixel".
+var heading_font := "field"
 
 const SETTINGS_PATH := "user://settings.cfg"
 
@@ -35,6 +37,7 @@ func save_settings():
 	config.set_value("display", "fullscreen", fullscreen)
 	config.set_value("display", "shortcut_buttons_visible", shortcut_buttons_visible)
 	config.set_value("display", "screen_shake", screen_shake)
+	config.set_value("display", "heading_font", heading_font)
 	config.save(SETTINGS_PATH)
 
 func load_settings():
@@ -54,6 +57,8 @@ func load_settings():
 	fullscreen = bool(config.get_value("display","fullscreen",false))
 	shortcut_buttons_visible = bool(config.get_value("display","shortcut_buttons_visible",true))
 	screen_shake = bool(config.get_value("display","screen_shake",true))
+	heading_font = str(config.get_value("display","heading_font","field"))
+	if heading_font not in ["field","old","pixel"]: heading_font = "field"
 	apply_display()
 
 func apply_display() -> void:
@@ -75,6 +80,10 @@ func set_fullscreen(value: bool) -> void:
 
 func set_shortcut_buttons(value: bool) -> void:
 	shortcut_buttons_visible = value
+	settings_changed.emit()
+
+func set_heading_font(value: String) -> void:
+	heading_font = value if value in ["field","old","pixel"] else "field"
 	settings_changed.emit()
 
 func set_screen_shake(value: bool) -> void:

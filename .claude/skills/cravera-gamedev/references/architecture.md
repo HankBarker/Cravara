@@ -272,9 +272,9 @@ Prioritized, concrete recommendations against the real files:
 - [TileMap → TileMapLayer migration — GameFromScratch](https://gamefromscratch.com/godot-tilemap-replaced-with-tilelayers/) · [TileMapLayer docs](https://docs.godotengine.org/en/stable/classes/class_tilemaplayer.html)
 
 ## Pass 13 modules (2026-09-25)
-- `Forest/progress/Skills.gd`: the keeper's six skills (XP by use, levels to 10, a small boost a
-  level, perk points, perk trees `PERKS`, the callings at 5 and 10 `CALLINGS`/`CALLING`, the taming
-  lore `LORE`). Group `skills`. Systems ask `value(effect)`, `has(perk)` or `knows(species)` and
+- `Forest/progress/Skills.gd`: the keeper's skills (XP by use, levels to 10, a small boost a
+  level, perk points, perk trees `PERKS`, the taming lore `LORE`; pass 14 made them seven
+  constellations with no callings, see below). Group `skills`. Systems ask `value(effect)`, `has(perk)` or `knows(species)` and
   report with `gain(skill, xp)`. Panel: `UI/SkillsPanel.gd` (L). Saved as `"skills"`.
   Perk-gated recipes use `hidden_until: "perk:<id>"` (CraftingManager.is_known).
 - `Forest/creatures/TamingWays.gd` (each beast's way to be won; Kaya's `LESSONS`),
@@ -292,3 +292,26 @@ Prioritized, concrete recommendations against the real files:
   migration of the small camps (sites saved as `camp_sites`).
 - `ForestPlayer.blow_class/blow_shape/strike_damage/_blow_targets`: the weapon classes (BLOWS).
   Tests compare damage against `strike_damage()`, not `get_active_weapon_damage()`.
+
+## Pass 14 modules (2026-09-25)
+- `Forest/progress/Skills.gd`: **seven** skills (Fishing joins), each a constellation of 18 stars
+  (`PERKS`, a true tree: `after` is a list, open when ANY is lit; one root per skill). The stars
+  and their figures live in the generated `Forest/progress/SkillStars.gd` (edit
+  `tools/skills/constellations.py` and run it `write`; `preview` draws the sheet). Two points a
+  level (`POINTS_PER_LEVEL`), so level 10 lights all 18. The callings are gone: their ids are
+  stars. `restore` turns a pass-13 save's callings into stars and makes its points up
+  (`earned - lit`); current saves carry `"stars": 2` and keep their points.
+- `Forest/items/Trinkets.gd`: `value(keeper, effect)` sums the five worn trinkets' `Item.effects`
+  **and the skills' `value(effect)`**, then caps. A star with a trinket effect (speed, cold,
+  luck...) reaches every system through it. Trinkets are authored in `tools/items/trinkets.py`
+  (it writes the `.tres`, recipes and `TrinketSources.gd`).
+- `Forest/world/Loot.gd`: `find(kind, cell, seed, luck)` (a chest's trinket, deterministic per
+  cell) and `beast(species, crystal, rng, luck)` (rare drops; a crystal-sick beast gives crystal).
+- `ForestCreature.crystal`: 0 clean, 1 Skytouched (`genes.gdshader` `sick`), 2 Crystalback (the
+  `<species>_crystal` art key). It is rolled from the spot (`_roll_crystal`), saved, and scales
+  stats (`CRYSTAL_STATS`). `ART_STRIDE` gives an art key its own walk/run stride.
+- New star hooks: `fish_cradle`/`fish_time` (FishingPanel), `fish_extra`/`fish_rest`
+  (FishingController, which also gives Fishing XP), `twins`/`court` (LifeKeeper), `soak`/
+  `seed_extra` (Gardening).
+- `ForestPlaytest._restock_wilds()` (at dawn): a `RESTOCK` kind with none left gets a new pack.
+- Tests: `Tests/Pass14Suite.tscn` (headless), `Tests/Pass14Capture.tscn` (look-book).

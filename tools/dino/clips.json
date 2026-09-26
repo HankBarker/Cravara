@@ -503,6 +503,144 @@
     "hurt",
     "death"
    ]
+  },
+  "raptor_crystal": {
+   "species": "raptor",
+   "palette": "raptor_crystal",
+   "body": "a slim blue velociraptor with a crest of spiky quills, pale blue crystals growing along its back and tail",
+   "clips": [
+    "idle",
+    "walk",
+    "run",
+    "slash",
+    "pounce",
+    "sniff",
+    "threat",
+    "hurt",
+    "death"
+   ]
+  },
+  "trike_crystal": {
+   "species": "trike",
+   "palette": "trike_crystal",
+   "body": "an orange triceratops with a spiked green frill and three horns, pale blue crystals growing along its back and tail",
+   "clips": [
+    "idle",
+    "walk",
+    "run",
+    "windup",
+    "gore",
+    "eat",
+    "hurt",
+    "death"
+   ]
+  },
+  "stego_crystal": {
+   "species": "stego",
+   "palette": "stego_crystal",
+   "body": "a green stegosaurus with orange back plates and a spiked tail, pale blue crystals growing along its back and tail",
+   "clips": [
+    "idle",
+    "walk",
+    "eat",
+    "tail_swing",
+    "tail_swing_far",
+    "threat",
+    "hurt",
+    "death"
+   ]
+  },
+  "longneck_crystal": {
+   "species": "longneck",
+   "palette": "longneck_crystal",
+   "body": "a blue long-necked sauropod with pale ridges along its back, pale blue crystals growing along its back and tail",
+   "clips": [
+    "idle",
+    "walk",
+    "eat",
+    "tail_swing",
+    "tail_swing_far",
+    "stomp",
+    "hurt",
+    "death"
+   ]
+  },
+  "parasaur_crystal": {
+   "species": "parasaur",
+   "palette": "parasaur_crystal",
+   "body": "a parasaurolophus with a long tube crest, pale blue crystals growing along its back and tail",
+   "clips": [
+    "idle",
+    "walk",
+    "run",
+    "eat",
+    "stomp",
+    "roar",
+    "hurt",
+    "death"
+   ]
+  },
+  "utah_crystal": {
+   "species": "utah",
+   "palette": "utah_crystal",
+   "body": "a sandy feathered utahraptor, pale blue crystals growing along its back and tail",
+   "clips": [
+    "idle",
+    "walk",
+    "run",
+    "slash",
+    "pounce",
+    "roar",
+    "hurt",
+    "death"
+   ]
+  },
+  "deino_crystal": {
+   "species": "deino",
+   "palette": "deino_crystal",
+   "body": "an olive green deinonychus, pale blue crystals growing along its back and tail",
+   "clips": [
+    "idle",
+    "walk",
+    "run",
+    "slash",
+    "pounce",
+    "threat",
+    "hurt",
+    "death"
+   ]
+  },
+  "sucho_crystal": {
+   "species": "sucho",
+   "palette": "sucho_crystal",
+   "body": "a muddy green suchomimus, pale blue crystals growing along its back and tail",
+   "clips": [
+    "idle",
+    "walk",
+    "run",
+    "bite",
+    "chomp",
+    "roar",
+    "eat",
+    "hurt",
+    "death"
+   ]
+  },
+  "spino_crystal": {
+   "species": "spino",
+   "palette": "spino_crystal",
+   "body": "a teal spinosaurus with a red sail, pale blue crystals growing along its back and tail",
+   "clips": [
+    "idle",
+    "walk",
+    "run",
+    "bite",
+    "slash",
+    "roar",
+    "eat",
+    "hurt",
+    "death"
+   ]
   }
  },
  "clips": {
@@ -915,6 +1053,106 @@
    "motion": "Keeps its back to the viewer the whole time: lowers its head to the ground and eats, then lifts its head again."
   },
   "spino/bite_up": {
+   "model": "pmm",
+   "motion": "Keeps its back to the viewer: lunges forward away from the viewer and bites down hard, then returns to its stance."
+  },
+  "raptor_crystal/slash_up": {
+   "model": "pmm",
+   "motion": "Lunges forward away from the viewer, snapping its jaws and swiping with its clawed hands, then springs back."
+  },
+  "raptor_crystal/sniff_up": {
+   "model": "pmm",
+   "motion": "Lowers its head to sniff the ground in front of it, then raises it again and looks left and right."
+  },
+  "trike_crystal/windup_down": {
+   "model": "pmm",
+   "motion": "Keeps facing the viewer: lowers its head so its horns point at the viewer and paws the ground twice with one front foot."
+  },
+  "trike_crystal/windup_up": {
+   "model": "pmm",
+   "motion": "Keeps its back to the viewer: lowers its head and paws the ground twice with one front foot."
+  },
+  "trike_crystal/eat_up": {
+   "model": "pmm",
+   "motion": "Keeps its back to the viewer: lowers its head to the ground and eats the grass, then lifts its head again."
+  },
+  "trike_crystal/gore_side": {
+   "model": "ai",
+   "motion": "Lowers its head and swings it hard to one side, then brings it back to its stance. Its body and feet stay still."
+  },
+  "trike_crystal/gore_down": {
+   "model": "ai",
+   "motion": "Lowers its head and swings it hard to one side, then brings it back to its stance. Its body and feet stay still."
+  },
+  "trike_crystal/gore_up": {
+   "model": "ai",
+   "motion": "Lowers its head and swings it hard to one side, then brings it back to its stance. Its body and feet stay still."
+  },
+  "stego_crystal/tail_swing_down": {
+   "model": "pmm",
+   "motion": "Keeps its body and head facing the viewer and swings its tail out from behind its body to one side in a wide fast sweep, then back behind it. Only the tail moves."
+  },
+  "stego_crystal/tail_swing_up": {
+   "model": "pmm",
+   "motion": "Keeps its back to the viewer and swings its tail out to one side in a wide fast sweep, then back to the middle. Only the tail moves."
+  },
+  "longneck_crystal/tail_swing_down": {
+   "model": "pmm",
+   "motion": "Keeps its body and head facing the viewer and swings its tail out from behind its body to one side in a wide fast sweep, then back behind it. Only the tail moves."
+  },
+  "longneck_crystal/tail_swing_up": {
+   "model": "pmm",
+   "motion": "Keeps its back to the viewer and swings its tail out to one side in a wide fast sweep, then back to the middle. Only the tail moves."
+  },
+  "parasaur_crystal/roar_side": {
+   "model": "pmm",
+   "motion": "Raises its head high and trumpets a long call through its crest, then lowers its head again. It stays in place."
+  },
+  "parasaur_crystal/stomp_side": {
+   "model": "pmm",
+   "motion": "Rears up on its hind legs, then stomps down hard with its front feet. It stays in place."
+  },
+  "parasaur_crystal/roar_down": {
+   "model": "pmm",
+   "motion": "Raises its head high and trumpets a long call through its crest, then lowers its head again. It stays in place."
+  },
+  "parasaur_crystal/stomp_down": {
+   "model": "pmm",
+   "motion": "Rears up on its hind legs, then stomps down hard with its front feet. It stays in place."
+  },
+  "parasaur_crystal/roar_up": {
+   "model": "pmm",
+   "motion": "Raises its head high and trumpets a long call through its crest, then lowers its head again. It stays in place."
+  },
+  "parasaur_crystal/stomp_up": {
+   "model": "pmm",
+   "motion": "Rears up on its hind legs, then stomps down hard with its front feet. It stays in place."
+  },
+  "utah_crystal/slash_down": {
+   "model": "pmm",
+   "motion": "Keeps facing the viewer: leans toward the viewer, snaps its jaws and rakes both clawed hands down, then steps back into its stance."
+  },
+  "deino_crystal/slash_up": {
+   "model": "pmm",
+   "motion": "Lunges forward away from the viewer, snapping its jaws and swiping with its clawed hands, then springs back."
+  },
+  "deino_crystal/threat_up": {
+   "model": "pmm",
+   "motion": "Keeps its back to the viewer: rears up, lifts its clawed arms out to the sides and screeches, then drops back into its stance."
+  },
+  "sucho_crystal/chomp_up": {
+   "model": "pmm",
+   "motion": "Keeps its back to the viewer: lunges forward away from the viewer and bites down hard, shakes its head from side to side, then returns to its stance."
+  },
+  "sucho_crystal/roar_up": {
+   "model": "ai",
+   "motion": "Keeps its back to the viewer the whole time: lifts its head high, then lowers it again."
+  },
+  "sucho_crystal/eat_up": {
+   "model": "ai",
+   "motion": "Keeps its back to the viewer the whole time: lowers its head to the ground and eats, then lifts its head again."
+  },
+  "spino_crystal/bite_up": {
    "model": "pmm",
    "motion": "Keeps its back to the viewer: lunges forward away from the viewer and bites down hard, then returns to its stance."
   }

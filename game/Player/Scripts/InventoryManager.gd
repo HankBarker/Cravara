@@ -1,6 +1,7 @@
 extends Node
 
-const MAX_INVENTORY_SIZE = 35
+## Pass 14: forty pockets, eight across (five pouches of eight; was 35).
+const MAX_INVENTORY_SIZE = 40
 var inventory: Array[Dictionary] = []
 var selected_slot_index: int = 0
 var hotbar_start: int = 0

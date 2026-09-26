@@ -120,22 +120,27 @@ func _finish(won: bool):
 	if not is_active(): return
 	if player.get("respawning")==true: cancel(); return
 	var spot: Dictionary=spots[active_spot]
+	var sk = get_tree().get_first_node_in_group("skills")
 	if won:
 		var id: String=FISH[_fish_index].id
+		# Fishing stars (pass 14): now and then a second fish on the line.
+		var count := 2 if sk and randf() < float(sk.value("fish_extra")) else 1
 		var item: Item=ItemDB.make(id)
-		if InventoryManager.add_item(item,1): notice.emit("Caught a %s!" % item.name)
+		if InventoryManager.add_item(item,count): notice.emit("Caught a %s!" % item.name if count==1 else "Caught two %ss!" % item.name)
 		else:
 			var drop=DROP.instantiate()
-			drop.setup_item(item,1)
+			drop.setup_item(item,count)
 			drop.position=player.global_position
 			session.add_child(drop)
 			notice.emit("Caught a %s! Satchel full: your catch is on the bank." % item.name)
 		spot.catches=int(spot.catches)+1
-		spot.cooldown=90.0
+		spot.cooldown=90.0*(1.0-clampf(float(sk.value("fish_rest")) if sk else 0.0,0.0,0.75))
 		caught.emit(id)
+		if sk: sk.gain("fishing",float(sk.XP.catch))
 		AudioManager.play_sfx("equip_gear")
 	else:
 		spot.cooldown=8.0
+		if sk: sk.gain("fishing",float(sk.XP.lost_fish))
 		notice.emit("The fish escaped. Let the ripples settle, then try again.")
 	_end()
 

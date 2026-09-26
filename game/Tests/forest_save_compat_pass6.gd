@@ -16,10 +16,13 @@ func run():
 	add_child(stage)
 	check(stage._load_journey(SNAPSHOT),"current pre-update journey loads without migration errors")
 	var actual: Array=SaveManager._serialize_inventory(InventoryManager.inventory)
-	var identical: bool=actual.size()==saved.inventory.size()
-	for i in mini(actual.size(),saved.inventory.size()):
+	# Pass 14: the pack grew to 40; the saved slots come back as they were, the new ones empty.
+	var identical: bool=actual.size()>=saved.inventory.size()
+	for i in actual.size():
+		if i>=saved.inventory.size():
+			if str(actual[i].id)!="": identical=false
 		# JSON numbers load as floats; inventory stack quantities are integers.
-		if str(actual[i].id)!=str(saved.inventory[i].id) or int(actual[i].qty)!=int(saved.inventory[i].qty): identical=false
+		elif str(actual[i].id)!=str(saved.inventory[i].id) or int(actual[i].qty)!=int(saved.inventory[i].qty): identical=false
 	check(identical,"all existing inventory slots and quantities preserved")
 	await get_tree().physics_frame
 	var equipped:={}

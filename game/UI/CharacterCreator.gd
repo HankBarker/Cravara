@@ -58,7 +58,7 @@ func _ready():
 	add_child(root)
 	root.theme=preload("res://UI/SkyfangUI.gd").theme()
 	var shade:=ColorRect.new()
-	shade.color=Color(0.02,0.06,0.055,0.9)
+	shade.color=Color(0.06,0.04,0.02,0.9)
 	shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	root.add_child(shade)
 	var frame:=FRAME.new()
@@ -66,9 +66,9 @@ func _ready():
 	frame.size=Vector2(432,246)
 	root.add_child(frame)
 	var heading:=_label("CREATE YOUR KEEPER" if new_journey else "KEEPER'S ATELIER",Vector2(40,21),14)
-	heading.add_theme_font_override("font",preload("res://Forest/fonts/IMFellEnglish.ttf"))
+	heading.add_theme_font_override("font",preload("res://UI/SkyfangUI.gd").title_font())
 	heading.add_theme_color_override("font_color",Color("dcc085"))
-	_label("FOREST WARDROBE",Vector2(344,25),8).modulate=Color("a1b99a")
+	_label("FOREST WARDROBE",Vector2(344,25),8).modulate=Color("a8977e")
 	var portrait:=FRAME.new()
 	portrait.position=Vector2(40,50)
 	portrait.size=Vector2(144,130)
@@ -184,7 +184,7 @@ func _set_page(value: String):
 	for control in _appearance_controls: control.visible=page=="appearance"
 	for control in _wardrobe_controls: control.visible=page=="wardrobe"
 	for key in _tabs:
-		_tabs[key].modulate=Color("f3d99a") if key==page else Color("a1b99a")
+		_tabs[key].modulate=Color("f3d99a") if key==page else Color("a8977e")
 	_refresh()
 
 func _cycle(field: String,step: int):

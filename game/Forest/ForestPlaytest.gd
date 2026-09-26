@@ -118,8 +118,7 @@ func _ready():
 	add_child(hud)
 	hud.setup_skills(skills)
 	skills.leveled.connect(_on_skill_level)
-	skills.calling_ready.connect(func(skill, tier):
-		hud.show_banner("A calling: %s %d" % [skills.SKILLS[skill].name, tier], "Choose one of two paths. Press L.", null))
+	TimeCycle.phase_changed.connect(_on_day_phase)
 	fishing = preload("res://Forest/FishingController.gd").new()
 	fishing.process_mode = Node.PROCESS_MODE_PAUSABLE
 	add_child(fishing)
@@ -356,8 +355,13 @@ const WILDS12_LIFE := [
 ## exported yet stays out of the world.
 const WILDS13_LIFE := [
 	["deino", 3, [3, 4], Rect2i(-160, -50, 100, 100), ""],
-	["utah", 2, [2, 2], Rect2i(66, -48, 92, 96), ""],
+	# Pass 14: three Sandblade packs, not two pairs (a keeper never found them).
+	["utah", 3, [2, 3], Rect2i(66, -48, 92, 96), ""],
 ]
+## Hunters that don't breed: when the last of a kind is gone, a new pack
+## wanders in at a dawn, far from the keeper (pass 14: the Sandblades had been
+## hunted out before a keeper ever met them).
+const RESTOCK := ["utah", "deino"]
 const MERE_HUNTERS := [["sucho", 3], ["spino", 1]]
 
 func _spawn_wilds13_life(met: Array = []):
@@ -464,6 +468,35 @@ func _spawn_bonelands_life():
 				if at.distance_to(wanted) > 220.0: continue
 				herd.append(_spawn_creature(str(entry[0]), at))
 			if life: life.add_young(herd)
+
+func _on_day_phase(phase: String) -> void:
+	if phase == "dawn": _restock_wilds()
+
+## At dawn: a kind from RESTOCK with none left in the wild gets a new pack
+## in its own country, well out of the keeper's sight.
+func _restock_wilds() -> void:
+	if not is_instance_valid(world) or not is_instance_valid(player): return
+	var DA = preload("res://Forest/creatures/DinoArt.gd")
+	for sp in RESTOCK:
+		if not DA.has_key(sp): continue
+		var left := 0
+		for c in get_tree().get_nodes_in_group("forest_creatures"):
+			if c.species == sp and not c.tamed and not c.is_dead: left += 1
+		if left > 0: continue
+		for entry in WILDS13_LIFE:
+			if str(entry[0]) != sp: continue
+			var area: Rect2i = entry[3]
+			for attempt in 12:
+				var centre := Vector2(randi_range(area.position.x, area.end.x), randi_range(area.position.y, area.end.y)) * 16.0
+				if centre.distance_to(player.global_position) < 480.0: continue
+				var came := 0
+				for i in randi_range(int(entry[2][0]), int(entry[2][1])):
+					var wanted := centre + Vector2(randf_range(-30.0, 30.0), randf_range(-22.0, 22.0))
+					var at: Vector2 = world.get_spawnable_position(wanted)
+					if at.distance_to(wanted) > 220.0: continue
+					_spawn_creature(sp, at)
+					came += 1
+				if came > 0: break
 
 func _spawn_wildlife():
 	_spawn_bonelands_life()
@@ -596,7 +629,7 @@ func _process(delta):
 		if _command_hold >= 0.32:
 			if not hud.is_open():
 				if _command_key == KEY_Q:
-					hud.show_companion_commands(_command_target if is_instance_valid(_command_target) else null)
+					hud.show_companion_commands(_command_target if is_instance_valid(_command_target) else null, true)
 				elif is_instance_valid(_command_target) and not _command_target.is_dead and _command_target.global_position.distance_to(player.global_position) <= 64:
 					hud.show_companion_commands(_command_target)
 			_command_key = 0
@@ -661,7 +694,7 @@ func _draw():
 	var target := get_global_mouse_position()
 	var cell := Vector2((target / 16.0).floor()) * 16.0
 	var nearby := target.distance_to(player.global_position) <= 52
-	var color := Color(0.77, 0.96, 0.77, 0.65) if nearby else Color(0.85, 0.52, 0.35, 0.3)
+	var color := Color(0.95, 0.88, 0.62, 0.7) if nearby else Color(0.85, 0.52, 0.35, 0.3)
 	# Four little corners keep the tile target readable without a heavy grid overlay.
 	for offset in [Vector2.ZERO, Vector2(16, 0), Vector2(0, 16), Vector2(16, 16)]:
 		var direction := Vector2(1 if offset.x == 0 else -1, 1 if offset.y == 0 else -1)
@@ -1192,7 +1225,7 @@ func _make_overlay(title: String, kind: String) -> VBoxContainer:
 	_panel.add_child(column)
 	var heading := Label.new()
 	heading.text = title
-	heading.add_theme_font_override("font", preload("res://Forest/fonts/IMFellEnglish.ttf"))
+	heading.add_theme_font_override("font", preload("res://UI/SkyfangUI.gd").title_font())
 	heading.add_theme_font_size_override("font_size", 13)
 	heading.add_theme_color_override("font_color", Color("eee1bc"))
 	column.add_child(heading)
@@ -1203,7 +1236,7 @@ func _make_overlay(title: String, kind: String) -> VBoxContainer:
 func _overlay_text(column: VBoxContainer, text: String, _font_size := 10):
 	var label := Label.new()
 	label.text = text
-	label.add_theme_color_override("font_color", Color("c7d8c9"))
+	label.add_theme_color_override("font_color", Color("e9dcc0"))
 	column.add_child(label)
 
 func _overlay_button(column: Container, text: String, callback: Callable) -> Button:
@@ -1272,7 +1305,7 @@ func show_lore(id: String, from_journal := false) -> void:
 	text.text = Lore.text(id)
 	text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	text.custom_minimum_size = Vector2(300, 0)
-	text.add_theme_color_override("font_color", Color("c7d8c9"))
+	text.add_theme_color_override("font_color", Color("e9dcc0"))
 	column.add_child(text)
 	if from_journal:
 		_overlay_button(column, "BACK TO THE LORE", _show_lore_list)
@@ -1380,7 +1413,7 @@ func save_journey(path: String = SAVE_FILE) -> bool:
 	for slot in player.equipped_armor:
 		var item = player.equipped_armor[slot]
 		data.armor[slot] = item.id if item else ""
-	for slot in ["trinket_0", "trinket_1", "trinket_2", "light"]:
+	for slot in ["trinket_0", "trinket_1", "trinket_2", "trinket_3", "trinket_4", "light"]:
 		var item: Item = player.get_equipment(slot)
 		data.equipment[slot] = item.id if item else ""
 	var file := FileAccess.open(path + ".tmp", FileAccess.WRITE)
@@ -1396,9 +1429,8 @@ func _on_skill_level(skill: String, level: int) -> void:
 	var boosts: Array = []
 	for effect in skills.PER_LEVEL[skill]:
 		var per: float = float(skills.PER_LEVEL[skill][effect])
-		boosts.append(("+%d%% " % int(round(per * 100.0)) if effect != "gather_power" else "stronger ") + str({"melee_damage": "melee", "bow_damage": "arrows", "draw_speed": "draw", "feeds_cut": "taming", "mount_speed": "riding", "hatch_speed": "hatching", "growth_speed": "growth", "crop_speed": "crops", "gather_power": "gathering"}.get(effect, effect)))
-	var points := 2 if level in [5, 10] else 1
-	hud.show_banner("%s %d" % [info.name, level], "%s. %d perk point%s to spend (L)." % [", ".join(boosts), points, "s" if points > 1 else ""], null)
+		boosts.append(("+%d%% " % int(round(per * 100.0)) if effect != "gather_power" else "stronger ") + str({"melee_damage": "melee", "bow_damage": "arrows", "draw_speed": "draw", "feeds_cut": "taming", "mount_speed": "riding", "hatch_speed": "hatching", "growth_speed": "growth", "crop_speed": "crops", "gather_power": "gathering", "fishing": "fishing knack"}.get(effect, effect)))
+	hud.show_banner("%s %d" % [info.name, level], "%s. %d new stars to light (L)." % [", ".join(boosts), skills.POINTS_PER_LEVEL], null)
 	AudioManager.play_sfx("craft")
 
 func _load_journey(path: String = SAVE_FILE) -> bool:
@@ -1426,7 +1458,7 @@ func _load_journey(path: String = SAVE_FILE) -> bool:
 		player.equip_armor(slot, null)
 	SaveManager._restore_armor(player, parsed.get("armor", {}))
 	var gear: Dictionary = parsed.get("equipment", {})
-	for slot in ["trinket_0", "trinket_1", "trinket_2", "light"]:
+	for slot in ["trinket_0", "trinket_1", "trinket_2", "trinket_3", "trinket_4", "light"]:
 		var id: String = str(gear.get(slot, ""))
 		player._set_equipment(slot, ItemDB.make(id) if id != "" else null)
 	player.end_skin_batch()

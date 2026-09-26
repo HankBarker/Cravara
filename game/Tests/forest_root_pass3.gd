@@ -100,7 +100,8 @@ func run():
 	player.food_satiation_left = 0
 	player._hunger_accum = 0
 	player._physics_process(90)
-	check(player.controls_locked and player.current_hunger < hunger_before and player.current_health > 50 and player.current_stamina > 20,"inventory panel blocks movement while gentle hunger and recovery continue")
+	# (Pass 14: no breath, so no stamina to recover.)
+	check(player.controls_locked and player.current_hunger < hunger_before and player.current_health > 50,"inventory panel blocks movement while gentle hunger and recovery continue")
 	scene.hud.close_panels()
 	player.controls_locked = false
 

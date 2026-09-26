@@ -45,7 +45,7 @@ func _to_pickup() -> void:
 
 
 func _draw() -> void:
-	draw_circle(Vector2(0, 2), 5.0, Color(0.03, 0.10, 0.09, 0.28))
+	draw_circle(Vector2(0, 2), 5.0, Color(0.08, 0.05, 0.03, 0.28))
 	if _icon:
 		var s := _icon.get_size()
 		var scale_to := minf(1.0, 12.0 / maxf(s.x, s.y))

@@ -99,7 +99,8 @@ $suites = @(
     # dimetrodon's sun, the ash in the air, the Sun Sail.
     @{Name='wilds12'; Args=@('res://Tests/Wilds12Suite.tscn')},
     # Pass 13: pace, telegraphs, weapon classes, skills, taming ways, genes, ores, care, siege, events, camps.
-    @{Name='pass13'; Args=@('res://Tests/Pass13Suite.tscn')}
+    @{Name='pass13'; Args=@('res://Tests/Pass13Suite.tscn')},
+    @{Name='pass14'; Args=@('res://Tests/Pass14Suite.tscn')}
 )
 if ($FromSuite -ne '' -and $FromSuite -notin $suites.Name) { throw ('Unknown suite: ' + $FromSuite) }
 $started = $FromSuite -eq ''

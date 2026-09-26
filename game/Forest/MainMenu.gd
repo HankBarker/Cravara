@@ -20,14 +20,14 @@ func _ready():
 	backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(backdrop)
 	var shade := ColorRect.new()
-	shade.color = Color(0.015, 0.055, 0.07, 0.22)
+	shade.color = Color(0.06, 0.04, 0.02, 0.22)
 	shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(shade)
-	_label("A WORLD CHANGED BY THE FALL", Vector2(28, 35), 9, Color("b5d7c5"))
+	_label("A WORLD CHANGED BY THE FALL", Vector2(28, 35), 9, Color("d9c79f"))
 	_label("CRAVERA", Vector2(25, 43), 36, Color("f4e4b9"), true)
-	_label("THE SKYFANG WILDS", Vector2(29, 89), 12, Color("78d8d2"), true)
-	_label("Build a home. Earn their trust.\nFollow the fragments of a fallen sky.", Vector2(29, 112), 9, Color("c9d6c3"))
+	_label("THE SKYFANG WILDS", Vector2(29, 89), 12, Color("9fd4f0"), true)
+	_label("Build a home. Earn their trust.\nFollow the fragments of a fallen sky.", Vector2(29, 112), 9, Color("f2e6c9"))
 	_buttons = VBoxContainer.new()
 	_buttons.position = Vector2(29, 135)
 	_buttons.size.x = 147
@@ -40,7 +40,7 @@ func _ready():
 	_button("FIELD GUIDE", _show_guide)
 	_button("SETTINGS", _show_settings)
 	_button("LEAVE THE WILDS", _quit_game)
-	_label("FOREST PLAYTEST  /  01", Vector2(29, 252), 8, Color("a8bcb0"))
+	_label("FOREST PLAYTEST  /  01", Vector2(29, 252), 8, Color("a8977e"))
 	_label("THE FALL OF THE SKY-FANGS", Vector2(324, 252), 8, Color("e4d5b0"))
 	AudioManager.play_music("res://Forest/audio/main-theme.mp3")
 	var motes := Node2D.new()
@@ -57,7 +57,7 @@ func _label(text: String, pos: Vector2, font_size: int, color: Color, pixel := f
 	label.position = pos
 	label.add_theme_font_size_override("font_size", font_size)
 	label.add_theme_color_override("font_color", color)
-	label.add_theme_color_override("font_shadow_color", Color("0c2228"))
+	label.add_theme_color_override("font_shadow_color", Color("140c07"))
 	label.add_theme_constant_override("shadow_offset_y", 1)
 	if pixel:
 		label.add_theme_font_override("font", PIXEL_FONT)
@@ -70,12 +70,12 @@ func _button(text: String, callback: Callable):
 	button.custom_minimum_size = Vector2(147, 19)
 	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	button.add_theme_font_size_override("font_size", 9)
-	button.add_theme_color_override("font_color", Color("e8e4cc"))
+	button.add_theme_color_override("font_color", Color("f2e6c9"))
 	for kind in ["normal", "hover", "pressed", "focus"]:
 		var style := StyleBoxFlat.new()
-		style.bg_color = Color("19383b") if kind == "normal" else Color("326367")
+		style.bg_color = Color("2b1e15") if kind == "normal" else Color("4a3321")
 		style.bg_color.a = 0.93
-		style.border_color = Color("5c8d80") if kind == "normal" else Color("a0ecd5")
+		style.border_color = Color("7a5a3c") if kind == "normal" else Color("e8c27a")
 		style.set_border_width_all(1)
 		style.border_width_left = 3
 		style.content_margin_left = 10
@@ -118,8 +118,8 @@ func _show_text(title: String, text: String, action: String, callback: Callable)
 	_details.position = Vector2(90, 8)
 	_details.size = Vector2(300, 218)
 	var style := StyleBoxFlat.new()
-	style.bg_color = Color("102d33")
-	style.border_color = Color("84b5a2")
+	style.bg_color = Color("22170f")
+	style.border_color = Color("b08a55")
 	style.set_border_width_all(1)
 	style.set_content_margin_all(10)
 	_details.add_theme_stylebox_override("panel", style)
@@ -162,7 +162,7 @@ func _process(delta):
 func _draw_motes():
 	for i in range(20):
 		var pos := Vector2(fmod(i * 83.0 + sin(_time * 0.3 + i) * 12, 480), fposmod(i * 37.0 - _time * (2 + i % 3), 270))
-		$Fireflies.draw_rect(Rect2(pos.round(), Vector2.ONE), Color(0.65, 0.97, 0.78, 0.2 + 0.45 * absf(sin(_time + i))))
+		$Fireflies.draw_rect(Rect2(pos.round(), Vector2.ONE), Color(1.0, 0.9, 0.6, 0.2 + 0.45 * absf(sin(_time + i))))
 
 func _capture():
 	await get_tree().create_timer(1.5).timeout

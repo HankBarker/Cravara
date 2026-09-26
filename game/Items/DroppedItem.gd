@@ -24,7 +24,7 @@ func _ready() -> void:
 	label.add_theme_font_override("font",load("res://Forest/fonts/Tiny5-Regular.ttf"))
 	label.add_theme_font_size_override("font_size",8)
 	label.add_theme_color_override("font_color",Color("f6e5bc"))
-	label.add_theme_color_override("font_shadow_color",Color("102324"))
+	label.add_theme_color_override("font_shadow_color",Color("140c07"))
 	label.add_theme_constant_override("shadow_offset_x",1)
 	label.add_theme_constant_override("shadow_offset_y",1)
 	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -74,7 +74,7 @@ func _draw() -> void:
 	if not GameSettings.shadows_enabled: return
 	# Grounded shadow establishes height without moving the actual pickup area.
 	draw_set_transform(Vector2(0,1),0,Vector2(1,0.4))
-	draw_circle(Vector2.ZERO,4,Color(0.03,0.12,0.10,0.35))
+	draw_circle(Vector2.ZERO,4,Color(0.08,0.05,0.03,0.35))
 	draw_set_transform(Vector2.ZERO,0,Vector2.ONE)
 
 func _on_body_entered(body: Node) -> void:

@@ -51,6 +51,8 @@ RIG = {
     "lystro": {"legs": 4, "gap": 2, "sway": 0},
     "parasaur": {"legs": 8, "gap": 3, "sway": 1},
     "ossuar": {"legs": 9, "gap": 3, "sway": 1},
+    # Pass 14: the Sailking (its crystal run lost the sail from the front).
+    "spino": {"legs": 11, "gap": 4, "sway": 1},
 }
 GAIT = {
     "walk": {"lift": 2.0, "bob": 1.0},

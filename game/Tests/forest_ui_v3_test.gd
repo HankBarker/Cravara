@@ -120,11 +120,12 @@ func run():
 		await key(KEY_CAPSLOCK)
 		check(InventoryManager.hotbar_start==page,"CapsLock advances to page "+str(page))
 		if page==32:
-			check(InventoryManager.get_hotbar_indices()==[32,33,34],"Final pouch exposes only 3 real slots")
+			# Pass 14: the pack holds 40, so the last pouch is a full eight.
+			check(InventoryManager.get_hotbar_indices()==[32,33,34,35,36,37,38,39],"Final pouch exposes all 8 real slots")
 			await key(KEY_3)
 			check(InventoryManager.selected_slot_index==34,"Numeric3 selects absolute slot34")
 			await key(KEY_8)
-			check(InventoryManager.selected_slot_index==34,"Unavailable numeric8 cannot escape final pouch")
+			check(InventoryManager.selected_slot_index==39,"Numeric8 selects the last slot, slot39")
 			await capture("02-last-pouch")
 	var after := []
 	for slot in InventoryManager.inventory: after.append([slot.item.id if slot.item else "",slot.quantity])

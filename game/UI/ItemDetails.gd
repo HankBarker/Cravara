@@ -21,10 +21,18 @@ static func text(item: Item) -> String:
 	if item.tool_type!="": stats.append("Damage %d" % item.damage)
 	if int(item.get("mining_power"))>0: stats.append("Mining %d" % int(item.get("mining_power")))
 	if int(item.get("chop_power"))>0: stats.append("Chopping %d" % int(item.get("chop_power")))
-	if item.defense>0: stats.append("Defense %d" % item.defense)
-	if item.damage_bonus: stats.append("Damage bonus +%d" % item.damage_bonus)
+	var trinket: bool=item.equipment_slot=="trinket"
+	if item.defense>0 and not trinket: stats.append("Defense %d" % item.defense)
+	if item.damage_bonus and not trinket: stats.append("Damage bonus +%d" % item.damage_bonus)
 	if not stats.is_empty(): lines.append(" | ".join(stats))
 	lines.append_array(armor_lines(item))
+	# Pass 14: a trinket's effects, one to a line, and how to wear it.
+	if trinket:
+		var rarity: String=str(item.rarity).capitalize()
+		lines.append("%s trinket" % rarity)
+		for effect_line in preload("res://Forest/items/Trinkets.gd").lines(item): lines.append("  " + effect_line)
+		lines.append("Right-click to wear")
+	elif item.armor_slot!="": lines.append("Right-click to wear")
 	if item.consumable:
 		var food: Array[String]=[]
 		if item.hunger_value: food.append("Hunger +%d" % item.hunger_value)

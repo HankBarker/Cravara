@@ -20,5 +20,5 @@ func _refresh():
 
 func _draw():
 	# Keeper v2 stands ~30px tall (90px at 3x): feet land near y 87.
-	draw_circle(Vector2(44,84), 24, Color(0.15,0.38,0.32,0.3))
-	draw_arc(Vector2(44,52),38,0.15,PI-0.15,30,Color(0.47,0.72,0.56,0.45),1)
+	draw_circle(Vector2(44,84), 24, Color(0.29,0.2,0.13,0.3))
+	draw_arc(Vector2(44,52),38,0.15,PI-0.15,30,Color(0.69,0.54,0.33,0.45),1)

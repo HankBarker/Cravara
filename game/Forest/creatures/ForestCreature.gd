@@ -22,6 +22,35 @@ const Ways = preload("res://Forest/creatures/TamingWays.gd")
 const OFFERING = preload("res://Forest/creatures/Offering.gd")
 ## Pass 13: each beast its own animal (colours, markings, temperament, traits, stats).
 const Genes = preload("res://Forest/creatures/Genes.gd")
+const Loot = preload("res://Forest/world/Loot.gd")
+const Trinkets = preload("res://Forest/items/Trinkets.gd")
+
+## Pass 14: the Sky-Fang's sickness in a beast. 0: clean; 1: Skytouched
+## (crystal veins glow through the hide); 2: Crystalback (crystal grown out
+## through it: its own drawings, <species>_crystal, where they exist).
+## None near camp; out from CRYSTAL_FROM px it takes more and more of them,
+## to about a third at the world's rim (the jungle, when it comes, will be
+## overrun). A herd or a pack has its sick among the clean.
+var crystal := -1
+const CRYSTAL_FROM := 1120.0
+const CRYSTAL_RIM := 2720.0
+## How much tougher: [hp, damage] for each level.
+const CRYSTAL_STATS := {1: [1.15, 1.1], 2: [1.4, 1.2]}
+
+## Its sickness, rolled from where it lives (the same spot always rolls the same).
+func _roll_crystal() -> void:
+	crystal = 0
+	if baby or tamed or bool(SPECIES[species].get("boss", false)) or variant != "" or is_instance_valid(master): return
+	var far := clampf((position.length() - CRYSTAL_FROM) / (CRYSTAL_RIM - CRYSTAL_FROM), 0.0, 1.0)
+	if far <= 0.0: return
+	var r := RandomNumberGenerator.new()
+	r.seed = int(position.x * 311 + position.y * 173) + species.hash() + 0xC4157
+	if r.randf() >= far * 0.35: return
+	var grown: bool = DinoArt.has_key(species + "_crystal") and r.randf() < 0.35 + far * 0.4
+	crystal = 2 if grown else 1
+
+func is_crystal() -> bool:
+	return crystal > 0 or variant == "crystal"
 ## How far out (px from camp) counts as the world's far edge (more mutations there).
 const FAR_EDGE := 2800.0
 
@@ -114,8 +143,8 @@ const PREY := {"raptor": ["dodo", "lystro", "proto", "compy"], "allo": ["dodo", 
 ## Territory (pass 12): the great hunters won't share ground. Two rivals that
 ## meet square up and fight; badly hurt, one breaks off (_rival_check) and the
 ## winner lets it go with a roar. Against the keeper they fight to the end.
-const RIVALS := {"rex": ["carno", "yuty", "spino"], "carno": ["rex", "yuty", "allo"], "yuty": ["rex", "carno", "allo"], "allo": ["carno", "yuty", "utah"],
-	"spino": ["rex", "sucho"], "sucho": ["spino"], "utah": ["allo"]}
+const RIVALS := {"rex": ["carno", "yuty", "spino"], "carno": ["rex", "yuty", "allo"], "yuty": ["rex", "carno", "allo"], "allo": ["carno", "yuty"],
+	"spino": ["rex", "sucho"], "sucho": ["spino"]}
 const DISPUTE_RANGE := 170.0
 ## Bony plates shrug off this much of every blow (heavy weapons get through).
 const PLATED := {"anky": 9}
@@ -125,6 +154,21 @@ const PACK_PREY := ["stego", "trike"]
 ## a keeper's sprint of 88, which only lasts a breath). walk/run are stride
 ## speeds for the clips (not scaled: the clips just play slower).
 const PACE := 0.72
+## Pass 14: art keys whose clips stride differently from their species' own
+## (the Crystalbacks: the species' tuned stride scaled by stride.py's measure
+## of the crystal clips against the clean ones).
+const ART_STRIDE := {
+	"raptor_crystal": {"walk": 31.0, "run": 83.0},
+	"trike_crystal": {"walk": 9.0, "run": 58.0},
+	"stego_crystal": {"walk": 19.0, "run": 19.0},
+	"longneck_crystal": {"walk": 10.0, "run": 10.0},
+	"parasaur_crystal": {"walk": 17.0, "run": 45.0},
+	"utah_crystal": {"walk": 16.0, "run": 58.0},
+	"deino_crystal": {"walk": 22.0, "run": 46.0},
+	# (stride.py read the crystal walk at 8 from few samples; 12 keeps the legs from racing.)
+	"sucho_crystal": {"walk": 12.0, "run": 40.0},
+	"spino_crystal": {"walk": 35.0, "run": 61.0},
+}
 ## How each body moves and animates. accel: px/s^2 (heavy bodies build up and
 ## shed speed slowly). walk/run: ground speed at which the clip's feet do not
 ## slide (speed_scale follows the real speed). run_at: speed that switches to
@@ -418,6 +462,7 @@ func _ready() -> void:
 	if not SPECIES.has(species): species = "raptor"
 	if baby and not Life.has_young(species): baby = false
 	# Its own animal: genes rolled from where it was born (never a boss's).
+	if crystal < 0: _roll_crystal()
 	if genes.is_empty() and not bool(SPECIES[species].get("boss", false)):
 		var grng := RandomNumberGenerator.new()
 		grng.seed = int(position.x * 735 + position.y * 97) + species.hash() + 7919
@@ -508,6 +553,13 @@ func _stage_stats() -> void:
 		if bool(v.get("hostile", false)): stats.predator_like = true
 		_tint = v.get("tint", Color.WHITE)
 	stats = stats.duplicate()
+	if crystal > 0 and variant == "" and not baby:
+		var boost: Array = CRYSTAL_STATS[mini(crystal, 2)]
+		stats.hp = int(round(float(stats.hp) * float(boost[0])))
+		stats.damage = int(round(float(stats.damage) * float(boost[1])))
+		stats.name = ("Crystalback %s" if crystal >= 2 else "Skytouched %s") % str(stats.name).split(" ")[-1]
+		# Grown crystal without drawings of its own: the old crystal tint.
+		if crystal >= 2 and not DinoArt.has_key(species + "_crystal"): _tint = VARIANTS.crystal.tint
 	if not genes.is_empty():
 		stats.hp = maxi(1, int(round(float(stats.hp) * Genes.stat_mult(genes, "hp"))))
 		stats.damage = maxi(1, int(round(float(stats.damage) * Genes.stat_mult(genes, "damage"))))
@@ -521,6 +573,9 @@ func set_variant(value: String) -> void:
 	if value != "" and not VARIANTS.has(value): value = ""
 	var fraction := float(health) / maxf(1.0, float(stats.hp)) if stats else 1.0
 	variant = value
+	# A kind of its own (a coat, a mini-boss, the surge's Crystalbacks) isn't
+	# also sick on top (pass 14).
+	if value != "": crystal = 0
 	_stage_stats()
 	health = maxi(1, int(round(fraction * float(stats.hp))))
 	if _sprite:
@@ -573,6 +628,7 @@ func wanted_art_key() -> String:
 	if baby and DinoArt.has_key(species + "_baby"): return species + "_baby"
 	var coat := str(VARIANTS.get(variant, {}).get("art", ""))
 	if coat != "" and not saddle and DinoArt.has_key(species + "_" + coat): return species + "_" + coat
+	if (crystal >= 2 or variant == "crystal") and not saddle and DinoArt.has_key(species + "_crystal"): return species + "_crystal"
 	if saddle and DinoArt.has_key(species + "_saddle"): key = species + "_saddle"
 	return key
 
@@ -600,7 +656,7 @@ func _apply_genes_look() -> void:
 	if not _sprite or not _sprite.sprite_frames: return
 	if bool(VARIANTS.get(variant, {}).get("bone", false)): return
 	var ours: bool = _sprite.material is ShaderMaterial and (_sprite.material as ShaderMaterial).shader == Genes.SHADER
-	if genes.is_empty():
+	if genes.is_empty() and crystal != 1:
 		if ours: _sprite.material = null
 		return
 	var anim := "idle_side" if _sprite.sprite_frames.has_animation("idle_side") else str(_sprite.animation)
@@ -608,6 +664,7 @@ func _apply_genes_look() -> void:
 	var size: Vector2 = tex.get_size() if tex else Vector2(64, 64)
 	if ours: Genes.apply(_sprite.material, genes, size)
 	else: _sprite.material = Genes.material(genes, size)
+	(_sprite.material as ShaderMaterial).set_shader_parameter("sick", 1.0 if crystal == 1 else 0.0)
 
 ## New genes (a hatchling of the keeper's own pair): stats and look follow.
 func set_genes(value: Dictionary, keep_health := false) -> void:
@@ -1269,14 +1326,16 @@ func _update_animation():
 	var speed := facing_vector.length()
 	# Ridden at a normal pace a mount walks; it gallops only when sprinted.
 	var run_at := maxf(float(body.run_at), 72.0) if is_mounted() else float(body.run_at)
+	# A drawing with a stride of its own (a Crystalback's clips) keeps its feet planted too.
+	var stride: Dictionary = ART_STRIDE.get(art_key, body)
 	if speed > 3:
 		if speed >= run_at and DinoArt.has_clip(art_key, "run"):
 			# Pass 12: hunters run down their quarry at up to twice their
 			# drawn gait (chase speeds); the stride quickens to keep the feet
 			# on the ground.
-			_play_clip("run", false, clampf(speed / float(body.run), 0.6, 2.4))
+			_play_clip("run", false, clampf(speed / float(stride.get("run", body.run)), 0.6, 2.4))
 		else:
-			_play_clip("walk", false, clampf(speed / float(body.walk), 0.55, 1.8))
+			_play_clip("walk", false, clampf(speed / float(stride.get("walk", body.walk)), 0.55, 1.8))
 	else:
 		_play_clip("idle", false)
 	queue_redraw()
@@ -2113,7 +2172,10 @@ func skills() -> Node:
 func feeds_needed() -> int:
 	var base := maxi(1, int(round(float(stats.feeds) * Genes.temper(genes, "feeds")))) if not baby else int(stats.feeds)
 	var sk := skills()
-	return sk.feeds_for(base) if sk and not baby else base
+	var need: int = sk.feeds_for(base) if sk and not baby else base
+	# A trinket that eases the winning (pass 14).
+	var ease := Trinkets.of(get_tree(), "taming") if not baby else 0.0
+	return maxi(1, int(round(float(need) * (1.0 - ease))))
 
 ## Asleep: a herbivore settled for the night (the stego's way).
 func asleep() -> bool:
@@ -2324,6 +2386,9 @@ func take_damage(amount: int, source: Variant = null, knockback := -1.0) -> void
 			var guard: float = 1.0 + sk.value("companion_hp")
 			if is_mounted(): guard /= maxf(0.1, 1.0 - sk.value("mount_guard"))
 			amount = maxi(1, int(ceil(float(amount) / guard)))
+		# The keeper's trinkets (pass 14: a Longneck Bell).
+		var ward := Trinkets.of(get_tree(), "pack_guard")
+		if ward > 0.0: amount = maxi(1, int(round(float(amount) * (1.0 - ward))))
 	health = maxi(0, health - amount)
 	_hurt_time = 0.14
 	if is_instance_valid(voice): voice.play_cue("hurt")
@@ -2514,6 +2579,11 @@ func _die() -> void:
 		loot["crystal_shard"] = 8
 	for id in VARIANTS.get(variant, {}).get("loot", {}):
 		loot[id] = int(loot.get(id, 0)) + int(VARIANTS[variant].loot[id])
+	# Pass 14: now and then a wild beast gives something rare: a trinket of its
+	# own (a raptor's sickle toe, an allosaur's signet), a crystal-sick one its crystal.
+	if not tamed:
+		var rare := Loot.beast(species, is_crystal(), _rng, Trinkets.of(get_tree(), "luck"))
+		for id in rare: loot[id] = int(loot.get(id, 0)) + int(rare[id])
 	_drop_loot(loot)
 	_fall_and_fade()
 
@@ -2551,6 +2621,7 @@ func serialize() -> Dictionary:
 	if life and life.has_nest(): data.nest = [life.nest.x, life.nest.y]
 	if tame_marks > 0: data.marks = tame_marks
 	if not genes.is_empty(): data.genes = genes
+	data.crystal = maxi(crystal, 0)
 	if bag: data.bag = bag.get_save_data()
 	if tether_cell != NO_POST: data.tether = [tether_cell.x, tether_cell.y]
 	if _train_rest > 0.0: data.train_rest = _train_rest
@@ -2583,6 +2654,13 @@ func restore(data: Dictionary) -> void:
 		var grng := RandomNumberGenerator.new()
 		grng.seed = int(position.x * 735 + position.y * 97) + species.hash() + 7919
 		set_genes(Genes.roll(grng, clampf(position.length() / FAR_EDGE, 0.0, 1.0)), true)
+	# The sickness (pass 14): saved with it; a beast from before rolls from where it stands.
+	if data.has("crystal"): crystal = int(data.crystal)
+	else: _roll_crystal()
+	var kept := health
+	_stage_stats()
+	if kept > 0: health = mini(kept, int(stats.hp))
+	_apply_art()
 	order = str(data.get("order","follow"))
 	if order not in ORDERS: order = "follow"
 	var saddle_id := str(data.get("saddle", ""))
@@ -2710,4 +2788,4 @@ func draw_ellipse_shadow() -> void:
 	# Off the ground (a leap), the shadow draws in and pales.
 	var lift := clampf(hop / 24.0, 0.0, 0.5)
 	for i in range(16): points.append(Vector2(cos(i*TAU/16.0)*float(stats.radius)*1.3*(1.0-lift),sin(i*TAU/16.0)*4*(1.0-lift)))
-	draw_colored_polygon(points,Color(0.03,0.10,0.09,0.27*(1.0-lift*0.6)))
+	draw_colored_polygon(points,Color(0.08,0.05,0.03,0.27*(1.0-lift*0.6)))

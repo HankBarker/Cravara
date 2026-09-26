@@ -1,0 +1,6 @@
+extends RefCounted
+## Written by tools/items/trinkets.py (edit the table there, then run it).
+## A beast's rare trinket drops: species ("crystal": any crystal-sick beast) -> [[id, chance]].
+const BEAST := {"raptor": [["sickle_toe", 0.03]], "trike": [["frill_guard", 0.05]], "stego": [["tail_spike", 0.05]], "anky": [["club_knuckle", 0.05]], "longneck": [["longneck_bell", 0.04]], "parasaur": [["crest_whistle", 0.05]], "allo": [["rust_signet", 0.04], ["rust_buckler", 0.02]], "rex": [["tyrant_eye", 0.06]], "dimetrodon": [["sunsail_brooch", 0.05]], "proto": [["frill_buckle", 0.05]], "compy": [["compy_trove", 0.02]], "dodo": [["dodo_plume", 0.03]], "lystro": [["tusk_charm", 0.04]], "carno": [["scarhorn_tip", 0.05]], "yuty": [["ash_tuft", 0.08]], "deino": [["reed_claw", 0.05]], "utah": [["sandblade_plume", 0.06]], "sucho": [["mirefang_tooth", 0.05]], "spino": [["sailking_fin", 0.12]], "crystal": [["skyfang_shard", 0.1], ["crystal_heart", 0.03]]}
+## The trinkets each kind of chest can hold (Loot.gd rolls them).
+const CHEST := {"cache": ["wayfarer_anklet", "lucky_coin", "moonstone_ring", "old_compass", "quiver_strap"], "relic": ["lucky_coin", "moonstone_ring", "old_compass", "keepers_locket"], "bones": ["lucky_coin"]}

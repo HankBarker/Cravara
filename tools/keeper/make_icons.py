@@ -95,6 +95,11 @@ ICONS = {
 ARMOUR = ("_helmet", "_chestplate", "_leggings")
 
 
+# Pass 14: the trinkets are authored in tools/items/trinkets.py.
+sys.path.insert(0, os.path.join(ROOT, "tools", "items"))
+from trinkets import ICONS as TRINKET_ICONS  # noqa: E402
+ICONS.update(TRINKET_ICONS)
+
 def out_path(item_id):
     return os.path.join(WARDROBE if item_id.endswith(ARMOUR) else ITEMS, item_id + ".png")
 

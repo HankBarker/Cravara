@@ -686,10 +686,11 @@ func _hit(victim: Node2D, dir: Vector2, heavy: bool) -> void:
 			knock *= lerpf(0.75, 1.2, charge)
 	if victim.is_in_group("forest_creatures"):
 		knock *= float(MASS.get(victim.species, 0.5))
-	# A Packleader's companions strike harder (pass 13).
+	# A Packleader's companions strike harder (pass 13), and a Crest Whistle's (pass 14).
 	if c.tamed and c.has_method("skills"):
 		var sk = c.skills()
 		if sk: amount = int(round(float(amount) * (1.0 + sk.value("companion_damage"))))
+		amount = int(round(float(amount) * (1.0 + preload("res://Forest/items/Trinkets.gd").of(c.get_tree(), "pack_damage"))))
 	victim.take_damage(amount, c, knock)
 	if victim == c._player and c.has_method("on_struck_keeper"): c.on_struck_keeper()
 	# A wild hunter that makes a kill rests from hunting for a while.

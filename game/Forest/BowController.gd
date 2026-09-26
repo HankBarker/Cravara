@@ -51,7 +51,8 @@ func cancel():
 ## Full draw takes this long (Archery shortens it, pass 13).
 func full_draw() -> float:
 	var sk = get_tree().get_first_node_in_group("skills")
-	return 0.65 / (1.0 + (sk.value("draw_speed") if sk else 0.0))
+	# A Hunter's Quiver Strap (pass 14) draws faster too.
+	return 0.65 / (1.0 + (sk.value("draw_speed") if sk else 0.0) + preload("res://Forest/items/Trinkets.gd").value(player, "draw"))
 
 func release(target: Vector2) -> bool:
 	if not drawing: return false
@@ -66,8 +67,9 @@ func release(target: Vector2) -> bool:
 	_aim=player.global_position.direction_to(target)
 	if _aim==Vector2.ZERO: _aim=Vector2.RIGHT
 	var damage: int=maxi(1,roundi(item.damage*lerpf(0.65,1.35,charge)))
-	for charm in player.equipped_trinkets:
-		if charm: damage+=charm.damage_bonus
+	var Trinkets = preload("res://Forest/items/Trinkets.gd")
+	damage += int(Trinkets.value(player, "damage"))
+	damage = int(round(float(damage) * (1.0 + Trinkets.value(player, "arrows"))))
 	damage=int(round(float(damage)*preload("res://Forest/equipment/SetBonus.gd").damage_mult(player)))
 	# Archery (pass 13): the skill's bite, a heavy full draw, a marksman's luck.
 	var full := charge >= 1.0

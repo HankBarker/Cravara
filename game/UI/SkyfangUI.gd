@@ -1,8 +1,9 @@
 extends RefCounted
-## Cravera's interface kit. Fossil-slate plaques and sockets lashed with
-## bronze (the look of UI/CrystalFrame.gd), Sky-Fang crystal for whatever is
-## chosen or alive, crisp Tiny5 pixel text for everything read at a glance and
-## IM Fell English for titles, as on the title screen and in the journal.
+## Cravera's interface kit: a keeper's field pack (pass 14). Stitched leather
+## tabs and pockets, brass for whatever is chosen, the Sky-Fang's pale blue for
+## whatever is lit (the look of UI/CrystalFrame.gd); crisp Tiny5 pixel text for
+## everything read at a glance, and titles in the heading font the keeper
+## picked in the settings (the hand-lettered Field Hand by default).
 ##
 ## One Theme serves the HUD, the satchel, the journal and every panel:
 ##   control.theme = SkyfangUI.theme()
@@ -10,24 +11,29 @@ extends RefCounted
 ## each piece's nine-patch margins).
 const PIXEL: Font = preload("res://Forest/fonts/Tiny5-Regular.ttf")
 const TITLE: Font = preload("res://Forest/fonts/IMFellEnglish.ttf")
+## Pass 14: a hand-lettered pixel face for titles (PixelLab, drawn on a 16 px grid).
+const FIELD_HAND: Font = preload("res://Forest/fonts/FieldHand.ttf")
+## The heading fonts the settings offer: id -> [name, font, the size it's crisp at (0: any)].
+const HEADINGS := {"field": ["Field hand", FIELD_HAND, 16], "old": ["Old serif", TITLE, 0], "pixel": ["Pixel", PIXEL, 16]}
 ## Tiny5 is drawn on an 8px grid: at 8 (or 16) every stroke is a whole pixel.
 const TEXT := 8
 const BIG := 16
 const ART := "res://UI/art/"
 
-const VOID := Color("091a1b")
-const INK := Color("172f31")
-const DARK := Color("102224")
-const EDGE := Color("658579")
-const GOLD := Color("dcc085")
-const PAPER := Color("eee3c7")
-const MINT := Color("9fddbb")
-const CRYSTAL := Color("a2e3ca")
+const VOID := Color("140c07")
+const INK := Color("2b1e15")
+const DARK := Color("22170f")
+const EDGE := Color("7a5a3c")
+const GOLD := Color("e8c27a")
+const PAPER := Color("f2e6c9")
+## (Named for the old mint; now the Sky-Fang's pale blue for good news.)
+const MINT := Color("b9dff0")
+const CRYSTAL := Color("9fd4f0")
 const EMBER := Color("e39a7f")
-const DIM := Color("85998b")
+const DIM := Color("a8977e")
 const VITALITY := Color("d96c6c")
 const HUNGER := Color("d8a95a")
-const SHADOW := Color(0.02, 0.06, 0.06, 0.92)
+const SHADOW := Color(0.06, 0.03, 0.01, 0.9)
 
 static var _theme: Theme
 static var _nine: Dictionary = {}
@@ -99,9 +105,9 @@ static func theme() -> Theme:
 	t.set_stylebox("focus", "LineEdit", _focus())
 	t.set_stylebox("read_only", "LineEdit", box("field", Vector4(5, 3, 5, 3)))
 	t.set_color("font_color", "LineEdit", PAPER)
-	t.set_color("font_placeholder_color", "LineEdit", Color("6f887e"))
+	t.set_color("font_placeholder_color", "LineEdit", Color("8a7862"))
 	t.set_color("caret_color", "LineEdit", CRYSTAL)
-	t.set_color("selection_color", "LineEdit", Color("35594c"))
+	t.set_color("selection_color", "LineEdit", Color("5a3e28"))
 	t.set_stylebox("panel", "PopupMenu", box("tip", Vector4(4, 4, 4, 4)))
 	t.set_stylebox("hover", "PopupMenu", box("button_hover"))
 	t.set_color("font_color", "PopupMenu", PAPER)
@@ -116,13 +122,13 @@ static func theme() -> Theme:
 	t.set_constant("shadow_offset_x", "TooltipLabel", 1)
 	t.set_constant("shadow_offset_y", "TooltipLabel", 1)
 	var track := StyleBoxFlat.new()
-	track.bg_color = Color("0b1c1d")
+	track.bg_color = Color(0.08, 0.05, 0.03, 0.7)
 	track.content_margin_left = 2
 	track.content_margin_right = 2
 	t.set_stylebox("scroll", "VScrollBar", track)
 	for kind in ["grabber", "grabber_highlight", "grabber_pressed"]:
 		var grip := StyleBoxFlat.new()
-		grip.bg_color = Color("8f7650") if kind == "grabber" else Color("bc9e67")
+		grip.bg_color = Color("a9803c") if kind == "grabber" else Color("d8ad5f")
 		grip.border_color = VOID
 		grip.set_border_width_all(1)
 		grip.content_margin_left = 2
@@ -131,7 +137,7 @@ static func theme() -> Theme:
 	var groove := box("field", Vector4(0, 2, 0, 2))
 	t.set_stylebox("slider", "HSlider", groove)
 	var lit := StyleBoxFlat.new()
-	lit.bg_color = Color("459a93")
+	lit.bg_color = Color("a9803c")
 	lit.content_margin_top = 2
 	lit.content_margin_bottom = 2
 	t.set_stylebox("grabber_area", "HSlider", lit)
@@ -142,9 +148,23 @@ static func theme() -> Theme:
 	return t
 
 
-## A title in the old hand (IM Fell English), gold by default.
+## The heading font the keeper picked (GameSettings.heading_font).
+static func title_font() -> Font:
+	var pick: String = str(GameSettings.get("heading_font")) if GameSettings.get("heading_font") != null else "field"
+	return HEADINGS.get(pick, HEADINGS.field)[1]
+
+
+## The size a heading is drawn at: a pixel face only at the size it was drawn
+## for (Field Hand at 16), the old serif at the size asked.
+static func title_size(font_size: int) -> int:
+	var pick: String = str(GameSettings.get("heading_font")) if GameSettings.get("heading_font") != null else "field"
+	var native: int = int(HEADINGS.get(pick, HEADINGS.field)[2])
+	return native if native > 0 else font_size
+
+
+## A title in the heading font, gold by default.
 static func style_title(label: Label, font_size := 11, tint := GOLD) -> Label:
-	label.add_theme_font_override("font", TITLE)
-	label.add_theme_font_size_override("font_size", font_size)
+	label.add_theme_font_override("font", title_font())
+	label.add_theme_font_size_override("font_size", title_size(font_size))
 	label.add_theme_color_override("font_color", tint)
 	return label

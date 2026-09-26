@@ -102,10 +102,16 @@ def track(frame, template, radius=6):
     return best_off
 
 
+def kind_of(key):
+    """A crystal-sick key (pass 14) stands exactly where its clean kind does."""
+    return key[:-len("_crystal")] if key.endswith("_crystal") else key
+
+
 def frame_origin(key, view):
     """Top-left of the original drawing on the canvas (prepare.py placement)."""
     sys.path.insert(0, HERE)
     import prepare
+    key = kind_of(key)
     if not os.path.exists(os.path.join(SRC, "base", "%s_%s.png" % (key, view))):
         view = "side"  # a side-on baby: every facing stands where the side does
     img = prepare.source(key, view)
@@ -129,7 +135,7 @@ def main():
         os.makedirs(out_dir, exist_ok=True)
         meta = {"key": key, "species": info["species"], "canvas": [w, h], "ground": h - GROUND - 1,
                 "origin": {v: frame_origin(key, v) for v in VIEWS}, "clips": {}}
-        drops = {v: VIEW_DROP.get(v, {}).get(key, 0) for v in VIEWS}
+        drops = {v: VIEW_DROP.get(v, {}).get(key, VIEW_DROP.get(v, {}).get(kind_of(key), 0)) for v in VIEWS}
         for v in VIEWS:
             # The rider's seat is measured from the origin: it drops with the art.
             meta["origin"][v][1] += drops[v]

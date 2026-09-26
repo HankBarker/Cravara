@@ -422,3 +422,44 @@ Result: 10-19 ms a frame across runs (camp ~11-14, the villages ~10-18, a sandst
 - **Siege** (`SIEGE_SECONDS`, `_find_blocker`, `_tick_siege`, `ForestWorld.siege_hit`): hunting and
   blocked, a beast bashes through a keeper's building (fractions of a blow add up in `prop.siege`); the
   big ones shoulder through trees.
+
+## Pass 14 (2026-09-25): the crystal-sick herds, the Ashmane's face, the Suchomimus' ridge
+- **Crystal keys** `<species>_crystal` for raptor, trike, stego, longneck, parasaur, utah, deino,
+  sucho and spino: a Crystalback (`ForestCreature.crystal == 2`) wears one.
+  - **Bases** (`tools/dino/crystal_bases.py`): PixelLab `edit_image` on the clean `first/`
+    drawings, up to 4 frames at <= 128 px per batch (a canvas over 128 px is cropped to a shared
+    window and pasted back). Three looks were tried: ridge, heavy and light. The raptor took
+    "ridge"; heavy was too much crystal. `adopt` stands each result feet-aligned where the clean
+    one stands. Palettes are `palettes/<key>.hex`; `clips.json` gives each key `palette` (gen.py
+    `palette()` reads it).
+  - **Clips**: gen.py, like any key. Then `tools/dino/crystal_fix.py KEY` applies the clean kind's
+    procedural fixes, the same tools and arguments that the clean key's ledger `method` entries
+    record: front and back walks, the stego's tail sweeps and copied threats, the trike's gore and
+    cap clamps, the parasaur's front displays, the Suchomimus' held bite frame, the lift_back
+    roars. `walk_back.py`, `tail_side.py` and `export.py` (`kind_of`: frame origin and
+    `VIEW_DROP`) fall back to the clean kind's rig for a `_crystal` key; `hits.json` was seeded
+    with the clean kind's contact frames.
+  - **Look at every front and back action.** The crystal models rear tails into pale spikes (the
+    raptor's sniff_down became a lunge_front graze) and flatten a back tail sweep into a bar (the
+    stego's tail_swing_up became `tail_front.py --view up`, and its threat_up a copy). They grow
+    posts over the head (the trike's walk_down became walk_front) and push a crest into a pillar
+    (the parasaur's roar_up became `lunge_front.py roar --view up`). The Utahraptor's front walk
+    and run lost their crest partway through (walk_front). The deinonychus' back slash turned round
+    to show its jaws (`lunge_front.py bite --view up`, moved to slash_up). The raptor's side slash
+    smeared an arm into a long dark bar, trimmed back by hand. The AI frames are kept in
+    `<clip>_ai`, and `crystal_fix.py`'s `CRYSTAL_EXTRA` replays these fixes after a regeneration
+    (the hand trim excepted).
+  - **Stride**: the crystal clips stride differently. `stride.py` measures clean against crystal,
+    and `ForestCreature.ART_STRIDE[key]` is the clean species' tuned walk/run scaled by that ratio.
+- **Skytouched** (level 1) is shader-only: `genes.gdshader` `sick` greys and cools the hide and runs
+  pale veins through it (two crossing sine fields, with a slow pulse). The clean art stays in use.
+- **The Ashmane's side face** was scrunched. `edit_image` on the flipped profile fixed it
+  (`inpaint` drew a tube for a head). The new `first/yuty_side.png` stands on the same ground row;
+  the old files are in `fix/yuty/`. Its eight side clips were requeued.
+- **The Suchomimus read like the spinosaur** (the same orange banded sail).
+  `tools/dino/mute_sail.py sucho` pulls every warm, saturated sail colour down to a dull olive
+  ridge, in every clip and drawing (backup in `fix/sucho-sail/`), then `export.py sucho`. No
+  generations.
+- **The Sandblades died out unseen**: the Bonelands' five allosaurs shared their ground and counted
+  them as `RIVALS`. The rivalry is gone, there are three packs of 2-3, and
+  `ForestPlaytest.RESTOCK` sends a new pack at dawn when a kind that doesn't breed has none left.

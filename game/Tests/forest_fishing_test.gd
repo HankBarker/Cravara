@@ -55,7 +55,7 @@ func test_flask_routing():
 	await settle()
 	await right_click(water_point)
 	check(InventoryManager.inventory[0].item.id=="water_flask" and InventoryManager.inventory[0].quantity==1,"Full-bag world right-click fills flask in the exact selected slot")
-	check(InventoryManager.get_item_count("stone")==34*99 and stage.world.water.has(water_cell),"Flask filling preserves all other inventory and source water")
+	check(InventoryManager.get_item_count("stone")==(InventoryManager.inventory.size()-1)*99 and stage.world.water.has(water_cell),"Flask filling preserves all other inventory and source water")
 	select_item("crystal_flask",1)
 	var baseline:=inventory_fingerprint()
 	await right_click(bank+Vector2(0,-16))
@@ -93,7 +93,7 @@ func test_flask_routing():
 		Input.parse_input_event(event)
 		await settle()
 	check(InventoryManager.inventory[7].item.id=="crystal_flask" and InventoryManager.inventory[7].quantity==1,"Satchel SlotUI right-click drinks tonic at full hunger and returns flask to same slot")
-	check(InventoryManager.get_item_count("stone")==33*99 and InventoryManager.get_item_count("crystal_flask")==2,"Full-bag inventory tonic use conserves every other stack and vessel")
+	check(InventoryManager.get_item_count("stone")==(InventoryManager.inventory.size()-2)*99 and InventoryManager.get_item_count("crystal_flask")==2,"Full-bag inventory tonic use conserves every other stack and vessel")
 	await get_tree().create_timer(0.5).timeout
 	check(stage.player.current_health>50 and stage.player.current_hunger==stage.player.max_hunger,"Inventory tonic starts vitality recovery without changing full hunger")
 	await key(KEY_TAB)

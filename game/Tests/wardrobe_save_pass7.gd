@@ -20,9 +20,13 @@ func armor_ids(player) -> Dictionary:
 
 func inventory_matches(saved: Array) -> bool:
 	var actual: Array=SaveManager._serialize_inventory(InventoryManager.inventory)
-	if actual.size()!=saved.size(): return false
+	# Pass 14: the pack grew to 40; an older journey's slots come back as they were
+	# and the new pockets are empty.
+	if actual.size()<saved.size(): return false
 	for i in actual.size():
-		if str(actual[i].id)!=str(saved[i].id) or int(actual[i].qty)!=int(saved[i].qty): return false
+		if i>=saved.size():
+			if str(actual[i].id)!="": return false
+		elif str(actual[i].id)!=str(saved[i].id) or int(actual[i].qty)!=int(saved[i].qty): return false
 	return true
 
 ## The journey's own creatures (pass 10 adds the alpha, raised fresh by its

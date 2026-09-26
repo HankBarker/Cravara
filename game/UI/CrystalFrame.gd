@@ -1,8 +1,20 @@
 extends Control
-## Authored interface ornament: fossil stone, bronze lashings and Sky-Fang inlays.
-## Geometry follows the native pixel grid. This is interface chrome, not world art.
+## A panel of the keeper's field pack (pass 14): a leather body the world
+## shows through, a stitched edge, brass rivets at the corners and, for a
+## titled panel, a darker flap along the top where the title sits. (Pass 13's
+## carved fossil slate read green and heavy.) Geometry follows the native
+## pixel grid. This is interface chrome, not world art.
 var compact := false
 var inset := false
+
+const BODY := Color(0.165, 0.110, 0.075, 0.84)
+const EDGE_OUT := Color("140c07")
+const BAND := Color("5a3b27")
+const BAND_LIGHT := Color("7a5236")
+const STITCH := Color("c9a46b")
+const FLAP := Color(0.10, 0.065, 0.04, 0.55)
+const BRASS := Color("d8ad5f")
+const BRASS_DARK := Color("6b4a1f")
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -12,50 +24,40 @@ func _draw() -> void:
 	var w := int(size.x)
 	var h := int(size.y)
 	if w < 12 or h < 12: return
-	var rim := Color("547f76")
-	draw_style_box(_stone(),Rect2(Vector2.ZERO,size))
-	# Recessed green slate and a thin warm carved line create depth without noise.
-	draw_rect(Rect2(3,3,w-6,h-6),Color("1b3835"),false)
-	draw_line(Vector2(7,4),Vector2(w-8,4),Color("91a17b"))
-	draw_line(Vector2(5,h-5),Vector2(w-6,h-5),Color("314b40"))
+	draw_style_box(_leather(),Rect2(Vector2.ZERO,size))
+	# The leather band round the edge: lit along the top, a running stitch inside it.
+	draw_rect(Rect2(2,2,w-4,h-4),BAND,false)
+	draw_line(Vector2(3,2),Vector2(w-4,2),BAND_LIGHT)
+	var inner := 4 if not inset else 3
+	for x in range(inner+2,w-inner-2,3):
+		draw_rect(Rect2(x,inner,2,1),STITCH)
+		draw_rect(Rect2(x,h-1-inner,2,1),STITCH)
+	for y in range(inner+2,h-inner-2,3):
+		draw_rect(Rect2(inner,y,1,2),STITCH)
+		draw_rect(Rect2(w-1-inner,y,1,2),STITCH)
 	if not compact and not inset:
-		draw_rect(Rect2(7,6,w-14,18),Color("213b33"))
-		draw_line(Vector2(10,25),Vector2(w-11,25),Color("5d7260"))
-		draw_line(Vector2(14,26),Vector2(w-15,26),Color("0c201f"))
-		# Little overlapping fern blades grow over the outside of the old carved frame.
-		# Their outline is kept clear of the usable panel interior.
-		for y in [31,h-35]:
-			draw_line(Vector2(1,y-8),Vector2(2,y+11),Color("3d694c"))
-			draw_colored_polygon(PackedVector2Array([Vector2(1,y),Vector2(-3,y-5),Vector2(-2,y+1),Vector2(2,y+4)]),Color("547e51"))
-			draw_colored_polygon(PackedVector2Array([Vector2(2,y+6),Vector2(5,y+2),Vector2(5,y+6),Vector2(2,y+10)]),Color("385a42"))
+		# The flap the title sits on, and its stitched seam.
+		draw_rect(Rect2(6,6,w-12,15),FLAP)
+		for x in range(8,w-8,3):
+			draw_rect(Rect2(x,21,2,1),STITCH.darkened(0.25))
 	for corner in [Vector2(0,0),Vector2(w-1,0),Vector2(0,h-1),Vector2(w-1,h-1)]:
 		var sx := 1 if corner.x == 0 else -1
 		var sy := 1 if corner.y == 0 else -1
-		var p: Vector2 = corner + Vector2(sx*2,sy*2)
-		draw_line(p,p+Vector2(sx*11,0),Color("bc9e67"),2)
-		draw_line(p,p+Vector2(0,sy*9),Color("806743"),2)
-		draw_line(p+Vector2(sx*2,sy*3),p+Vector2(sx*2,sy*7),rim)
-		gem(corner+Vector2(sx*5,sy*5),3 if compact else 4)
-	# Etched seed-runes on the lower rim, far from text and icons.
-	if w > 90 and not compact:
-		for x in range(w/2-15,w/2+16,10):
-			draw_line(Vector2(x-2,h-3),Vector2(x,h-5),Color("9a855d"))
-			draw_line(Vector2(x,h-5),Vector2(x+2,h-3),Color("9a855d"))
+		rivet(corner+Vector2(sx*3,sy*3))
 
-func gem(p: Vector2,r: int) -> void:
-	draw_colored_polygon(PackedVector2Array([p+Vector2(0,-r),p+Vector2(r,0),p+Vector2(0,r+1),p+Vector2(-r,0)]),Color("0b272b"))
-	draw_colored_polygon(PackedVector2Array([p+Vector2(0,1-r),p+Vector2(r-1,0),p,p+Vector2(1-r,0)]),Color("a2e3ca"))
-	draw_colored_polygon(PackedVector2Array([p,p+Vector2(r-1,0),p+Vector2(0,r),p+Vector2(1-r,0)]),Color("459a93"))
-	draw_line(p+Vector2(0,1-r),p,Color("f0f5d2"))
+func rivet(p: Vector2) -> void:
+	draw_rect(Rect2(p-Vector2(1,1),Vector2(3,3)),BRASS_DARK)
+	draw_rect(Rect2(p-Vector2(1,1),Vector2(2,2)),BRASS)
+	draw_rect(Rect2(p-Vector2(1,1),Vector2(1,1)),Color("f1d38c"))
 
-func _stone() -> StyleBoxFlat:
+func _leather() -> StyleBoxFlat:
 	var s := StyleBoxFlat.new()
-	s.bg_color = Color("152c2b")
-	s.border_color = Color("091b1e")
+	s.bg_color = BODY
+	s.border_color = EDGE_OUT
 	s.set_border_width_all(2)
 	s.set_corner_radius_all(3)
 	s.corner_detail = 1
-	s.shadow_color = Color(0,0,0,0.55)
-	s.shadow_size = 3
+	s.shadow_color = Color(0,0,0,0.35)
+	s.shadow_size = 2
 	s.shadow_offset = Vector2(0,2)
 	return s

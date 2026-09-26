@@ -17,7 +17,7 @@ const SetBonus = preload("res://Forest/equipment/SetBonus.gd")
 const UI = preload("res://UI/SkyfangUI.gd")
 const Puff = preload("res://Forest/fx/Puff.gd")
 const FC = preload("res://Forest/creatures/ForestCreature.gd")
-const SHADOW_COLOR := Color(0.03, 0.10, 0.09)
+const SHADOW_COLOR := Color(0.08, 0.05, 0.03)
 ## The cel's centre sits this far above the feet (the keeper's SORT_Y).
 const LIFT := 8.0
 ## How far off a raider sees the keeper; a band that has cried out sees further

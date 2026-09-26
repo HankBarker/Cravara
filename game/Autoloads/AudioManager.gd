@@ -13,6 +13,8 @@ var _music_path := ""
 var _tone_cache: Dictionary = {}
 var _last_foley: Dictionary = {}
 const LEATHER_CUES := {"equip_gear":"equip-gear","unequip_gear":"unequip-gear","satchel_open":"satchel-open","satchel_close":"satchel-close"}
+## Pass 14: the field pack's zipper (tools/audio/make_zip_audio.py).
+const ZIP_CUES := {"pack_unzip":"res://Forest/audio/leather/pack-unzip.wav","pack_zip":"res://Forest/audio/leather/pack-zip.wav"}
 # Procedural movement/combat foley (res://Forest/audio/generated, made by
 # make_feel_sfx.py). Each family is an AudioStreamRandomizer: random variant,
 # never the same one twice in a row, small pitch/level spread.
@@ -105,6 +107,9 @@ func play_sfx(sfx_name: String):
 	if GENERATED_CUES.has(sfx_name) and _foley_bank(GENERATED_CUES[sfx_name][0]) != null:
 		var cue: Array = GENERATED_CUES[sfx_name]
 		play_foley(cue[0], cue[1], cue[2])
+		return
+	if ZIP_CUES.has(sfx_name):
+		_play_sample(ZIP_CUES[sfx_name],-6)
 		return
 	var leather_path := get_leather_cue_path(sfx_name)
 	if leather_path != "":

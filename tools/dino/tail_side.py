@@ -146,11 +146,13 @@ def bent(tail4, size, pivot, angle_deg, stretch):
 
 def build(key, side):
     drawing = Image.open(os.path.join(OUT, "first", "%s_side.png" % key)).convert("RGBA")
-    body, tail, pivot = split(drawing, CUT[key])
+    # A crystal-sick drawing (pass 14) is cut where its clean kind is.
+    base = key.replace("_crystal", "")
+    body, tail, pivot = split(drawing, CUT.get(key, CUT.get(base)))
     tail4 = scale2x(scale2x(tail))
     frames = []
     for i, (share, stretch) in enumerate(PLAN):
-        angle = SWING_KEY.get(key, {}).get(side, SWING[side]) * share
+        angle = SWING_KEY.get(key, SWING_KEY.get(base, {})).get(side, SWING[side]) * share
         if i == 0 or (abs(angle) < 0.5 and stretch == 1.0):
             frames.append(drawing.copy())
             continue

@@ -179,6 +179,9 @@ func _process(delta: float) -> void:
 		if c.tamed and not c.baby and not c.is_dead and c.order in HOME_ORDERS and Life.has_young(c.species) and not c.is_mounted():
 			home.append(c)
 	var seen := {}
+	# Breeding stars (pass 14): Courtship and Love-match shorten the courting and the rest.
+	var bs = get_tree().get_first_node_in_group("skills")
+	var court: float = 1.0 - clampf(bs.value("court") if bs else 0.0, 0.0, 0.75)
 	for i in home.size():
 		for j in range(i + 1, home.size()):
 			var a = home[i]
@@ -188,21 +191,22 @@ func _process(delta: float) -> void:
 			var key := "%d:%d" % [mini(a.get_instance_id(), b.get_instance_id()), maxi(a.get_instance_id(), b.get_instance_id())]
 			seen[key] = true
 			_together[key] = float(_together.get(key, 0.0)) + step
-			if float(_together[key]) >= TOGETHER:
+			if float(_together[key]) >= TOGETHER * court:
 				_together.erase(key)
-				_rested[a.get_instance_id()] = REST_AFTER
-				_rested[b.get_instance_id()] = REST_AFTER
-				var egg := Life.egg_of(a.species)
-				session.world._burst({egg: 1}, (a.global_position + b.global_position) / 2.0 + Vector2(0, 6))
-				# The young one's genes, from both parents (Breeding perks tip the odds).
-				var bs = get_tree().get_first_node_in_group("skills")
-				var inherit: float = clampf(0.55 + (bs.value("inherit") if bs else 0.0), 0.0, 1.0)
-				var mutation: float = 1.0 + (bs.value("mutation") if bs else 0.0)
+				_rested[a.get_instance_id()] = REST_AFTER * court
+				_rested[b.get_instance_id()] = REST_AFTER * court
 				var rng := RandomNumberGenerator.new()
 				rng.randomize()
+				# Twin Clutch, Brood: now and then two eggs.
+				var clutch := 2 if rng.randf() < (bs.value("twins") if bs else 0.0) else 1
+				var egg := Life.egg_of(a.species)
+				session.world._burst({egg: clutch}, (a.global_position + b.global_position) / 2.0 + Vector2(0, 6))
+				# The young one's genes, from both parents (Breeding stars tip the odds).
+				var inherit: float = clampf(0.55 + (bs.value("inherit") if bs else 0.0), 0.0, 1.0)
+				var mutation: float = 1.0 + (bs.value("mutation") if bs else 0.0)
 				if not bred.has(a.species): bred[a.species] = []
-				bred[a.species].append(FC.Genes.blend(a.genes, b.genes, rng, inherit, mutation))
-				session._toast("Your %ss have laid an egg! Set it in a warm incubator." % str(Life.SHORT.get(a.species, a.species)).to_lower())
+				for n in clutch: bred[a.species].append(FC.Genes.blend(a.genes, b.genes, rng, inherit, mutation))
+				session._toast(("Your %ss have laid an egg! Set it in a warm incubator." if clutch == 1 else "Your %ss have laid twin eggs! Set them in a warm incubator.") % str(Life.SHORT.get(a.species, a.species)).to_lower())
 				var sk = get_tree().get_first_node_in_group("skills")
 				if sk: sk.gain("breeding", float(sk.XP.bred))
 	for key in _together.keys():

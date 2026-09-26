@@ -37,6 +37,10 @@ extends Resource
 @export var bleed_dps: float = 0.0
 # Pass 12: how much of the Pale Lands' ash a trinket keeps out (1 = all).
 @export var ash_guard: float = 0.0
+## Pass 14: a trinket's effects, {effect: amount} (Forest/items/Trinkets.gd
+## names them: "crit", "bleed", "speed", "luck"...). They add up across the
+## keeper's trinket slots.
+@export var effects: Dictionary = {}
 
 # Consumables
 @export var consumable: bool = false

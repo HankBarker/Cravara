@@ -3,7 +3,7 @@ extends Node
 signal stations_changed
 var nearby_stations: Array[String] = []
 var last_failure := ""
-var categories: Array[String] = ["All", "Tools", "Building", "Materials", "Food", "Armor", "Relics"]
+var categories: Array[String] = ["All", "Tools", "Building", "Materials", "Food", "Armor", "Trinkets", "Relics"]
 var personal_recipes: Array = [
 	# Armour, tier 1-6 (docs/ARMOR_PROGRESSION.md). Bulk materials are renewable or
 	# plentiful; each scarce drop appears once per piece and only from tier 3 up:
@@ -40,6 +40,23 @@ var personal_recipes: Array = [
 	{"name":"Plate Maul","item_id":"plate_maul","ingredients":{"stego_plate":5,"trike_hide":1,"log":2},"category":"Tools","quantity":1,"description":"21 damage, and its blows bleed. Stego plates on a heavy haft.","station":"workbench"},
 	{"name":"Allosaur Cleaver","item_id":"allo_cleaver","ingredients":{"allo_tooth":4,"trex_scale":3,"prism_crystal":2},"category":"Tools","quantity":1,"description":"27 damage. Edged with allosaurus teeth.","station":"workbench"},
 	{"name":"Tyrant Fang","item_id":"tyrant_fang","ingredients":{"trex_scale":6,"allo_tooth":3,"prism_crystal":3},"category":"Tools","quantity":1,"description":"36 damage. The Emerald Tyrant's fang.","station":"workbench"},
+	# Pass 14: trinkets from a beast's parts (the same parts make its weapons), and
+	# two trinkets tinkered into one (tools/items/trinkets.py).
+	{"name":"Fang Necklace","item_id":"fang_necklace","ingredients":{"raptor_fang":3,"plant_fiber":2},"station":"workbench","category":"Trinkets","description":"Raptor fangs strung on fibre."},
+	{"name":"Plate Pendant","item_id":"plate_pendant","ingredients":{"stego_plate":2,"plant_fiber":2},"station":"workbench","category":"Trinkets","description":"A stego plate, filed to an edge."},
+	{"name":"Horn Guard","item_id":"horn_guard","ingredients":{"trike_horn":2,"trike_hide":1},"station":"workbench","category":"Trinkets","description":"Trike horn and hide, a bracer that turns blows."},
+	{"name":"Scale Bracer","item_id":"scale_bracer","ingredients":{"trex_scale":3,"raptor_hide":1},"station":"workbench","category":"Trinkets","description":"Crystal scale laced over raptor hide."},
+	{"name":"Allo Tooth Ring","item_id":"tooth_ring","ingredients":{"allo_tooth":2,"rustiron":1},"station":"workbench","category":"Trinkets","description":"An allosaur tooth set in rustiron."},
+	{"name":"Sunstone Amulet","item_id":"sunstone_amulet","ingredients":{"sunstone":2,"sail_scale":1},"station":"workbench","category":"Trinkets","description":"Warm to the touch, even at night."},
+	{"name":"Bog-iron Band","item_id":"bogiron_band","ingredients":{"bog_iron":2,"sucho_claw":1},"station":"workbench","category":"Trinkets","description":"Black bog iron and a Suchomimus claw."},
+	{"name":"Ashglass Eye","item_id":"ashglass_eye","ingredients":{"ashglass":2,"ashmane_fur":1},"station":"workbench","category":"Trinkets","description":"A lens of ashglass. Through it, foes show their weak spots."},
+	{"name":"Fur-lined Wrap","item_id":"fur_wrap","ingredients":{"ashmane_fur":2,"raptor_hide":1},"station":"workbench","category":"Trinkets","description":"Ashmane fur against the snow."},
+	{"name":"Claw Bracelet","item_id":"claw_bracelet","ingredients":{"deino_claw":2,"sickle_claw":1},"station":"workbench","category":"Trinkets","description":"Deinonychus and Utahraptor claws in a ring."},
+	{"name":"Spine Torc","item_id":"spine_torc","ingredients":{"spino_spine":2,"bog_iron":1},"station":"workbench","category":"Trinkets","description":"Spinosaur spines bent into a neck ring."},
+	{"name":"Bloodfang Necklace","item_id":"bloodfang","ingredients":{"fang_necklace":1,"plate_pendant":1,"crystal_shard":2},"station":"workbench","category":"Trinkets","description":"Fangs and a filed plate: every cut counts."},
+	{"name":"Bulwark Charm","item_id":"bulwark_charm","ingredients":{"horn_guard":1,"frill_guard":1,"crystal_shard":2},"station":"workbench","category":"Trinkets","description":"Horn and frill: nothing moves you."},
+	{"name":"Wanderer's Step","item_id":"wanderers_step","ingredients":{"wayfarer_anklet":1,"sandblade_plume":1,"prism_crystal":1},"station":"workbench","category":"Trinkets","description":"Anklet and plume: light as the Sandblades."},
+	{"name":"Apex Signet","item_id":"apex_signet","ingredients":{"tyrant_eye":1,"rust_signet":1,"prism_crystal":2},"station":"workbench","category":"Trinkets","description":"The rex's eye set in the allosaur's ring."},
 	{"name":"Skyshard Sword","item_id":"shard_sword","ingredients":{"prism_crystal":3,"plank":2,"plant_fiber":2},"category":"Tools","quantity":1,"description":"A broad crystal-edged blade. A sweeping slash with greater reach than a dagger.","station":"workbench"},
 	{"name":"Reed Fishing Rod", "item_id":"fishing_rod", "ingredients":{"log":6,"plant_fiber":8,"crystal_shard":2}, "station":"workbench", "category":"Tools", "description":"Cast into rippling fishing holes. Hold and release Space to reel in a catch."},
 	{"name":"Crystal Flask", "item_id":"crystal_flask", "ingredients":{"crystal_shard":2,"stone":1}, "station":"workbench", "category":"Materials", "description":"Polish a reusable vessel. Fill it at the water's edge."},

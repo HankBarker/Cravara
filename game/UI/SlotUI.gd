@@ -35,7 +35,7 @@ func _make_custom_tooltip(for_text: String) -> Object:
 		label.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 		label.add_theme_font_override("font",preload("res://Forest/fonts/Tiny5-Regular.ttf"))
 		label.add_theme_font_size_override("font_size",8)
-		label.add_theme_color_override("font_shadow_color",Color(0.02,0.06,0.06,0.92))
+		label.add_theme_color_override("font_shadow_color",Color(0.08,0.05,0.03,0.92))
 		label.add_theme_constant_override("shadow_offset_x",1)
 		label.add_theme_constant_override("shadow_offset_y",1)
 		if i==0 and lines.size()>1: label.add_theme_color_override("font_color",Color("dcc085"))
@@ -58,7 +58,8 @@ func _on_gui_input(event):
 			elif parent_ui and parent_ui.has_method("select_slot"):
 				parent_ui.select_slot(self)
 		elif event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
-			_try_consume()
+			# Pass 14 (Terraria's way): right-click wears what can be worn, eats what can be eaten.
+			if not _try_quick_equip(): _try_consume()
 func _try_consume():
 	var src = _get_source()
 	var slot_data = src.inventory[slot_index]
@@ -80,39 +81,44 @@ func _try_consume():
 			src.inventory[slot_index] = {"item": null, "quantity": 0}
 		src.inventory_changed.emit()
 
-func _try_quick_equip():
+func _try_quick_equip() -> bool:
 	if parent_ui and parent_ui.has_method("select_slot"):
 		parent_ui.select_slot(self)
 	# Quick-equip only makes sense for slots backed by the player's
-	# InventoryManager — equipping out of a chest would be confusing.
+	# InventoryManager: wearing something straight out of a chest would be confusing.
 	if source != null:
-		return
+		return false
 	var slot_data = InventoryManager.inventory[slot_index]
 	if slot_data == null or slot_data.item == null:
-		return
-	if slot_data.item.armor_slot == "":
-		return
+		return false
+	var item: Item = slot_data.item
 	var player = get_tree().get_first_node_in_group("player")
-	if not player or not player.has_method("equip_armor"):
-		return
-
-	var target_slot: String = slot_data.item.armor_slot
-	if player.has_method("equip_from_inventory"):
-		if player.equip_from_inventory(slot_index,target_slot):
-			AudioManager.play_sfx("equip_gear")
-		return
-	var new_armor: Item = slot_data.item
-	var current: Item = player.equipped_armor.get(target_slot)
-
-	if current:
-		InventoryManager.inventory[slot_index] = {"item": current, "quantity": 1}
+	if not player or not player.has_method("equip_from_inventory"):
+		return false
+	# Where it goes: its armour place, the first free trinket place (pass 14:
+	# five of them), or the light.
+	var target := ""
+	if item.armor_slot != "":
+		target = item.armor_slot
+	elif item.equipment_slot == "trinket" and player.has_method("trinket_slots"):
+		for place in player.trinket_slots():
+			var worn = player.get_equipment(place)
+			if worn and worn.id == item.id: return false
+		target = player.trinket_slots()[0]
+		for place in player.trinket_slots():
+			if player.get_equipment(place) == null:
+				target = place
+				break
+	elif item.equipment_slot == "light" or item.id in ["torch", "lantern"]:
+		target = "light"
 	else:
-		InventoryManager.inventory[slot_index] = {"item": null, "quantity": 0}
-	InventoryManager.inventory_changed.emit()
-	player.equip_armor(target_slot, new_armor)
-	AudioManager.play_sfx("equip_gear")
-	if parent_ui and parent_ui.has_method("update_armor_display"):
-		parent_ui.update_armor_display()
+		return false
+	if player.equip_from_inventory(slot_index, target):
+		AudioManager.play_sfx("equip_gear")
+		if parent_ui and parent_ui.has_method("update_armor_display"):
+			parent_ui.update_armor_display()
+		return true
+	return false
 
 func _on_mouse_entered():
 	_is_hovered = true

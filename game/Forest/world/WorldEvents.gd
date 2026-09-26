@@ -276,7 +276,8 @@ func _tick_fire(delta: float) -> void:
 		var at: Vector2i = world.to_cell(keeper.global_position)
 		for d in [Vector2i.ZERO, Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
 			if burning.has(at + d):
-				keeper.take_damage(3, null, 60.0)
+				var burn := int(round(3.0 * (1.0 - preload("res://Forest/items/Trinkets.gd").value(keeper, "fire"))))
+				if burn > 0: keeper.take_damage(burn, null, 60.0)
 				break
 		for creature in get_tree().get_nodes_in_group("forest_creatures"):
 			if creature.is_dead or creature.tamed: continue

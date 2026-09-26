@@ -13,6 +13,9 @@ uniform int marking = 0;           // 0 none, 1 bold bands, 2 faded bands, 3 spe
 uniform vec4 mark_color = vec4(0.1, 0.08, 0.08, 1.0);
 uniform float mark_seed = 0.0;
 uniform vec2 frame_size = vec2(64.0, 64.0);
+// Pass 14: the Sky-Fang's sickness (Skytouched, 1): pale crystal veins glow
+// through the hide, a slow pulse running along them.
+uniform float sick = 0.0;
 // The sprite's modulate (the hurt flash, a variant's tint, the death fade).
 // COLOR in fragment() already carries the texture's colour in Godot 4, so the
 // modulate is taken here, before it's mixed in.
@@ -60,6 +63,18 @@ void fragment() {
 			float l = dot(rgb, vec3(0.3, 0.59, 0.11));
 			vec3 recolour = clamp(mutation.rgb * (0.38 + l * 1.7), 0.0, 1.0);
 			rgb = mix(rgb, recolour, mutation.a * hide);
+		}
+		if (sick > 0.0) {
+			vec2 px = mod(floor(UV / TEXTURE_PIXEL_SIZE), frame_size);
+			// Branching veins: where two slow waves cross their zero lines.
+			float a = sin(px.x * 0.43 + sin(px.y * 0.19 + mark_seed * 3.1) * 2.6 + mark_seed * 5.7);
+			float b = sin(px.y * 0.37 + sin(px.x * 0.23 + mark_seed) * 2.2);
+			float vein = (1.0 - smoothstep(0.0, 0.22, abs(a))) * step(-0.25, b);
+			float pulse = 0.6 + 0.4 * sin(TIME * 2.2 - px.x * 0.12 - px.y * 0.08);
+			vec3 glow = vec3(0.72, 0.93, 1.0);
+			// The hide itself goes a little cold and grey under the sickness.
+			rgb = mix(rgb, vec3(dot(rgb, vec3(0.3, 0.59, 0.11))) * vec3(0.86, 0.96, 1.12), 0.3 * hide * sick);
+			rgb = mix(rgb, glow * (0.8 + 0.3 * pulse), vein * hide * sick * (0.72 + 0.28 * pulse));
 		}
 		if (marking == 1) {
 			rgb = mix(rgb, mark_color.rgb * (0.6 + hsv.z), band * 0.75);
