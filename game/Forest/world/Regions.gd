@@ -11,11 +11,33 @@ const INFO := {
 	"dunes": {"name": "The Sunscar Dunes", "blurb": "Sand, sun and the old king's grave.", "map": Color("b89a5e")},
 	# Pass 12: pale with the ash that falls from the mountain beyond.
 	"pale_hills": {"name": "The Pale Lands", "blurb": "Ash falls here like snow, from the mountain beyond. Nothing sings.", "map": Color("a8a39a")},
+	# Pass 15: underground (each cave names itself as the keeper goes in).
+	"caves": {"name": "Underground", "blurb": "", "map": Color("2a2830")},
 }
 
 
 static func title(region: String) -> String:
 	return str(INFO.get(region, {}).get("name", "The Skyfang Wilds"))
+
+
+## Which way a land lies from camp ("north-east"): a ring world turns its
+## lands the way its seed says (pass 15), the old world had them fixed.
+const OLD_WAYS := {"glassmere": "west", "dunes": "south", "pale_hills": "north", "bonelands": "east", "forest": "here"}
+const COMPASS := ["east", "south-east", "south", "south-west", "west", "north-west", "north", "north-east"]
+static func way_to(region: String, world) -> String:
+	var layout = world.get("layout") if world else null
+	if layout == null or not layout.is_rings(): return str(OLD_WAYS.get(region, "out"))
+	if region == "forest": return "here"
+	var a := wrapf(float(layout.angles.get(region, 0.0)), 0.0, TAU)
+	return COMPASS[int(round(a / (TAU / 8.0))) % 8]
+
+## Words with the lands' ways in them: "{dir:glassmere}" -> "west", "{Dir:dunes}" -> "South".
+static func say(text: String, world) -> String:
+	if not "{" in text: return text
+	for region in INFO:
+		var way := way_to(region, world)
+		text = text.replace("{dir:%s}" % region, way).replace("{Dir:%s}" % region, way.capitalize())
+	return text
 
 
 static func blurb(region: String) -> String:

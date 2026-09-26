@@ -389,6 +389,79 @@
     },
     "raw": "C:\\Cravera\\art\\dino-v2\\raw\\allo\\roar_up@2"
    }
+  ],
+  "stalk_up": [
+   {
+    "job": "d600264b-e284-471c-8f5e-2334cf975ede",
+    "tool": "animate_image",
+    "seed": 7773357,
+    "status": "done",
+    "cost": 2.0,
+    "prompt": "Creeps forward in place in a low crouch, its head held low and level, stepping slowly and carefully. It stays in place with its back to the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790402290.8073804,
+    "finished": 1790402445.7284982,
+    "score": {
+     "bright": 24,
+     "area": 1.37,
+     "wide": 1.0,
+     "base": 37
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\allo\\stalk_up@0"
+   },
+   {
+    "job": "5573f17b-9a57-47d5-a2ad-bb84589d32ed",
+    "tool": "animate_image",
+    "seed": 7774357,
+    "status": "done",
+    "cost": 2.0,
+    "prompt": "Creeps forward in place in a low crouch, its head held low and level, stepping slowly and carefully. It stays in place with its back to the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790402614.716283,
+    "finished": 1790402796.7357728,
+    "score": {
+     "bright": 24,
+     "area": 1.41,
+     "wide": 1.0,
+     "base": 37
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\allo\\stalk_up@1"
+   },
+   {
+    "job": "0b4d0e04-7ec4-4ccf-8055-a9daf44fa3f3",
+    "tool": "animate_image",
+    "seed": 7775357,
+    "status": "done",
+    "cost": 2.0,
+    "prompt": "Creeps forward in place in a low crouch, its head held low and level, stepping slowly and carefully. It stays in place with its back to the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790402868.527445,
+    "finished": 1790402992.8354456,
+    "score": {
+     "bright": 123,
+     "area": 1.67,
+     "wide": 1.0,
+     "base": 37
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\allo\\stalk_up@2"
+   },
+   {
+    "job": "d7bc97eb-0c57-4f88-80d2-e279e0126ca8",
+    "tool": "animate_image",
+    "seed": 7776357,
+    "status": "done",
+    "cost": 2.0,
+    "prompt": "Creeps forward in place in a low crouch, its head held low and level, stepping slowly and carefully. It stays in place with its back to the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790403083.530657,
+    "finished": 1790403261.4654198,
+    "score": {
+     "bright": 40,
+     "area": 1.28,
+     "wide": 1.08,
+     "base": 37
+    }
+   }
   ]
  },
  "chomp_down": {
@@ -602,5 +675,107 @@
    "base": 37
   },
   "kept_attempt": "C:\\Cravera\\art\\dino-v2\\raw\\allo\\roar_up@1"
+ },
+ "stalk_side": {
+  "job": "890a2d24-9d8e-4d70-8d08-d3beac32cca5",
+  "tool": "animate_image",
+  "seed": 8408267,
+  "status": "done",
+  "cost": 2.0,
+  "prompt": "Creeps forward in place in a low crouch, its head held low and level, stepping slowly and carefully. It stays in place, facing right.",
+  "frames": 9,
+  "submitted": 1790400885.102231,
+  "finished": 1790401024.6365867,
+  "score": {
+   "bright": 0,
+   "area": 1.0,
+   "wide": 1.05,
+   "base": 79
+  }
+ },
+ "look_side": {
+  "job": "8fa85dc2-20d6-456c-8373-62ee1c72555f",
+  "tool": "animate_image_pixminimax",
+  "seed": 4140040,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stands in place and turns its head to look to one side, then to the other side, then back ahead, its body staying still. It stays in place, facing right.",
+  "frames": 13,
+  "submitted": 1790402206.9564593,
+  "finished": 1790402386.5971737,
+  "score": {
+   "bright": 2,
+   "area": 1.0,
+   "wide": 1.03,
+   "base": 79
+  }
+ },
+ "look_down": {
+  "job": "0f0bcb66-4a2b-4d26-b7f9-c666be19cadd",
+  "tool": "animate_image_pixminimax",
+  "seed": 15542216,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stands in place and turns its head to look to one side, then to the other side, then back ahead, its body staying still. It stays in place, facing the viewer the whole time.",
+  "frames": 13,
+  "submitted": 1790402207.7820723,
+  "finished": 1790402322.8894722,
+  "score": {
+   "bright": 1,
+   "area": 1.04,
+   "wide": 1.0,
+   "base": 77
+  }
+ },
+ "look_up": {
+  "job": "32ddfd40-7307-4c31-b263-a58bcfcae987",
+  "tool": "animate_image_pixminimax",
+  "seed": 11855245,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stands in place and turns its head to look to one side, then to the other side, then back ahead, its body staying still. It stays in place with its back to the viewer the whole time.",
+  "frames": 13,
+  "submitted": 1790402208.5141537,
+  "finished": 1790402340.6057491,
+  "score": {
+   "bright": 5,
+   "area": 1.04,
+   "wide": 1.0,
+   "base": 37
+  }
+ },
+ "stalk_down": {
+  "job": "a6ef83bf-9942-41f7-9cf6-804a9053300f",
+  "tool": "animate_image",
+  "seed": 16446340,
+  "status": "done",
+  "cost": 2.0,
+  "prompt": "Creeps forward in place in a low crouch, its head held low and level, stepping slowly and carefully. It stays in place, facing the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790402209.236593,
+  "finished": 1790402347.5485504,
+  "score": {
+   "bright": 0,
+   "area": 1.03,
+   "wide": 1.0,
+   "base": 77
+  }
+ },
+ "stalk_up": {
+  "job": "5517b5aa-4f2d-45db-a896-8ff83554b25e",
+  "tool": "animate_image",
+  "seed": 7774361,
+  "status": "done",
+  "cost": 2.0,
+  "prompt": "Creeps forward in place in a low crouch, its head held low and level, stepping slowly and carefully. It stays in place with its back to the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790404423.6895783,
+  "finished": 1790404571.6685524,
+  "score": {
+   "bright": 18,
+   "area": 1.3,
+   "wide": 1.0,
+   "base": 37
+  }
  }
 }

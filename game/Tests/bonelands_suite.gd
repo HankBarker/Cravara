@@ -109,10 +109,15 @@ func _shape() -> void:
 	# Pass 10's world (the forest and the Bonelands), now inside pass 11's wilds.
 	check(world.OLD_BOUNDS == Rect2i(-56, -56, 224, 112) and b.encloses(world.OLD_BOUNDS), "the forest and the Bonelands are twice as wide as the forest (%s)" % b)
 	check(world.BONELANDS == Rect2i(56, -56, 112, 112), "the Bonelands are the eastern half")
-	check(world.terrain.size() == b.size.x * b.size.y, "every cell of the world has ground (%d)" % world.terrain.size())
+	# (Pass 15: the caves' cells lie outside the world, in their own strip.)
+	var inside := 0
+	for c in world.terrain:
+		if b.has_point(c): inside += 1
+	check(inside == b.size.x * b.size.y, "every cell of the world has ground (%d)" % inside)
 	check(world.region_of(Vector2i(0, 0)) == "forest" and world.region_of(Vector2i(55, 0)) == "forest", "camp and the old east wall's line are forest")
 	check(world.region_of(Vector2i(56, 0)) == "bonelands" and world.region_of(Vector2i(160, -40)) == "bonelands", "east of it is the Bonelands")
-	check(world.surface.origin == b.position and world.surface.cells == b.size, "the ground is baked over the whole world")
+	var drawn: Rect2i = world.render_bounds()
+	check(world.surface.origin == drawn.position and world.surface.cells == drawn.size and drawn.encloses(b), "the ground is baked over the whole world, and the caves")
 	var map := preload("res://Forest/ForestMap.gd").new()
 	check(map != null, "the map knows the world's bounds")
 	map.free()

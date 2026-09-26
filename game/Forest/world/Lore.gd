@@ -26,6 +26,19 @@ const ENTRIES := {
 		"text": "The pages are water-stained. 'The crystal grows thicker north of the hills, white instead of blue. The beasts there don't sleep at all. I've found the pass, but it's choked with crystal.'\nThe last entry: 'Something falls from the sky every hundred years. It must be kept. I'm going on.'"},
 	"pale_road": {"title": "The Pale Waystone",
 		"text": "A worn stone at the start of the old road north. The tribe marked the hills with a Keeper's sign: an eye over a falling star.\n'North of here, the Keepers walked alone.'"},
+	# Pass 15: the far lands' ruins (a new journey's world).
+	"drowned_hall": {"title": "The Drowned Hall",
+		"text": "The builders' hall stood on dry ground once. The bog rose around it, a finger's width a year, and they carved each year's water line into the arch.\nThe last line is at a child's height: 'We leave the hall to the mere.'"},
+	"sunken_watch": {"title": "The Sunken Watch",
+		"text": "A watchtower leaning into the black water. Scratched on its stair: a great fin, drawn again and again, each one bigger than the last."},
+	"sand_temple": {"title": "The Sand Temple",
+		"text": "The dunes have buried it to the shoulders. Inside, the builders painted the sky as they saw it the night the Sky-Fangs fell: every star a falling one.\n'The old king heard them fall, and woke.'"},
+	"buried_arches": {"title": "The Buried Arches",
+		"text": "Arches of a market street, sand to their tops. Coins of the first builders turn up in the sand round them, and the Sunward come here to dig."},
+	"ash_moot": {"title": "The Ash Moot",
+		"text": "A meeting ring grey with ash. The carved face wears no crown here, only a cloth over its mouth.\n'We met to choose who would go north. None came back to say what they found.'"},
+	"bone_shrine": {"title": "The Bone Shrine",
+		"text": "A shrine of great ribs lashed into an arch, the wolf's face carved on the keystone. The tribe brought the bones of their fiercest hunts here.\nThe newest bones are an allosaur's, and the marks on them are not from any blade."},
 	"wolf": {"title": "The Wolf Idol",
 		"text": "A guardian carved into a living trunk, facing the raptor lands. The tribe asked it to keep the pack-hunters away.\nThe claw marks on its bark say it did not always work."},
 }
@@ -34,6 +47,9 @@ const ENTRIES := {
 ## Pages read from something other than a carving (the Last Keeper's journal,
 ## found at their camp in the Pale Hills): never placed in `lore_at`.
 const NOT_CARVED := ["keeper_journal"]
+## Carvings only a new journey's world has (pass 15: the far lands' ruins,
+## world/RingsGen.gd): an old journey's world never shows them.
+const RINGS_ONLY := ["drowned_hall", "sunken_watch", "sand_temple", "buried_arches", "ash_moot", "bone_shrine"]
 
 
 static func title(id: String) -> String:

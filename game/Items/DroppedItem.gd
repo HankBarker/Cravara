@@ -11,6 +11,9 @@ var _phase := 0.0
 var _retry := 0.18
 var _pickup_delay := 0.18
 var _picked_up := false
+## Dropped by the keeper (pass 15): it lies there until they have stepped away
+## once, so it isn't picked straight back up.
+var _await_leave := false
 const ICON_EXTENT := 12.0
 
 func _ready() -> void:
@@ -55,8 +58,16 @@ func _process(delta: float) -> void:
 	sprite.position = Vector2(0,-7+lift)
 	label.position = Vector2(4,-4+lift)
 
+## Put down by the keeper: not picked up for a moment, nor until they step away.
+func hold_off(seconds := 0.8) -> void:
+	_pickup_delay = maxf(_pickup_delay, seconds)
+	_await_leave = true
+
 func _physics_process(delta: float) -> void:
 	_pickup_delay = maxf(0,_pickup_delay-delta)
+	if _await_leave:
+		var keeper := get_tree().get_first_node_in_group("player") as Node2D
+		if not is_instance_valid(keeper) or keeper.global_position.distance_to(global_position) > pickup_range + 8.0: _await_leave = false
 	_retry -= delta
 	if _retry<=0 and not _picked_up:
 		_retry = 0.3
@@ -81,7 +92,7 @@ func _on_body_entered(body: Node) -> void:
 	_try_pickup(body)
 
 func _try_pickup(body: Node) -> bool:
-	if _picked_up or _pickup_delay>0 or not item or not is_instance_valid(body): return false
+	if _picked_up or _pickup_delay>0 or _await_leave or not item or not is_instance_valid(body): return false
 	if not (body.is_in_group("player") or body.name=="Player"): return false
 	if body.get("respawning")==true: return false
 	if InventoryManager.add_item(item,quantity):

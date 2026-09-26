@@ -323,7 +323,7 @@ func _pick_site(vid: String, info: Dictionary, move: int) -> Vector2i:
 	r.seed = int(world.world_seed) ^ hash([vid, move])
 	var rect: Rect2i = info.rect
 	for attempt in 600:
-		var c := Vector2i(r.randi_range(rect.position.x + 4, rect.end.x - 5), r.randi_range(rect.position.y + 4, rect.end.y - 5))
+		var c: Vector2i = world.area_point(rect, r, 4, 5)
 		if _site_ok(c, info, false): return c
 	return Vector2i(9999, 9999)
 
@@ -436,12 +436,15 @@ func _tick_band(band: Dictionary, delta: float, keeper: Node2D) -> void:
 			return
 	else:
 		band.gone = 0.0
-	if bool(band.get("goal_reached", false)) or not band.has("goal"):
+	# (Pass 15 fix: while it rests the leader stands at its "goal", so that
+	# arrival no longer restarts the rest; a band walks on when it's over.)
+	if float(band.get("pause", 0.0)) <= 0.0 and (bool(band.get("goal_reached", false)) or not band.has("goal")):
 		band.goal_reached = false
 		band.pause = _rng.randf_range(4.0, 10.0)
 	if float(band.get("pause", 0.0)) > 0.0:
 		band.pause = float(band.pause) - delta
 		band.goal = lead.global_position
+		band.goal_reached = false
 		if float(band.pause) <= 0.0:
 			band.goal = _next_goal(lead.global_position, str(band.region))
 

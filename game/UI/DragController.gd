@@ -1,5 +1,9 @@
 extends Node
 ## Global release resolves mouse capture correctly; preview stays on the UI canvas.
+## Pass 15: a stack let go this near a panel's edge goes back, not into the
+## world (only a drag well out over the world drops it).
+const DROP_MARGIN := 10.0
+
 var dragged_slot: Control
 var dragged_icon: TextureRect
 var is_dragging := false
@@ -64,6 +68,9 @@ func _finish_drop(pos: Vector2) -> void:
 	if moved:
 		if is_instance_valid(destination) and destination != origin and origin.parent_ui:
 			origin.parent_ui.cross_swap(origin,destination)
+		# Pass 15: let go out over the world (not over a panel) and it's dropped there.
+		elif not is_instance_valid(destination) and origin.parent_ui and origin.parent_ui.has_method("drop_to_world") and not origin.parent_ui.is_over_panel(pos, DROP_MARGIN):
+			origin.parent_ui.drop_to_world(origin, true)
 	elif origin.get_global_rect().has_point(pos): origin._try_quick_equip()
 
 func end_drag() -> void:

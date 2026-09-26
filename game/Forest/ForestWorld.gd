@@ -15,6 +15,8 @@ const OLD_BOUNDS := Rect2i(-56, -56, 224, 112)
 const Prop = preload("res://Forest/ForestProp.gd")
 const Nesting = preload("res://Forest/world/Nesting.gd")
 const WildsGen = preload("res://Forest/world/WildsGen.gd")
+## Pass 15: each land's building stuff.
+const Materials = preload("res://Forest/world/Materials.gd")
 const Life = preload("res://Forest/creatures/Life.gd")
 const GROUND = preload("res://Forest/ground/ForestGround.gd")
 const FLORA = preload("res://Forest/ground/ForestFlora.gd")
@@ -22,6 +24,10 @@ const ROOFS = preload("res://Forest/ForestRoofs.gd")
 const Housing = preload("res://Forest/folk/Housing.gd")
 const Loot = preload("res://Forest/world/Loot.gd")
 const Trinkets = preload("res://Forest/items/Trinkets.gd")
+const Layout = preload("res://Forest/world/Layout.gd")
+const Caves = preload("res://Forest/world/Caves.gd")
+## Pass 15: the caves (world/Caves.gd): their insides in a strip east of the world.
+var caves
 ## A cache was opened (cell, {item id: count}): the session notes what turned up.
 signal cache_opened(cell: Vector2i, loot: Dictionary)
 ## Points of interest: ruins of the first builders and the old tribe's carved
@@ -38,6 +44,26 @@ const SITES := [
 ]
 const DROP = preload("res://Items/DroppedItem.tscn")
 @export var world_seed: int = 726151
+## Pass 15: which kind of world this is (world/Layout.gd): "legacy" (every
+## journey from before pass 15, and the tests) or "rings" (a new journey's:
+## bigger, the lands turned the way its seed says). Saved with the journey.
+var layout_kind := "legacy"
+var layout
+## Pass 15: small places with a look and a feel of their own inside a land
+## (cell -> MICRO index): the plains' red meadow, the bog's safe haven, the
+## dunes' oases. The ground and the grass are tinted by them (ForestGround's
+## land map), and a keeper who walks into one hears its name.
+var micro := {}
+## Where each is (name -> its middle cell), for the life placed in them.
+var micro_at := {}
+const MICRO := ["", "red_meadow", "haven", "oasis"]
+const MICRO_NAMES := {"red_meadow": ["The Red Meadow", "Crimson grass as far as you can see, and grain in it."],
+	"haven": ["Stillwater Haven", "Dry ground in the bog. The hunters don't come here."],
+	"oasis": ["An Oasis", "Palms and sweet water in the sand."]}
+
+## The micro place a cell is in ("" for none).
+func micro_of(c: Vector2i) -> String:
+	return str(MICRO[int(micro.get(c, 0))])
 var water: Dictionary = {}
 var terrain: Dictionary = {}
 var props: Dictionary = {}
@@ -96,6 +122,11 @@ var _cull_shown := {}
 var _cull_clock := 0.0
 ## Bone heaps already picked through (cell -> true).
 var searched := {}
+## Pass 15: an ancient cache is a chest to look through, not a burst of loot:
+## its contents (cell -> BeastBag, the saddlebags' container) are rolled when
+## it is first opened and whatever is left in it is saved.
+var cache_bags := {}
+const CACHE_SLOTS := 9
 ## Cells whose grass may have to hide or come back (a prop came or went).
 var _flora_cells := {}
 var _nest_clock := 0.0
@@ -105,15 +136,24 @@ signal egg_hatched_at(cell: Vector2i, species: String)
 func _ready() -> void:
 	add_to_group("forest_world")
 	y_sort_enabled = true
+	var timing := "--gen-timing" in OS.get_cmdline_user_args()
+	var t := Time.get_ticks_msec()
 	_generate()
+	preload("res://Forest/Boot.gd").breathe()
+	if timing: print("WORLD generate %dms" % (Time.get_ticks_msec() - t))
+	t = Time.get_ticks_msec()
 	surface = GROUND.new()
 	surface.name = "Ground"
 	add_child(surface)
 	surface.setup(self)
+	preload("res://Forest/Boot.gd").breathe()
+	if timing: print("WORLD ground %dms" % (Time.get_ticks_msec() - t))
+	t = Time.get_ticks_msec()
 	flora = FLORA.new()
 	flora.name = "Flora"
 	add_child(flora)
 	flora.setup(self)
+	if timing: print("WORLD flora %dms" % (Time.get_ticks_msec() - t))
 	roof_layer = ROOFS.new()
 	roof_layer.world = self
 	add_child(roof_layer)
@@ -161,7 +201,7 @@ func _process(delta: float) -> void:
 	for y in range(here.y - 6, here.y + 7):
 		for x in range(here.x - 6, here.x + 7):
 			var p = props.get(Vector2i(x, y))
-			if is_instance_valid(p) and p.kind in ["workbench","campfire"] and p.global_position.distance_to(player.global_position) < 88:
+			if is_instance_valid(p) and p.kind in ["workbench","campfire","cooking_pot"] and p.global_position.distance_to(player.global_position) < 88:
 				stations.append(p.kind)
 	CraftingManager.set_nearby_stations(stations)
 
@@ -174,8 +214,14 @@ var sensed := {}
 var event_props := {}
 
 func _generate() -> void:
+	layout = Layout.rings(world_seed) if layout_kind == "rings" else Layout.legacy()
+	micro.clear()
+	micro_at.clear()
 	nesting = Nesting.new(self)
 	searched.clear()
+	for c in cache_bags:
+		if is_instance_valid(cache_bags[c]): cache_bags[c].queue_free()
+	cache_bags.clear()
 	clams.clear()
 	deep.clear()
 	piranha.clear()
@@ -185,6 +231,9 @@ func _generate() -> void:
 	noise.seed = world_seed
 	noise.frequency = 0.058
 	noise.fractal_octaves = 3
+	if layout.is_rings():
+		_generate_rings()
+		return
 	for y in range(-EXTENT,EXTENT):
 		for x in range(-EXTENT,EXTENT):
 			var c := Vector2i(x,y)
@@ -242,15 +291,73 @@ func _generate() -> void:
 	# Each far land's ore round its beasts, and crystal thicker far out (pass 13).
 	minerals = preload("res://Forest/world/Minerals.gd").new(self)
 	minerals.place()
+	# Each land's wild crops (pass 15).
+	preload("res://Forest/world/Larder.gd").new(self).place()
+	# And its caves (pass 15).
+	caves = Caves.new(self)
+	caves.place()
 	_build_deep_water()
 	_build_shore()
 
-## The world, in cells (the forest and the Bonelands).
+## A new journey's world (pass 15, world/RingsGen.gd), then what every world
+## gets after its lands: nests, ores, wild crops, deep water and banks.
+func _generate_rings() -> void:
+	var t := Time.get_ticks_msec()
+	var timing := "--gen-timing" in OS.get_cmdline_user_args()
+	preload("res://Forest/world/RingsGen.gd").new(self).generate()
+	preload("res://Forest/Boot.gd").breathe()
+	if timing: print("GEN lands %dms" % (Time.get_ticks_msec() - t))
+	nesting.place_all()
+	preload("res://Forest/Boot.gd").breathe()
+	if timing: print("GEN nests %dms" % (Time.get_ticks_msec() - t))
+	minerals = preload("res://Forest/world/Minerals.gd").new(self)
+	minerals.place()
+	preload("res://Forest/Boot.gd").breathe()
+	if timing: print("GEN minerals %dms" % (Time.get_ticks_msec() - t))
+	preload("res://Forest/world/Larder.gd").new(self).place()
+	preload("res://Forest/Boot.gd").breathe()
+	if timing: print("GEN larder %dms" % (Time.get_ticks_msec() - t))
+	caves = Caves.new(self)
+	caves.place()
+	preload("res://Forest/Boot.gd").breathe()
+	if timing: print("GEN caves %dms" % (Time.get_ticks_msec() - t))
+	_build_deep_water()
+	_build_shore()
+	preload("res://Forest/Boot.gd").breathe()
+	if timing: print("GEN water %dms" % (Time.get_ticks_msec() - t))
+
+
+## A random cell in a box of the old world (`lo`/`hi`: cells in from its
+## sides; the old callers each had their own): as ever in a legacy world, the
+## same land, depth and reach across in a ring world (Layout.sample_like).
+func area_point(rect: Rect2i, r: RandomNumberGenerator, lo := 0, hi := 0) -> Vector2i:
+	if r == null:
+		r = RandomNumberGenerator.new()
+		r.randomize()
+	if layout and layout.is_rings(): return layout.sample_like(rect, r)
+	return Vector2i(r.randi_range(rect.position.x + lo, rect.end.x - hi), r.randi_range(rect.position.y + lo, rect.end.y - hi))
+
+
+## A cave's rock (its walls), which a thing laid inside may stand beside.
+func deep_rock_or_rim(c: Vector2i) -> bool:
+	var p = props.get(c)
+	return is_instance_valid(p) and p.kind in ["wall", "ore"] and region_of(c) == "caves"
+
+## What the ground is drawn over: the world and the caves' strip (pass 15).
+func render_bounds() -> Rect2i:
+	var b := bounds()
+	if caves and caves.strip.has_area(): b = b.merge(caves.strip)
+	return b
+
+
+## The world, in cells.
 func bounds() -> Rect2i:
-	return BOUNDS
+	return layout.bounds() if layout else BOUNDS
 
 
 func region_of(c: Vector2i) -> String:
+	if caves and caves.strip.has_point(c): return "caves"
+	if layout: return layout.region_of(c)
 	if BONELANDS.has_point(c): return "bonelands"
 	if GLASSMERE.has_point(c): return "glassmere"
 	if PALE_HILLS.has_point(c): return "pale_hills"
@@ -269,8 +376,9 @@ func _old_edge(c: Vector2i) -> bool:
 
 ## What the world's rim says to a keeper who tries it.
 func edge_text(c: Vector2i) -> String:
-	if PALE_HILLS.has_point(c) and c.y <= BOUNDS.position.y + 1:
-		return "The ash lies deep to the north, and the mountain beyond still smoulders. Not yet."
+	if region_of(c) == "caves": return "Solid rock. There's no way through."
+	if region_of(c) == "pale_hills" and (c.y <= bounds().position.y + 1 or layout.is_rings()):
+		return "The ash lies deep here, and the mountain beyond still smoulders. Not yet."
 	return "The wilds go on beyond here, one day."
 
 
@@ -305,8 +413,8 @@ func _solid_near(c: Vector2i) -> bool:
 ## The grass's tint for a cell: dead and grey under the Pale Lands' ash
 ## (pass 12), fading in over their southern rows.
 func grass_tint(c: Vector2i) -> Color:
-	if not PALE_HILLS.has_point(c): return Color.WHITE
-	var fade := clampf(float(PALE_HILLS.end.y - 1 - c.y) / 10.0, 0.0, 1.0)
+	if region_of(c) != "pale_hills": return Color.WHITE
+	var fade := clampf(float(layout.from_inner(c)) / 10.0, 0.0, 1.0) if layout else clampf(float(PALE_HILLS.end.y - 1 - c.y) / 10.0, 0.0, 1.0)
 	return Color.WHITE.lerp(Color(0.8, 0.78, 0.72), fade)
 
 
@@ -353,7 +461,7 @@ func _build_shore() -> void:
 	_shore_body = null
 	var bank := {}
 	for c in water:
-		if not GLASSMERE.has_point(c): continue
+		if region_of(c) != "glassmere": continue
 		for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1), Vector2i(1, 1), Vector2i(-1, 1), Vector2i(1, -1), Vector2i(-1, -1)]:
 			var n: Vector2i = c + d
 			if terrain.has(n) and not water.has(n): bank[n] = true
@@ -380,7 +488,10 @@ func is_deep_at(pos: Vector2) -> bool:
 ## The world's outer wall (two cells deep west and north, one east and south,
 ## as the forest always had): never mined or built on.
 func on_edge(c: Vector2i) -> bool:
-	return c.x <= BOUNDS.position.x + 1 or c.x >= BOUNDS.end.x - 1 or c.y <= BOUNDS.position.y + 1 or c.y >= BOUNDS.end.y - 1
+	# A cave's outer rock is the only edge down there (pass 15).
+	if caves and caves.strip.has_point(c): return caves.deep_rock.has(c)
+	var b := bounds()
+	return c.x <= b.position.x + 1 or c.x >= b.end.x - 1 or c.y <= b.position.y + 1 or c.y >= b.end.y - 1
 
 
 ## The Bonelands: dry badlands east of the forest, the second region (and the
@@ -635,21 +746,39 @@ func _free_cells_near(at: Vector2i, least: int, most: int, original: Dictionary,
 			out.append(c)
 	return out
 
-## Open an ancient cache: its loot bursts out around it, once.
+## Open an ancient cache and look through it (pass 15; it used to burst its
+## loot out around it). The first time it grinds open, its loot is rolled into
+## it; after that it holds whatever was left.
 func _open_cache(c: Vector2i, cache) -> bool:
-	if cache.opened:
+	var bag = _cache_bag(c)
+	if not cache.opened:
+		cache.opened = true
+		cache.queue_redraw()
+		var loot: Dictionary = Loot.cache(c, world_seed)
+		var find := Loot.find("cache", c, world_seed, Trinkets.of(get_tree(), "luck"))
+		if find != "": loot[find] = 1
+		for id in loot:
+			var item := ItemDB.make(str(id))
+			if item and not bag.add_item(item, int(loot[id])): _drop(str(id), int(loot[id]), Vector2(c * CELL) + Vector2(8, 10))
+		AudioManager.play_sfx("harvest_plant")
+		_notify("The ancient cache grinds open.")
+		cache_opened.emit(c, loot)
+	elif bag.is_empty():
 		_notify("Empty. Whoever hid this is long gone.")
-		return true
-	cache.opened = true
-	cache.queue_redraw()
-	var loot: Dictionary = Loot.cache(c, world_seed)
-	var find := Loot.find("cache", c, world_seed, Trinkets.of(get_tree(), "luck"))
-	if find != "": loot[find] = 1
-	_burst(loot, Vector2(c * CELL) + Vector2(8, 10))
-	AudioManager.play_sfx("harvest_plant")
-	_notify("The ancient cache grinds open.")
-	cache_opened.emit(c, loot)
+	var hud := get_tree().get_first_node_in_group("inventory_ui")
+	if hud and hud.has_method("open_chest"): hud.open_chest(bag)
 	return true
+
+## A cache's contents (made the first time it is asked for).
+func _cache_bag(c: Vector2i):
+	if cache_bags.has(c) and is_instance_valid(cache_bags[c]): return cache_bags[c]
+	var bag = preload("res://Forest/creatures/BeastBag.gd").new()
+	bag.setup(CACHE_SLOTS, "Ancient Cache")
+	# Where it is: the panel closes when the keeper walks away from it.
+	bag.set_meta("at", Vector2(c * CELL) + Vector2(8, 8))
+	add_child(bag)
+	cache_bags[c] = bag
+	return bag
 
 ## Relic mounds and wild roots come up with a hoe.
 func is_dig_spot(pos: Vector2) -> bool:
@@ -728,9 +857,11 @@ func _spawn_prop(c: Vector2i, kind: String) -> void:
 	p.max_hp=STRUCTURE_HP.get(kind, int(Prop.WILD.get(kind, {}).get("hp", 1)))
 	p.hp=p.max_hp
 	p.cell=c
-	p.sandstone=kind in Prop.SANDSTONE and (BONELANDS.has_point(c) or DUNES.has_point(c))
-	p.chalk=kind in Prop.SANDSTONE and PALE_HILLS.has_point(c)
-	p.ashen=kind in Prop.ASHEN_KINDS and PALE_HILLS.has_point(c)
+	var land := region_of(c)
+	p.sandstone=kind in Prop.SANDSTONE and land in ["bonelands", "dunes"]
+	p.chalk=kind in Prop.SANDSTONE and land == "pale_hills"
+	p.ashen=kind in Prop.ASHEN_KINDS and land == "pale_hills"
+	p.ground=ground_kind_at(c)
 	p.position=Vector2(c*CELL)+Vector2(8,8)
 	props[c]=p
 	add_child(p)
@@ -740,6 +871,21 @@ func _spawn_prop(c: Vector2i, kind: String) -> void:
 	_cull[square].append(p)
 	p.visible = _cull_shown.get(square, true)
 	if p.has_parts(): _index_solids(p, true)
+
+## What the ground under a cell grows (pass 15): a structure's ground contact
+## takes its tufts from it, so a tent stands in grass on the green, in dry
+## grass on the sand and in moss in the bog.
+func ground_kind_at(c: Vector2i) -> String:
+	var style := str(ground_style.get(c, ""))
+	if style == "stone": return "stone"
+	if style == "mud": return "bog"
+	if style in ["sand", "hardpan"]: return "sand"
+	match region_of(c):
+		"glassmere": return "bog"
+		"pale_hills": return "pale"
+		"dunes": return "sand"
+		"bonelands": return "sand" if int(terrain.get(c, 0)) == 1 else "grass"
+	return "dirt" if int(terrain.get(c, 0)) == 1 else "grass"
 
 ## Note (or forget) the cells a landmark's footing touches.
 func _index_solids(p, add: bool) -> void:
@@ -756,7 +902,8 @@ func _index_solids(p, add: bool) -> void:
 					if _solid_cells[c].is_empty(): _solid_cells.erase(c)
 
 ## How many hits a prop takes; stone outlasts timber.
-const STRUCTURE_HP := {"tree":3,"wall":3,"ore":3,"rock":8,"wood_wall":4,"wood_floor":3,"workbench":6,"chest":6,"torch":3,"campfire":5,"sun_sail":5,"wood_door":5,"thatch_roof":3,"hide_bed":5,"tent":8,"stone_wall":10,"stone_floor":6,"stone_door":8,"slate_roof":5,
+const STRUCTURE_HP := {"tree":3,"wall":3,"ore":3,"rock":8,"wood_wall":4,"wood_floor":3,"workbench":6,"chest":6,"torch":3,"campfire":5,"cooking_pot":5,"sun_sail":5,"wood_door":5,"thatch_roof":3,"hide_bed":5,"tent":8,"stone_wall":10,"stone_floor":6,"stone_door":8,"slate_roof":5,
+	"bogwood_wall":6,"bogwood_floor":4,"palewood_wall":5,"palewood_floor":4,"sandstone_wall":9,"sandstone_floor":6,"crystal_wall":12,"crystal_floor":7,
 	"incubator":5,"hitching_post":4,"big_gate":8}
 
 func _spawn_floor(c: Vector2i, kind := "wood_floor") -> void:
@@ -973,6 +1120,7 @@ func get_interaction_hint(pos: Vector2) -> String:
 			"shrine": return "The Sky-Fang hums beneath the earth."
 			"workbench": return "E · Workbench crafting"
 			"campfire": return "E · Campfire cooking"
+			"cooking_pot": return "E · Cooking pot: the finer dishes"
 			"hide_bed": return "E · Bind respawn to this bed"
 			"tent": return "Hide shelter · Strike to reclaim and move"
 			"chest": return "E · Open storage chest"
@@ -980,7 +1128,9 @@ func get_interaction_hint(pos: Vector2) -> String:
 			"wood_door","stone_door": return "E · Close door" if props[c].opened else "E · Open door"
 			"big_gate": return "Pen gate · E: shut it" if props[c].opened else "Pen gate · E: open it"
 			"hitching_post": return "Hitching post · hold E on a companion close by to tie it here"
-			"cache": return "An emptied cache" if props[c].opened else "E · Open the ancient cache"
+			"cache":
+				if not props[c].opened: return "E · Open the ancient cache"
+				return "An emptied cache" if not cache_bags.has(c) or cache_bags[c].is_empty() else "E · Look in the ancient cache"
 			"folk_hut": return "Someone's hut"
 			"folk_camp": return "A cold camp"
 			"folk_cage": return "E · Break the trap open"
@@ -1001,6 +1151,16 @@ func get_interaction_hint(pos: Vector2) -> String:
 			"incubator": return nesting.status(c)
 			"palm", "pine", "birch", "dead_tree": return "AXE · Fell the tree"
 			"cactus": return "Strike to pick the red fruit"
+			"cave_mouth":
+				var cave: Dictionary = caves.cave_by_mouth(c) if caves else {}
+				return "E · Go into %s" % str(cave.get("name", "the cave"))
+			"cave_exit": return "E · Climb back out into the light"
+			"explorer": return "E · A lost explorer, hurt"
+			"wild_grain": return "E · Gather wild redgrain"
+			"wild_lotus": return "E · Pull up a mire lotus"
+			"wild_melon": return "E · Pick the wild melon (and its seeds)"
+			"wild_pepper": return "E · Pick ember peppers"
+			"wild_gourd": return "E · Cut the marrow gourd (and its seeds)"
 			"reeds": return "Strike to cut reeds"
 			"chalk_rock": return "PICKAXE · Chalk stone"
 			"pale_crystal": return "PICKAXE POWER 2 · Pale Sky-Fang crystal"
@@ -1015,7 +1175,7 @@ func get_interaction_hint(pos: Vector2) -> String:
 		if props[c].kind in Prop.LANDMARKS:
 			return "E · Read the carving" if lore_at.has(c) else "Ruins of the first builders"
 	if roofs.has(c) and not is_roof_open(c): return ("Slate roof" if roofs[c].kind == "slate_roof" else "Thatch shelter") + " · Strike to reclaim roof"
-	if floors.has(c): return ("Stone floor" if floors[c].kind == "stone_floor" else "Timber floor") + " · Strike to reclaim"
+	if floors.has(c): return Materials.floor_name(str(floors[c].kind)) + " · Strike to reclaim"
 	if water.has(to_cell(pos)): return "BUCKET · Collect water / wade to cross"
 	return ""
 
@@ -1073,7 +1233,14 @@ func mine_at(pos: Vector2, tool_type: String, power: int = 1, knack: int = 0) ->
 		mined[c] = true
 		placed.erase(c)
 		if not drop.is_empty(): _drop(str(drop[0]), int(drop[1]) + _gather_extra(str(wild.tool), str(drop[0])), Vector2(c * CELL) + Vector2(8, 8))
-		_gathered("tree" if str(wild.tool) == "axe" else ("rock" if str(wild.tool) == "pickaxe" else "forage"), pos)
+		# Each land's own wood besides (pass 15: world/Materials.gd).
+		var own_w: Array = Materials.native(p.kind, region_of(c))
+		if not own_w.is_empty(): _drop(str(own_w[0]), int(own_w[1]), Vector2(c * CELL) + Vector2(4, 9))
+		# A second thing it gives (pass 15: a wild melon's seeds).
+		var more: Array = wild.get("extra", [])
+		if not more.is_empty(): _drop(str(more[0]), int(more[1]), Vector2(c * CELL) + Vector2(12, 9))
+		var ore_kind: bool = p.kind.ends_with("_vein") or p.kind.begins_with("seam_")
+		_gathered("tree" if str(wild.tool) == "axe" else ("ore" if ore_kind else ("rock" if str(wild.tool) == "pickaxe" else "forage")), pos)
 		return true
 	if p.kind=="tree" and tool_type!="axe":
 		last_feedback="Equip an axe to fell this tree."
@@ -1081,7 +1248,7 @@ func mine_at(pos: Vector2, tool_type: String, power: int = 1, knack: int = 0) ->
 	if p.kind in ["rock","wall","ore"] and tool_type!="pickaxe":
 		last_feedback="Equip a pickaxe to mine stone."
 		return false
-	last_hit_material = "stone" if p.kind in ["rock","wall","ore","campfire","stone_wall","stone_door","stone_floor","slate_roof"] else ("plant" if p.kind in ["bush","fern","flowers","mushroom","cattail"] else "wood")
+	last_hit_material = "stone" if p.kind in ["rock","wall","ore","campfire","cooking_pot","stone_wall","stone_door","stone_floor","slate_roof"] or bool(Materials.PIECES.get(p.kind, ["", "", 0, false])[3]) else ("plant" if p.kind in ["bush","fern","flowers","mushroom","cattail"] else "wood")
 	var hardness: int = p.required_power()
 	if power < hardness and p.kind in ["tree","rock","wall","ore"]:
 		last_feedback="Requires %s power %d (yours: %d)." % ["axe" if p.kind=="tree" else "pickaxe",hardness,power]
@@ -1108,6 +1275,10 @@ func mine_at(pos: Vector2, tool_type: String, power: int = 1, knack: int = 0) ->
 		amount += _gather_extra("axe" if kind == "tree" else ("pickaxe" if kind in ["rock","wall","ore"] else ""), id)
 		_gathered({"tree":"tree","rock":"rock","wall":"rock","ore":"ore"}.get(kind, "forage"), pos)
 	_drop(id,amount,Vector2(c*CELL)+Vector2(8,8))
+	# Pass 15: each land's own wood or stone besides (world/Materials.gd).
+	if not roof and not floor_tile and not p.is_placed:
+		var own: Array = Materials.native(kind, region_of(c))
+		if not own.is_empty(): _drop(str(own[0]), int(own[1]), Vector2(c*CELL)+Vector2(12,6))
 	# Pass 13: a crystal-seer (or a geologist) finds prism in any vein now and then.
 	var sk = get_tree().get_first_node_in_group("skills")
 	if sk and kind == "ore" and not p.rich_vein and randf() < sk.value("prism_chance"):
@@ -1168,6 +1339,16 @@ func interact_at(pos: Vector2, item_id: String) -> bool:
 		if props.has(target):
 			var prop=props[target]
 			var ui:=get_tree().get_first_node_in_group("inventory_ui")
+			# A wild crop (pass 15) is gathered by hand, like a bush.
+			if Prop.WILD_CROPS.has(str(prop.kind)):
+				return mine_at(pos, "", 1)
+			# The caves (pass 15): in and out, and the lost explorer.
+			var session_node := get_tree().get_first_node_in_group("forest_session")
+			if prop.kind in ["cave_mouth", "cave_exit"] and session_node and session_node.has_method("cave_travel"):
+				return session_node.cave_travel(prop.cell, prop.kind == "cave_mouth")
+			if prop.kind == "explorer":
+				var life := get_tree().get_first_node_in_group("cave_life")
+				return life != null and life.talk_to_explorer(prop.cell)
 			match prop.kind:
 				"hide_bed":
 					var session:=get_tree().get_first_node_in_group("forest_session")
@@ -1186,7 +1367,7 @@ func interact_at(pos: Vector2, item_id: String) -> bool:
 						if ui.has_method("is_chest_open_for") and ui.is_chest_open_for(chest): ui.close_chest()
 						else: ui.open_chest(chest)
 						return true
-				"workbench","campfire":
+				"workbench","campfire","cooking_pot":
 					if ui and ui.has_method("open_panels"):
 						_process(0.5)
 						ui.open_panels()
@@ -1263,7 +1444,7 @@ func interact_at(pos: Vector2, item_id: String) -> bool:
 		_flora_cells[c] = true
 		return true
 	if item_id == "boat":
-		if not water.has(c) or not GLASSMERE.has_point(c) or props.has(c):
+		if not water.has(c) or region_of(c) != "glassmere" or props.has(c):
 			last_feedback = "Set the boat on the open water of the Mirefen's mere."
 			return false
 		if not InventoryManager.remove_item("boat", 1): return false
@@ -1287,7 +1468,7 @@ func interact_at(pos: Vector2, item_id: String) -> bool:
 		if not InventoryManager.remove_item(item_id,1): return false
 		_spawn_floor(c, item_id)
 		return true
-	if item_id in ["wood_wall","stone_wall","campfire","workbench","torch","chest","wood_door","stone_door","hide_bed","tent","incubator","sun_sail","hitching_post","big_gate"] and not water.has(c) and not props.has(c):
+	if (item_id in Prop.WALLS or item_id in ["campfire","cooking_pot","workbench","torch","chest","wood_door","stone_door","hide_bed","tent","incubator","sun_sail","hitching_post","big_gate"]) and not water.has(c) and not props.has(c):
 		if _placement_overlaps_actor(c,item_id):
 			last_feedback="A creature or survivor is standing in the way."
 			return false
@@ -1447,7 +1628,9 @@ func _exchange_bucket(before: String, after: String) -> bool:
 	return false
 
 func serialize() -> Dictionary:
-	var data:={"seed":world_seed,"mined":[],"water_edits":[],"placed":[],"chests":[],"roofs":[],"doors":[],"damage":[],"floors":[],"caches":[],"searched":[]}
+	var data:={"seed":world_seed,"layout":layout_kind,"mined":[],"water_edits":[],"placed":[],"chests":[],"roofs":[],"doors":[],"damage":[],"floors":[],"caches":[],"searched":[],"cache_bags":[]}
+	for c in cache_bags:
+		if is_instance_valid(cache_bags[c]): data.cache_bags.append([c.x, c.y, cache_bags[c].get_save_data()])
 	if nesting: data.nesting = nesting.serialize()
 	data.clams = []
 	for c in clams: data.clams.append([c.x, c.y, float(clams[c])])
@@ -1480,6 +1663,8 @@ func restore(data: Dictionary) -> void:
 	edits.clear()
 	placed.clear()
 	world_seed=int(data.get("seed",world_seed))
+	# A journey from before pass 15 has no layout: the old world.
+	layout_kind=str(data.get("layout","legacy"))
 	event_props.clear()
 	sensed.clear()
 	_generate()
@@ -1530,6 +1715,10 @@ func restore(data: Dictionary) -> void:
 		if props.has(c) and props[c].kind=="cache":
 			props[c].opened=true
 			props[c].queue_redraw()
+	# Pass 15: what was left in each cache (an older journey's opened caches were burst, and are empty).
+	for entry in data.get("cache_bags",[]):
+		var c:=Vector2i(int(entry[0]),int(entry[1]))
+		if entry.size() > 2 and entry[2] is Dictionary: _cache_bag(c).apply_save_data(entry[2])
 	for entry in data.get("damage",[]):
 		var c:=Vector2i(entry[0],entry[1])
 		if props.has(c): props[c].hp=clampi(int(entry[2]),1,props[c].max_hp)

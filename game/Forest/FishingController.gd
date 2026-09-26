@@ -5,11 +5,14 @@ signal activity_changed(active: bool)
 signal caught(item_id: String)
 const PANEL = preload("res://Forest/FishingPanel.gd")
 const DROP = preload("res://Items/DroppedItem.tscn")
-const FISH := [
-	{"id":"reed_perch","name":"Reed Perch","difficulty":"Gentle","speed":0.85,"range":0.22,"dart":0.025,"cradle":0.18,"gain":0.19,"loss":0.105},
-	{"id":"shardfin","name":"Jade Shardfin","difficulty":"Restless","speed":1.25,"range":0.27,"dart":0.06,"cradle":0.145,"gain":0.17,"loss":0.13},
-	{"id":"moonscale","name":"Moonscale","difficulty":"Wild","speed":1.7,"range":0.31,"dart":0.095,"cradle":0.12,"gain":0.16,"loss":0.145}
-]
+## Pass 15: every land's waters have their own fish (tools/items/foods.py):
+## the forest's perch, shardfin and moonscale first, then the Mirefen's eels
+## and pike, the oases' carp and sunfin, the Pale Lands' char and frostjaw, the
+## Bonelands' catfish and bonegill. A hole's `species` is its fish's index.
+const FoodData = preload("res://Forest/life/FoodData.gd")
+const FISH: Array = FoodData.FISH_LIST
+## Holes nearer than this (pixels) would crowd each other.
+const HOLE_GAP := 110.0
 var session: Node
 var world: Node2D
 var player: Node2D
@@ -29,6 +32,12 @@ func setup(owner_session: Node, terrain: Node2D, survivor: Node2D):
 	z_index=4
 	_generate_spots()
 
+## The index in FISH of a fish id.
+static func fish_index(id: String) -> int:
+	for i in FISH.size():
+		if str(FISH[i].id) == id: return i
+	return 0
+
 func _generate_spots():
 	spots.clear()
 	var candidates: Array=world.water.keys()
@@ -36,21 +45,30 @@ func _generate_spots():
 		var da: int=a.length_squared()
 		var db: int=b.length_squared()
 		return da<db if da!=db else (a.y<b.y if a.y!=b.y else a.x<b.x))
+	# Pass 15: each land its own holes (FoodData.WATERS), nearest camp first.
+	var holes := {}
+	var wanted := 0
+	for land in FoodData.WATERS: wanted += int(FoodData.WATERS[land][1])
 	for cell in candidates:
+		var land_name: String = str(world.region_of(cell)) if world.has_method("region_of") else "forest"
+		var waters: Array = FoodData.WATERS.get(land_name, [])
+		if waters.is_empty() or int(holes.get(land_name, 0)) >= int(waters[1]): continue
+		var point: Vector2=world.to_global(Vector2(cell)*16+Vector2(8,8))
+		var separated:=true
+		for spot in spots:
+			if Vector2(spot.position).distance_to(point)<HOLE_GAP: separated=false; break
+		if not separated: continue
 		var shore:=false
 		for offset in [Vector2i.LEFT,Vector2i.RIGHT,Vector2i.UP,Vector2i.DOWN]:
 			var land: Vector2=world.to_global(Vector2(cell+offset)*16+Vector2(8,8))
 			if not world.water.has(cell+offset) and not world.is_blocked_at(land): shore=true
 		if not shore: continue
-		var point: Vector2=world.to_global(Vector2(cell)*16+Vector2(8,8))
-		var separated:=true
-		for spot in spots:
-			if Vector2(spot.position).distance_to(point)<110: separated=false; break
-		if not separated: continue
-		var species: int=posmod(int(cell.x)*17+int(cell.y)*31+int(world.world_seed),3)
+		var pool: Array = waters[0]
+		var species: int=fish_index(str(pool[posmod(int(cell.x)*17+int(cell.y)*31+int(world.world_seed),pool.size())]))
 		if spots.is_empty(): species=0
-		spots.append({"cell":cell,"position":point,"cooldown":0.0,"species":species,"catches":0})
-		if spots.size()>=18: break
+		spots.append({"cell":cell,"position":point,"cooldown":0.0,"species":species,"catches":0,"land":land_name})
+		holes[land_name]=int(holes.get(land_name, 0))+1
+		if spots.size()>=wanted: break
 	queue_redraw()
 
 func is_active() -> bool: return active_spot>=0 and is_instance_valid(panel)

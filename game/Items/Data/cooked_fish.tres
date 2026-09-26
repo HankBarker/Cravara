@@ -3,7 +3,7 @@
 [resource]
 script = ExtResource("1")
 id = "cooked_fish"
-name = "Roasted Perch"
+name = "Grilled Fish"
 description = "A flame-roasted river meal. 55 hunger, 2 minutes of fullness, and 18 vitality over 20 seconds."
 icon_generator = "forest"
 max_stack = 20

@@ -3,7 +3,11 @@ extends Node2D
 func _ready() -> void:
 	await get_tree().process_frame
 	var world=$World
-	assert(world.terrain.size()==world.BOUNDS.size.x*world.BOUNDS.size.y)
+	# Every cell of the world has ground (pass 15: the caves' cells lie outside it).
+	var inside := 0
+	for c in world.terrain:
+		if world.BOUNDS.has_point(c): inside += 1
+	assert(inside==world.BOUNDS.size.x*world.BOUNDS.size.y)
 	assert(not world.is_water_at(Vector2.ZERO))
 	assert(not world.is_blocked_at(Vector2.ZERO))
 	# Placement uses the actual physics shapes, including creature bodies.

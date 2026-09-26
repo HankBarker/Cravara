@@ -39,7 +39,10 @@
     "chomp",
     "roar",
     "hurt",
-    "death"
+    "death",
+    "look",
+    "stalk",
+    "rest"
    ]
   },
   "raptor": {
@@ -54,7 +57,9 @@
     "sniff",
     "threat",
     "hurt",
-    "death"
+    "death",
+    "look",
+    "stalk"
    ]
   },
   "stego": {
@@ -68,7 +73,9 @@
     "tail_swing_far",
     "threat",
     "hurt",
-    "death"
+    "death",
+    "look",
+    "rest"
    ]
   },
   "trike": {
@@ -82,7 +89,9 @@
     "gore",
     "eat",
     "hurt",
-    "death"
+    "death",
+    "look",
+    "rest"
    ]
   },
   "longneck": {
@@ -96,7 +105,9 @@
     "tail_swing_far",
     "stomp",
     "hurt",
-    "death"
+    "death",
+    "look",
+    "rest"
    ]
   },
   "dodo": {
@@ -109,7 +120,9 @@
     "peck",
     "eat",
     "hurt",
-    "death"
+    "death",
+    "look",
+    "rest"
    ]
   },
   "stego_saddle": {
@@ -164,7 +177,9 @@
     "chomp",
     "roar",
     "hurt",
-    "death"
+    "death",
+    "look",
+    "stalk"
    ]
   },
   "lystro": {
@@ -177,7 +192,9 @@
     "peck",
     "eat",
     "hurt",
-    "death"
+    "death",
+    "look",
+    "rest"
    ]
   },
   "dodo_baby": {
@@ -343,7 +360,9 @@
     "stomp",
     "roar",
     "hurt",
-    "death"
+    "death",
+    "look",
+    "rest"
    ]
   },
   "ossuar": {
@@ -372,7 +391,9 @@
     "roar",
     "eat",
     "hurt",
-    "death"
+    "death",
+    "look",
+    "stalk"
    ]
   },
   "carno": {
@@ -385,7 +406,9 @@
     "bite",
     "roar",
     "hurt",
-    "death"
+    "death",
+    "look",
+    "stalk"
    ]
   },
   "yuty": {
@@ -399,7 +422,9 @@
     "chomp",
     "roar",
     "hurt",
-    "death"
+    "death",
+    "look",
+    "stalk"
    ]
   },
   "anky": {
@@ -413,7 +438,9 @@
     "tail_swing_far",
     "threat",
     "hurt",
-    "death"
+    "death",
+    "look",
+    "rest"
    ]
   },
   "proto": {
@@ -427,7 +454,9 @@
     "eat",
     "threat",
     "hurt",
-    "death"
+    "death",
+    "look",
+    "rest"
    ]
   },
   "compy": {
@@ -440,7 +469,9 @@
     "bite",
     "threat",
     "hurt",
-    "death"
+    "death",
+    "look",
+    "stalk"
    ],
    "views": [
     "side"
@@ -457,7 +488,9 @@
     "pounce",
     "roar",
     "hurt",
-    "death"
+    "death",
+    "look",
+    "stalk"
    ]
   },
   "deino": {
@@ -471,7 +504,9 @@
     "pounce",
     "threat",
     "hurt",
-    "death"
+    "death",
+    "look",
+    "stalk"
    ]
   },
   "sucho": {
@@ -486,7 +521,9 @@
     "roar",
     "eat",
     "hurt",
-    "death"
+    "death",
+    "look",
+    "stalk"
    ]
   },
   "spino": {
@@ -501,7 +538,9 @@
     "roar",
     "eat",
     "hurt",
-    "death"
+    "death",
+    "look",
+    "stalk"
    ]
   },
   "raptor_crystal": {
@@ -888,6 +927,50 @@
     "anky": "Plants its feet and swings its clubbed tail from side to side as a warning, then lets it hang again.",
     "proto": "Lowers its head and opens its beak wide in a hiss, stamping one front foot, then settles back.",
     "compy": "Crouches, opens its jaws wide in a shrill screech and flicks its tail, then settles."
+   }
+  },
+  "look": {
+   "model": "pmm",
+   "frames": 12,
+   "loop": false,
+   "fps": 7,
+   "clean": {
+    "ground": true,
+    "anchor": true,
+    "clamp_top": 4,
+    "clamp_sides": 3
+   },
+   "motion": "Stands in place and turns its head to look to one side, then to the other side, then back ahead, its body staying still."
+  },
+  "stalk": {
+   "model": "ai",
+   "frames": 8,
+   "loop": true,
+   "fps": 6,
+   "clean": {
+    "ground": true,
+    "anchor": true,
+    "clamp_top": 4,
+    "clamp_sides": 3
+   },
+   "motion": {
+    "biped": "Creeps forward in place in a low crouch, its head held low and level, stepping slowly and carefully.",
+    "quadruped": "Creeps forward in place low to the ground, its head held low, stepping slowly and carefully.",
+    "dimetrodon": "Creeps forward in place on its four splayed legs, its belly low to the ground, slowly and carefully."
+   }
+  },
+  "rest": {
+   "model": "pmm",
+   "frames": 12,
+   "loop": false,
+   "fps": 6,
+   "clean": {
+    "ground": false,
+    "anchor": false
+   },
+   "motion": {
+    "default": "Slowly lowers its body and lies down on the ground with its legs folded under it, then rests there, breathing slowly.",
+    "biped": "Slowly crouches down and lies on its belly on the ground with its head resting down, then rests there, breathing slowly."
    }
   }
  },

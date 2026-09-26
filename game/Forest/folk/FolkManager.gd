@@ -463,7 +463,7 @@ func help() -> String:
 		return "The old ones carved their story into the ruins. Read the carvings (E) and your journal keeps them."
 	if not bool(m.get("alpha", false)):
 		return "The raptors have a leader: Skarn, the Shardback Alpha. It dens in the north-east (your map marks it red). Go with armour, arrows and beasts at your side."
-	return "You're doing well. The crystal grows thickest to the north, and the rex keeps to the far south-east."
+	return preload("res://Forest/world/Regions.gd").say("You're doing well. The crystal grows thickest the further out you go, and the rex roams the dunes to the {dir:dunes}.", world)
 
 
 func _built(kind: String) -> bool:

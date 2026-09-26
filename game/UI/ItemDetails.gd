@@ -39,6 +39,9 @@ static func text(item: Item) -> String:
 		if item.food_satiation_seconds: food.append("Fullness %ds" % int(item.food_satiation_seconds))
 		if item.healing_total: food.append("Vitality +%d over %ds" % [int(item.healing_total),int(item.healing_duration)])
 		lines.append(" | ".join(food))
+	# Pass 15: a meal's buffs, a seed's crop, a fish's water, who loves it.
+	for info in preload("res://Forest/life/Foods.gd").info_lines(item): lines.append(str(info))
+	if item.consumable:
 		lines.append("Right-click to use")
 	lines.append("Stack limit %d" % item.max_stack)
 	return "\n".join(lines)

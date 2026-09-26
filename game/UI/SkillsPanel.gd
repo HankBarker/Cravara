@@ -46,7 +46,7 @@ func setup(owner_hud: Node, keeper_skills: Node) -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	panel = hud._panel(self, Vector2(14, 10), Vector2(452, 250))
 	hud._label(panel, "SKILLS", Vector2(12, 5), 11, UI.GOLD)
-	hud._label(panel, "Doing a thing makes you better at it. Each level lights two stars.", Vector2(70, 9), 8, UI.MINT)
+	hud._label(panel, "Doing a thing makes you better at it. A star point each level.", Vector2(70, 9), 8, UI.MINT)
 	hud._button(panel, "Close", Vector2(398, 6), Vector2(46, 15), hud.close_panels)
 	for i in SKILLS.ORDER.size():
 		var skill: String = SKILLS.ORDER[i]
@@ -192,16 +192,22 @@ func _tip_stars() -> void:
 
 
 func _state_text(id: String) -> String:
-	if skills.has(id): return "Lit."
+	# Pass 15: a star's ranks.
+	var r: int = skills.rank(id)
+	var most: int = SKILLS.ranks_of(id)
+	if r >= most: return "Lit." if most == 1 else "Lit, all %d ranks." % most
+	var head := ("Rank %d of %d. " % [r, most]) if r > 0 else ("%d ranks. " % most if most > 1 else "")
 	var why: String = skills.blocked(id)
-	return "Ready to light (1 point)." if why == "" else why
+	if why == "": return head + ("Ready to light (1 point)." if r == 0 else "Ready to light again (1 point).")
+	return head + why
 
 
 ## The strip beneath the sky: the star in hand (or under the pointer), else
 ## the skill itself.
 func _show_info() -> void:
 	var id := hovered if hovered != "" else picked
-	learn_button.visible = picked != "" and not skills.has(picked)
+	learn_button.visible = picked != "" and skills.can_rank(picked)
+	learn_button.text = "Light it" if picked == "" or not skills.has(picked) else "Rank up"
 	learn_button.disabled = picked == "" or skills.blocked(picked) != ""
 	if id != "" and SKILLS.PERKS.has(id):
 		var p: Dictionary = SKILLS.PERKS[id]
@@ -296,6 +302,16 @@ class NightSky extends Control:
 			var root: bool = panel.SKILLS.PERKS[id].after.is_empty()
 			var lit: bool = skills.has(id)
 			var ready: bool = not lit and skills.blocked(id) == ""
+			# Pass 15: a lit star with ranks to take, and its ranks as pips.
+			var most: int = panel.SKILLS.ranks_of(id)
+			if most > 1:
+				var r: int = skills.rank(id)
+				for k in most:
+					var pip := at + Vector2((float(k) - float(most - 1) * 0.5) * 3.0, 6.0)
+					draw_rect(Rect2(pip - Vector2(0.5, 0.5), Vector2(1.5, 1.5)), Color(1.0, 0.86, 0.55, 0.95) if k < r else Color(0.55, 0.6, 0.8, 0.5))
+				if lit and skills.can_rank(id) and skills.blocked(id) == "":
+					var pulse2 := 0.5 + 0.5 * sin(t * 3.2)
+					draw_arc(at, 5.0 + pulse2 * 1.2, 0.0, TAU, 16, Color(0.62, 0.85, 1.0, 0.25 + 0.3 * pulse2), 1.0)
 			var open: bool = not lit and skills.opened(id)
 			if lit:
 				var tw := 0.75 + 0.25 * sin(t * 2.0 + at.x * 0.1)

@@ -108,7 +108,39 @@ func _start(continue_save: bool):
 		return
 	_starting = true
 	get_tree().set_meta("forest_continue", continue_save)
+	# Pass 15: a new journey is a new world: the rings, turned by a seed of its own.
+	if continue_save:
+		if get_tree().has_meta("forest_new_world"): get_tree().remove_meta("forest_new_world")
+	else:
+		var r := RandomNumberGenerator.new()
+		r.randomize()
+		get_tree().set_meta("forest_new_world", {"layout": "rings", "seed": r.randi_range(1, 2000000000)})
+	# Raising a world takes a few seconds: say so before the screen goes still
+	# (drawn first, then the scene changes).
+	_waking_card(continue_save)
+	await get_tree().process_frame
+	await RenderingServer.frame_post_draw
 	get_tree().change_scene_to_file(PLAY_SCENE)
+
+## "The wilds are waking": over everything while the journey loads.
+func _waking_card(continue_save: bool) -> void:
+	var layer := CanvasLayer.new()
+	layer.layer = 90
+	add_child(layer)
+	var dark := ColorRect.new()
+	dark.color = Color(0.03, 0.07, 0.08, 0.985)
+	dark.size = Vector2(480, 270)
+	layer.add_child(dark)
+	var title := _label("THE WILDS ARE WAKING", Vector2.ZERO, 12, Color("9fd4f0"), true)
+	title.reparent(layer)
+	title.size = Vector2(480, 20)
+	title.position = Vector2(0, 118)
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var line := _label("Finding your camp..." if continue_save else "A new world rises from its seed...", Vector2.ZERO, 9, Color("d9c79f"))
+	line.reparent(layer)
+	line.size = Vector2(480, 16)
+	line.position = Vector2(0, 140)
+	line.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 func _show_guide():
 	_show_text("FIELD GUIDE", "WASD Move    SHIFT Sprint    SPACE Roll    1-8 Tools\nLEFT CLICK Harvest or attack, including on a mount\nRIGHT CLICK Eat, fill vessels, build, or cast a rod\nE Interact, talk, ride or dismount    F Feed your mount\nHold E / Q Companion orders    Q away: group orders\nTAB Satchel / craft    CAPS Next pouch    K Gear\nP Companions / locator    M Map    J Journal    H Folk & houses\nESC Pause / settings    F5 Save\n\nBuild floors, walls, doors and optional thatch roofing.\nTame, equip a stego/trike saddle, then tap E to ride.\nCraft a Hide Bed; press E beside it to set home.\nAfter death, awaken at home in five seconds.\nFish at silver ripples: hold/release SPACE to reel.\nMix armour pieces from six sets; gems glow at night.\nRoast meals for lasting fullness; no energy costs.", "RETURN", _close_details)

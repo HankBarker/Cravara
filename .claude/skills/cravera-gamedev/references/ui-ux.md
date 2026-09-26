@@ -481,3 +481,21 @@ Secondary: factor health/hunger/stamina into one reusable `StatBar` (kills the
 `FOCUS_ALL` + `grab_focus()` on open for controller support; add colorblind-safe rarity shapes;
 add empty-armor-slot ghost icons. Migrate hard-coded `480`/`270` positioning to anchors +
 `MarginContainer` so a future res change doesn't break layout.
+
+## Pass 15: the map, the waking card, banners, dropping
+
+- **Map (M)**: `_make_overlay(title, kind, rect)` takes a panel rect; the map uses nearly the whole
+  screen, the picture fitted to the world's own aspect (`ForestMap.picture_rect()`), the key beside
+  it as colour chips (a cave's chip drawn like its mark). Markers off the picture (a cave's beasts in
+  the strip) are skipped. The picture is cached 30 s per world.
+- **Overlay headings** use `SkyfangUI.title_size()`: a pixel heading face drawn off its native size
+  (Field Hand at 16) renders spaces as underscores.
+- **Waking card**: `MainMenu._start` draws "The wilds are waking" and waits a frame + post-draw
+  before `change_scene_to_file` (tests must wait for `current_scene` to change).
+- **Banners**: `ForestHUD.show_banner(title, text, icon, key)`; a keyed banner replaces a waiting
+  one with the same key (several level-ups at once make one banner).
+- **Dropping**: Q over a pack pocket drops one (Shift/Ctrl: the stack); a drag let go over the world
+  (not over a panel, nor within `DragController.DROP_MARGIN` 10 px of one) drops the stack
+  (`ForestHUD.drop_to_world`).
+- **Caches** open as containers (`world.cache_bags`, a BeastBag per cache, saved; the panel closes
+  when the keeper walks away).

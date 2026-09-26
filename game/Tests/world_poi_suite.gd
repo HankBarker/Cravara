@@ -200,7 +200,7 @@ func _placement(world) -> void:
 		var p = world.props.get(c)
 		check(is_instance_valid(p) and p.kind in Prop.LANDMARKS, "carving '%s' is on a landmark" % id)
 	for id in Lore.ENTRIES:
-		if id in Lore.NOT_CARVED: continue
+		if id in Lore.NOT_CARVED or id in Lore.RINGS_ONLY: continue
 		check(int(seen.get(id, 0)) == 1, "carving '%s' is in the forest exactly once" % id)
 	var caches := _cells_of(world, ["cache"])
 	var relics := _cells_of(world, ["relic"])
@@ -238,6 +238,11 @@ func _legacy_intact(world, legacy) -> void:
 	var same_terrain: bool = world.terrain.size() == legacy.terrain.size()
 	for c in legacy.terrain:
 		same_terrain = same_terrain and world.terrain.get(c, -1) == legacy.terrain[c]
+	if not same_terrain:
+		for c in legacy.terrain:
+			if world.terrain.get(c, -1) != legacy.terrain[c]:
+				print("  terrain differs at %s (%s): %s vs %s" % [c, world.region_of(c), world.terrain.get(c, -1), legacy.terrain[c]])
+				break
 	check(same_terrain, "terrain cells match the seed exactly")
 	var same_water: bool = world.water.size() == legacy.water.size()
 	for c in legacy.water:
@@ -251,6 +256,9 @@ func _legacy_intact(world, legacy) -> void:
 		# Nests (pass 11) go on free ground after everything else, and only
 		# where no ruin stands, so they differ in a world without ruins.
 		if old.kind == "nest" or (is_instance_valid(now) and now.kind == "nest"): continue
+		# So do each land's wild crops (pass 15).
+		if str(old.kind).begins_with("wild_") or (is_instance_valid(now) and str(now.kind).begins_with("wild_")): continue
+		if str(old.kind) == "cave_mouth" or (is_instance_valid(now) and str(now.kind) == "cave_mouth"): continue
 		if is_instance_valid(now) and now.kind == old.kind and now.variant == old.variant:
 			continue
 		if old.kind in BRUSH and not is_instance_valid(now) and world.poi_cleared.get(c, "") == old.kind:
@@ -420,15 +428,23 @@ func _cache(world) -> void:
 	var loot: Dictionary = Loot.cache(c, world.world_seed)
 	check(announced.size() == 1 and announced[0][0] == c and announced[0][1] == loot, "opening announces the cache's loot")
 	check(world.props[c].opened, "the cache stays open")
-	var spilled := _new_drops(before)
-	check(spilled == loot, "its loot spills out on the ground: %s" % [spilled])
+	# Pass 15: the loot waits inside, to be looked through (nothing spills).
+	check(_new_drops(before).is_empty(), "nothing spills out on the ground")
+	var bag = world.cache_bags.get(c)
+	check(bag != null and bag.contents() == loot, "its loot lies inside it: %s" % [bag.contents() if bag else {}])
+	check(world.get_interaction_hint(_at(c)) == "E · Look in the ancient cache", "an open cache with things in it invites a look")
+	var data: Dictionary = world.serialize()
+	world.restore(JSON.parse_string(JSON.stringify(data)))
+	check(world.cache_bags.has(c) and world.cache_bags[c].contents() == loot, "what's left in it is saved")
+	# Taken out, it's empty.
+	for i in world.cache_bags[c].inventory.size(): world.cache_bags[c].inventory[i] = {"item": null, "quantity": 0}
 	before = _drops()
 	check(world.interact_at(_at(c), "") and world.last_feedback.begins_with("Empty"), "an emptied cache says so")
 	await get_tree().process_frame
 	check(_new_drops(before).is_empty() and announced.size() == 1, "an emptied cache gives nothing more")
 	check(world.get_interaction_hint(_at(c)) == "An emptied cache", "an emptied cache looks empty")
 	check(not world.mine_at(_at(c), "pickaxe", 9) and world.props.has(c), "a cache cannot be broken up")
-	var data: Dictionary = world.serialize()
+	data = world.serialize()
 	check([c.x, c.y] in data.caches and data.caches.size() == 1, "the save records the opened cache")
 	world.restore(JSON.parse_string(JSON.stringify(data)))
 	check(world.props[c].opened, "an opened cache is still open after loading")
@@ -550,7 +566,7 @@ func _session() -> void:
 	stage._show_journal()
 	await get_tree().process_frame
 	var lore_button := _find_button(stage._overlay, "LORE OF THE WILDS")
-	check(lore_button != null and lore_button.text.ends_with("1/%d" % Lore.ENTRIES.size()), "the journal counts the carvings read: " + (lore_button.text if lore_button else "none"))
+	check(lore_button != null and lore_button.text.ends_with("1/%d" % stage._lore_total()), "the journal counts the carvings read: " + (lore_button.text if lore_button else "none"))
 	stage._show_lore_list()
 	await get_tree().process_frame
 	check(_find_button(stage._overlay, "The Star Temple") != null, "the lore list offers the carving read")

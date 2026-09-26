@@ -23,6 +23,8 @@ func run(game):
 	# pass 11's parasaurs by Glassmere), one rex, and the alpha in its den.
 	var kinds := {}
 	for creature in get_tree().get_nodes_in_group("forest_creatures"):
+		# (Pass 15: the caves' Sleepers are rexes of their own, asleep in their lairs.)
+		if str(creature.variant) == "sleeper": continue
 		kinds[creature.species] = int(kinds.get(creature.species, 0)) + 1
 	# (Pass 12 adds the dunes' and the Pale Lands' beasts and the tribes' own.)
 	check(kinds.size() >= 10 and int(kinds.get("rex", 0)) == 1 and int(kinds.get("alpha", 0)) == 1 and not kinds.has("ossuar") and get_tree().get_nodes_in_group("forest_creatures").size() >= 20, "Wildlife across nine species or more, one rex, and the alpha (%s)" % [kinds])

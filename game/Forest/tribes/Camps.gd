@@ -18,6 +18,11 @@ extends RefCounted
 const CAMPS := {
 	"sunward_oasis": {"name": "Tamar Oasis", "tribe": "sunward", "main": true},
 	"ashen_camp": {"name": "Cinderhold", "tribe": "ashen", "main": true},
+	# Pass 15: the Sunward's reed-cutters on their dry ground in the Mirefen (a
+	# new journey's world: world/RingsGen.gd _haven).
+	"stillwater": {"name": "Stillwater", "tribe": "sunward", "main": true,
+		"folk": [["sunward_trader", 1], ["sunward_spear_b", 1], ["sunward_bow", 1], ["sunward_spear_a", 1]],
+		"beasts": [["parasaur", 1]]},
 	"saltwell": {"name": "Saltwell", "tribe": "sunward", "region": "dunes", "rect": Rect2i(-150, 64, 300, 60),
 		"folk": [["sunward_trader", 1], ["sunward_spear_a", 1], ["sunward_bow", 1]],
 		"props": [[Vector2i(-3, -2), "sunward_tent"], [Vector2i(3, -2), "sunward_tent"], [Vector2i(0, 0), "campfire"]],

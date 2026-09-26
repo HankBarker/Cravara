@@ -82,8 +82,7 @@ func place_all() -> void:
 
 func _candidate(area: Dictionary, r: RandomNumberGenerator) -> Vector2i:
 	if area.has("rect"):
-		var rect: Rect2i = area.rect
-		return Vector2i(r.randi_range(rect.position.x, rect.end.x - 1), r.randi_range(rect.position.y, rect.end.y - 1))
+		return world.area_point(area.rect, r, 0, 1)
 	var ring: Array = area.ring
 	var arc: Array = area.get("arc", [0, 360])
 	var angle := deg_to_rad(r.randf_range(float(arc[0]), float(arc[1])))

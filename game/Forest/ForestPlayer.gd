@@ -39,6 +39,17 @@ var _choke := 0.0
 var _shelter_check := 0.0
 var _sheltered := false
 var food_satiation_left := 0.0
+## Pass 15: a meal's buffs (Core Keeper's food): effect -> {amount, left, from}.
+## Trinkets.value counts them with the trinkets' and the stars' own; a later
+## meal's effect takes the place of the same effect from an earlier one.
+var food_buffs := {}
+## Vitality before a meal's vigor.
+const BASE_HEALTH := 100
+## Pass 15's combat stars: the string of quick blows so far (Blood Rush) and
+## when the last landed, and the life drawn from blows not yet a whole point.
+var _combo := 0
+var _combo_at := -10.0
+var _leech := 0.0
 var _meal_cooldown := 0.0
 const Appearance = preload("res://Forest/equipment/Appearance.gd")
 var appearance: Dictionary = Appearance.normalize()
@@ -129,6 +140,7 @@ func hunger_activity() -> String:
 func _tick_hunger(delta: float):
 	if state == "dead" or respawning: return
 	_meal_cooldown = maxf(0, _meal_cooldown - delta)
+	_tick_meals(delta)
 	var activity := hunger_activity()
 	var rate: float = {"idle":0.012, "walk":0.035, "sprint":0.16}[activity]
 	# Snowfall (pass 13): out under the open sky the cold makes the keeper hungrier.
@@ -403,6 +415,11 @@ func _forest_hit():
 	if aim == Vector2.ZERO: aim = _facing_vector()
 	_swing_trail(blow, aim, shape)
 	var hits := _blow_targets(blow, shape, aim)
+	# Blood Rush (pass 15): blows landing close on each other's heels.
+	if not hits.is_empty():
+		var now := Time.get_ticks_msec() / 1000.0
+		_combo = _combo + 1 if now - _combo_at < 1.4 else 0
+		_combo_at = now
 	for n in hits.size():
 		var target: Node2D = hits[n]
 		var dealt := strike_damage(n, hits)
@@ -421,11 +438,20 @@ func _forest_hit():
 				SignalBus.player_health_changed.emit(current_health, max_health)
 		if bool(shape.get("stagger", false)) and not target.is_dead and target.has_method("stagger"): target.stagger(0.4 + (skills.value("smash_stagger") if skills else 0.0))
 		if bleed_dps > 0.0 and not target.is_dead and target.has_method("apply_bleed"): target.apply_bleed(bleed_dps, 4.0, self)
+		# Crimson Tide (pass 15): the blow feeds the keeper a little.
+		var leech: float = float(_skills().value("leech")) if _skills() else 0.0
+		if leech > 0.0 and current_health < max_health:
+			_leech += float(dealt) * leech
+			if _leech >= 1.0:
+				current_health = mini(max_health, current_health + int(_leech))
+				_leech -= floorf(_leech)
+				SignalBus.player_health_changed.emit(current_health, max_health)
 		_feel_creature_hit(target, dealt, tool)
 		# Combat: every blow on a foe teaches; a kill teaches more.
 		if skills and alive:
-			var xp := minf(float(dealt), 40.0) * 0.5
-			if target.is_dead: xp += clampf(float(target.get("stats").hp if target.get("stats") != null else 60) / 10.0, 4.0, 60.0)
+			# Pass 15: a blow teaches a little; the kill teaches by the beast (Skills.KILL_XP).
+			var xp: float = skills.hit_xp(float(dealt))
+			if target.is_dead: xp += skills.kill_xp(target)
 			skills.gain("combat", xp)
 	if not hits.is_empty(): return
 	# Old Maw, while it is out of the water (OldMaw.gd).
@@ -490,6 +516,14 @@ func strike_damage(n: int = 0, foes: Array = []) -> int:
 	if skills:
 		var bonus: float = skills.value("melee_damage")
 		if blow == "thrust": bonus += skills.value("thrust_damage")
+		# Pass 15: each style's mastery (Whirlwind, Earthshaker), the Executioner
+		# on a foe near its end, and Blood Rush's string of quick blows.
+		elif blow == "sweep": bonus += skills.value("sweep_damage")
+		elif blow == "smash": bonus += skills.value("smash_damage")
+		elif blow == "stab": bonus += skills.value("stab_damage")
+		if n < foes.size() and is_instance_valid(foes[n]) and foes[n].get("stats") != null and float(foes[n].get("health")) * 3.0 < float(foes[n].stats.hp):
+			bonus += skills.value("execute")
+		bonus += skills.value("combo") * float(mini(_combo, 3))
 		var near := _foes_near(64.0)
 		if near <= 1: bonus += skills.value("duel_damage")
 		else: bonus += skills.value("brawl_damage") * float(mini(near - 1, 3))
@@ -610,6 +644,9 @@ func complete_respawn(spawn_position: Vector2):
 	_food_healing.clear()
 	food_satiation_left = 30.0
 	_meal_cooldown = 0.0
+	# A meal's buffs don't outlast a fall.
+	food_buffs.clear()
+	refresh_vigor()
 	_regen_accum = 0
 	_hazard_clock = 0
 	_hunger_accum = 0
@@ -821,8 +858,11 @@ func _process(_delta: float):
 
 func eat(item: Item) -> bool:
 	if not item or not item.consumable or respawning or state == "dead" or _meal_cooldown > 0: return false
-	if current_hunger >= max_hunger and (current_health >= max_health or item.healing_total <= 0): return false
-	if item.hunger_value <= 0 and current_health >= max_health: return false
+	# A meal with buffs can always be eaten (before a fight, say).
+	var buffs: bool = not item.effects.is_empty() and item.buff_seconds > 0.0
+	if not buffs and current_hunger >= max_hunger and (current_health >= max_health or item.healing_total <= 0): return false
+	if not buffs and item.hunger_value <= 0 and current_health >= max_health: return false
+	if buffs: _apply_meal(item)
 	current_hunger = mini(max_hunger, current_hunger + item.hunger_value)
 	food_satiation_left = maxf(food_satiation_left, item.food_satiation_seconds)
 	_meal_cooldown = 1.0
@@ -853,6 +893,35 @@ func consume_slot(source: Node, index: int) -> bool:
 		if entry.quantity <= 0: source.inventory[index] = {"item":null,"quantity":0}
 	source.inventory_changed.emit()
 	return true
+
+## A meal's buffs take hold (pass 15).
+func _apply_meal(item: Item) -> void:
+	for effect in item.effects:
+		food_buffs[str(effect)] = {"amount": float(item.effects[effect]), "left": item.buff_seconds, "total": item.buff_seconds, "from": item.id}
+	refresh_vigor()
+
+## How much of `effect` the keeper's meals give now (Trinkets.value asks).
+func food_buff(effect: String) -> float:
+	var b = food_buffs.get(effect)
+	return float(b.amount) if b is Dictionary else 0.0
+
+func _tick_meals(delta: float) -> void:
+	if food_buffs.is_empty(): return
+	var ended := false
+	for effect in food_buffs.keys():
+		food_buffs[effect].left = float(food_buffs[effect].left) - delta
+		if float(food_buffs[effect].left) <= 0.0:
+			food_buffs.erase(effect)
+			ended = true
+	if ended: refresh_vigor()
+
+## Vitality's ceiling with a meal's vigor in it.
+func refresh_vigor() -> void:
+	var top := BASE_HEALTH + int(round(Trinkets.value(self, "vigor")))
+	if top == max_health: return
+	max_health = top
+	current_health = mini(current_health, max_health)
+	SignalBus.player_health_changed.emit(current_health, max_health)
 
 ## How much of the ash the keeper's things keep out (0..1).
 func ash_guard() -> float:

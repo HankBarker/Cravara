@@ -20,12 +20,49 @@ uniform ivec2 canvas_px = ivec2(1792, 1792);
 uniform ivec2 world_offset = ivec2(-896, -896);
 // The Pale Hills (pass 11): cells (x0, y0, x1, y1) where the ground turns pale
 // and cool, fading in over its southernmost rows (pale_fade cells).
-uniform ivec4 pale_area = ivec4(0, 0, 0, 0);
 uniform float pale_fade = 10.0;
 // The Mirefen Bog (pass 12): cells where the ground is dark, wet and olive,
 // fading in over its easternmost bog_fade columns.
-uniform ivec4 bog_area = ivec4(0, 0, 0, 0);
 uniform float bog_fade = 12.0;
+// Pass 15: each cell's land (r: its index, world/Layout.gd LANDS: 1 the bog,
+// 3 the Pale Lands) and how many cells into it from its side nearer camp (g),
+// one texel a cell from map_origin: the lands aren't boxes any more.
+uniform sampler2D land_map : filter_nearest, repeat_disable;
+uniform ivec2 land_origin = ivec2(0, 0);
+uniform ivec2 land_size = ivec2(1, 1);
+ivec2 land_of(ivec2 cell) {
+	ivec2 t = cell - land_origin;
+	if (t.x < 0 || t.y < 0 || t.x >= land_size.x || t.y >= land_size.y) return ivec2(0, 999);
+	vec4 v = texelFetch(land_map, t, 0);
+	return ivec2(int(v.r * 255.0 + 0.5), int(v.g * 255.0 + 0.5));
+}
+int micro_of(ivec2 cell) {
+	ivec2 t = cell - land_origin;
+	if (t.x < 0 || t.y < 0 || t.x >= land_size.x || t.y >= land_size.y) return 0;
+	return int(texelFetch(land_map, t, 0).b * 255.0 + 0.5);
+}
+// Whether a pixel lies in a small place (pass 15; 1 the red meadow, 2 the
+// haven): the four cells round it weighted by where it sits between their
+// centres, with the wandering wobble and frayed blades the ground's own edges
+// get (region()), so the edge is organic rather than stepping a cell at a time.
+bool in_micro(ivec2 p, int kind) {
+	vec2 cp = (vec2(p) + 0.5) / 16.0 - 0.5;
+	vec2 cb = floor(cp);
+	vec2 f = cp - cb;
+	ivec2 c = ivec2(cb);
+	float a = micro_of(c) == kind ? 1.0 : 0.0;
+	float r = micro_of(c + ivec2(1, 0)) == kind ? 1.0 : 0.0;
+	float d = micro_of(c + ivec2(0, 1)) == kind ? 1.0 : 0.0;
+	float e = micro_of(c + ivec2(1, 1)) == kind ? 1.0 : 0.0;
+	float m = mix(mix(a, r, f.x), mix(d, e, f.x), f.y);
+	return m + (vnoise(vec2(p) / 7.0, 5173u + uint(kind)) - 0.5) * 0.5 + (rnd(p, 5174u) - 0.5) * 0.14 > 0.5;
+}
+// The red meadow's grass: the same shading, turned crimson.
+vec3 crimson(vec3 col) {
+	float luma = dot(col, vec3(0.3, 0.59, 0.11));
+	return mix(vec3(0.3, 0.05, 0.1), vec3(0.86, 0.32, 0.34), smoothstep(0.12, 0.72, luma));
+}
+
 
 const vec3 GRASS[5] = {vec3(0.243, 0.420, 0.247), vec3(0.357, 0.573, 0.322), vec3(0.478, 0.678, 0.333), vec3(0.588, 0.773, 0.373), vec3(0.729, 0.827, 0.384)};
 const vec3 MEADOW[5] = {vec3(0.369, 0.498, 0.227), vec3(0.498, 0.612, 0.275), vec3(0.627, 0.702, 0.353), vec3(0.722, 0.765, 0.373), vec3(0.816, 0.839, 0.431)};
@@ -158,12 +195,21 @@ void fragment() {
 		bool wet = k == K_SOIL && (cell_flags(cell) & 2) != 0;
 		int s = base_shade(p, k);
 		int draw_k = k;
-		// Tilled beds: furrow rows, a dark rim where the bed ends.
+		// Tilled beds (pass 15: earth, not a board): mounded furrows that wander
+		// a little, clods and pebbles dithered through them, and a soft heaped
+		// lip where the bed meets the ground instead of a dark frame.
 		if (k == K_SOIL) {
-			int row = (p.y + 4096) & 3;
+			float wob = sin(float(p.x) * 0.31 + float(cell.y) * 1.7) * 1.2 + (vnoise(vec2(p) / 5.0, 411u) - 0.5) * 1.6;
+			int row = int(floor(float(p.y) + wob + 4096.0)) & 3;
 			s = row == 0 ? 1 : (row == 1 ? 3 : 2);
+			float clod = rnd(p, 977u);
+			if (clod > 0.9) {
+				s = max(s - 1, 0);
+			} else if (clod < 0.07) {
+				s = min(s + 1, 4);
+			}
 			if (up != K_SOIL || dn != K_SOIL || lf != K_SOIL || rt != K_SOIL) {
-				s = 0;
+				s = row == 1 ? 3 : 2;
 			}
 		}
 		// Flagstones: offset slabs, moss in the joints, the odd slab gone to grass.
@@ -220,7 +266,7 @@ void fragment() {
 				} else if (is_bare(lf) || is_bare(rt)) {
 					s = max(s, 3);
 				}
-			} else if (is_bare(k) && k != K_SOIL) {
+			} else if (is_bare(k)) {
 				if (is_grassy(up)) {
 					s = 0;
 				} else if (is_grassy(region(p + ivec2(0, -2)))) {
@@ -242,20 +288,38 @@ void fragment() {
 		// The Pale Lands (pass 12): ash lies over everything, grey-white,
 		// with the odd dark cinder.
 		ivec2 here = ivec2(floor(vec2(p) / 16.0));
-		if (here.x >= pale_area.x && here.x < pale_area.z && here.y >= pale_area.y && here.y < pale_area.w) {
-			float f = clamp(float(pale_area.w - 1 - here.y) / pale_fade + (bayer4(p) - 0.5) * 0.12, 0.0, 1.0);
+		ivec2 land = land_of(here);
+		if (land.x == 3) {
+			float f = clamp(float(land.y) / pale_fade + (bayer4(p) - 0.5) * 0.12, 0.0, 1.0);
 			float luma = dot(col, vec3(0.3, 0.59, 0.11));
 			vec3 pale = mix(col, vec3(luma), 0.88) * vec3(0.96, 0.94, 0.9) + vec3(0.3, 0.29, 0.27);
 			if (rnd(p, 977u) < 0.012) pale *= 0.55;
 			col = mix(col, pale, f);
 		}
-		// The bog: wet, dark olive ground and black mud.
-		if (here.x >= bog_area.x && here.x < bog_area.z && here.y >= bog_area.y && here.y < bog_area.w) {
-			float fb = clamp(float(bog_area.z - 1 - here.x) / bog_fade + (bayer4(p) - 0.5) * 0.12, 0.0, 1.0);
+		// The red meadow (pass 15): its grass crimson, its edge wandering and
+		// fraying like the ground's own.
+		if ((k == K_GRASS || k == K_MOSS) && in_micro(p, 1)) {
+			col = mix(col, crimson(col), 0.88 - step(0.93, rnd(p, 5171u)) * 0.5);
+		}
+		// The bog: wet, dark olive ground and black mud. Stillwater's haven is
+		// dry and green: no bog murk on it (its edge frayed the same way).
+		if (land.x == 1 && !in_micro(p, 2)) {
+			float fb = clamp(float(land.y) / bog_fade + (bayer4(p) - 0.5) * 0.12, 0.0, 1.0);
 			float lb = dot(col, vec3(0.3, 0.59, 0.11));
 			vec3 wet = (k == K_DIRT || k == K_SOIL) ? mix(vec3(0.12, 0.1, 0.08), vec3(0.3, 0.25, 0.18), smoothstep(0.15, 0.6, lb))
 				: mix(col, vec3(lb) * vec3(0.86, 1.0, 0.7), 0.35) * 0.82;
 			col = mix(col, wet, fb);
+		}
+		// The caves (pass 15, land 5): bare rock underfoot, darkness past the walls.
+		if (land.x == 5) {
+			if (k == K_WATER) {
+			} else if (k == K_GRASS || k == K_MOSS) {
+				col = vec3(0.035, 0.03, 0.04);
+			} else {
+				float lc = dot(col, vec3(0.3, 0.59, 0.11));
+				col = mix(vec3(0.13, 0.12, 0.13), vec3(0.36, 0.33, 0.31), smoothstep(0.1, 0.62, lc));
+				if (rnd(p, 3313u) < 0.02) col *= 0.7;
+			}
 		}
 		COLOR = vec4(col, 1.0);
 	}

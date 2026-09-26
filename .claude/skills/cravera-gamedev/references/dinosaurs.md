@@ -463,3 +463,32 @@ Result: 10-19 ms a frame across runs (camp ~11-14, the villages ~10-18, a sandst
 - **The Sandblades died out unseen**: the Bonelands' five allosaurs shared their ground and counted
   them as `RIVALS`. The rivalry is gone, there are three packs of 2-3, and
   `ForestPlaytest.RESTOCK` sends a new pack at dawn when a kind that doesn't breed has none left.
+
+## Pass 15 (2026-09-26): look, rest and stalk clips; pack and ambush tactics
+
+- **Clips**: `look` (13 frames, a head turn), `rest` (lying down, 13) and `stalk` (low creep, 8)
+  for 19 species, specs in `tools/dino/clips.json`. `gen.py flagged()` exempts `rest` from the width
+  QA. ForestCreature plays them only if `DinoArt.has_clip` finds them: idle glances, herds resting,
+  hunters creeping while `stalk_time > 0`. Every third idle action is a look (a higher share crowded
+  out grazing).
+- **Front/back stalks**: PixelLab kept drawing them standing tall (a raptor's tail as a post above its
+  head, the allosaur's neck as a column) even with a tail-low prompt; allo/up, deino/down, rex/up and
+  utah/down are their walk frames (`tools/dino/stalk_from_walk.py`, free). Floating specks within 2 px
+  of a mane survive gen.py's cleaning: `tools/dino/speck_fix.py` (yuty stalk_side 2,3; dimetrodon
+  stalk_up 4 held from 3). Rerun both after `gen.py clean` of those clips.
+- **Tactics** (`creatures/Tactics.gd`, hooked in `_hunt`, never for tamed/provoked/boss beasts):
+  - Packs (`PACK`: raptor, deino, utah, compy) share a plan per quarry (`plans[target id]`):
+    gather at a rally point `GATHER_R` 124 px out, spread on a ring `SURROUND_R` 66 px, then strike;
+    `TOO_CLOSE` 44 px forces the strike. A plan only starts with a packmate within 200 px and
+    against quarry that fights back (the keeper, folk, tribesmen, tamed beasts); otherwise the
+    usual chase.
+  - Allosaur ambush (`_will_ambush`): slip to cover (tree/rock 130-240 px from the keeper, far
+    side), lurk still, burst with a roar when the keeper is within `SPRING_AT` 96 px or turns their
+    back within 160 px. `_wild_target` keeps the keeper while an ambush is on.
+- **Variants**: `grotto` (cave-dwelling crystal beasts) and `sleeper` (the lair rex: 2.6x hp, its
+  own loot incl. `sleeper_fang`; asleep until CaveLife wakes it).
+- **Stampede** (WorldEvents): a herd flees a `world/Fright.gd` node 900 px behind it, at
+  `STAMPEDE_PACE` 1.6x chase speed while the `stampede` meta is set. Anything used as
+  `_retreat_from` needs an `is_dead` property.
+- **Two-tone mutations** (`Genes.gd`): body and accent hues separately; speckles no longer roll
+  (they read as stray spots on the allosaur).

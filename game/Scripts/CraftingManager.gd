@@ -1,6 +1,7 @@
 extends Node
 
 signal stations_changed
+const _Foods = preload("res://Forest/life/Foods.gd")
 var nearby_stations: Array[String] = []
 var last_failure := ""
 var categories: Array[String] = ["All", "Tools", "Building", "Materials", "Food", "Armor", "Trinkets", "Relics"]
@@ -61,7 +62,7 @@ var personal_recipes: Array = [
 	{"name":"Reed Fishing Rod", "item_id":"fishing_rod", "ingredients":{"log":6,"plant_fiber":8,"crystal_shard":2}, "station":"workbench", "category":"Tools", "description":"Cast into rippling fishing holes. Hold and release Space to reel in a catch."},
 	{"name":"Crystal Flask", "item_id":"crystal_flask", "ingredients":{"crystal_shard":2,"stone":1}, "station":"workbench", "category":"Materials", "description":"Polish a reusable vessel. Fill it at the water's edge."},
 	{"name":"Mushroom Tonic", "item_id":"mushroom_potion", "ingredients":{"mushroom":2,"berry":1,"water_flask":1}, "station":"campfire", "category":"Food", "description":"Brew 40 vitality over 8 seconds. Drinking returns the empty flask."},
-	{"name":"Roasted Perch", "item_id":"cooked_fish", "ingredients":{"reed_perch":1}, "station":"campfire", "category":"Food", "description":"55 hunger and 2 minutes of fullness. Restores 18 vitality over time."},
+	{"name":"Grilled Fish", "item_id":"cooked_fish", "ingredients":{"any:fish":1}, "station":"campfire", "category":"Food", "description":"Any fish, grilled whole (the commonest first). 55 hunger and 2 minutes of fullness. Restores 18 vitality over time."},
 	{"name":"Hide Tent", "item_id":"tent", "ingredients":{"plank":6,"plant_fiber":12,"trex_scale":3}, "station":"workbench", "category":"Building", "description":"Place a tribal shelter. Reclaim it with any tool or your hands."},
 	{"name":"Hide Bed", "item_id":"hide_bed", "ingredients":{"plank":4,"plant_fiber":8,"trex_scale":2}, "station":"workbench", "category":"Building", "description":"A woven hide bed. Place it and press E to set your respawn point."},
 	{"name":"Dugout Boat", "item_id":"boat", "ingredients":{"plank":10,"plant_fiber":8,"log":2}, "station":"workbench", "category":"Building", "description":"A hollowed canoe for Glassmere. Set it on the water and press E to climb in; E again steps ashore."},
@@ -125,6 +126,12 @@ var personal_recipes: Array = [
 	{"name":"Baked Tuber", "item_id":"baked_tuber", "ingredients":{"wild_tuber":2}, "station":"campfire", "category":"Food", "description":"Two wild tubers baked soft: 45 hunger, full for a minute."}
 ]
 
+## Pass 15: the larder's recipes (tools/items/foods.py: the cooking pot's
+## dishes, a campfire's roasts, the pot itself).
+func _ready() -> void:
+	for recipe in preload("res://Forest/life/FoodData.gd").RECIPES + preload("res://Forest/world/Materials.gd").RECIPES:
+		if get_recipe(str(recipe.item_id)).is_empty(): personal_recipes.append(recipe.duplicate(true))
+
 func set_nearby_stations(stations: Array[String]) -> void:
 	if nearby_stations == stations: return
 	nearby_stations = stations.duplicate()
@@ -180,12 +187,17 @@ func _simulate(recipe: Dictionary) -> Array[Dictionary]:
 	for slot in InventoryManager.inventory: result.append(slot.duplicate())
 	for id in recipe.ingredients:
 		var needed := int(recipe.ingredients[id])
-		for slot in result:
-			if slot.item and slot.item.id == id:
-				var used := mini(needed, int(slot.quantity))
-				slot.quantity -= used
-				needed -= used
-				if slot.quantity == 0: slot.item = null
+		# "any:fish" (pass 15): the commonest of the group goes first.
+		var takes: Array = _Foods.group(str(id))
+		if takes.is_empty(): takes = [id]
+		for take in takes:
+			for slot in result:
+				if needed <= 0: break
+				if slot.item and slot.item.id == take:
+					var used := mini(needed, int(slot.quantity))
+					slot.quantity -= used
+					needed -= used
+					if slot.quantity == 0: slot.item = null
 	var remaining := int(recipe.get("quantity",1))
 	if recipe.item_id == "bone_arrow" and is_inside_tree():
 		var sk = get_tree().get_first_node_in_group("skills")
@@ -222,9 +234,11 @@ func create_item_by_id(id: String) -> Item:
 	return ItemDB.make(id)
 
 func get_item_icon(item_id: String) -> Texture2D:
+	if item_id.begins_with("any:"): item_id = str(_Foods.group(item_id)[0])
 	var item := create_item_by_id(item_id)
 	return item.icon if item else null
 
 func get_ingredient_name(item_id: String) -> String:
+	if item_id.begins_with("any:"): return _Foods.group_name(item_id)
 	var item := create_item_by_id(item_id)
 	return item.name if item else item_id.capitalize()

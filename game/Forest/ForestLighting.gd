@@ -29,8 +29,17 @@ var _props_seen := -1
 ## Stale shapes rebuilt per frame after the sun moves on (the rest wait a
 ## frame or two, a 512th of a day behind), so no one frame pays for them all.
 const REBUILDS_PER_FRAME := 6
-const LIT_KINDS := ["campfire", "shrine", "torch", "sun_sail"]
+const LIT_KINDS := ["campfire", "cooking_pot", "shrine", "torch", "sun_sail", "reed_lantern"]
+## Pass 15: underground the Sky-Fang crystal gives a cold light of its own (the
+## grottos: "crystal on every wall"), so a cave reads without a torch.
+const CAVE_GLOW := Color("8fd0ff")
+
 const SHADOW_COLORS := [Color(0.08,0.17,0.15)]
+
+## Whether a prop gives light: the lit kinds, and crystal in a cave.
+func _emits(prop) -> bool:
+	if prop.kind in LIT_KINDS: return true
+	return prop.kind == "pale_crystal" and is_instance_valid(world) and world.region_of(prop.cell) == "caves"
 
 func _ready():
 	_gradient = GradientTexture2D.new()
@@ -63,8 +72,11 @@ func _process(delta):
 
 ## The shadows' strength follows the light every frame; their shapes are
 ## drawn again only when something has changed.
+## Pass 15: the keeper is in a cave (the session says): no sun, lights at their brightest.
+var cave := false
+
 func _update_shade() -> void:
-	var daylight := maxf(0,sin((TimeCycle.time_of_day-0.25)*TAU))
+	var daylight := 0.0 if cave else maxf(0,sin((TimeCycle.time_of_day-0.25)*TAU))
 	# Full strength once the sun is up (a low sun throws long, dark shadows);
 	# they fade only as it rises and sets.
 	_shade.self_modulate=Color(1,1,1,SHADOW_STRENGTH*clampf(daylight/0.3,0.0,1.0))
@@ -107,7 +119,7 @@ func _refresh_nearby():
 			var footprint: PackedVector2Array = _occlusion_shape(prop)
 			# These emitters sit visually above their own hearth/stake/base. A 2D
 			# footprint beneath them would incorrectly shadow half their own light.
-			if footprint.size()>=3 and prop.kind not in ["campfire","torch","shrine","sun_sail"]:
+			if footprint.size()>=3 and not _emits(prop):
 				var occluder: LightOccluder2D = prop.get_node_or_null("LightOcclusion")
 				if not occluder:
 					occluder=LightOccluder2D.new()
@@ -117,22 +129,32 @@ func _refresh_nearby():
 					prop.add_child(occluder)
 				if occluder.occluder.polygon!=footprint: occluder.occluder.polygon=footprint
 				if occluder.visible!=GameSettings.shadows_enabled: occluder.visible=GameSettings.shadows_enabled
-		if prop.kind in ["campfire","shrine","sun_sail"] and not prop.has_node("EmberLight"):
+		if prop.kind in ["campfire","cooking_pot","shrine","sun_sail","reed_lantern"] and not prop.has_node("EmberLight"):
 			var light := PointLight2D.new()
 			light.name="EmberLight"
 			light.texture=_gradient
 			light.position=Vector2(0,-8) if prop.kind!="sun_sail" else Vector2(0,-14)
+			if prop.kind=="reed_lantern": light.position=Vector2(2,-30)
 			# The Sun Sail gives back the day's sun as a low golden glow.
-			light.color={"campfire":Color("ffbc6d"),"shrine":Color("79d9d5"),"sun_sail":Color("ffd27a")}[prop.kind]
+			light.color={"campfire":Color("ffbc6d"),"cooking_pot":Color("ffb060"),"shrine":Color("79d9d5"),"sun_sail":Color("ffd27a"),"reed_lantern":Color("ffcf7a")}[prop.kind]
 			light.energy=0.75 if prop.kind!="sun_sail" else 0.55
-			light.texture_scale={"campfire":1.05,"shrine":0.65,"sun_sail":0.85}[prop.kind]
+			light.texture_scale={"campfire":1.05,"cooking_pot":0.8,"shrine":0.65,"sun_sail":0.85,"reed_lantern":0.7}[prop.kind]
 			prop.add_child(light)
+		elif prop.kind == "pale_crystal" and _emits(prop) and not prop.has_node("EmberLight"):
+			var glow := PointLight2D.new()
+			glow.name="EmberLight"
+			glow.texture=_gradient
+			glow.position=Vector2(0,-8)
+			glow.color=CAVE_GLOW
+			glow.energy=0.6
+			glow.texture_scale=0.6
+			prop.add_child(glow)
 	if opened_sig!=_opened_sig:
 		_opened_sig=opened_sig
 		_shadows_dirty=true
 	var lights: Array[PointLight2D] = []
 	for prop in _lit_props():
-		if not is_instance_valid(prop) or not prop.kind in LIT_KINDS: continue
+		if not is_instance_valid(prop) or not _emits(prop): continue
 		var light: PointLight2D = prop.get_node_or_null("EmberLight")
 		if prop.kind=="torch": light=prop.get_node_or_null("PlacedObject/PointLight2D")
 		if light:
@@ -161,7 +183,7 @@ func _lit_props() -> Array:
 		_lit_seen = world.props.size()
 		_lit = []
 		for prop in world.props.values():
-			if is_instance_valid(prop) and prop.kind in LIT_KINDS: _lit.append(prop)
+			if is_instance_valid(prop) and _emits(prop): _lit.append(prop)
 	return _lit
 
 func _configure_light(light: PointLight2D):
@@ -188,7 +210,7 @@ func _set_prop_light_mask(node: Node) -> void:
 		if not child is Light2D: _set_prop_light_mask(child)
 
 func _update_light_energy() -> void:
-	var daylight := maxf(0,sin((TimeCycle.time_of_day-0.25)*TAU))
+	var daylight := 0.0 if cave else maxf(0,sin((TimeCycle.time_of_day-0.25)*TAU))
 	var intensity := lerpf(1.0,0.18,daylight)
 	for light in _active_lights:
 		if not is_instance_valid(light): continue
@@ -403,7 +425,7 @@ func _sun_silhouette(prop: Node2D) -> Dictionary:
 	if outline.is_empty():
 		_silhouettes[key]={}
 		return {}
-	var bottom:=8 if prop.kind in ["wall","ore","wood_wall","stone_wall"] else 7
+	var bottom:=8 if prop.kind in ["wall","ore"] or prop.kind in preload("res://Forest/ForestProp.gd").WALLS else 7
 	var result: Dictionary={"size":Vector2(source.get_size()),"polygons":polygons,"outline":outline,"bounds":source.get_used_rect(),"origin":Vector2(-source.get_width()/2.0,bottom-source.get_height())}
 	_silhouettes[key]=result
 	return result

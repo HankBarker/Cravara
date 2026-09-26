@@ -69,6 +69,11 @@
    "loop": false,
    "frames": 13
   },
+  "threat": {
+   "fps": 10,
+   "loop": false,
+   "frames": 9
+  },
   "hurt": {
    "fps": 12,
    "loop": false,
@@ -78,6 +83,16 @@
    "fps": 10,
    "loop": false,
    "frames": 13
+  },
+  "look": {
+   "fps": 7,
+   "loop": false,
+   "frames": 13
+  },
+  "stalk": {
+   "fps": 6,
+   "loop": true,
+   "frames": 8
   }
  }
 }

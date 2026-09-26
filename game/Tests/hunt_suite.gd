@@ -96,7 +96,8 @@ func _placement() -> void:
 		var r: String = world.region_of(world.to_cell(c.global_position))
 		if r == "forest" and c.species in ["allo", "rex"]: forest_apex += 1
 		if r == "bonelands" and c.species == "allo": bonelands_allo += 1
-		if c.species == "rex": rex_where.append(r)
+		# (Pass 15: the caves' Sleepers are rexes of their own, in their lairs.)
+		if c.species == "rex" and str(c.variant) != "sleeper": rex_where.append(r)
 	check(forest_apex == 0, "no allosaur or rex in the green round camp (%d)" % forest_apex)
 	check(bonelands_allo >= 4, "the Bonelands are thick with allosaurs (%d)" % bonelands_allo)
 	check(rex_where == ["dunes"], "the Emerald Tyrant roams the dunes (%s)" % [rex_where])

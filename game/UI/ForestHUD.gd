@@ -230,6 +230,11 @@ func _build_status() -> void:
 	ash_label = _label(ash_row,"",Vector2.ZERO,8,ASH)
 	ash_label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	_ash_box.visible = false
+	# Pass 15: what the keeper last ate, and how long its buffs last.
+	_meal_box = _backing(root,Vector4(4,1,5,1))
+	_meal_box.position = Vector2(8,UNDER_PLATE)
+	_meal_label = _label(_meal_box,"",Vector2.ZERO,8,MEAL)
+	_meal_box.visible = false
 	context_label = _label(root,"",Vector2(10,218),8)
 	context_label.size = Vector2(460,12)
 	context_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -394,6 +399,7 @@ func _process(delta: float) -> void:
 		var bleeding: bool = player.get("bleed") != null and player.bleed.active()
 		_bleed_box.visible = bleeding
 		if bleeding: bleed_label.text = "BLEEDING  %ds" % ceili(player.bleed.time_left)
+		_tick_meal_line(bleeding)
 		var ash: float = float(player.get("ash")) if player.get("ash") != null else 0.0
 		_ash_box.visible = ash > 0.04
 		if _ash_box.visible:
@@ -411,6 +417,9 @@ func _process(delta: float) -> void:
 	_toast_box.visible = _toast_time > 0 and toast.text != ""
 	if _toast_box.visible: _toast_box.position.y = _toast_top()
 	if is_instance_valid(command_panel) and is_instance_valid(_wheel): _tick_wheel()
+	# Pass 15: a cache (a container with a place) closes when the keeper walks away.
+	if is_instance_valid(_active_chest) and _active_chest.has_meta("at") and is_instance_valid(player):
+		if player.global_position.distance_to(_active_chest.get_meta("at")) > 72.0: close_panels()
 	_roster_tick -= delta
 	if roster_panel.visible and _roster_tick <= 0 and not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 		_roster_tick = 1.0
@@ -433,6 +442,13 @@ func _input(event: InputEvent) -> void:
 	if not event is InputEventKey or not event.pressed or event.echo: return
 	var key: int = event.keycode if event.keycode != 0 else event.physical_keycode
 	var focus := get_viewport().gui_get_focus_owner()
+	# Pass 15: Q over a pocket of the open pack drops one (Shift or Ctrl: the stack).
+	if key == KEY_Q and inventory_panel and inventory_panel.visible and not focus is LineEdit:
+		for slot in slots + hotbar:
+			if is_instance_valid(slot) and slot.is_visible_in_tree() and slot.get("_is_hovered") == true:
+				drop_to_world(slot, event.shift_pressed or event.ctrl_pressed)
+				get_viewport().set_input_as_handled()
+				return
 	if key == KEY_ESCAPE and is_open():
 		close_panels()
 		get_viewport().set_input_as_handled()
@@ -553,7 +569,7 @@ func show_tasks(tasks: Array, lines_for: Callable) -> void:
 	for child in _tasks_list.get_children(): child.queue_free()
 	_tasks_box.visible = not tasks.is_empty()
 	for q in tasks.slice(0, 3):
-		var head := _label(_tasks_list,str(q.title),Vector2.ZERO,8,GOLD)
+		var head := _label(_tasks_list,preload("res://Forest/world/Regions.gd").say(str(q.title),get_tree().get_first_node_in_group("forest_world")),Vector2.ZERO,8,GOLD)
 		head.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 		for line in lines_for.call(q):
 			var row := _label(_tasks_list,str(line),Vector2.ZERO,8,MINT if str(line).ends_with("done") else PAPER)
@@ -568,6 +584,27 @@ func _place_tasks() -> void:
 
 ## The companions' gifts (Buffs.gd), a line under the vitals plate.
 var _gifts_box: Control
+var _meal_box: PanelContainer
+var _meal_label: Label
+var _meal_text := ""
+const MEAL := Color("f0c27a")
+
+## The meal line(s) under the plate, below the gifts, a bleed and the ash.
+func _tick_meal_line(bleeding: bool) -> void:
+	var buffs = player.get("food_buffs")
+	var text := ""
+	if buffs is Dictionary and not buffs.is_empty():
+		text = "
+".join(preload("res://Forest/life/Foods.gd").meal_lines(buffs))
+	_meal_box.visible = text != ""
+	if not _meal_box.visible: return
+	if text != _meal_text:
+		_meal_text = text
+		_meal_label.text = text
+		_meal_box.reset_size()
+	var gifts_on: bool = is_instance_valid(_gifts_box) and _gifts_box.visible
+	var ash_on: bool = is_instance_valid(_ash_box) and _ash_box.visible
+	_meal_box.position.y = UNDER_PLATE + (14.0 if gifts_on else 0.0) + (14.0 if bleeding else 0.0) + (14.0 if ash_on else 0.0)
 var _gifts_label: Label
 func show_gifts(names: Array) -> void:
 	if not is_instance_valid(_gifts_box):
@@ -610,9 +647,22 @@ func hide_boss() -> void:
 	fade.tween_property(plate,"modulate:a",0.0,0.6)
 	fade.tween_callback(plate.queue_free)
 
-func show_banner(title: String, text: String, icon: Texture2D = null) -> void:
-	_banners.append([title, text, icon])
+func show_banner(title: String, text: String, icon: Texture2D = null, key := "") -> void:
+	# (Pass 15: a banner with a key takes the place of a waiting one with the
+	# same key: several levels at once make one banner.)
+	if key != "":
+		for i in _banners.size():
+			if _banners[i].size() > 3 and str(_banners[i][3]) == key:
+				_banners[i] = [title, text, icon, key]
+				return
+	_banners.append([title, text, icon, key])
 	if not is_instance_valid(_banner): _next_banner()
+
+## Whether a banner with this key is still waiting its turn.
+func banner_waiting(key: String) -> bool:
+	for entry in _banners:
+		if entry.size() > 3 and str(entry[3]) == key: return true
+	return false
 
 func _next_banner() -> void:
 	if _banners.is_empty(): return
@@ -930,6 +980,39 @@ func transfer_slot(slot_control: Control) -> void:
 
 
 
+
+## Pass 15: drop what's in one of the keeper's pack slots (not a chest's) at
+## their feet, a step ahead: one of it, or the whole stack.
+func drop_to_world(slot: Control, all := true) -> bool:
+	if not is_instance_valid(slot) or slot.get("source") != null or not is_instance_valid(player): return false
+	var index: int = int(slot.slot_index)
+	if index < 0 or index >= InventoryManager.inventory.size(): return false
+	var entry: Dictionary = InventoryManager.inventory[index]
+	if entry.item == null or int(entry.quantity) <= 0: return false
+	var count: int = int(entry.quantity) if all else 1
+	var item: Item = entry.item
+	InventoryManager.inventory[index] = {"item": null, "quantity": 0} if count >= int(entry.quantity) else {"item": item, "quantity": int(entry.quantity) - count}
+	InventoryManager.inventory_changed.emit()
+	var facing := {"up": Vector2.UP, "down": Vector2.DOWN, "left": Vector2.LEFT, "right": Vector2.RIGHT}.get(str(player.get("last_facing")), Vector2.DOWN) as Vector2
+	var drop = preload("res://Items/DroppedItem.tscn").instantiate()
+	drop.setup_item(item, count)
+	var holder: Node = get_tree().get_first_node_in_group("forest_session")
+	if holder == null: holder = player.get_parent()
+	holder.add_child(drop)
+	drop.global_position = player.global_position + facing * 16.0 + Vector2(0, 4)
+	drop.hold_off()
+	AudioManager.play_sfx("unequip_gear")
+	update_inventory_display()
+	show_toast("Dropped %s%s" % [item.name, (" x%d" % count) if count > 1 else ""])
+	return true
+
+## Whether a screen point is over one of the open panels (a drag let go there
+## isn't a drop into the world), or within `margin` px of one (a drag that
+## just slipped past a panel's edge is let go, not thrown away).
+func is_over_panel(pos: Vector2, margin := 0.0) -> bool:
+	for p in [inventory_panel, recipes_panel, equipment_panel, chest_panel, _candidates, roster_panel, skills_panel, command_panel]:
+		if p is Control and is_instance_valid(p) and p.is_visible_in_tree() and p.get_global_rect().grow(margin).has_point(pos): return true
+	return false
 
 func select_slot(slot: Control) -> void:
 	if slot in hotbar:

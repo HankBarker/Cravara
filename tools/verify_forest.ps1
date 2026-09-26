@@ -100,7 +100,14 @@ $suites = @(
     @{Name='wilds12'; Args=@('res://Tests/Wilds12Suite.tscn')},
     # Pass 13: pace, telegraphs, weapon classes, skills, taming ways, genes, ores, care, siege, events, camps.
     @{Name='pass13'; Args=@('res://Tests/Pass13Suite.tscn')},
-    @{Name='pass14'; Args=@('res://Tests/Pass14Suite.tscn')}
+    @{Name='pass14'; Args=@('res://Tests/Pass14Suite.tscn')},
+    # Pass 15: dropping, two-tone mutations, the larder (crops, meals, meats, fish),
+    # caves, pack and ambush tactics, ranked stars, building from each land,
+    # stampedes and caravans, the map.
+    @{Name='pass15'; Args=@('res://Tests/Pass15Suite.tscn')},
+    # Pass 15: a new journey's ring world: every land, the small places, the
+    # villages, ruins and caves, all where they should be.
+    @{Name='rings'; Args=@('res://Tests/RingsSuite.tscn')}
 )
 if ($FromSuite -ne '' -and $FromSuite -notin $suites.Name) { throw ('Unknown suite: ' + $FromSuite) }
 $started = $FromSuite -eq ''

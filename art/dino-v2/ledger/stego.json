@@ -377,6 +377,65 @@
     },
     "raw": "C:\\Cravera\\art\\dino-v2\\raw\\stego\\threat_up@2"
    }
+  ],
+  "rest_down": [
+   {
+    "job": "64d6d8a7-b6ff-40f8-8e1b-ce31845df715",
+    "tool": "animate_image_pixminimax",
+    "seed": 6839588,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Slowly lowers its body and lies down on the ground with its legs folded under it, then rests there, breathing slowly. It stays in place, facing the viewer the whole time.",
+    "frames": 13,
+    "submitted": 1790401423.0982702,
+    "finished": 1790401645.1193454,
+    "score": {
+     "bright": 7,
+     "area": 1.08,
+     "wide": 2.13,
+     "base": 42
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\stego\\rest_down@0"
+   }
+  ],
+  "rest_up": [
+   {
+    "job": "0f38a445-ee8b-4e08-8129-19310acbd0d9",
+    "tool": "animate_image_pixminimax",
+    "seed": 16042005,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Slowly lowers its body and lies down on the ground with its legs folded under it, then rests there, breathing slowly. It stays in place with its back to the viewer the whole time.",
+    "frames": 13,
+    "submitted": 1790401484.73963,
+    "finished": 1790401656.7431538,
+    "score": {
+     "bright": 3,
+     "area": 1.28,
+     "wide": 2.45,
+     "base": 22
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\stego\\rest_up@0"
+   }
+  ],
+  "look_up": [
+   {
+    "job": "b75bc2a1-0324-4f75-b838-2ed613bd8ed9",
+    "tool": "animate_image_pixminimax",
+    "seed": 10971064,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Stands in place and turns its head to look to one side, then to the other side, then back ahead, its body staying still. It stays in place with its back to the viewer the whole time.",
+    "frames": 13,
+    "submitted": 1790401352.1504726,
+    "finished": 1790401483.0747433,
+    "score": {
+     "bright": 5,
+     "area": 1.18,
+     "wide": 1.35,
+     "base": 22
+    }
+   }
   ]
  },
  "idle_down": {
@@ -589,5 +648,107 @@
   },
   "kept_attempt": "C:\\Cravera\\art\\dino-v2\\raw\\stego\\threat_up@2",
   "method": "copied from tail_swing_up (pass 13: the AI's warning grew the tail into a column taller than the stego; the AI frames kept in threat_up_ai)"
+ },
+ "rest_side": {
+  "job": "e4b2e5bb-7a1c-45bd-9567-5faf20c0e066",
+  "tool": "animate_image_pixminimax",
+  "seed": 2089827,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Slowly lowers its body and lies down on the ground with its legs folded under it, then rests there, breathing slowly. It stays in place, facing right.",
+  "frames": 13,
+  "submitted": 1790400884.3791456,
+  "finished": 1790401016.301263,
+  "score": {
+   "bright": 11,
+   "area": 1.0,
+   "wide": 1.09,
+   "base": 111
+  }
+ },
+ "look_side": {
+  "job": "c21962e2-13d6-4152-b6c7-649f9cf50f41",
+  "tool": "animate_image_pixminimax",
+  "seed": 16380363,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stands in place and turns its head to look to one side, then to the other side, then back ahead, its body staying still. It stays in place, facing right.",
+  "frames": 13,
+  "submitted": 1790401349.7789485,
+  "finished": 1790401462.948188,
+  "score": {
+   "bright": 15,
+   "area": 1.03,
+   "wide": 1.0,
+   "base": 111
+  }
+ },
+ "look_down": {
+  "job": "89bbbc83-908d-4bf6-84d7-a62f029198be",
+  "tool": "animate_image_pixminimax",
+  "seed": 7939230,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stands in place and turns its head to look to one side, then to the other side, then back ahead, its body staying still. It stays in place, facing the viewer the whole time.",
+  "frames": 13,
+  "submitted": 1790401351.051753,
+  "finished": 1790401473.3992505,
+  "score": {
+   "bright": 4,
+   "area": 1.0,
+   "wide": 1.04,
+   "base": 42
+  }
+ },
+ "look_up": {
+  "job": "8987570f-1775-40cf-9f16-22c7c30946a0",
+  "tool": "animate_image_pixminimax",
+  "seed": 10972065,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stands in place and turns its head slightly to one side, then back ahead, its body, back and tail staying perfectly still. It stays in place with its back to the viewer the whole time.",
+  "frames": 13,
+  "submitted": 1790404416.750159,
+  "finished": 1790404610.1679873,
+  "score": {
+   "bright": 6,
+   "area": 1.09,
+   "wide": 1.05,
+   "base": 22
+  }
+ },
+ "rest_down": {
+  "job": "cc2af159-5cee-4d89-b34b-0735d1c8f60a",
+  "tool": "animate_image_pixminimax",
+  "seed": 6840588,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Slowly lowers its body and lies down on the ground with its legs folded under it, then rests there, breathing slowly. It stays in place, facing the viewer the whole time.",
+  "frames": 13,
+  "submitted": 1790401724.8185592,
+  "finished": 1790401922.4039779,
+  "score": {
+   "bright": 0,
+   "area": 1.14,
+   "wide": 2.13,
+   "base": 42
+  }
+ },
+ "rest_up": {
+  "job": "ab7c27fb-c3b5-403f-b4ee-0f5fa53ccd81",
+  "tool": "animate_image_pixminimax",
+  "seed": 16043005,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Slowly lowers its body and lies down on the ground with its legs folded under it, then rests there, breathing slowly. It stays in place with its back to the viewer the whole time.",
+  "frames": 13,
+  "submitted": 1790401797.9301636,
+  "finished": 1790401939.8550436,
+  "score": {
+   "bright": 2,
+   "area": 1.0,
+   "wide": 1.6,
+   "base": 22
+  }
  }
 }

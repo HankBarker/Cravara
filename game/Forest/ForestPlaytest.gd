@@ -85,7 +85,21 @@ var _dodge_guard := 0.0
 func _enter_tree():
 	SaveManager.disable_for_playtest()
 
+## Pass 15: how long each part of the boot takes (with --gen-timing).
+var _boot_ms := 0
+func _bt(what: String) -> void:
+	preload("res://Forest/Boot.gd").breathe()
+	if not "--gen-timing" in OS.get_cmdline_user_args(): return
+	var now := Time.get_ticks_msec()
+	print("BOOT %s +%dms" % [what, now - _boot_ms])
+	_boot_ms = now
+
 func _ready():
+	_boot_ms = Time.get_ticks_msec()
+	# (No keys or clicks reach a half-built session while the window breathes
+	# between the boot's steps, Boot.gd: input again once this frame is done.)
+	get_tree().root.gui_disable_input = true
+	get_tree().root.set_deferred("gui_disable_input", false)
 	add_to_group("forest_session")
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	y_sort_enabled = true
@@ -93,8 +107,20 @@ func _ready():
 	get_tree().root.close_requested.connect(_quit_game)
 	world = load("res://Forest/ForestWorld.gd").new()
 	world.name = "ForestWorld"
+	# Pass 15: a new journey from the menu is a ring world with a seed of its
+	# own (MainMenu); `--rings SEED` makes one for a test. A load puts the
+	# journey's own world back (ForestWorld.restore).
+	var fresh: Dictionary = get_tree().get_meta("forest_new_world", {}) if get_tree().has_meta("forest_new_world") else {}
+	var cli := OS.get_cmdline_user_args()
+	var at_rings := cli.find("--rings")
+	if at_rings >= 0:
+		fresh = {"layout": "rings", "seed": int(cli[at_rings + 1]) if at_rings + 1 < cli.size() and cli[at_rings + 1].is_valid_int() else 726151}
+	if not fresh.is_empty() and not get_tree().get_meta("forest_continue", false):
+		world.layout_kind = str(fresh.get("layout", "legacy"))
+		world.world_seed = int(fresh.get("seed", world.world_seed))
 	world.process_mode = Node.PROCESS_MODE_PAUSABLE
 	add_child(world)
+	_bt("world")
 	player = PLAYER.instantiate()
 	# The original scene allocates unattached FSM Nodes before its script is replaced.
 	for state_node in player.states.values():
@@ -112,17 +138,22 @@ func _ready():
 	lighting.world=world
 	lighting.player=player
 	add_child(lighting)
+	_bt("lighting")
 	hud = load("res://UI/ForestHUD.gd").new()
 	hud.player = player
 	hud.process_mode = Node.PROCESS_MODE_PAUSABLE
 	add_child(hud)
+	_bt("hud")
 	hud.setup_skills(skills)
 	skills.leveled.connect(_on_skill_level)
+	# Pass 15: stars of vigor raise the keeper's vitality at once.
+	skills.changed.connect(player.refresh_vigor)
 	TimeCycle.phase_changed.connect(_on_day_phase)
 	fishing = preload("res://Forest/FishingController.gd").new()
 	fishing.process_mode = Node.PROCESS_MODE_PAUSABLE
 	add_child(fishing)
 	fishing.setup(self,world,player)
+	_bt("fishing")
 	fishing.notice.connect(_toast)
 	fishing.caught.connect(func(id): SignalBus.fish_caught.emit(id))
 	fishing.activity_changed.connect(func(_active):
@@ -133,6 +164,7 @@ func _ready():
 	gardening.process_mode=Node.PROCESS_MODE_PAUSABLE
 	add_child(gardening)
 	gardening.setup(world,player)
+	_bt("gardening")
 	gardening.notice.connect(_toast)
 	bow=preload("res://Forest/BowController.gd").new()
 	bow.process_mode=Node.PROCESS_MODE_PAUSABLE
@@ -142,10 +174,12 @@ func _ready():
 	boss = BOSS.new()
 	add_child(boss)
 	boss.setup(self)
+	_bt("alpha")
 	ossuar = OSSUAR_BOSS.new()
 	ossuar.process_mode = Node.PROCESS_MODE_PAUSABLE
 	add_child(ossuar)
 	ossuar.setup(self)
+	_bt("ossuar")
 	var ambience := AMBIENCE.new()
 	add_child(ambience)
 	ambience.setup(player)
@@ -155,10 +189,12 @@ func _ready():
 	life = LIFE_KEEPER.new()
 	add_child(life)
 	life.setup(self)
+	_bt("life")
 	# The tribes (pass 12): the villages' folk and the wandering bands.
 	tribes = TRIBE_KEEPER.new()
 	add_child(tribes)
 	tribes.setup(self)
+	_bt("tribes")
 	# The regions' air (pass 12): the Pale Lands' ash and hush, the Mirefen's mist.
 	for air_kind in ["ash", "mire", "storm"]:
 		var air = preload("res://Forest/fx/RegionAir.gd").new()
@@ -170,6 +206,10 @@ func _ready():
 	boating = BOATING.new()
 	add_child(boating)
 	boating.setup(self)
+	cave_life = preload("res://Forest/world/CaveLife.gd").new()
+	cave_life.name = "CaveLife"
+	add_child(cave_life)
+	cave_life.setup(self)
 	events = preload("res://Forest/world/WorldEvents.gd").new()
 	events.setup(self)
 	add_child(events)
@@ -178,6 +218,7 @@ func _ready():
 	folk = FOLK.new()
 	add_child(folk)
 	folk.setup(self)
+	_bt("folk")
 	talk = TALK.new()
 	add_child(talk)
 	talk.closed.connect(func():
@@ -205,10 +246,17 @@ func _ready():
 			_toast("Dino playtest: E rides the saddled stego or trike, click to strike. Herd east, dodos north, raptors north-west, rex west.")
 		else:
 			_spawn_wildlife()
+			_spread_hunters()
+			_bt("wildlife")
 			life.populate_nests()
+			_bt("nests")
+			cave_life.people()
+			_milestones["caves"] = true
 			_toast("A new beginning. Press J for your field journal.")
 		_prepare_bosses()
+		_bt("bosses")
 		folk.begin_journey()
+		_bt("journey")
 		if _folk_playtest(): _set_up_folk_playtest()
 		if _wilds_playtest():
 			_toast("Wilds playtest: the Mirefen Bog (west, a boat), the Sunward oasis and the Ossuary (south), the Pale Lands' ash (north: wear the veil). M: the map.")
@@ -274,8 +322,46 @@ func _wilds_playtest() -> bool:
 	return "--wilds-playtest" in args and "--no-save-playtest" in args
 
 func _update_ambient(_time: float, color: Color):
+	_sky = color
 	if is_instance_valid(_ambient):
-		_ambient.color = Color.WHITE.lerp(color, 0.78)
+		_ambient.color = CAVE_DARK if _in_cave else Color.WHITE.lerp(color, 0.78)
+
+## Pass 15: the caves (world/Caves.gd). Underground it's dark whatever the hour.
+const CAVE_DARK := Color(0.3, 0.29, 0.36)
+var _sky := Color.WHITE
+var _in_cave := false
+var cave_life
+
+## Into a cave through its mouth (in: true), or back out by its shaft of
+## daylight: the keeper and the companions following them.
+func cave_travel(cell: Vector2i, going_in: bool) -> bool:
+	if world.caves == null: return false
+	var cave: Dictionary = world.caves.cave_by_mouth(cell) if going_in else world.caves.cave_by_exit(cell)
+	if cave.is_empty(): return false
+	if is_instance_valid(player.mounted_creature):
+		_toast("Dismount first: the way is narrow.")
+		return true
+	var to: Vector2 = Vector2(cave.entry if going_in else cave.out) * 16.0 + Vector2(8, 8)
+	var from: Vector2 = player.global_position
+	player.global_position = world.get_open_position(to, 10.0)
+	player.velocity = Vector2.ZERO
+	player.get_node("Camera2D").reset_smoothing()
+	for c in get_tree().get_nodes_in_group("forest_creatures"):
+		if c.tamed and not c.is_dead and str(c.order) == "follow" and c.global_position.distance_to(from) < 260.0:
+			c.global_position = world.get_open_position(player.global_position + Vector2(randf_range(-24, 24), randf_range(8, 24)), float(c.stats.radius))
+	AudioManager.play_sfx("satchel_close")
+	if going_in and not _milestones.get("cave_" + str(cave.id), false):
+		_milestones["cave_" + str(cave.id)] = true
+		hud.show_banner(str(cave.name), str(world.caves.KINDS[cave.kind].blurb))
+	_track_cave()
+	return true
+
+func _track_cave() -> void:
+	var inside: bool = world.region_of(world.to_cell(player.global_position)) == "caves"
+	if inside == _in_cave: return
+	_in_cave = inside
+	if is_instance_valid(lighting): lighting.cave = inside
+	_update_ambient(TimeCycle.time_of_day, _sky)
 
 func _on_player_died():
 	_command_key = 0
@@ -372,7 +458,7 @@ func _spawn_wilds13_life(met: Array = []):
 		if not DA.has_key(str(entry[0])) or str(entry[0]) in met: continue
 		var area: Rect2i = entry[3]
 		for group in int(entry[1]):
-			var centre := Vector2(rng.randi_range(area.position.x, area.end.x), rng.randi_range(area.position.y, area.end.y)) * 16.0
+			var centre := Vector2(world.area_point(area, rng)) * 16.0
 			for i in rng.randi_range(int(entry[2][0]), int(entry[2][1])):
 				var wanted := centre + Vector2(rng.randf_range(-30.0, 30.0), rng.randf_range(-22.0, 22.0))
 				var at: Vector2 = world.get_spawnable_position(wanted)
@@ -383,7 +469,7 @@ func _spawn_wilds13_life(met: Array = []):
 	var shallows: Array = []
 	var deep_edge: Array = []
 	for c in world.water:
-		if not world.GLASSMERE.has_point(c): continue
+		if world.region_of(c) != "glassmere": continue
 		if world.deep.has(c):
 			if not world.deep.has(c + Vector2i(3, 0)) or not world.deep.has(c + Vector2i(-3, 0)): deep_edge.append(c)
 		else:
@@ -421,7 +507,7 @@ func _spawn_wilds12_life():
 		if not preload("res://Forest/creatures/DinoArt.gd").has_key(str(entry[0])): continue
 		var area: Rect2i = entry[3]
 		for group in int(entry[1]):
-			var centre := Vector2(rng.randi_range(area.position.x, area.end.x), rng.randi_range(area.position.y, area.end.y)) * 16.0
+			var centre := Vector2(world.area_point(area, rng)) * 16.0
 			var herd: Array = []
 			for i in rng.randi_range(int(entry[2][0]), int(entry[2][1])):
 				var wanted := centre + Vector2(rng.randf_range(-30.0, 30.0), rng.randf_range(-22.0, 22.0))
@@ -438,7 +524,7 @@ func _spawn_wilds_life():
 		if not preload("res://Forest/creatures/ForestCreature.gd").SPECIES.has(str(entry[0])): continue
 		var area: Rect2i = entry[3]
 		for group in int(entry[1]):
-			var centre := Vector2(rng.randi_range(area.position.x, area.end.x), rng.randi_range(area.position.y, area.end.y)) * 16.0
+			var centre := Vector2(world.area_point(area, rng)) * 16.0
 			var herd: Array = []
 			for i in rng.randi_range(int(entry[2][0]), int(entry[2][1])):
 				var wanted := centre + Vector2(rng.randf_range(-30.0, 30.0), rng.randf_range(-22.0, 22.0))
@@ -450,7 +536,7 @@ func _spawn_wilds_life():
 			if life and str(entry[4]) == "": life.add_young(herd)
 	for entry in ROAMERS:
 		var area: Rect2i = entry[2]
-		var want := Vector2(rng.randi_range(area.position.x, area.end.x), rng.randi_range(area.position.y, area.end.y)) * 16.0
+		var want := Vector2(world.area_point(area, rng)) * 16.0
 		var roamer = _spawn_creature(str(entry[0]), world.get_spawnable_position(want))
 		roamer.set_variant(str(entry[1]))
 
@@ -460,7 +546,7 @@ func _spawn_bonelands_life():
 	for entry in BONELANDS_LIFE:
 		var area: Rect2i = entry[3]
 		for group in int(entry[1]):
-			var centre := Vector2(rng.randi_range(area.position.x, area.end.x), rng.randi_range(area.position.y, area.end.y)) * 16.0
+			var centre := Vector2(world.area_point(area, rng)) * 16.0
 			var herd: Array = []
 			for i in rng.randi_range(int(entry[2][0]), int(entry[2][1])):
 				var wanted := centre + Vector2(rng.randf_range(-30.0, 30.0), rng.randf_range(-22.0, 22.0))
@@ -487,7 +573,7 @@ func _restock_wilds() -> void:
 			if str(entry[0]) != sp: continue
 			var area: Rect2i = entry[3]
 			for attempt in 12:
-				var centre := Vector2(randi_range(area.position.x, area.end.x), randi_range(area.position.y, area.end.y)) * 16.0
+				var centre := Vector2(world.area_point(area, null)) * 16.0
 				if centre.distance_to(player.global_position) < 480.0: continue
 				var came := 0
 				for i in randi_range(int(entry[2][0]), int(entry[2][1])):
@@ -518,6 +604,44 @@ func _spawn_wildlife():
 				if at.length() < 40.0 and wanted.length() > 120.0: continue
 				herd.append(_spawn_creature(str(entry[0]), at))
 			if life: life.add_young(herd)
+
+## Pass 15: a ring world's big hunters are placed by the old world's compass
+## (WILDLIFE's arcs) and its lands' boxes, so several could start on one
+## another's ground and then fight on and on (their rivalries, a hungry rex's
+## hunting), every close fight run at full rate however far off. Spread them:
+## none starts within SPREAD px of another, each moved within its own land
+## (and, on the plains, well away from camp). An old journey's world keeps
+## its placement.
+const BIG_HUNTERS := ["rex", "carno", "allo", "yuty", "spino"]
+const SPREAD := 480.0
+
+func _spread_hunters() -> void:
+	if not world.layout.is_rings(): return
+	var rng := RandomNumberGenerator.new()
+	rng.seed = hash(world.world_seed) ^ 0x5B2E
+	var placed: Array = []
+	for c in get_tree().get_nodes_in_group("forest_creatures"):
+		if c.is_dead or c.tamed or not str(c.species) in BIG_HUNTERS or str(c.variant) in ["sleeper", "grotto"]: continue
+		var land: String = world.region_of(world.to_cell(c.global_position))
+		if land == "caves": continue
+		if not _crowded(c.global_position, placed):
+			placed.append(c.global_position)
+			continue
+		var cells: Array = world.layout.cells(land)
+		for attempt in 60:
+			var cell: Vector2i = cells[rng.randi() % cells.size()]
+			if land == "forest" and Vector2(cell).length() < 50.0: continue
+			var at: Vector2 = world.get_spawnable_position(Vector2(cell) * 16.0 + Vector2(8, 8))
+			if world.region_of(world.to_cell(at)) != land or _crowded(at, placed): continue
+			c.global_position = at
+			c.home = at
+			break
+		placed.append(c.global_position)
+
+func _crowded(at: Vector2, placed: Array) -> bool:
+	for p in placed:
+		if Vector2(p).distance_to(at) < SPREAD: return true
+	return false
 
 ## --dino-playtest (no-save runs only): every dinosaur close to the start, with
 ## a saddled stego and trike already tamed beside the keeper, ready to ride.
@@ -922,7 +1046,7 @@ func _interact_creature():
 		world.last_feedback = ""
 		var aimed = world.props.get(world._target_cell(target))
 		if is_instance_valid(aimed) and _can_reach_prop(aimed) and world.interact_at(target, ""):
-			if aimed.kind in ["bush","fern","mushroom","flowers","cattail"]: player.play_action("pickup",target)
+			if aimed.kind in ["bush","fern","mushroom","flowers","cattail","wild_grain","wild_lotus","wild_melon","wild_pepper","wild_gourd"]: player.play_action("pickup",target)
 			elif is_instance_valid(aimed): player.play_gesture("interact", aimed.global_position)
 			if world.last_feedback != "": _toast(world.last_feedback)
 			return
@@ -965,7 +1089,7 @@ func _offer_target():
 	var distance: float = Ways.OFFER_SIGHT
 	for creature in get_tree().get_nodes_in_group("forest_creatures"):
 		if creature.is_dead or creature.tamed or creature.baby or creature.is_queued_for_deletion(): continue
-		if not Ways.sets_down(creature.species) or str(creature.stats.food) != item.id: continue
+		if not Ways.sets_down(creature.species) or not preload("res://Forest/life/Foods.gd").accepts(creature.species, str(creature.stats.food), item.id): continue
 		var d: float = creature.global_position.distance_to(player.global_position)
 		if d < distance:
 			best = creature
@@ -980,7 +1104,7 @@ func _prop_distance(prop: Node2D) -> float:
 	return feet.distance_to(nearest)
 
 ## Props that answer E from nearby (landmarks too: E reads their carving).
-const _INTERACTIVE := ["workbench","campfire","chest","wood_door","stone_door","hide_bed","shrine","tent","cache","relic","roots","nest","incubator","bone_pile","boat","clam_bed","keeper_camp","ossuary","dune_ribs","dune_skull","big_gate","ashen_totem"]
+const _INTERACTIVE := ["workbench","campfire","cooking_pot","cave_mouth","cave_exit","explorer","wild_grain","wild_lotus","wild_melon","wild_pepper","wild_gourd","chest","wood_door","stone_door","hide_bed","shrine","tent","cache","relic","roots","nest","incubator","bone_pile","boat","clam_bed","keeper_camp","ossuary","dune_ribs","dune_skull","big_gate","ashen_totem"]
 
 func _interaction_prop():
 	var nearest = null
@@ -1035,7 +1159,9 @@ func _use_selected():
 	if not item:
 		return
 	if item.tool_type=="bow": return
-	if item.id in ["garden_hoe","berry_seed","mushroom_spore"] or (item.id=="water_bucket" and gardening.plots.has(world.to_cell(get_global_mouse_position()))):
+	# Pass 15: any crop's seed (a tuber or a lotus root is eaten unless it's
+	# aimed at a bed).
+	if gardening.wants(item.id, get_global_mouse_position()):
 		gardening.use_at(get_global_mouse_position(),item.id)
 		return
 	if item.id == "fishing_rod":
@@ -1091,7 +1217,7 @@ func _use_selected():
 		return
 	if world.interact_at(target, item.id):
 		for garden_cell in garden_cells: gardening.plots.erase(garden_cell)
-		if not garden_cells.is_empty(): gardening.queue_redraw()
+		if not garden_cells.is_empty(): gardening.refresh()
 		if item.id in ["bucket", "water_bucket"]:
 			player.play_action("bucket",target)
 			_milestones["water"] = true
@@ -1105,11 +1231,22 @@ func _use_selected():
 
 ## Which region the keeper is in: the HUD plate names it, and the first time
 ## there a banner says so (SignalBus.region_entered for the tasks).
+var _small_place := ""
 func _track_region(delta: float) -> void:
+	_track_cave()
 	_region_clock += delta
 	if _region_clock < 0.4: return
 	_region_clock = 0.0
 	var now: String = world.region_of(world.to_cell(player.global_position)) if world.has_method("region_of") else "forest"
+	# Pass 15: a small place inside a land (the red meadow, a haven, an oasis):
+	# its name the first time the keeper walks in.
+	var small: String = world.micro_of(world.to_cell(player.global_position)) if world.has_method("micro_of") else ""
+	if small != _small_place:
+		_small_place = small
+		if small != "" and not _milestones.get("place_" + small, false):
+			_milestones["place_" + small] = true
+			var named: Array = world.MICRO_NAMES.get(small, [])
+			if not named.is_empty(): hud.show_banner(str(named[0]), str(named[1]))
 	if now == region: return
 	region = now
 	hud.set_region(Regions.title(now))
@@ -1192,7 +1329,7 @@ func _toast(text: String):
 	if is_instance_valid(hud) and text != "":
 		hud.show_toast(text)
 
-func _make_overlay(title: String, kind: String) -> VBoxContainer:
+func _make_overlay(title: String, kind: String, rect := Rect2(77, 20, 326, 230)) -> VBoxContainer:
 	if fishing: fishing.cancel()
 	if talk: talk.close()
 	_close_overlay()
@@ -1204,8 +1341,8 @@ func _make_overlay(title: String, kind: String) -> VBoxContainer:
 	shade.size = Vector2(480, 270)
 	_overlay.add_child(shade)
 	_panel = PanelContainer.new()
-	_panel.position = Vector2(77, 20)
-	_panel.size = Vector2(326, 230)
+	_panel.position = rect.position
+	_panel.size = rect.size
 	var style := StyleBoxFlat.new()
 	style.bg_color = Color.TRANSPARENT
 	style.border_color = Color.TRANSPARENT
@@ -1226,7 +1363,7 @@ func _make_overlay(title: String, kind: String) -> VBoxContainer:
 	var heading := Label.new()
 	heading.text = title
 	heading.add_theme_font_override("font", preload("res://UI/SkyfangUI.gd").title_font())
-	heading.add_theme_font_size_override("font_size", 13)
+	heading.add_theme_font_size_override("font_size", preload("res://UI/SkyfangUI.gd").title_size(13))
 	heading.add_theme_color_override("font_color", Color("eee1bc"))
 	column.add_child(heading)
 	return column
@@ -1289,7 +1426,7 @@ func _show_journal():
 	pages.add_theme_constant_override("separation", 4)
 	column.add_child(pages)
 	_overlay_button(pages, "GARDENS & COMPANIONS", _show_field_skills)
-	_overlay_button(pages, "LORE OF THE WILDS  %d/%d" % [_lore_found().size(), Lore.ENTRIES.size()], _show_lore_list)
+	_overlay_button(pages, "LORE OF THE WILDS  %d/%d" % [_lore_found().size(), _lore_total()], _show_lore_list)
 	for page in pages.get_children():
 		page.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_overlay_button(column, "CLOSE JOURNAL  [J / ESC]", _close_overlay)
@@ -1319,20 +1456,38 @@ func _lore_found() -> Array:
 		if _milestones.get("lore_" + id, false): found.append(id)
 	return found
 
+## The carvings this world holds (pass 15: an old journey's world lacks the
+## far lands' ruins).
+func _lore_total() -> int:
+	var total := 0
+	for id in Lore.ENTRIES:
+		if id in Lore.RINGS_ONLY and not world.layout.is_rings(): continue
+		total += 1
+	return total
+
 func _show_lore_list():
 	var column := _make_overlay("LORE OF THE WILDS", "journal")
 	column.add_theme_constant_override("separation", 2)
 	var found := _lore_found()
-	if found.size() == Lore.ENTRIES.size():
+	if found.size() >= _lore_total():
 		_overlay_text(column, "All %d carvings read. The old peoples' story is yours." % found.size(), 8)
 	else:
-		_overlay_text(column, "%d of %d carvings read. Ruins and idols hold the rest." % [found.size(), Lore.ENTRIES.size()], 8)
-	# Two to a row, so all eight carvings fit the 270px screen.
+		_overlay_text(column, "%d of %d carvings read. Ruins and idols hold the rest." % [found.size(), _lore_total()], 8)
+	# Two to a row; past a screenful they scroll (pass 15: the far lands' ruins).
 	var grid := GridContainer.new()
 	grid.columns = 2
 	grid.add_theme_constant_override("h_separation", 4)
 	grid.add_theme_constant_override("v_separation", 2)
-	column.add_child(grid)
+	var rows := int(ceil(found.size() / 2.0))
+	if rows > 7:
+		var scroll := ScrollContainer.new()
+		scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+		scroll.custom_minimum_size = Vector2(0, 7 * 17)
+		grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		column.add_child(scroll)
+		scroll.add_child(grid)
+	else:
+		column.add_child(grid)
 	for id in found:
 		var entry := _overlay_button(grid, Lore.title(id), func(): show_lore(id, true))
 		entry.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -1354,14 +1509,56 @@ func _show_field_skills():
 	_overlay_button(column,"BACK TO FIRST CAMP",_show_journal)
 	_overlay_button(column,"RETURN TO THE WILDS",_close_overlay)
 
+## The map (M), pass 15: the whole screen, the picture in the world's own
+## shape (a ring world is square) with its key beside it.
 func _show_map():
-	var column := _make_overlay("THE SKYFANG WILDS", "map")
+	var column := _make_overlay("THE SKYFANG WILDS", "map", Rect2(12, 6, 456, 258))
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 10)
+	column.add_child(row)
 	_map = load("res://Forest/ForestMap.gd").new()
 	_map.world = world
 	_map.player = player
-	_map.custom_minimum_size = Vector2(288, 138)
-	column.add_child(_map)
-	_overlay_text(column, "Yellow: you   Gold: ruins   Violet: folk   Red: bosses   Orange: great beasts   Cream: nests   Amber: heard by your parasaur\nWest: the Mirefen Bog   North: the Pale Lands   East: the Bonelands   South: the Sunscar Dunes", 8)
+	var b: Rect2i = world.bounds()
+	var tall := 196.0
+	var wide := clampf(roundf(tall * float(b.size.x) / float(maxi(b.size.y, 1))), 150.0, 262.0)
+	_map.custom_minimum_size = Vector2(wide, tall)
+	row.add_child(_map)
+	var key := VBoxContainer.new()
+	key.add_theme_constant_override("separation", 1)
+	key.custom_minimum_size.x = 436.0 - wide - 10.0
+	row.add_child(key)
+	for entry in [["ffe199", "You"], ["e8d49a", "Ruins"], ["cave", "Caves"], ["c9a8f0", "Folk"], ["5ec8c0", "The Sunward"],
+			["d0503c", "Bosses, the war camp"], ["f0a040", "Great beasts"], ["f2e6c8", "Nests"], ["f2c84b", "Heard by your parasaur"]]:
+		var line := HBoxContainer.new()
+		line.add_theme_constant_override("separation", 4)
+		var chip := ColorRect.new()
+		chip.color = Color(str(entry[0])) if str(entry[0]) != "cave" else _map.CAVE
+		chip.custom_minimum_size = Vector2(5, 5)
+		chip.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		line.add_child(chip)
+		# A cave's chip as its mark: a dark door in a pale rim.
+		if str(entry[0]) == "cave":
+			var door := ColorRect.new()
+			door.color = _map.CAVE_DARK
+			door.position = Vector2(1, 1)
+			door.size = Vector2(3, 3)
+			chip.add_child(door)
+		var name_label := Label.new()
+		name_label.text = str(entry[1])
+		name_label.add_theme_color_override("font_color", Color("e9dcc0"))
+		line.add_child(name_label)
+		key.add_child(line)
+	var Regions = preload("res://Forest/world/Regions.gd")
+	var lands := []
+	for land in ["glassmere", "dunes", "pale_hills", "bonelands"]:
+		lands.append("%s: %s" % [Regions.title(land).trim_prefix("The "), Regions.way_to(land, world)])
+	var ways := Label.new()
+	ways.text = "\n" + "\n".join(lands)
+	ways.add_theme_color_override("font_color", Color("a9c7b4"))
+	ways.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	ways.custom_minimum_size.x = key.custom_minimum_size.x
+	key.add_child(ways)
 	_overlay_button(column, "RETURN  [M / ESC]", _close_overlay)
 
 func save_journey(path: String = SAVE_FILE) -> bool:
@@ -1396,6 +1593,7 @@ func save_journey(path: String = SAVE_FILE) -> bool:
 		"hotbar_start": InventoryManager.hotbar_start,
 		"food_healing": [] if player.respawning else player._food_healing,
 		"food_satiation": 30.0 if player.respawning else player.food_satiation_left,
+		"food_buffs": {} if player.respawning else player.food_buffs.duplicate(true),
 		"fishing": fishing.serialize(),
 		"appearance": player.appearance,
 		"gardening": gardening.serialize(),
@@ -1424,13 +1622,22 @@ func save_journey(path: String = SAVE_FILE) -> bool:
 	return DirAccess.rename_absolute(path + ".tmp", path) == OK
 
 ## A skill rose (pass 13): a banner with what it brought.
+## Stars the waiting level-up banner of each skill tells of (pass 15: several
+## levels at once, from a great kill, make one banner with all of them).
+var _level_stars := {}
+
 func _on_skill_level(skill: String, level: int) -> void:
 	var info: Dictionary = skills.SKILLS[skill]
 	var boosts: Array = []
 	for effect in skills.PER_LEVEL[skill]:
-		var per: float = float(skills.PER_LEVEL[skill][effect])
-		boosts.append(("+%d%% " % int(round(per * 100.0)) if effect != "gather_power" else "stronger ") + str({"melee_damage": "melee", "bow_damage": "arrows", "draw_speed": "draw", "feeds_cut": "taming", "mount_speed": "riding", "hatch_speed": "hatching", "growth_speed": "growth", "crop_speed": "crops", "gather_power": "gathering", "fishing": "fishing knack"}.get(effect, effect)))
-	hud.show_banner("%s %d" % [info.name, level], "%s. %d new stars to light (L)." % [", ".join(boosts), skills.POINTS_PER_LEVEL], null)
+		var per: float = float(skills.PER_LEVEL[skill][effect]) * 100.0
+		var amount := ("+%d%% " % int(round(per))) if per >= 1.0 else ("+%.1f%% " % per)
+		boosts.append((amount if effect != "gather_power" else "stronger ") + str({"melee_damage": "melee", "bow_damage": "arrows", "draw_speed": "draw", "feeds_cut": "taming", "mount_speed": "riding", "hatch_speed": "hatching", "growth_speed": "growth", "crop_speed": "crops", "gather_power": "gathering", "fishing": "fishing knack"}.get(effect, effect)))
+	var key := "level:" + skill
+	var stars: int = skills.POINTS_PER_LEVEL + (1 if level % 10 == 0 else 0)
+	if hud.banner_waiting(key): stars += int(_level_stars.get(skill, 0))
+	_level_stars[skill] = stars
+	hud.show_banner("%s %d" % [info.name, level], "%s a level. %d new star%s to light (L)." % [", ".join(boosts), stars, "" if stars == 1 else "s"], null, key)
 	AudioManager.play_sfx("craft")
 
 func _load_journey(path: String = SAVE_FILE) -> bool:
@@ -1489,6 +1696,15 @@ func _load_journey(path: String = SAVE_FILE) -> bool:
 	var afloat := bool(parsed.get("afloat", false))
 	var saved_at := Vector2(p.get("x", 0), p.get("y", 0))
 	player.position = saved_at if afloat else world.get_spawnable_position(saved_at)
+	# A meal's buffs first (pass 15): a vigor meal raises the ceiling the health fits under.
+	player.food_buffs = {}
+	var meals = parsed.get("food_buffs", {})
+	if meals is Dictionary:
+		for effect in meals:
+			var b = meals[effect]
+			if b is Dictionary and float(b.get("left", 0.0)) > 0.0:
+				player.food_buffs[str(effect)] = {"amount": float(b.get("amount", 0.0)), "left": minf(float(b.get("left", 0.0)), 3600.0), "total": float(b.get("total", b.get("left", 0.0))), "from": str(b.get("from", ""))}
+	player.refresh_vigor()
 	player.current_health = clampi(int(p.get("health", 100)), 1, player.max_health)
 	player.current_hunger = clampi(int(p.get("hunger", 100)), 0, player.max_hunger)
 	player.current_stamina = player.max_stamina # Legacy saves may contain exhausted energy.
@@ -1537,6 +1753,14 @@ func _load_journey(path: String = SAVE_FILE) -> bool:
 	SignalBus.player_stamina_changed.emit(player.current_stamina,player.max_stamina)
 	tribes.restore(parsed.get("tribes", null))
 	_prepare_bosses()
+	# The caves (pass 15): a journey from before them gets their beasts now; the
+	# Sleepers sleep again.
+	if is_instance_valid(cave_life):
+		if not _milestones.get("caves", false):
+			cave_life.people()
+			_milestones["caves"] = true
+		cave_life.find_sleepers()
+	_track_cave()
 	return true
 
 

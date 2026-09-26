@@ -1,4 +1,5 @@
 extends Node
+const _Foods = preload("res://Forest/life/Foods.gd")
 
 ## Pass 14: forty pockets, eight across (five pouches of eight; was 35).
 const MAX_INVENTORY_SIZE = 40
@@ -69,6 +70,16 @@ func find_empty_slot() -> int:
 
 func remove_item(item_id: String, quantity: int = 1) -> bool:
 	if quantity <= 0 or get_item_count(item_id) < quantity: return false
+	# Pass 15: "any:fish" takes the commonest of its group first (Foods.gd).
+	var members: Array = _Foods.group(item_id)
+	if not members.is_empty():
+		var left := quantity
+		for id in members:
+			var take := mini(left, get_item_count(str(id)))
+			if take > 0: remove_item(str(id), take)
+			left -= take
+			if left <= 0: break
+		return true
 	var remaining := quantity
 	for i in inventory.size():
 		var slot := inventory[i]
@@ -83,6 +94,9 @@ func remove_item(item_id: String, quantity: int = 1) -> bool:
 
 func get_item_count(item_id: String) -> int:
 	var total := 0
+	if item_id.begins_with("any:"):
+		for id in _Foods.group(item_id): total += get_item_count(str(id))
+		return total
 	for slot in inventory:
 		if slot.item and slot.item.id == item_id: total += int(slot.quantity)
 	return total

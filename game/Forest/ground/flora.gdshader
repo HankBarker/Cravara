@@ -11,8 +11,44 @@ uniform vec2 atlas_cells = vec2(16.0, 3.0);
 uniform float frames_per_second = 8.0;
 // The Pale Lands (pass 12): cells (x0, y0, x1, y1) where the grass is dead
 // and grey under the ash, fading in over the southernmost pale_fade rows.
-uniform ivec4 pale_area = ivec4(0, 0, 0, 0);
 uniform float pale_fade = 10.0;
+// Pass 15: each cell's land (r: its index, world/Layout.gd LANDS: 1 the bog,
+// 3 the Pale Lands) and how many cells into it from its side nearer camp (g),
+// one texel a cell from map_origin: the lands aren't boxes any more.
+uniform sampler2D land_map : filter_nearest, repeat_disable;
+uniform ivec2 land_origin = ivec2(0, 0);
+uniform ivec2 land_size = ivec2(1, 1);
+ivec2 land_of(ivec2 cell) {
+	ivec2 t = cell - land_origin;
+	if (t.x < 0 || t.y < 0 || t.x >= land_size.x || t.y >= land_size.y) return ivec2(0, 999);
+	vec4 v = texelFetch(land_map, t, 0);
+	return ivec2(int(v.r * 255.0 + 0.5), int(v.g * 255.0 + 0.5));
+}
+int micro_of(ivec2 cell) {
+	ivec2 t = cell - land_origin;
+	if (t.x < 0 || t.y < 0 || t.x >= land_size.x || t.y >= land_size.y) return 0;
+	return int(texelFetch(land_map, t, 0).b * 255.0 + 0.5);
+}
+// How far a point lies in the red meadow (pass 15): the four cells round it,
+// weighted by where it sits between their centres (the ground blends its edge
+// the same way), so the tufts along the edge mix red and green.
+float meadow_at(vec2 px) {
+	vec2 cp = px / 16.0 - 0.5;
+	vec2 cb = floor(cp);
+	vec2 f = cp - cb;
+	ivec2 c = ivec2(cb);
+	float a = micro_of(c) == 1 ? 1.0 : 0.0;
+	float r = micro_of(c + ivec2(1, 0)) == 1 ? 1.0 : 0.0;
+	float d = micro_of(c + ivec2(0, 1)) == 1 ? 1.0 : 0.0;
+	float e = micro_of(c + ivec2(1, 1)) == 1 ? 1.0 : 0.0;
+	return mix(mix(a, r, f.x), mix(d, e, f.x), f.y);
+}
+// The red meadow's grass: the same shading, turned crimson.
+vec3 crimson(vec3 col) {
+	float luma = dot(col, vec3(0.3, 0.59, 0.11));
+	return mix(vec3(0.3, 0.05, 0.1), vec3(0.86, 0.32, 0.34), smoothstep(0.12, 0.72, luma));
+}
+
 varying vec2 v_root;
 // xy: a body's feet in world px, z: reach, w: 1 when in use.
 uniform vec4 pushers[8];
@@ -47,8 +83,11 @@ void vertex() {
 void fragment() {
 	vec4 c = texture(TEXTURE, UV) * COLOR;
 	ivec2 cell = ivec2(floor(v_root / 16.0));
-	if (cell.x >= pale_area.x && cell.x < pale_area.z && cell.y >= pale_area.y && cell.y < pale_area.w) {
-		float f = clamp(float(pale_area.w - 1 - cell.y) / pale_fade, 0.0, 1.0);
+	ivec2 land = land_of(cell);
+	float jitter = fract(sin(dot(v_root, vec2(12.9898, 78.233))) * 43758.5453) - 0.5;
+	if (meadow_at(v_root) + jitter * 0.5 > 0.5) c.rgb = mix(c.rgb, crimson(c.rgb), 0.9);
+	if (land.x == 3) {
+		float f = clamp(float(land.y) / pale_fade, 0.0, 1.0);
 		float luma = dot(c.rgb, vec3(0.3, 0.59, 0.11));
 		vec3 dead = mix(vec3(0.36, 0.33, 0.31), vec3(0.86, 0.83, 0.78), smoothstep(0.1, 0.7, luma));
 		c.rgb = mix(c.rgb, dead, 0.85 * f);

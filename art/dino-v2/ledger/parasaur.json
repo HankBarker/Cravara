@@ -390,5 +390,107 @@
    "area": 1.0,
    "wide": 2.36
   }
+ },
+ "look_side": {
+  "job": "73cc8d50-64a6-48d4-961a-5f98eb114386",
+  "tool": "animate_image_pixminimax",
+  "seed": 1626552,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stands in place and turns its head to look to one side, then to the other side, then back ahead, its body staying still. It stays in place, facing right.",
+  "frames": 13,
+  "submitted": 1790402411.8945224,
+  "finished": 1790402655.6220107,
+  "score": {
+   "bright": 0,
+   "area": 1.0,
+   "wide": 1.01,
+   "base": 62
+  }
+ },
+ "look_down": {
+  "job": "e7a3b5b1-688f-4815-b61f-dfea672ae8e4",
+  "tool": "animate_image_pixminimax",
+  "seed": 14617955,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stands in place and turns its head to look to one side, then to the other side, then back ahead, its body staying still. It stays in place, facing the viewer the whole time.",
+  "frames": 13,
+  "submitted": 1790402412.6638055,
+  "finished": 1790402665.2965765,
+  "score": {
+   "bright": 6,
+   "area": 1.03,
+   "wide": 1.0,
+   "base": 32
+  }
+ },
+ "look_up": {
+  "job": "32542a80-b449-4744-801e-d4a3ce43bc38",
+  "tool": "animate_image_pixminimax",
+  "seed": 9174239,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stands in place and turns its head to look to one side, then to the other side, then back ahead, its body staying still. It stays in place with its back to the viewer the whole time.",
+  "frames": 13,
+  "submitted": 1790402413.415018,
+  "finished": 1790402580.78969,
+  "score": {
+   "bright": 1,
+   "area": 1.03,
+   "wide": 1.0,
+   "base": 63
+  }
+ },
+ "rest_side": {
+  "job": "45b53fe9-b8a3-413d-aef2-558e43694e0c",
+  "tool": "animate_image_pixminimax",
+  "seed": 10463913,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Slowly crouches down and lies on its belly on the ground with its head resting down, then rests there, breathing slowly. It stays in place, facing right.",
+  "frames": 13,
+  "submitted": 1790402490.1454377,
+  "finished": 1790402676.3782947,
+  "score": {
+   "bright": 0,
+   "area": 1.0,
+   "wide": 1.27,
+   "base": 62
+  }
+ },
+ "rest_down": {
+  "job": "7333f164-4a6d-4585-91d9-6ea4fe016508",
+  "tool": "animate_image_pixminimax",
+  "seed": 12749376,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Slowly crouches down and lies on its belly on the ground with its head resting down, then rests there, breathing slowly. It stays in place, facing the viewer the whole time.",
+  "frames": 13,
+  "submitted": 1790402490.860416,
+  "finished": 1790402591.4633405,
+  "score": {
+   "bright": 0,
+   "area": 1.0,
+   "wide": 2.0,
+   "base": 32
+  }
+ },
+ "rest_up": {
+  "job": "1ea2cba7-5b16-4fe7-bc92-39f2101400ad",
+  "tool": "animate_image_pixminimax",
+  "seed": 6463488,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Slowly crouches down and lies on its belly on the ground with its head resting down, then rests there, breathing slowly. It stays in place with its back to the viewer the whole time.",
+  "frames": 13,
+  "submitted": 1790402491.5717852,
+  "finished": 1790402601.545127,
+  "score": {
+   "bright": 0,
+   "area": 1.0,
+   "wide": 2.44,
+   "base": 63
+  }
  }
 }

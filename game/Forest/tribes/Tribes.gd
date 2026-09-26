@@ -75,9 +75,12 @@ const CHIEF_LOOT := [["ancient_coin", 1.0, 12], ["ashen_helmet", 0.5, 1], ["ashe
 ## The Sunward's goods (id -> [price in ancient coins, how many]) and what
 ## they pay for (coins each): dune goods, and wraps against the Pale Lands' ash.
 const STOCK := {"sunward_helmet": [14, 1], "sunward_chestplate": [22, 1], "sunward_leggings": [16, 1],
-	"water_flask": [3, 1], "cactus_fruit": [1, 3], "bone_arrow": [2, 10], "sail_scale": [6, 1], "cooked_meat": [2, 2]}
+	"water_flask": [3, 1], "cactus_fruit": [1, 3], "bone_arrow": [2, 10], "sail_scale": [6, 1], "cooked_meat": [2, 2],
+	# Pass 15: the dunes' crops, and the Pale Lands' pepper they trade for.
+	"melon_seed": [3, 2], "sun_melon": [3, 1], "ember_pepper": [3, 2], "gourd_seed": [4, 2]}
 const BUYS := {"proto_frill": 2, "sail_scale": 4, "anky_plate": 5, "carno_horn": 18, "ashmane_fur": 8, "trex_scale": 6,
-	"raptor_hide": 1, "trike_hide": 1, "old_bone": 1, "fossil_bone": 4, "allo_tooth": 5, "raptor_fang": 2}
+	"raptor_hide": 1, "trike_hide": 1, "old_bone": 1, "fossil_bone": 4, "allo_tooth": 5, "raptor_fang": 2,
+	"oasis_carp": 2, "sunfin": 3, "redgrain": 1, "mirelotus": 1}
 const COIN := "ancient_coin"
 
 ## The Sunward trader in the folk dialogue (Folk.info reads this).

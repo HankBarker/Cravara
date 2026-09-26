@@ -633,3 +633,46 @@ See `vision.md` for why.
   - Full: CHOKING (−2 hp every 1.25 s) and slower. The HUD row reads "ASH n%".
 - **Villages:** `WildsGen._villages()` lays the Sunward oasis and the Ashen war camp from their
   own RNG, lists them in `world.villages` and marks them on the map (teal and red).
+
+## Pass 15: ring worlds, micro places, caves (Hank: "like Core Keeper... randomized in placement")
+
+- **Two layouts** (`world/Layout.gd`), picked per journey and saved (`world.layout_kind`,
+  `world_seed`):
+  - **legacy**: the fixed boxes every journey before pass 15 was made in (seed 726151). Never
+    change what it generates: old saves' edits are stored against it. `Tests/legacy_world_signature.gd`
+    hashes the forest and Bonelands squares against `Tests/fixtures/legacy_world_signature.json`;
+    `world_poi_suite` checks the match. A new prop kind placed by a post-pass (nests, veins, seams,
+    wild crops, cave mouths...) must go in the signature's `ADDED` list.
+  - **rings**: every new journey (the menu sets a random seed; tests use `--rings SEED`). 420x420
+    cells: the plains inside `PLAINS` 76 (the edge wanders per angle via a LUT), the bog and the
+    dunes facing each other out to `MIDDLE` 150, the Pale Lands and Bonelands beyond; lands turned
+    by the seed, borders bent by warp noise. A per-cell land grid and a from_inner cache are built
+    once (~180 ms); `land_index(c)` and `from_inner(c)` are array reads.
+- `world/RingsGen.gd` lays each land (plains -> mirefen -> dunes -> pale -> bonelands -> rim ->
+  villages -> red meadow, haven, oases -> ruins). Every step swaps in its own RNG, so a land's
+  content doesn't shift when another land changes.
+- **Micro places** (`world.micro` cell -> index into `MICRO`, `micro_at` name -> centre): the red
+  meadow, Stillwater haven (a village; hunters won't enter: `ForestCreature.in_haven`), oases.
+- **The land map texture** (`ForestGround._land_map`, one texel a cell over `render_bounds()`):
+  r = land index (5 = caves), g = cells in from the land's inner edge, b = micro index. The ground
+  bake, water and flora shaders read it (`land_of`, `micro_of` helpers) for the bog murk, ash,
+  crimson grass and the cave floor. Built from a PackedByteArray in one pass.
+- **Caves** (`world/Caves.gd`): two per land (`PLAN`), kinds hollow / warren / grotto / explorer /
+  lair. Insides are carved into a strip of cells east of `bounds()` (`render_bounds()` includes it;
+  `region_of` returns "caves" there; `deep_rock` is never breakable). Each cave carves with its own
+  RNG (`world_seed ^ hash(id)`) before its mouth is placed; a mouth needs open ground in its land (a
+  ring world may clear scrub round it, a legacy world never clears seeded props). E at the mouth /
+  the shaft travels (`ForestPlaytest.cave_travel`). `world/CaveLife.gd` peoples them once a journey
+  (skip caves with no mouth).
+- **Big hunters are spread** in a new ring world (`ForestPlaytest._spread_hunters`: rex, carno, allo,
+  yuty, spino at least 480 px apart, each moved within its own land). The wildlife tables still place
+  by the old world's compass arcs, which put three allosaurs, the carno and a rex on one another's
+  ground in the dunes: endless rival fights, each run at full rate far off (~1 ms a frame).
+- **Frame cost** (PerfProbe, same hour): a ring world averaged ~1.3x the old world's frame time
+  (~17-19 ms against ~12-15 ms), worst at the villages (21-24 ms). Not one hotspot: denser content
+  (27k props against 15k, 64k nodes against 37k) and more beasts near the villages. Next: profile in
+  the editor.
+- **Boot cost** (ring world, `--gen-timing`): generation ~2.9 s (the Pale Lands and Bonelands spawn
+  ~15k of the ~23k props; each prop node costs ~100 us), ground 0.5 s, flora 1.1 s. `Forest/Boot.gd`
+  pumps window events between steps so Windows doesn't flag "Not Responding"; input is held off
+  with `get_tree().root.gui_disable_input` until the boot frame ends.

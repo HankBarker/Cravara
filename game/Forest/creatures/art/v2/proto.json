@@ -66,6 +66,16 @@
    "fps": 10,
    "loop": false,
    "frames": 13
+  },
+  "look": {
+   "fps": 7,
+   "loop": false,
+   "frames": 13
+  },
+  "rest": {
+   "fps": 6,
+   "loop": false,
+   "frames": 13
   }
  }
 }

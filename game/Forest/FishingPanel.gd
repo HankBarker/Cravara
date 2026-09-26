@@ -21,6 +21,14 @@ var title: Label
 var _phase := 0.0
 var panel_on_left := true
 
+## Pass 15: the water the fish is from ("MIRE FISHING").
+func _water_name() -> String:
+	var waters: Dictionary = preload("res://Forest/life/FoodData.gd").WATERS
+	for land in waters:
+		if str(fish.get("id", "")) in waters[land][0]:
+			return {"glassmere": "MIRE FISHING", "dunes": "OASIS FISHING", "pale_hills": "COLD POOL FISHING", "bonelands": "CANYON FISHING"}.get(land, "RIVER FISHING")
+	return "RIVER FISHING"
+
 func configure(profile: Dictionary, seed_value: int, on_left := true):
 	fish=profile
 	_phase=float(posmod(seed_value,97))/97.0*TAU
@@ -48,7 +56,7 @@ func _ready():
 	frame.size=Vector2(216,222)
 	root.add_child(frame)
 	root.theme=preload("res://UI/SkyfangUI.gd").theme()
-	title=_label(root,"RIVER FISHING",origin+Vector2(14,8),13)
+	title=_label(root,_water_name(),origin+Vector2(14,8),13)
 	title.add_theme_font_override("font",preload("res://UI/SkyfangUI.gd").title_font())
 	title.add_theme_color_override("font_color",Color("dcc085"))
 	_label(root,str(fish.name),origin+Vector2(94,48),12)
@@ -147,7 +155,9 @@ func _draw_track():
 	play_area.draw_rect(Rect2(10,roundf(cradle_y),30,roundf(h)),Color("f2e6c9"),false)
 	var icon: Texture2D=ItemDB.get_prototype(str(fish.id)).icon
 	var y: float=7+(1-fish_position)*116
-	play_area.draw_texture_rect(icon,Rect2(14,roundf(y)-6,23,12),false,Color(1,1,1,0.45 if waiting>0 else 1))
+	# Pass 15: the fish as drawn, pixel for pixel (not squeezed into a box).
+	var shown := Vector2(mini(icon.get_width(), 32), mini(icon.get_height(), 20))
+	play_area.draw_texture_rect_region(icon,Rect2(Vector2(roundf(25 - shown.x / 2), roundf(y - shown.y / 2)), shown),Rect2(Vector2.ZERO, shown),Color(1,1,1,0.45 if waiting>0 else 1))
 	play_area.draw_style_box(_rim(),Rect2(57,0,14,129))
 	play_area.draw_rect(Rect2(60,4,8,121),Color("2a1d13"))
 	play_area.draw_rect(Rect2(60,125-roundf(progress*121),8,roundf(progress*121)),Color("d0b46d"))

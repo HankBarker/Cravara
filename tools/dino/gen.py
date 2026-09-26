@@ -206,7 +206,9 @@ def flagged(clip, view, sc):
         return True
     if SPEC["clips"][clip].get("loop") and sc["area"] > 1.15:
         return True
-    if view != "side" and clip not in TAIL_OK and sc["wide"] > 1.7:
+    # (Pass 15: a beast lying down to rest spreads out from the front and the
+    # back too; that's the pose, not a turn side-on.)
+    if view != "side" and clip not in TAIL_OK and clip != "rest" and sc["wide"] > 1.7:
         return True  # a front/back clip that turned side-on
     return False
 

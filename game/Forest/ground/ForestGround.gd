@@ -58,12 +58,17 @@ var _stamp_meta: Dictionary
 func setup(owner_world) -> void:
 	world = owner_world
 	extent = int(world.EXTENT)
-	var b: Rect2i = world.bounds() if world.has_method("bounds") else Rect2i(-extent, -extent, extent * 2, extent * 2)
+	var b: Rect2i = world.render_bounds() if world.has_method("render_bounds") else (world.bounds() if world.has_method("bounds") else Rect2i(-extent, -extent, extent * 2, extent * 2))
 	origin = b.position
 	cells = b.size
 	map_image = Image.create(cells.x, cells.y, false, Image.FORMAT_RGBA8)
+	var timing := "--gen-timing" in OS.get_cmdline_user_args()
+	var t := Time.get_ticks_msec()
 	depth = _water_depth()
+	if timing: print("GROUND depth %dms" % (Time.get_ticks_msec() - t))
+	t = Time.get_ticks_msec()
 	_fill_map(Rect2i(origin, cells))
+	if timing: print("GROUND fill %dms (%s cells)" % [Time.get_ticks_msec() - t, cells])
 	map_texture = ImageTexture.create_from_image(map_image)
 	_stamp_meta = JSON.parse_string(FileAccess.get_file_as_string("res://Forest/ground/art/stamps.json"))
 	_bake_material = _material(BAKE)
@@ -72,14 +77,14 @@ func setup(owner_world) -> void:
 	for kind in ["blades", "clover", "flowers", "specks", "pebbles", "twigs"]:
 		var entry: Dictionary = _stamp_meta.kinds.get(kind, {"first": 0, "count": 0})
 		_bake_material.set_shader_parameter("st_" + kind, Vector2i(int(entry.first), int(entry.count)))
-	if world.get("PALE_HILLS") != null:
-		var hills: Rect2i = world.PALE_HILLS
-		_bake_material.set_shader_parameter("pale_area", Vector4i(hills.position.x, hills.position.y, hills.end.x, hills.end.y))
-	if world.get("GLASSMERE") != null:
-		var bog: Rect2i = world.GLASSMERE
-		_bake_material.set_shader_parameter("bog_area", Vector4i(bog.position.x, bog.position.y, bog.end.x, bog.end.y))
+	t = Time.get_ticks_msec()
+	land_texture = _land_map()
+	if timing: print("GROUND lands %dms" % (Time.get_ticks_msec() - t))
+	lands_to(_bake_material)
 	_field_material = _material(FIELD)
+	t = Time.get_ticks_msec()
 	_update_chunks(true)
+	if timing: print("GROUND chunks %dms" % (Time.get_ticks_msec() - t))
 
 
 func _material(shader: Shader) -> ShaderMaterial:
@@ -164,9 +169,7 @@ func _make_chunk(index: Vector2i) -> void:
 	wm.set_shader_parameter("canvas_px", px)
 	wm.set_shader_parameter("world_offset", offset)
 	wm.set_shader_parameter("world_seed", int(world.world_seed))
-	if world.get("GLASSMERE") != null:
-		var bog: Rect2i = world.GLASSMERE
-		wm.set_shader_parameter("bog_area", Vector4i(bog.position.x, bog.position.y, bog.end.x, bog.end.y))
+	lands_to(wm)
 	water.material = wm
 	add_child(water)
 	_chunks[index] = {"ground": ground_view, "field": field_view, "sprite": sprite, "water": water}
@@ -254,6 +257,43 @@ func _process(_delta: float) -> void:
 
 
 ## One texel per cell: kind, water depth (cells to land) and flags.
+## Pass 15: each cell's land and how far into it (see the shaders' land_of):
+## the ash and the bog's murk come in over their first rows from camp's side,
+## whichever way the lands lie.
+var land_texture: ImageTexture
+func _land_map() -> ImageTexture:
+	var layout = world.get("layout")
+	var micro: Dictionary = world.micro if world.get("micro") != null else {}
+	var caves = world.get("caves")
+	var strip: Rect2i = caves.strip if caves != null else Rect2i()
+	# (A byte array filled in one pass: the whole world, the caves' strip too.)
+	var data := PackedByteArray()
+	data.resize(cells.x * cells.y * 4)
+	var i := 0
+	for y in range(origin.y, origin.y + cells.y):
+		for x in range(origin.x, origin.x + cells.x):
+			var c := Vector2i(x, y)
+			var land := 0
+			var inside := 255
+			if strip.has_point(c):
+				land = 5
+			elif layout:
+				land = layout.land_index(c)
+				inside = clampi(int(floor(float(layout.from_inner(c)))), 0, 255)
+			data[i] = land
+			data[i + 1] = inside
+			data[i + 2] = int(micro.get(c, 0))
+			data[i + 3] = 255
+			i += 4
+	return ImageTexture.create_from_image(Image.create_from_data(cells.x, cells.y, false, Image.FORMAT_RGBA8, data))
+
+## Hand a material the land map (the ground's bake, the water, the flora).
+func lands_to(m: ShaderMaterial) -> void:
+	if land_texture == null: return
+	m.set_shader_parameter("land_map", land_texture)
+	m.set_shader_parameter("land_origin", origin)
+	m.set_shader_parameter("land_size", cells)
+
 func _fill_map(area: Rect2i) -> void:
 	for y in range(area.position.y, area.end.y):
 		for x in range(area.position.x, area.end.x):

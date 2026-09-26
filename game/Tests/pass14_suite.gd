@@ -87,7 +87,8 @@ func _constellations() -> void:
 	check(Skills.ORDER.size() == 7 and Skills.ORDER.has("fishing"), "seven skills, Fishing among them")
 	for skill in Skills.ORDER:
 		var stars: Array = Skills.stars_of(skill)
-		check(stars.size() == 18, "%s has 18 stars (%d)" % [skill, stars.size()])
+		# (Pass 15: ten more stars in every sky, some of them lit more than once.)
+		check(stars.size() == 28, "%s has 28 stars (%d)" % [skill, stars.size()])
 		check(Skills.FIGURES.has(skill) and not Skills.FIGURES[skill].lines.is_empty(), "%s has a figure to draw" % skill)
 		var roots := 0
 		for id in stars:
@@ -98,7 +99,11 @@ func _constellations() -> void:
 			var at: Vector2 = p.at
 			check(at.x >= 0.0 and at.y >= 0.0 and at.x <= Skills.STARS.SKY.x and at.y <= Skills.STARS.SKY.y, "%s sits on the sky" % id)
 		check(roots == 1, "%s has one root star" % skill)
-	check(Skills.POINTS_PER_LEVEL * (Skills.MAX_LEVEL - 1) == 18, "a mastered skill earns 18 points, one a star")
+	var mastered: int = Skills.POINTS_PER_LEVEL * (Skills.MAX_LEVEL - 1) + Skills.MAX_LEVEL / 10
+	for skill in Skills.ORDER:
+		var cost := 0
+		for id in Skills.stars_of(skill): cost += Skills.ranks_of(id)
+		check(mastered >= cost, "a mastered skill earns enough points for every %s star and rank (%d of %d)" % [skill, cost, mastered])
 
 
 ## Level every skill to 10 on a keeper of its own and light every star.
@@ -108,22 +113,25 @@ func _everything_unlockable() -> void:
 	for n in Skills.TO_NEXT: total += float(n)
 	for skill in Skills.ORDER:
 		sk.gain(skill, total + 10.0)
-		check(sk.level(skill) == 10 and int(sk.points.get(skill, 0)) == 18, "%s reaches 10 with 18 points" % skill)
+		check(sk.level(skill) == Skills.MAX_LEVEL and int(sk.points.get(skill, 0)) == int(sk.earned(skill)), "%s reaches the top level with every point" % skill)
 		var lit := true
 		while lit:
 			lit = false
 			for id in Skills.stars_of(skill):
 				if sk.learn(id): lit = true
-		check(sk.lit(skill) == 18 and int(sk.points.get(skill, 0)) == 0, "every %s star can be lit (%d/18)" % [skill, sk.lit(skill)])
+		var stars: int = Skills.stars_of(skill).size()
+		var cost := 0
+		for id in Skills.stars_of(skill): cost += Skills.ranks_of(id)
+		check(sk.lit(skill) == stars and sk.spent(skill) == cost and int(sk.points.get(skill, 0)) == int(sk.earned(skill)) - cost, "every %s star can be lit, every rank taken (%d/%d, %d points)" % [skill, sk.lit(skill), stars, sk.spent(skill)])
 	# A fresh skill: the root waits for the first point.
 	var fresh: Node = Skills.new()
 	check(fresh.blocked("blade_sense").begins_with("No Combat points"), "a new keeper's root waits for a point (%s)" % fresh.blocked("blade_sense"))
-	check(fresh.blocked("berserker").begins_with("Needs Combat 10"), "the sword's tip needs level 10")
+	check(fresh.blocked("berserker").begins_with("Needs Combat 50"), "the sword's tip needs the top level")
 	check(fresh.blocked("riposte") != "" and Skills.PERKS.riposte.after.size() == 2, "Riposte hangs from either Quick Hands or Long Reach")
 	var saved: Dictionary = sk.serialize()
 	var copy: Node = Skills.new()
 	copy.restore(saved)
-	check(copy.lit("gathering") == 18 and int(copy.points.get("gathering", 0)) == 0, "a lit sky survives a save")
+	check(copy.lit("gathering") == Skills.stars_of("gathering").size() and int(copy.points.get("gathering", 0)) == int(sk.points.get("gathering", 0)), "a lit sky survives a save")
 	for n in [sk, fresh, copy]: n.free()
 
 
@@ -346,13 +354,13 @@ func _wheel() -> void:
 
 func _skills_panel() -> void:
 	var sk: Node = stage.skills
-	sk.gain("taming", 40.0)
+	sk.gain("taming", float(Skills.TO_NEXT[0]))
 	hud.show_skills()
 	await frames(1)
 	var panel = hud.skills_panel
 	panel.select("taming")
 	await frames(1)
-	check(panel.star_buttons.size() == 18, "the sky shows all 18 of a skill's stars")
+	check(panel.star_buttons.size() == 28, "the sky shows all 28 of a skill's stars (%d)" % panel.star_buttons.size())
 	var before: int = sk.lit("taming")
 	panel._star_clicked("calm_voice")
 	check(panel.picked == "calm_voice" and not sk.has("calm_voice"), "a click picks a star")

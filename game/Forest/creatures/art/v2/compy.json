@@ -80,6 +80,22 @@
     "side"
    ],
    "frames": 13
+  },
+  "look": {
+   "fps": 7,
+   "loop": false,
+   "views": [
+    "side"
+   ],
+   "frames": 13
+  },
+  "stalk": {
+   "fps": 6,
+   "loop": true,
+   "views": [
+    "side"
+   ],
+   "frames": 8
   }
  }
 }

@@ -13,6 +13,10 @@ extends Node
 ##  - surge: "SKYFANG DETECTED". A Sky-Fang spire bursts out of the ground
 ##    somewhere near, and crystal beasts come out of it for a while. The
 ##    spire stays: break it for prism crystal.
+##  - stampede (pass 15): a herd thunders past close by, frightened by
+##    something; stand in its way and it tramples you. A chance at meat.
+##  - caravan (pass 15): a Sunward trade caravan passes near, a trader in it
+##    with their wares (the far lands' seeds among them), for a few minutes.
 ## The spires and fallen stars stay in the world (world.event_props, saved).
 ## `start(kind)` begins one at once (a test, a debug key).
 
@@ -20,8 +24,11 @@ signal started(kind: String)
 
 const EVERY := [600.0, 1080.0]
 const FIRST := 480.0
-const KINDS := ["quake", "snow", "fire", "meteors", "surge"]
-const NAMES := {"quake": "Earthquake", "snow": "Snowfall", "fire": "Wildfire", "meteors": "Meteor shower", "surge": "SKYFANG DETECTED"}
+const KINDS := ["quake", "snow", "fire", "meteors", "surge", "stampede", "caravan"]
+const NAMES := {"quake": "Earthquake", "snow": "Snowfall", "fire": "Wildfire", "meteors": "Meteor shower", "surge": "SKYFANG DETECTED", "stampede": "Stampede", "caravan": "A trade caravan"}
+## What stampedes in each land.
+const HERDS := {"forest": "trike", "glassmere": "parasaur", "dunes": "proto", "pale_hills": "trike", "bonelands": "stego"}
+const TRAMPLE := 7
 const FLAMMABLE := ["bush", "fern", "flowers", "tree", "dead_tree", "palm", "pine", "birch", "cactus", "reeds", "cattail", "mushroom"]
 const FIRE_MAX := 46
 const SURGE_BEASTS := {"forest": "raptor", "bonelands": "allo", "dunes": "raptor", "pale_hills": "raptor", "glassmere": "raptor"}
@@ -43,6 +50,13 @@ var _surge_beasts: Array = []
 var _quake_clock := 0.0
 var _meteors_left := 0
 var _meteor_clock := 0.0
+## The stampede: its beasts, what they flee from, and the trampling's pause.
+var _herd: Array = []
+var _fright: Node2D
+var _trample_clock := 0.0
+var _thunder_clock := 0.0
+## The caravan (a Sunward band with a trader).
+var _caravan := {}
 var _layer: CanvasLayer
 var _snow: CPUParticles2D
 var _chill: ColorRect
@@ -126,6 +140,7 @@ func _process(delta: float) -> void:
 			"quake": _tick_quake(delta)
 			"meteors": _tick_meteors(delta)
 			"surge": _tick_surge(delta)
+			"stampede": _tick_stampede(delta)
 		if left <= 0.0: _end()
 	if not burning.is_empty(): _tick_fire(delta)
 	var snowing := kind == "snow" and left > 0.0
@@ -144,6 +159,10 @@ func _choose() -> String:
 	if region == "dunes": weights.fire = 3.0
 	if TimeCycle.is_night(): weights.meteors = 4.0
 	else: weights.meteors = 0.0
+	# Pass 15: a stampede out on open ground by day; a caravan where the
+	# Sunward travel (not into the ash, not underground).
+	weights["stampede"] = 1.2 if not TimeCycle.is_night() and region != "caves" else 0.0
+	weights["caravan"] = 1.0 if region in ["forest", "dunes", "glassmere", "bonelands"] and not TimeCycle.is_night() else 0.0
 	var fallen = session.get("_milestones")
 	if not (fallen is Dictionary and bool(fallen.get("alpha", false))): weights.surge = 0.0
 	var total := 0.0
@@ -182,6 +201,18 @@ func start(what: String) -> bool:
 			_meteor_clock = 4.0
 			(_sky as Streaks).on = true
 			if hud: hud.show_banner("Meteor shower", "Stars streak across the sky. Some are falling close.", null)
+		"stampede":
+			if not _loose_herd():
+				kind = ""
+				return false
+			left = 16.0
+			if hud: hud.show_banner("Stampede!", "The ground thunders: a herd is coming this way. Get clear!", null)
+		"caravan":
+			if not _call_caravan():
+				kind = ""
+				return false
+			left = 240.0
+			if hud: hud.show_banner("A trade caravan", "Sunward traders are passing close by. Their wares come from far lands.", null)
 		"surge":
 			if not _raise_spire():
 				kind = ""
@@ -199,8 +230,109 @@ func _end() -> void:
 		"snow": session._toast("The snow stops.")
 		"meteors": (_sky as Streaks).on = false
 		"surge": session._toast("The spire goes quiet. Its crystal is still there for the taking.")
+		"stampede": _settle_herd()
+		"caravan": _send_caravan_on()
 	kind = ""
 	left = 0.0
+
+
+# ------------------------------------------------------------------ stampede (pass 15)
+## A herd of the land's own beasts, frightened into a run past the keeper.
+func _loose_herd() -> bool:
+	var keeper: Node2D = session.player
+	var world = session.world
+	var land: String = world.region_of(world.to_cell(keeper.global_position))
+	var species: String = str(HERDS.get(land, "trike"))
+	var side := Vector2.from_angle(_rng.randf_range(0.0, TAU))
+	var start: Vector2 = keeper.global_position + side * 260.0
+	if world.region_of(world.to_cell(start)) == "caves" or world.water.has(world.to_cell(start)): return false
+	_fright = preload("res://Forest/world/Fright.gd").new()
+	session.add_child(_fright)
+	# Far behind them, so they run in near-parallel lines past the keeper
+	# rather than fanning out.
+	_fright.global_position = start + side * 900.0
+	_herd.clear()
+	for i in _rng.randi_range(5, 8):
+		var at: Vector2 = world.get_open_position(start + side.orthogonal() * _rng.randf_range(-60.0, 60.0) + side * _rng.randf_range(-20.0, 30.0), 14.0)
+		var beast = session._spawn_creature(species, at)
+		beast._retreat_from = _fright
+		beast._retreat_time = 16.0
+		beast.set_meta("stampede", true)
+		_herd.append(beast)
+	return not _herd.is_empty()
+
+
+func _tick_stampede(delta: float) -> void:
+	_trample_clock = maxf(0.0, _trample_clock - delta)
+	var keeper: Node2D = session.player
+	# The ground trembles more as the herd comes closer.
+	_thunder_clock -= delta
+	if _thunder_clock <= 0.0:
+		_thunder_clock = 0.3
+		var nearest := INF
+		for beast in _herd:
+			if is_instance_valid(beast) and not beast.is_dead: nearest = minf(nearest, beast.global_position.distance_to(keeper.global_position))
+		var feel = keeper.get("feel")
+		if feel != null and nearest < 240.0: feel.shake(0.1 * (1.0 - nearest / 240.0))
+	for beast in _herd:
+		if not is_instance_valid(beast) or beast.is_dead: continue
+		# The fright keeps it running the same way, past the keeper.
+		if is_instance_valid(_fright):
+			beast._retreat_from = _fright
+			beast._retreat_time = maxf(float(beast._retreat_time), 1.0)
+		if _trample_clock <= 0.0 and beast.global_position.distance_to(keeper.global_position) < float(beast.stats.radius) + 10.0 and keeper.get("respawning") != true:
+			_trample_clock = 1.2
+			keeper.take_damage(TRAMPLE, beast, 260.0)
+
+
+## Past the keeper, the herd slows and wanders off as any herd; those that
+## ran on out of sight are gone for good (the wilds keep their numbers).
+func _settle_herd() -> void:
+	var keeper: Node2D = session.player
+	for beast in _herd:
+		if is_instance_valid(beast) and not beast.is_dead:
+			if is_instance_valid(keeper) and beast.global_position.distance_to(keeper.global_position) > 320.0 and not beast.tamed:
+				beast.queue_free()
+				continue
+			beast._retreat_time = 0.0
+			beast.home = beast.global_position
+			beast.remove_meta("stampede")
+	_herd.clear()
+	if is_instance_valid(_fright): _fright.queue_free()
+	_fright = null
+
+
+# ------------------------------------------------------------------ caravan (pass 15)
+func _call_caravan() -> bool:
+	var tribes = session.get("tribes")
+	if tribes == null or not tribes.has_method("spawn_band"): return false
+	var keeper: Node2D = session.player
+	var world = session.world
+	var at: Vector2 = world.get_open_position(keeper.global_position + Vector2.from_angle(_rng.randf_range(0.0, TAU)) * 180.0, 12.0)
+	if world.region_of(world.to_cell(at)) in ["caves", "pale_hills"]: return false
+	_caravan = tribes.spawn_band("sunward", at)
+	if _caravan.is_empty(): return false
+	var trader: Node2D = tribes._spawn("sunward_trader", world.get_open_position(at + Vector2(14, 6), 8.0), _caravan)
+	trader.trade_id = "tribe_sunward"
+	trader.set_meta("caravan", true)
+	# They rest where they are while the caravan lasts, then go on.
+	_caravan.pause = 240.0
+	_caravan.hunting = false
+	return true
+
+
+func _send_caravan_on() -> void:
+	if _caravan.is_empty(): return
+	var tribes = session.get("tribes")
+	if tribes and tribes.has_method("_disband") and is_instance_valid(session.player):
+		# Out of sight, they're gone; in sight, they walk on (and go later).
+		var near := false
+		for m in _caravan.get("members", []):
+			if is_instance_valid(m) and m.global_position.distance_to(session.player.global_position) < 300.0: near = true
+		_caravan.pause = 0.01
+		if not near: tribes._disband(_caravan)
+	session._toast("The caravan moves on.")
+	_caravan = {}
 
 
 # ------------------------------------------------------------------ quake

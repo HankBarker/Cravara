@@ -137,6 +137,11 @@ func _plates_and_swarms() -> void:
 	var at := _spot(Vector2i(-40, 100))
 	var anky = stage._spawn_creature("anky", at)
 	await frames(1)
+	# Its own traits aside (a thick hide takes less harm): the plates alone.
+	anky.genes = {}
+	anky.crystal = 0
+	anky._stage_stats()
+	anky.health = int(anky.stats.hp)
 	var before: int = anky.health
 	anky.take_damage(12, stage.player)
 	check(before - anky.health == 12 - int(FC.PLATED.anky), "an ankylosaur's plates shrug off part of a light blow (%d)" % (before - anky.health))

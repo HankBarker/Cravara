@@ -156,6 +156,7 @@ func _dig(keeper: Node2D) -> void:
 const SENSE_REACH := 32
 const SENSE_EVERY := 22.0
 const SENSED := {"rustiron_vein": "rustiron", "sunstone_vein": "sunstone", "ashglass_vein": "ashglass",
+	"seam_rustiron": "rustiron", "seam_sunstone": "sunstone", "seam_ashglass": "ashglass",
 	"bogiron_vein": "bog iron", "pale_crystal": "Sky-Fang crystal", "skyfang_spire": "a Sky-Fang spire",
 	"meteor_rock": "a fallen star", "cache": "an old cache", "relic": "something buried", "roots": "wild roots"}
 var _sense_clock := 10.0

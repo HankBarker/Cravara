@@ -225,6 +225,26 @@
     },
     "raw": "C:\\Cravera\\art\\dino-v2\\raw\\dimetrodon\\roar_down@2"
    }
+  ],
+  "stalk_up": [
+   {
+    "job": "58d5e49a-8c7e-4a49-bf9e-a681573718a6",
+    "tool": "animate_image",
+    "seed": 14274641,
+    "status": "done",
+    "cost": 2.0,
+    "prompt": "Creeps forward in place on its four splayed legs, its belly low to the ground, slowly and carefully. It stays in place with its back to the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790402689.9381168,
+    "finished": 1790402803.9291308,
+    "score": {
+     "bright": 62,
+     "area": 1.09,
+     "wide": 1.0,
+     "base": 1
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\dimetrodon\\stalk_up@0"
+   }
   ]
  },
  "run_down": {
@@ -577,6 +597,108 @@
    "bright": 21,
    "area": 1.89,
    "wide": 1.05
+  }
+ },
+ "look_side": {
+  "job": "2f7c32b7-aebb-42db-b5c7-96869d80b723",
+  "tool": "animate_image_pixminimax",
+  "seed": 16196760,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stands in place and turns its head to look to one side, then to the other side, then back ahead, its body staying still. It stays in place, facing right.",
+  "frames": 13,
+  "submitted": 1790402492.2704728,
+  "finished": 1790402686.6587653,
+  "score": {
+   "bright": 3,
+   "area": 1.0,
+   "wide": 1.0,
+   "base": 5
+  }
+ },
+ "look_down": {
+  "job": "1d5bef42-e3f8-48e7-98d8-b5e8fe96e43b",
+  "tool": "animate_image_pixminimax",
+  "seed": 14620052,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stands in place and turns its head to look to one side, then to the other side, then back ahead, its body staying still. It stays in place, facing the viewer the whole time.",
+  "frames": 13,
+  "submitted": 1790402492.9850397,
+  "finished": 1790402613.6145065,
+  "score": {
+   "bright": 13,
+   "area": 1.01,
+   "wide": 1.0,
+   "base": 18
+  }
+ },
+ "look_up": {
+  "job": "47645417-bec2-40a5-a874-605584f49c17",
+  "tool": "animate_image_pixminimax",
+  "seed": 1681002,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stands in place and turns its head to look to one side, then to the other side, then back ahead, its body staying still. It stays in place with its back to the viewer the whole time.",
+  "frames": 13,
+  "submitted": 1790402621.4245641,
+  "finished": 1790402749.178035,
+  "score": {
+   "bright": 6,
+   "area": 1.08,
+   "wide": 1.0,
+   "base": 1
+  }
+ },
+ "stalk_side": {
+  "job": "32cd5416-3e1a-4579-8886-a6adb5bc5812",
+  "tool": "animate_image",
+  "seed": 12041053,
+  "status": "done",
+  "cost": 2.0,
+  "prompt": "Creeps forward in place on its four splayed legs, its belly low to the ground, slowly and carefully. It stays in place, facing right.",
+  "frames": 9,
+  "submitted": 1790402622.1628308,
+  "finished": 1790402756.1356936,
+  "score": {
+   "bright": 2,
+   "area": 1.01,
+   "wide": 1.02,
+   "base": 5
+  }
+ },
+ "stalk_down": {
+  "job": "e4f01044-439a-4cf7-885e-5e4ee3161a6f",
+  "tool": "animate_image",
+  "seed": 9623470,
+  "status": "done",
+  "cost": 2.0,
+  "prompt": "Creeps forward in place on its four splayed legs, its belly low to the ground, slowly and carefully. It stays in place, facing the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790402622.9433973,
+  "finished": 1790402762.9938853,
+  "score": {
+   "bright": 2,
+   "area": 1.13,
+   "wide": 1.0,
+   "base": 18
+  }
+ },
+ "stalk_up": {
+  "job": "4441b7a6-8cea-4ac1-93f0-93f3b491ae82",
+  "tool": "animate_image",
+  "seed": 14275641,
+  "status": "done",
+  "cost": 2.0,
+  "prompt": "Creeps forward in place on its four splayed legs, its belly low to the ground, slowly and carefully. It stays in place with its back to the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790402870.306277,
+  "finished": 1790403045.0123372,
+  "score": {
+   "bright": 2,
+   "area": 1.03,
+   "wide": 1.0,
+   "base": 1
   }
  }
 }

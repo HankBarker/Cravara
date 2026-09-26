@@ -50,8 +50,11 @@ func run():
 	menu._creator._cycle("cloth",1)
 	var chosen: Dictionary=menu._creator.draft.duplicate()
 	menu._creator._accept()
-	await process_frame
-	await process_frame
+	# (Pass 15: the menu draws its "wilds are waking" card first, then changes
+	# scene: wait for the forest, a few frames at most.)
+	for i in 60:
+		await process_frame
+		if is_instance_valid(current_scene) and current_scene != menu and current_scene.has_method("save_journey"): break
 	var game = current_scene
 	check(game.has_method("save_journey"), "New expedition enters forest scene")
 	check(game.player.appearance==chosen,"Created appearance reaches new forest")

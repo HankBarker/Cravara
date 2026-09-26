@@ -187,10 +187,11 @@ func _depth(keeper: Node2D) -> float:
 	var world = session.world
 	var c: Vector2i = world.to_cell(keeper.global_position)
 	var d := 0.0
+	# Pass 15: however the lands lie, cells in from their side nearer camp.
 	if preset.axis == "north":
-		d = float(world.PALE_HILLS.end.y - c.y)
+		d = float(world.layout.from_inner(c)) + 1.0 if world.region_of(c) == "pale_hills" else 0.0
 	elif preset.axis == "west":
-		d = float(world.GLASSMERE.end.x - c.x)
+		d = float(world.layout.from_inner(c)) + 1.0 if world.region_of(c) == "glassmere" else 0.0
 	else:
 		return 1.0
 	return clampf(d / float(preset.depth), 0.0, 1.0)

@@ -2,15 +2,18 @@ extends Node
 ## The keeper's skills (pass 13; constellations since pass 14). Doing a thing
 ## makes the keeper better at it:
 ##  - Seven skills level by use (XP): Combat, Archery, Taming, Breeding,
-##    Farming, Gathering, Fishing. Level cap 10.
-##  - Every level brings a small stat boost (PER_LEVEL) and two star points
-##    for that skill.
-##  - Each skill is a constellation of 18 stars (SkillStars.gd, drawn from
+##    Farming, Gathering, Fishing. Fifty levels since pass 15, each dearer
+##    than the last (TO_NEXT); a kill teaches by the beast (KILL_XP).
+##  - Every level brings a small stat boost (PER_LEVEL) and a star point for
+##    that skill, and every tenth level one more.
+##  - Each skill is a constellation of 28 stars (SkillStars.gd, drawn from
 ##    tools/skills/constellations.py): a true tree, rooted in one star, whose
 ##    lines draw its figure (Combat a sword, Taming a trike's skull, Breeding
 ##    an egg...). A star opens at its level once any star it hangs from is
-##    learned, and costs a point. 18 points by level 10: a mastered skill has
-##    every star lit. Nothing is one-or-the-other.
+##    learned, and costs a point; many can be lit again (ranks: each rank a
+##    point, SkillStars.RANK_STEP levels after the last, its effect again).
+##    54 points by level 50: a mastered skill has every star and rank lit.
+##    Nothing is one-or-the-other.
 ##  - The taming stars' lore gates which beasts will ever take the keeper,
 ##    and which of their eggs will hatch: small and herd beasts from the start,
 ##    pack hunters (Pack-lore), the big hunters (Hunter-lore), the apex (Apex-lore).
@@ -27,12 +30,16 @@ signal leveled(skill: String, level: int)
 
 const STARS := preload("res://Forest/progress/SkillStars.gd")
 
-const MAX_LEVEL := 10
-## Star points each level brings: 18 by level 10, one for every star.
-const POINTS_PER_LEVEL := 2
-## XP from level L to L+1 (index L-1): a first level in a few minutes' work, the
-## tenth after a long journey.
-const TO_NEXT := [40, 110, 200, 320, 450, 590, 740, 900, 1080]
+## Pass 15: a long road ("I killed two dinosaurs and I was level four"). Fifty
+## levels, each dearer than the last: a few raptors for the second, a long
+## journey for the tenth, many for the fiftieth.
+const MAX_LEVEL := 50
+## Star points each level brings, and one more at every tenth level.
+const POINTS_PER_LEVEL := 1
+## XP from level L to L+1 (index L-1): round(40 * L^1.35 + 10).
+const TO_NEXT := [50, 112, 186, 270, 361, 459, 563, 673, 787, 905, 1028, 1155, 1286, 1420, 1558, 1699, 1843, 1990, 2140, 2293, 2448, 2606, 2767, 2930, 3095, 3263, 3433, 3605, 3780, 3956, 4135, 4315, 4498, 4683, 4869, 5057, 5248, 5440, 5633, 5829, 6026, 6225, 6426, 6628, 6832, 7037, 7244, 7453, 7663]
+## Pass 13-14's table (ten levels): an older journey's XP is re-counted on the new one.
+const OLD_TO_NEXT := [40, 110, 200, 320, 450, 590, 740, 900, 1080]
 
 const ORDER := ["combat", "archery", "taming", "breeding", "farming", "gathering", "fishing"]
 const SKILLS := {
@@ -45,16 +52,27 @@ const SKILLS := {
 	"fishing": {"name": "Fishing", "icon": "fish", "text": "Lines cast and fish brought to the bank."},
 }
 
-## The boost each level (past the first) brings.
+## The boost each level (past the first) brings (small: there are 49 of them).
 const PER_LEVEL := {
-	"combat": {"melee_damage": 0.02},
-	"archery": {"bow_damage": 0.02, "draw_speed": 0.02},
-	"taming": {"feeds_cut": 0.025, "mount_speed": 0.01},
-	"breeding": {"hatch_speed": 0.03, "growth_speed": 0.03},
-	"farming": {"crop_speed": 0.03},
-	"gathering": {"gather_power": 0.34},
-	"fishing": {"fishing": 0.02},
+	"combat": {"melee_damage": 0.006},
+	"archery": {"bow_damage": 0.006, "draw_speed": 0.006},
+	"taming": {"feeds_cut": 0.006, "mount_speed": 0.003},
+	"breeding": {"hatch_speed": 0.01, "growth_speed": 0.01},
+	"farming": {"crop_speed": 0.01},
+	"gathering": {"gather_power": 0.1},
+	"fishing": {"fishing": 0.005},
 }
+
+## Pass 15: what a kill teaches (Combat or Archery, whichever landed the blow):
+## by the beast, not by the blows. A Skytouched beast teaches a third more, a
+## Crystalback 60% more, a mutant a fifth more, a baby a quarter as much.
+const KILL_XP := {"compy": 3, "dodo": 4, "lystro": 5, "proto": 10, "raptor": 12, "deino": 18,
+	"parasaur": 20, "dimetrodon": 26, "trike": 30, "stego": 30, "utah": 38, "allo": 45,
+	"longneck": 45, "anky": 55, "sucho": 60, "carno": 80, "rex": 110, "yuty": 130, "spino": 150,
+	"alpha": 300, "ossuar": 500}
+## A blow that lands teaches a little of its own (damage x this, at most HIT_XP_MAX).
+const HIT_XP := 0.05
+const HIT_XP_MAX := 1.5
 
 ## The stars: {id: {skill, name, at, needs, after, text, effects}} (SkillStars.gd).
 const PERKS: Dictionary = STARS.PERKS
@@ -67,8 +85,8 @@ const LORE := {"raptor": 1, "deino": 1, "allo": 2, "carno": 2, "utah": 2, "sucho
 const LORE_NAMES := ["", "Pack-lore", "Hunter-lore", "Apex-lore"]
 
 ## XP for what the keeper does (see gain calls around the game).
-const XP := {"tame": 30.0, "feed": 6.0, "ride_second": 0.25, "egg": 5.0, "incubate": 5.0, "hatch": 40.0,
-	"bred": 25.0, "plant": 2.0, "harvest": 6.0, "water": 1.0, "tree": 4.0, "rock": 3.0, "ore": 6.0,
+const XP := {"tame": 60.0, "feed": 6.0, "ride_second": 0.25, "egg": 8.0, "incubate": 10.0, "hatch": 80.0,
+	"bred": 50.0, "plant": 2.0, "harvest": 6.0, "water": 1.0, "tree": 4.0, "rock": 3.0, "ore": 6.0,
 	"forage": 1.0, "catch": 40.0, "lost_fish": 4.0}
 
 var xp := {}
@@ -104,9 +122,28 @@ func progress(skill: String) -> Vector2:
 	return Vector2(float(xp.get(skill, 0.0)), float(TO_NEXT[l - 1]))
 
 
-## Star points a skill has earned by its level (spent or not).
+## Star points a skill has earned by its level (spent or not): one a level,
+## and one more at every tenth.
 func earned(skill: String) -> int:
-	return POINTS_PER_LEVEL * (level(skill) - 1)
+	return POINTS_PER_LEVEL * (level(skill) - 1) + level(skill) / 10
+
+
+## What killing this beast teaches (see KILL_XP).
+static func kill_xp(beast) -> float:
+	if beast == null: return 0.0
+	var xp := float(KILL_XP.get(str(beast.get("species")), 10))
+	var sick := int(beast.get("crystal")) if beast.get("crystal") != null else 0
+	if sick == 1: xp *= 1.3
+	elif sick >= 2: xp *= 1.6
+	var g = beast.get("genes")
+	if g is Dictionary and str(g.get("mutation", "")) != "": xp *= 1.2
+	if beast.get("baby") == true: xp *= 0.25
+	return xp
+
+
+## What a blow that lands teaches (see HIT_XP).
+static func hit_xp(damage: float) -> float:
+	return minf(damage * HIT_XP, HIT_XP_MAX)
 
 
 func gain(skill: String, amount: float) -> void:
@@ -118,7 +155,7 @@ func gain(skill: String, amount: float) -> void:
 	while level(skill) < MAX_LEVEL and float(xp[skill]) >= float(TO_NEXT[level(skill) - 1]):
 		xp[skill] = float(xp[skill]) - float(TO_NEXT[level(skill) - 1])
 		levels[skill] = level(skill) + 1
-		points[skill] = int(points.get(skill, 0)) + POINTS_PER_LEVEL
+		points[skill] = int(points.get(skill, 0)) + POINTS_PER_LEVEL + (1 if level(skill) % 10 == 0 else 0)
 		leveled.emit(skill, level(skill))
 		rose = true
 	if level(skill) >= MAX_LEVEL: xp[skill] = 0.0
@@ -139,13 +176,31 @@ func has(perk: String) -> bool:
 	return perks.has(perk)
 
 
+## Pass 15: a star's ranks. How many times it has been lit (0: never), and
+## how many it can be (SkillStars.RANK_STEP more levels a rank).
+func rank(perk: String) -> int:
+	return int(perks.get(perk, 0))
+
+static func ranks_of(perk: String) -> int:
+	return int(PERKS.get(perk, {}).get("ranks", 1))
+
+## The skill level the next rank of a star needs.
+static func needs_for(perk: String, at_rank: int) -> int:
+	return int(PERKS.get(perk, {}).get("needs", 1)) + maxi(0, at_rank) * int(STARS.RANK_STEP)
+
+## Whether a lit star has ranks still to take.
+func can_rank(perk: String) -> bool:
+	return rank(perk) < ranks_of(perk)
+
+
 ## Why a star can't be learned now ("" when it can).
 func blocked(perk: String) -> String:
 	if not PERKS.has(perk): return "Unknown."
-	if perks.has(perk): return "Learned."
+	if not can_rank(perk): return "Learned."
 	var p: Dictionary = PERKS[perk]
 	var skill := str(p.skill)
-	if level(skill) < int(p.needs): return "Needs %s %d." % [SKILLS[skill].name, int(p.needs)]
+	var need := needs_for(perk, rank(perk))
+	if level(skill) < need: return "Needs %s %d." % [SKILLS[skill].name, need]
 	if not opened(perk):
 		var names: Array = []
 		for a in p.after: names.append(str(PERKS[str(a)].name))
@@ -167,7 +222,7 @@ func learn(perk: String) -> bool:
 	if blocked(perk) != "": return false
 	var skill := str(PERKS[perk].skill)
 	points[skill] = int(points[skill]) - 1
-	perks[perk] = true
+	perks[perk] = rank(perk) + 1
 	_cache_ok = false
 	changed.emit()
 	return true
@@ -176,9 +231,17 @@ func learn(perk: String) -> bool:
 ## A star given outright (a test, a debug console, a quest reward).
 func grant(perk: String) -> void:
 	if not PERKS.has(perk): return
-	perks[perk] = true
+	perks[perk] = maxi(rank(perk), 1)
 	_cache_ok = false
 	changed.emit()
+
+
+## The points a skill has spent on its stars (every rank one).
+func spent(skill: String) -> int:
+	var n := 0
+	for id in perks:
+		if str(PERKS.get(id, {}).get("skill", "")) == skill: n += rank(id)
+	return n
 
 
 ## How many of a skill's stars are lit.
@@ -203,7 +266,9 @@ func _rebuild() -> void:
 			_cache[effect] = float(_cache.get(effect, 0.0)) + float(PER_LEVEL[skill][effect]) * extra
 	for perk in perks:
 		var fx: Dictionary = PERKS.get(perk, {}).get("effects", {})
-		for effect in fx: _cache[effect] = float(_cache.get(effect, 0.0)) + float(fx[effect])
+		# Each rank lit is its effects again.
+		var times := float(maxi(1, rank(perk)))
+		for effect in fx: _cache[effect] = float(_cache.get(effect, 0.0)) + float(fx[effect]) * times
 	_cache_ok = true
 
 
@@ -228,26 +293,44 @@ func feeds_for(base: int) -> int:
 
 # ------------------------------------------------------------------ save
 func serialize() -> Dictionary:
-	return {"stars": 2, "xp": xp.duplicate(), "levels": levels.duplicate(), "points": points.duplicate(), "perks": perks.keys()}
+	# Format 4 (pass 15): each star with its rank.
+	return {"stars": 4, "xp": xp.duplicate(), "levels": levels.duplicate(), "points": points.duplicate(), "perks": perks.duplicate()}
 
 
 func restore(data) -> void:
 	if not data is Dictionary: return
+	var format := int(data.get("stars", 0))
 	for skill in ORDER:
 		levels[skill] = clampi(int(data.get("levels", {}).get(skill, 1)), 1, MAX_LEVEL)
 		xp[skill] = maxf(0.0, float(data.get("xp", {}).get(skill, 0.0)))
+		# A journey from before pass 15 (ten levels, a quicker road): its whole
+		# XP is counted again on the long road, and the level follows from it.
+		if format < 3:
+			var total := float(xp[skill])
+			for l in range(1, mini(int(levels[skill]), 10)): total += float(OLD_TO_NEXT[l - 1])
+			levels[skill] = 1
+			while levels[skill] < MAX_LEVEL and total >= float(TO_NEXT[int(levels[skill]) - 1]):
+				total -= float(TO_NEXT[int(levels[skill]) - 1])
+				levels[skill] = int(levels[skill]) + 1
+			xp[skill] = total if int(levels[skill]) < MAX_LEVEL else 0.0
 	perks.clear()
-	for perk in data.get("perks", []):
-		if PERKS.has(str(perk)): perks[str(perk)] = true
+	# Format 4 (pass 15): {star: rank}; before it, a list of stars lit once.
+	var saved_perks = data.get("perks", [])
+	if saved_perks is Dictionary:
+		for perk in saved_perks:
+			if PERKS.has(str(perk)): perks[str(perk)] = clampi(int(saved_perks[perk]), 1, ranks_of(str(perk)))
+	else:
+		for perk in saved_perks:
+			if PERKS.has(str(perk)): perks[str(perk)] = 1
 	# A pass-13 journey's callings are stars now (the same names).
 	var saved: Dictionary = data.get("callings", {}) if data.get("callings", {}) is Dictionary else {}
 	for key in saved:
-		if PERKS.has(str(saved[key])): perks[str(saved[key])] = true
+		if PERKS.has(str(saved[key])): perks[str(saved[key])] = maxi(1, rank(str(saved[key])))
 	# Points: as saved; a pass-13 journey (perks and callings, fewer points a
 	# level) gets what its levels earn now, less what is lit.
-	var current: bool = int(data.get("stars", 0)) >= 2
+	var current: bool = format >= 3
 	for skill in ORDER:
 		if current: points[skill] = clampi(int(data.get("points", {}).get(skill, 0)), 0, earned(skill))
-		else: points[skill] = maxi(0, earned(skill) - lit(skill))
+		else: points[skill] = maxi(0, earned(skill) - spent(skill))
 	_cache_ok = false
 	changed.emit()

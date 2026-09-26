@@ -25,7 +25,24 @@ const VEINS := [
 	["sunstone_vein", "dunes", 5, [3, 5], {"rect": Rect2i(-150, 98, 300, 32)}],
 	["ashglass_vein", "pale_hills", 5, [3, 5], {"rect": Rect2i(-150, -136, 300, 46)}],
 	["bogiron_vein", "glassmere", 5, [3, 4], {"shore": true}],
+	# Pass 15: more of each ("much more abundant").
+	["rustiron_vein", "bonelands", 3, [3, 5], {"rect": Rect2i(60, -52, 104, 104)}],
+	["sunstone_vein", "dunes", 4, [3, 5], {"rect": Rect2i(-160, 64, 320, 64)}],
+	["ashglass_vein", "pale_hills", 4, [3, 5], {"rect": Rect2i(-160, -134, 320, 76)}],
+	["bogiron_vein", "glassmere", 6, [3, 5], {"shore": true}],
 ]
+## Pass 15: seams of each far land's ore in its outcrops' stone. Laid on free
+## cells against an outcrop's face (walls and crystal blocks of the land), in
+## short runs of 1-3 along it, so the ore reads as part of the rock. Placed
+## after the veins, with numbers of their own (old saves keep every seeded
+## prop: the legacy signature leaves these kinds out).
+## [seam kind, land, runs]
+const SEAMS := [
+	["seam_rustiron", "bonelands", 46],
+	["seam_sunstone", "dunes", 60],
+	["seam_ashglass", "pale_hills", 56],
+]
+const SEAM_ROCK := ["wall", "ore"]
 ## Crystal outcrops (the Pale Lands' crystal kind) out past this many cells
 ## from camp, denser toward the rim: at the far edge about one cell in 90.
 const CRYSTAL_FROM := 70.0
@@ -69,7 +86,42 @@ func place() -> void:
 					veins[c] = str(entry[0])
 					laid += 1
 	_crystal(r)
+	var seam_r := RandomNumberGenerator.new()
+	seam_r.seed = int(world.world_seed) ^ 0x5EA3
+	_seams(seam_r)
 	world.rng = forest_rng
+
+
+## The ore seams (SEAMS): free cells touching an outcrop of the land, in runs.
+func _seams(r: RandomNumberGenerator) -> void:
+	var steps := [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]
+	for entry in SEAMS:
+		var land := str(entry[1])
+		var faces: Array = []
+		for c in world.props:
+			var p = world.props[c]
+			# (Not the world's own edge: that wall isn't an outcrop.)
+			if not is_instance_valid(p) or not str(p.kind) in SEAM_ROCK or world.region_of(c) != land or world.on_edge(c): continue
+			for s in steps:
+				var n: Vector2i = c + s
+				if _free(n) and world.region_of(n) == land: faces.append([n, s])
+		if faces.is_empty(): continue
+		faces.sort_custom(func(a, b): return a[0].x < b[0].x or (a[0].x == b[0].x and a[0].y < b[0].y))
+		var laid := 0
+		for attempt in int(entry[2]) * 4:
+			if laid >= int(entry[2]): break
+			var pick: Array = faces[r.randi_range(0, faces.size() - 1)]
+			var start: Vector2i = pick[0]
+			if not _free(start): continue
+			# Along the face (across the step that found it).
+			var along := Vector2i(pick[1].y, pick[1].x)
+			var run := r.randi_range(1, 3)
+			for k in run:
+				var c: Vector2i = start + along * k
+				if not _free(c) or world.region_of(c) != land: break
+				world._spawn_prop(c, str(entry[0]))
+				veins[c] = str(entry[0])
+			laid += 1
 
 
 func _centre(entry: Array, r: RandomNumberGenerator) -> Vector2i:
@@ -77,8 +129,7 @@ func _centre(entry: Array, r: RandomNumberGenerator) -> Vector2i:
 	for attempt in 200:
 		var c := Vector2i(99999, 99999)
 		if area.has("rect"):
-			var rect: Rect2i = area.rect
-			c = Vector2i(r.randi_range(rect.position.x, rect.end.x - 1), r.randi_range(rect.position.y, rect.end.y - 1))
+			c = world.area_point(area.rect, r, 0, 1)
 		elif area.has("nests"):
 			var nests: Array = []
 			if world.nesting:
@@ -89,8 +140,7 @@ func _centre(entry: Array, r: RandomNumberGenerator) -> Vector2i:
 			c = nest + Vector2i(r.randi_range(-9, 9), r.randi_range(-9, 9))
 		elif area.has("shore"):
 			# A dry cell a step or two from the Mirefen's water.
-			var rect := MIREFEN
-			c = Vector2i(r.randi_range(rect.position.x + 4, rect.end.x - 5), r.randi_range(rect.position.y + 4, rect.end.y - 5))
+			c = world.area_point(MIREFEN, r, 4, 5)
 			if not _near_water(c, 3): continue
 		if world.region_of(c) == str(entry[1]) and _free(c): return c
 	return Vector2i(99999, 99999)
@@ -98,13 +148,15 @@ func _centre(entry: Array, r: RandomNumberGenerator) -> Vector2i:
 
 ## Far out, the Sky-Fang's crystal breaks the ground more and more often.
 func _crystal(r: RandomNumberGenerator) -> void:
-	var b := BOUNDS
+	var b: Rect2i = world.bounds()
+	# A ring world runs out much further: its crystal thickens over more ground.
+	var rim := CRYSTAL_RIM if not world.layout.is_rings() else 260.0
 	for y in range(b.position.y + 2, b.end.y - 2, 2):
 		for x in range(b.position.x + 2, b.end.x - 2, 2):
 			var c := Vector2i(x, y)
 			var far := Vector2(c).length()
 			if far < CRYSTAL_FROM: continue
-			var chance := CRYSTAL_DENSITY * 4.0 * clampf((far - CRYSTAL_FROM) / (CRYSTAL_RIM - CRYSTAL_FROM), 0.0, 1.0)
+			var chance := CRYSTAL_DENSITY * 4.0 * clampf((far - CRYSTAL_FROM) / (rim - CRYSTAL_FROM), 0.0, 1.0)
 			if r.randf() >= chance: continue
 			if world.region_of(c) == "forest" or not _free(c): continue
 			world._spawn_prop(c, "pale_crystal")

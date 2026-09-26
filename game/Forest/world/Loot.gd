@@ -8,6 +8,8 @@ const CACHE := [
 	["crystal_shard", 2, 4, 20], ["prism_crystal", 1, 2, 8], ["plank", 4, 8, 14], ["plant_fiber", 6, 10, 10],
 	["cooked_meat", 1, 2, 8], ["mushroom_potion", 1, 1, 6], ["fossil_bone", 1, 2, 8], ["sky_idol", 1, 1, 5],
 	["ancient_coin", 2, 5, 14], ["hunter_charm", 1, 1, 2], ["crystal_pendant", 1, 1, 2], ["river_totem", 1, 1, 2],
+	# Pass 15: a far land's seeds, kept dry, and a hunter's bait.
+	["melon_seed", 1, 2, 4], ["gourd_seed", 1, 2, 4], ["redgrain", 2, 4, 5], ["bloody_bait", 1, 1, 3],
 ]
 ## A relic mound: one find.
 const RELIC := [["ancient_coin", 1, 3, 50], ["fossil_bone", 1, 1, 25], ["crystal_shard", 1, 2, 12], ["sky_idol", 1, 1, 5], ["stone", 2, 3, 8]]

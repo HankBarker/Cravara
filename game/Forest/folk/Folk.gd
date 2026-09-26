@@ -96,37 +96,41 @@ const Ways = preload("res://Forest/creatures/TamingWays.gd")
 ## Kaya's beasts (pass 13): species -> [her name for it, what it eats, how it's
 ## won (TamingWays.LESSONS: each beast its own way), riding].
 const BEASTS := {
-	"dodo": ["Dodo", "Berries", Ways.LESSONS.dodo, "Too small to ride. Set them to work and they'll gather for you."],
-	"lystro": ["Lystro", "Berries", Ways.LESSONS.lystro, "Too small to ride, but it'll follow you anywhere."],
-	"compy": ["Compy", "Raw meat", Ways.LESSONS.compy, "Too small to ride. A swarm of your own guards your back."],
-	"parasaur": ["Parasaur", "Berries", Ways.LESSONS.parasaur, "Too skittish to ride, but one at your side hears everything: it finds ore, caches and nests for you."],
-	"proto": ["Proto", "Berries", Ways.LESSONS.proto, "Too small to ride. On sand it noses up old bones, fossils and coins."],
-	"longneck": ["Longneck", "Berries", Ways.LESSONS.longneck, "Too tall for any saddle yet made."],
-	"stego": ["Stego", "Berries", Ways.LESSONS.stego, "Fit a stego saddle (workbench). Steady, strong, and its tail swing bleeds foes."],
-	"trike": ["Trike", "Berries", Ways.LESSONS.trike, "Fit a trike saddle. Click to gore; hold to charge a ram that bowls foes over."],
-	"anky": ["Anky", "Berries", Ways.LESSONS.anky, "Not for riding, but beside you its club cracks stone: more from every rock and vein you mine."],
-	"dimetrodon": ["Dimetrodon", "Raw meat", Ways.LESSONS.dimetrodon, "Too low to ride, but its sail gathers the sun: your crops grow faster by day."],
-	"raptor": ["Raptor", "Raw meat", Ways.LESSONS.raptor, "No saddle fits a raptor. It fights beside you instead."],
-	"deino": ["Deino", "Raw meat", Ways.LESSONS.deino, "No saddle fits it. A pack of your own in the reeds."],
-	"utah": ["Sandblade", "Raw meat", Ways.LESSONS.utah, "Not yet ridden. Its sickle claws open anything."],
-	"allo": ["Allosaur", "Raw meat", Ways.LESSONS.allo, "No saddle for an allosaurus. Yet."],
-	"carno": ["Scarhorn", "Raw meat", Ways.LESSONS.carno, "Not yet ridden. At your side you sprint faster."],
-	"yuty": ["Ashmane", "Raw meat", Ways.LESSONS.yuty, "Not yet ridden. With one at your side the ash can't reach you."],
-	"sucho": ["Suchomimus", "Fish", Ways.LESSONS.sucho, "Not ridden. It fishes the mere for you."],
-	"rex": ["Rex", "Raw meat", Ways.LESSONS.rex, "Rex saddles are the stuff of legend."],
-	"spino": ["Spinosaur", "Fish", Ways.LESSONS.spino, "The bog's king carries no one. Yet."],
+	"dodo": ["Dodo", "Greens, fruit, roots and grain", Ways.LESSONS.dodo, "Too small to ride. Set them to work and they'll gather for you."],
+	"lystro": ["Lystro", "Greens, fruit, roots and grain", Ways.LESSONS.lystro, "Too small to ride, but it'll follow you anywhere."],
+	"compy": ["Compy", "Any raw meat", Ways.LESSONS.compy, "Too small to ride. A swarm of your own guards your back."],
+	"parasaur": ["Parasaur", "Greens, fruit, roots and grain", Ways.LESSONS.parasaur, "Too skittish to ride, but one at your side hears everything: it finds ore, caches and nests for you."],
+	"proto": ["Proto", "Greens, fruit, roots and grain", Ways.LESSONS.proto, "Too small to ride. On sand it noses up old bones, fossils and coins."],
+	"longneck": ["Longneck", "Greens, fruit, roots and grain", Ways.LESSONS.longneck, "Too tall for any saddle yet made."],
+	"stego": ["Stego", "Greens, fruit, roots and grain", Ways.LESSONS.stego, "Fit a stego saddle (workbench). Steady, strong, and its tail swing bleeds foes."],
+	"trike": ["Trike", "Greens, fruit, roots and grain", Ways.LESSONS.trike, "Fit a trike saddle. Click to gore; hold to charge a ram that bowls foes over."],
+	"anky": ["Anky", "Greens, fruit, roots and grain", Ways.LESSONS.anky, "Not for riding, but beside you its club cracks stone: more from every rock and vein you mine."],
+	"dimetrodon": ["Dimetrodon", "Any raw meat", Ways.LESSONS.dimetrodon, "Too low to ride, but its sail gathers the sun: your crops grow faster by day."],
+	"raptor": ["Raptor", "Any raw meat", Ways.LESSONS.raptor, "No saddle fits a raptor. It fights beside you instead."],
+	"deino": ["Deino", "Any raw meat", Ways.LESSONS.deino, "No saddle fits it. A pack of your own in the reeds."],
+	"utah": ["Sandblade", "Any raw meat", Ways.LESSONS.utah, "Not yet ridden. Its sickle claws open anything."],
+	"allo": ["Allosaur", "Any raw meat", Ways.LESSONS.allo, "No saddle for an allosaurus. Yet."],
+	"carno": ["Scarhorn", "Any raw meat", Ways.LESSONS.carno, "Not yet ridden. At your side you sprint faster."],
+	"yuty": ["Ashmane", "Any raw meat", Ways.LESSONS.yuty, "Not yet ridden. With one at your side the ash can't reach you."],
+	"sucho": ["Suchomimus", "Any fish", Ways.LESSONS.sucho, "Not ridden. It fishes the mere for you."],
+	"rex": ["Rex", "Any raw meat", Ways.LESSONS.rex, "Rex saddles are the stuff of legend."],
+	"spino": ["Spinosaur", "Any fish", Ways.LESSONS.spino, "The bog's king carries no one. Yet."],
 	"alpha": ["Skarn", "Nothing", "Skarn leads the Shardback pack from its den in the north-east. It won't take food. It takes keepers.", "Beat it and the pack loses its nerve."],
 }
 
 ## The trader's goods: id -> [price in ancient coins, how many per purchase].
 const STOCK := {
-	"merchant": {"berry_seed": [2, 3], "mushroom_spore": [2, 2], "net": [3, 1], "bone_arrow": [4, 10], "torch": [2, 3], "lantern": [12, 1], "crystal_flask": [6, 1], "garden_hoe": [5, 1], "fishing_rod": [6, 1], "cooked_meat": [3, 2]},
-	"warden": {"net": [3, 2], "stego_saddle": [18, 1], "trike_saddle": [22, 1], "berry": [1, 4], "trex_meat": [2, 1]},
+	"merchant": {"berry_seed": [2, 3], "mushroom_spore": [2, 2], "redgrain": [2, 3], "net": [3, 1], "bone_arrow": [4, 10], "torch": [2, 3], "lantern": [12, 1], "crystal_flask": [6, 1], "garden_hoe": [5, 1], "fishing_rod": [6, 1], "cooked_meat": [3, 2]},
+	# Pass 15: the warden keeps what beasts love (a favourite wins twice the trust).
+	"warden": {"net": [3, 2], "stego_saddle": [18, 1], "trike_saddle": [22, 1], "berry": [1, 4], "trex_meat": [2, 1], "beast_treat": [5, 1], "bloody_bait": [6, 1]},
 }
 ## Rarer wares that turn up one or two at a time, a new pick each day.
 const RARE := {"merchant": {"hunter_charm": 20, "crystal_pendant": 25, "river_totem": 25, "mushroom_potion": 8, "prism_crystal": 6}}
 ## What the trader pays (ancient coins each).
-const BUYS := {"fossil_bone": 4, "sky_idol": 15, "crystal_shard": 1, "prism_crystal": 4, "trex_scale": 6, "raptor_fang": 2, "moonscale": 5, "shardfin": 3, "dodo_egg": 1, "old_bone": 1, "glass_pearl": 6, "pale_crystal": 8, "maw_tooth": 20, "cactus_fruit": 1, "raptor_hide": 1, "trike_horn": 3, "trike_hide": 1, "stego_plate": 3, "longneck_hide": 1, "allo_tooth": 5, "parasaur_crest": 3}
+const BUYS := {"fossil_bone": 4, "sky_idol": 15, "crystal_shard": 1, "prism_crystal": 4, "trex_scale": 6, "raptor_fang": 2, "moonscale": 5, "shardfin": 3, "dodo_egg": 1, "old_bone": 1, "glass_pearl": 6, "pale_crystal": 8, "maw_tooth": 20, "cactus_fruit": 1, "raptor_hide": 1, "trike_horn": 3, "trike_hide": 1, "stego_plate": 3, "longneck_hide": 1, "allo_tooth": 5, "parasaur_crest": 3,
+	# Pass 15: the far waters' fish and the far lands' crops.
+	"mire_eel": 2, "fen_pike": 3, "oasis_carp": 2, "sunfin": 3, "ash_char": 3, "frostjaw": 6, "rust_catfish": 2, "bonegill": 6,
+	"sun_melon": 2, "ember_pepper": 1, "marrow_gourd": 2, "mirelotus": 1}
 const COIN := "ancient_coin"
 ## What tending a companion costs at the warden's (coins each).
 const TEND_PRICE := 1

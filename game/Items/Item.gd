@@ -50,6 +50,9 @@ extends Resource
 @export var food_satiation_seconds: float = 0.0
 @export var consumed_container_id: String = ""
 @export var recovery_bonus: float = 0.0
+## Pass 15: a meal's buffs. A consumable's `effects` (the trinkets' effect
+## names, Forest/items/Trinkets.gd) last this long once it is eaten.
+@export var buff_seconds: float = 0.0
 
 func _init(item_id: String = "", item_name: String = "", item_desc: String = ""):
 	id = item_id

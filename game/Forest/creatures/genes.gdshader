@@ -1,7 +1,11 @@
 shader_type canvas_item;
 // Pass 13: each beast's own look (Genes.gd): its hide's hue, saturation and
 // brightness shifted a little, a rare mutation colour laid over it, and its
-// markings: the art's own dark bands made bolder or fainter, or speckles.
+// markings: the art's own dark bands made bolder or fainter. Pass 15: a
+// mutation is two colours, one for the body and one for its accents (spikes,
+// plates, a crest or a sail: the drawing's saturated parts away from the
+// body's own hue); a pale belly keeps most of its own colour. The speckles
+// are gone (they read as spots that weren't part of the drawing).
 // Outlines (the darkest pixels) and bright highlights (eyes, teeth, claws)
 // are left alone, so it still reads as the same drawing.
 
@@ -9,7 +13,10 @@ uniform float hue = 0.0;           // turns, -0.5..0.5
 uniform float sat = 1.0;
 uniform float val = 1.0;
 uniform vec4 mutation = vec4(0.0); // rgb: the colour; a: how strongly it takes
-uniform int marking = 0;           // 0 none, 1 bold bands, 2 faded bands, 3 speckles
+uniform vec4 mutation_accent = vec4(0.0); // rgb: the accents' colour (a > 0: used)
+uniform float body_hue = 0.0;      // the drawing's own body hue (turns), Genes.body_look
+uniform float accent_bands = 0.0;  // 1: a one-hued drawing, its accents go on its dark bands
+uniform int marking = 0;           // 0 none, 1 bold bands, 2 faded bands
 uniform vec4 mark_color = vec4(0.1, 0.08, 0.08, 1.0);
 uniform float mark_seed = 0.0;
 uniform vec2 frame_size = vec2(64.0, 64.0);
@@ -59,10 +66,18 @@ void fragment() {
 		hsv.z = clamp(hsv.z * mix(1.0, val, hide), 0.0, 1.0);
 		rgb = hsv2rgb(hsv);
 		if (mutation.a > 0.0) {
-			// Recoloured by brightness: the mutation's colour in the drawing's own light.
+			// Recoloured by brightness: the mutation's colours in the drawing's own light.
+			vec3 hsv0 = rgb2hsv(c.rgb);
 			float l = dot(rgb, vec3(0.3, 0.59, 0.11));
-			vec3 recolour = clamp(mutation.rgb * (0.38 + l * 1.7), 0.0, 1.0);
-			rgb = mix(rgb, recolour, mutation.a * hide);
+			float away = abs(fract(hsv0.x - body_hue + 0.5) - 0.5);
+			float accent = smoothstep(0.07, 0.15, away) * smoothstep(0.22, 0.4, hsv0.y);
+			// A drawing all of one hue (the allosaur's rust): the accents take its dark bands.
+			float bands0 = smoothstep(0.18, 0.26, hsv0.z) * (1.0 - smoothstep(0.42, 0.52, hsv0.z)) * smoothstep(0.15, 0.3, hsv0.y);
+			accent = mix(accent, bands0 * 0.85, accent_bands) * step(0.001, mutation_accent.a);
+			float neutral = 1.0 - smoothstep(0.12, 0.3, hsv0.y);
+			vec3 body = clamp(mutation.rgb * (0.38 + l * 1.7), 0.0, 1.0);
+			vec3 acc = clamp(mutation_accent.rgb * (0.38 + l * 1.7), 0.0, 1.0);
+			rgb = mix(rgb, mix(body, acc, accent), mutation.a * hide * (1.0 - neutral * 0.7));
 		}
 		if (sick > 0.0) {
 			vec2 px = mod(floor(UV / TEXTURE_PIXEL_SIZE), frame_size);
@@ -77,14 +92,9 @@ void fragment() {
 			rgb = mix(rgb, glow * (0.8 + 0.3 * pulse), vein * hide * sick * (0.72 + 0.28 * pulse));
 		}
 		if (marking == 1) {
-			rgb = mix(rgb, mark_color.rgb * (0.6 + hsv.z), band * 0.75);
+			rgb = mix(rgb, mark_color.rgb * (0.6 + hsv.z), band * 0.6);
 		} else if (marking == 2) {
 			rgb = mix(rgb, rgb * 1.35 + vec3(0.04), band * 0.8);
-		} else if (marking == 3) {
-			vec2 px = mod(floor(UV / TEXTURE_PIXEL_SIZE), frame_size);
-			vec2 cell = floor(px / 2.0);
-			float spot = step(0.9, hash(cell)) * step(0.3, hsv.z);
-			rgb = mix(rgb, mark_color.rgb * (0.5 + hsv.z), spot * hide * 0.8);
 		}
 	}
 	COLOR = vec4(rgb, c.a) * tint;

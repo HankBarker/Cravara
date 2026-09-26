@@ -100,7 +100,11 @@ func _wildlife() -> void:
 		if c.species == "raptor" and world.region_of(world.to_cell(c.global_position)) == "forest":
 			forest_raptors += 1
 			if c.global_position.x > 0 and c.global_position.y < 0: raptors_ne += 1
-	check(int(counts.get("rex", 0)) == 1, "there is one rex (%s)" % [counts])
+	# (Pass 15: the caves' Sleepers are rexes of their own, asleep in their lairs.)
+	var sleepers := 0
+	for c in get_tree().get_nodes_in_group("forest_creatures"):
+		if str(c.variant) == "sleeper": sleepers += 1
+	check(int(counts.get("rex", 0)) - sleepers == 1, "there is one rex (%s)" % [counts])
 	check(forest_raptors >= 4 and raptors_ne == forest_raptors, "the forest's raptor packs keep to the north-east (%d of %d)" % [raptors_ne, forest_raptors])
 	check(int(counts.get("allo", 0)) >= 1 and int(counts.get("lystro", 0)) >= 2, "allosaurs and lystrosaurs roam")
 	check(at_camp == 0, "nothing is spawned at camp")

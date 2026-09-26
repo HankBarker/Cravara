@@ -12,8 +12,20 @@ uniform int world_seed = 726151;
 uniform float frames_per_second = 10.0;
 // The Mirefen Bog (pass 12): cells (x0, y0, x1, y1) where the water is black
 // and murky, fading in over its easternmost bog_fade columns (toward the forest).
-uniform ivec4 bog_area = ivec4(0, 0, 0, 0);
 uniform float bog_fade = 12.0;
+// Pass 15: each cell's land (r: its index, world/Layout.gd LANDS: 1 the bog,
+// 3 the Pale Lands) and how many cells into it from its side nearer camp (g),
+// one texel a cell from map_origin: the lands aren't boxes any more.
+uniform sampler2D land_map : filter_nearest, repeat_disable;
+uniform ivec2 land_origin = ivec2(0, 0);
+uniform ivec2 land_size = ivec2(1, 1);
+ivec2 land_of(ivec2 cell) {
+	ivec2 t = cell - land_origin;
+	if (t.x < 0 || t.y < 0 || t.x >= land_size.x || t.y >= land_size.y) return ivec2(0, 999);
+	vec4 v = texelFetch(land_map, t, 0);
+	return ivec2(int(v.r * 255.0 + 0.5), int(v.g * 255.0 + 0.5));
+}
+
 
 const vec3 W_DEEP = vec3(0.106, 0.290, 0.431);
 const vec3 W_MID = vec3(0.137, 0.365, 0.525);
@@ -92,8 +104,9 @@ void fragment() {
 	}
 	// The bog: the same water, dark and peaty (glints dull, foam a scum).
 	ivec2 cell = ivec2(floor(vec2(p) / 16.0));
-	if (cell.x >= bog_area.x && cell.x < bog_area.z && cell.y >= bog_area.y && cell.y < bog_area.w) {
-		float f = clamp(float(bog_area.z - 1 - cell.x) / bog_fade, 0.0, 1.0);
+	ivec2 land = land_of(cell);
+	if (land.x == 1) {
+		float f = clamp(float(land.y) / bog_fade, 0.0, 1.0);
 		float l = dot(col, vec3(0.3, 0.59, 0.11));
 		vec3 murk = mix(vec3(0.16, 0.2, 0.12), vec3(0.46, 0.47, 0.3), smoothstep(0.15, 0.9, l));
 		col = mix(col, murk, 0.88 * f);

@@ -77,6 +77,9 @@ static func hint(c) -> String:
 	if reading != "": name += " · " + reading
 	var food := food_name(str(c.stats.food))
 	var tally := "Trust %d/%d" % [c.trust, c.feeds_needed()]
+	# Pass 15: what it loves (twice the trust).
+	var loves: String = preload("res://Forest/life/Foods.gd").loves(c.species)
+	if loves != "": tally += " · loves " + loves
 	var skills = c.skills()
 	if skills and not skills.knows(c.species):
 		return "%s · Beyond you: needs %s (Taming)" % [name, skills.lore_needed(c.species)]

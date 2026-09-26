@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/art/items/gourd_porridge.png" id="2"]
+[resource]
+script = ExtResource("1")
+id = "gourd_porridge"
+name = "Gourd Porridge"
+description = "Sweet gourd and red grain. It settles like armour."
+icon = ExtResource("2")
+max_stack = 20
+consumable = true
+hunger_value = 70
+food_satiation_seconds = 300.0
+healing_total = 20.0
+healing_duration = 25.0
+effects = {
+"defense": 5
+}
+buff_seconds = 300.0

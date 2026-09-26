@@ -19,6 +19,8 @@ const Life = preload("res://Forest/creatures/Life.gd")
 const CreatureLife = preload("res://Forest/creatures/CreatureLife.gd")
 ## Pass 13: each beast's own way to be won (Kaya teaches them).
 const Ways = preload("res://Forest/creatures/TamingWays.gd")
+## Pass 15: diets, favourites and meat (Forest/life/Foods.gd).
+const Foods = preload("res://Forest/life/Foods.gd")
 const OFFERING = preload("res://Forest/creatures/Offering.gd")
 ## Pass 13: each beast its own animal (colours, markings, temperament, traits, stats).
 const Genes = preload("res://Forest/creatures/Genes.gd")
@@ -110,6 +112,11 @@ const VARIANTS := {
 	# Sky-Fangs' ember glow in their veins.
 	"sand": {"name": "Dune %s", "hp": 1.2, "damage": 1.1, "speed": 1.05, "art": "sand"},
 	"ash": {"name": "Ashfang %s", "hp": 1.5, "damage": 1.25, "speed": 1.08, "art": "ash", "loot": {"crystal_shard": 1}},
+	# Pass 15: the caves (world/Caves.gd). The Crystal Grotto's beasts, crystal
+	# to the bone and hostile to all comers; and the Sleeper, a great tyrant
+	# asleep in its lair (world/CaveLife.gd) who drops its fang.
+	"grotto": {"name": "Grotto %s", "hp": 1.6, "damage": 1.3, "speed": 1.06, "art": "crystal", "hostile": true, "loot": {"crystal_shard": 3, "prism_crystal": 1}},
+	"sleeper": {"title": "The Sleeper", "hp": 2.6, "damage": 1.35, "speed": 1.0, "tint": Color(0.86, 0.9, 1.0), "hostile": true, "loot": {"sleeper_fang": 1, "trex_scale": 8, "prime_meat": 3}},
 }
 const BONE_LOOK := preload("res://Forest/creatures/bone.gdshader")
 ## Taming. The dodo and the lystrosaurus eat from any hand. Everything else
@@ -245,7 +252,7 @@ const TREES := ["tree", "palm", "pine", "birch", "dead_tree"]
 const AQUATIC := {"sucho": 0.9, "spino": 0.85}
 const DEEP_WADERS := ["spino"]
 const LURK := ["sucho"]
-const STONE_BUILT := ["stone_wall", "stone_door", "stone_floor"]
+const STONE_BUILT := ["stone_wall", "stone_door", "stone_floor", "sandstone_wall", "sandstone_floor", "crystal_wall", "crystal_floor"]
 const STONE_SLOW := 2.2
 const TREE_SECONDS := 7.0
 var _siege_cell := NO_POST
@@ -271,6 +278,17 @@ var sated := 0.0
 ## A boss resting in its den ignores everything until woken (AlphaBoss), or
 ## until something strikes it.
 var dormant := false
+## Pass 15: asleep where it lies (the Sleeper: world/CaveLife.gd wakes it).
+var sleeping := false
+## Pass 15: the hunters' tactics (creatures/Tactics.gd): an allosaur's ambush
+## (where it hides, how long it has waited), and a burst of speed when it springs.
+const Tactics = preload("res://Forest/creatures/Tactics.gd")
+## How much faster than its chase a stampeding beast runs (WorldEvents).
+const STAMPEDE_PACE := 1.6
+var ambush_state := {}
+var burst_time := 0.0
+## Moving in the low creep (Tactics steering it): the stalk clip plays.
+var stalk_time := 0.0
 ## Enraged (bosses): moves come round faster and the body runs harder.
 var haste := 1.0
 ## Pass 12: running down a target costs wind. Seconds spent chasing hard; once
@@ -665,6 +683,11 @@ func _apply_genes_look() -> void:
 	if ours: Genes.apply(_sprite.material, genes, size)
 	else: _sprite.material = Genes.material(genes, size)
 	(_sprite.material as ShaderMaterial).set_shader_parameter("sick", 1.0 if crystal == 1 else 0.0)
+	# A mutation's accents go on the parts away from the drawing's own body hue.
+	if str(genes.get("mutation", "")) != "":
+		var look: Vector2 = Genes.body_look(art_key)
+		(_sprite.material as ShaderMaterial).set_shader_parameter("body_hue", look.x)
+		(_sprite.material as ShaderMaterial).set_shader_parameter("accent_bands", look.y)
 
 ## New genes (a hatchling of the keeper's own pair): stats and look follow.
 func set_genes(value: Dictionary, keep_health := false) -> void:
@@ -773,6 +796,8 @@ func _physics_process(delta: float) -> void:
 	provoked_time = maxf(0.0, provoked_time - delta)
 	sated = maxf(0.0, sated - delta)
 	_winded = maxf(0.0, _winded - delta)
+	burst_time = maxf(0.0, burst_time - delta)
+	stalk_time = maxf(0.0, stalk_time - delta)
 	_retreat_time = maxf(0.0, _retreat_time - delta)
 	_path_boost = maxf(0.0, _path_boost - delta)
 	_hunt_scan -= delta
@@ -918,6 +943,9 @@ func _on_view() -> bool:
 	return not is_instance_valid(_player) or global_position.distance_squared_to(_player.global_position) < 176400.0
 
 # ------------------------------------------------------------------ behaviour
+## Idle actions played so far (every third is a look about, pass 15).
+var _idle_count := 0
+
 ## Idle life while not fighting: graze, sniff or roar now and then.
 func _resting_behaviour(delta: float, wanted: Vector2) -> void:
 	if moves.busy() or _action_time > 0.0 or wanted.length() > 2.0 or velocity.length() > 4.0: return
@@ -926,6 +954,10 @@ func _resting_behaviour(delta: float, wanted: Vector2) -> void:
 	_idle_timer = _rng.randf_range(float(body.idle_every) * 0.6, float(body.idle_every) * 1.4)
 	var clip := str(body.idle)
 	if species == "rex" and tamed: clip = "idle"
+	# Pass 15: every third time it looks about instead (tools/dino: "look"),
+	# and every time if it has no idle of its own; a herd still mostly grazes.
+	_idle_count += 1
+	if DinoArt.has_clip(art_key, "look") and (clip == "idle" or _idle_count % 3 == 0): clip = "look"
 	if clip != "idle": play_action(clip)
 
 ## Play a one-shot clip (graze, sniff, roar, warning) while standing still.
@@ -949,7 +981,11 @@ func _wild_behaviour(delta: float) -> Vector2:
 		return near_home
 	if _retreat_time > 0.0 and is_instance_valid(_retreat_from) and not _retreat_from.is_dead:
 		state = "flee"
-		return _retreat_from.global_position.direction_to(global_position) * _chase_speed()
+		# (A stampede's herd runs flat out: WorldEvents, pass 15.)
+		return _retreat_from.global_position.direction_to(global_position) * _chase_speed() * (STAMPEDE_PACE if has_meta("stampede") else 1.0)
+	if sleeping and provoked_time <= 0.0:
+		state = "rest"
+		return Vector2.ZERO
 	if dormant and provoked_time <= 0.0:
 		state = "wander"
 		var rest := _wander_velocity(delta, home, 36.0) * 0.6
@@ -1012,7 +1048,8 @@ func _wild_behaviour(delta: float) -> Vector2:
 	var target := _current_target()
 	if target:
 		_calm_for = 0.0
-		if _alert_needed(target):
+		# (An allosaur about to lie in wait for the keeper gives no warning.)
+		if _alert_needed(target) and not _will_ambush(target):
 			return _begin_alert(target)
 		if _alert_left > 0.0:
 			state = "alert"
@@ -1108,10 +1145,23 @@ func _display_clip() -> String:
 
 ## Pursuit tactics per species; attacks start from _approach_or_attack.
 func _hunt(target: Node2D, delta: float) -> Vector2:
+	# Pass 15: a wild hunter won't follow its quarry into a haven (Stillwater).
+	if not tamed and bool(stats.predator) and in_haven(target.global_position):
+		_give_up()
+		return Vector2.ZERO
 	# Breaking through what's in the way (pass 13).
 	if _siege_cell != NO_POST:
 		var bash := _tick_siege(delta, target)
 		if bash != Vector2.INF: return bash
+	# Pass 15: the pack gathers and surrounds before it strikes; the allosaur
+	# waits in cover (creatures/Tactics.gd).
+	if not tamed and provoked_time <= 0.0 and not moves.busy() and not bool(stats.get("boss", false)):
+		if species in Tactics.PACK:
+			var way := Tactics.pack(self, target, delta)
+			if way != Vector2.INF: return way
+		elif _will_ambush(target) or not ambush_state.is_empty() and str(ambush_state.get("phase", "")) != "burst":
+			var way := Tactics.ambush(self, target, delta)
+			if way != Vector2.INF: return way
 	var wanted := _approach_or_attack(target)
 	if moves.busy(): return Vector2.ZERO
 	var to := target.global_position - global_position
@@ -1250,7 +1300,17 @@ func _tick_siege(delta: float, quarry: Node2D) -> Vector2:
 	return Vector2.ZERO
 
 ## The quarry got away: back to its own business for a while.
+## An allosaur lies in wait for a keeper rather than charge (Tactics.ambush).
+func _will_ambush(target: Node2D) -> bool:
+	return species == "allo" and not tamed and variant == "" and target == _player and provoked_time <= 0.0 and ambush_state.get("phase", "") != "burst"
+
+## Whether a point is in a haven, where no wild hunter goes (pass 15).
+func in_haven(at: Vector2) -> bool:
+	if not is_instance_valid(_world) or _world.get("micro") == null or _world.micro.is_empty(): return false
+	return _world.micro_of(_world.to_cell(at)) == "haven"
+
 func _give_up() -> void:
+	ambush_state = {}
 	provoked_time = 0.0
 	_threat = null
 	_hunt_target = null
@@ -1324,6 +1384,17 @@ func _update_animation():
 	if facing_vector.length() > 2: _face(facing_vector)
 	if _facing != "side": _sprite.flip_h = false  # undo a sweep's mirroring
 	var speed := facing_vector.length()
+	# Pass 15: lying down to rest (a herbivore at night, the Sleeper), and the
+	# hunters' low creep while they close in or slip off to cover.
+	if state == "rest" and speed <= 3.0 and DinoArt.has_clip(art_key, "rest"):
+		_play_clip("rest", false)
+		queue_redraw()
+		return
+	if stalk_time > 0.0 and speed > 3.0 and DinoArt.has_clip(art_key, "stalk"):
+		var stride0: Dictionary = ART_STRIDE.get(art_key, body)
+		_play_clip("stalk", false, clampf(speed / float(stride0.get("walk", body.walk)) * 1.2, 0.5, 1.8))
+		queue_redraw()
+		return
 	# Ridden at a normal pace a mount walks; it gallops only when sprinted.
 	var run_at := maxf(float(body.run_at), 72.0) if is_mounted() else float(body.run_at)
 	# A drawing with a stride of its own (a Crystalback's clips) keeps its feet planted too.
@@ -1552,6 +1623,8 @@ func _tribe_behaviour(delta: float) -> Vector2:
 func _chase_speed() -> float:
 	var cruise := float(stats.speed)
 	if _winded > 0.0 or baby: return cruise
+	# An ambusher springing from cover (pass 15).
+	if burst_time > 0.0: cruise *= 1.5
 	# The kind's and the individual's speed apply to the chase as well.
 	var scale := cruise / maxf(1.0, float(SPECIES[species].speed) * PACE)
 	return maxf(cruise, float(body.get("chase", cruise)) * scale)
@@ -1633,6 +1706,10 @@ func _contact_range(target: Node2D) -> float:
 func _wild_target() -> Node2D:
 	if provoked_time > 0 and _valid_target(_threat):
 		return _threat
+	# Lying in wait (pass 15, Tactics.ambush): it keeps its eye on the keeper
+	# from cover, past where it would first have noticed them.
+	if not ambush_state.is_empty() and _valid_target(_player) and global_position.distance_to(_player.global_position) < 340.0:
+		return _player
 	if dormant or not _is_hostile(): return null
 	# The keeper and companions within its reach; prey (whatever this hunter
 	# takes, wild or tamed) out to its hunting range: the rex never stops, the
@@ -1943,8 +2020,9 @@ func train(stat: String) -> String:
 	if baby: return "Let it grow up first."
 	if not Genes.can_train(genes, stat): return "It has trained all it can in that."
 	if _train_rest > 0.0: return "It needs rest. Train again in %d s." % int(ceil(_train_rest))
-	var food := str(stats.food)
-	if InventoryManager.get_item_count(food) < TRAIN_FOOD: return "Training takes %d %s." % [TRAIN_FOOD, Ways.food_name(food)]
+	# Pass 15: any food of its diet (its own first, its favourites last).
+	var food: String = Foods.pick(species, str(stats.food), TRAIN_FOOD)
+	if food == "": return "Training takes %d %s." % [TRAIN_FOOD, Ways.food_name(str(stats.food))]
 	InventoryManager.remove_item(food, TRAIN_FOOD)
 	var g := genes.duplicate(true)
 	var ranks: Dictionary = g.get("train", {})
@@ -2127,7 +2205,11 @@ func interact(item_id: String = "") -> Dictionary:
 		# Pass 13: reaching for a guarded baby is what brings its kin.
 		if life: life.disturbed(_player)
 		return _result(false, false, "Its kin rush to its side! Drive them off first.")
-	if item_id != str(stats.food): return _result(false, false, get_interaction_hint())
+	# Pass 15: anything of its diet will do; a favourite wins twice the trust.
+	var gain: int = Foods.trust_for(species, str(stats.food), item_id)
+	if gain <= 0:
+		if species in Foods.Data.SCORNS.get(item_id, []): return _result(false, false, "Too small a bite for a %s." % stats.name)
+		return _result(false, false, get_interaction_hint())
 	if not baby:
 		var why: String = Ways.refusal(self)
 		if why != "": return _result(false, false, why)
@@ -2136,7 +2218,7 @@ func interact(item_id: String = "") -> Dictionary:
 	if feed_cooldown > 0: return _result(false, false, "Let it eat. Feed again in %.0fs." % ceilf(feed_cooldown))
 	if settle > 0.0 and net_time <= 0.0 and not baby:
 		return _result(false, false, "It's watching you. Step back and give it room for a while.")
-	trust += 1
+	trust += gain
 	feed_cooldown = float(FEED_WAIT.get(species, 5.0))
 	settle = 0.0 if species in EASY or net_time > 0.0 or baby else SETTLE
 	unease = 0.0
@@ -2146,7 +2228,7 @@ func interact(item_id: String = "") -> Dictionary:
 	if trust >= feeds_needed():
 		_become_tamed()
 		return _result(true, true, "%s trusts you! Interact to give orders." % stats.name)
-	return _result(true, true, "%s trust: %d/%d" % [stats.name, trust, feeds_needed()])
+	return _result(true, true, "%s trust: %d/%d%s" % [stats.name, trust, feeds_needed(), "  (a favourite!)" if gain > 1 else ""])
 
 ## Won over: the bond is made.
 func _become_tamed() -> void:
@@ -2212,7 +2294,7 @@ func _offer_steer(delta: float) -> Vector2:
 		if _offer_scan > 0.0: return Vector2.INF
 		_offer_scan = 0.8
 		for o in get_tree().get_nodes_in_group("offerings"):
-			if o.item_id == str(stats.food) and o.global_position.distance_to(global_position) < Ways.OFFER_SIGHT and not is_instance_valid(o.claimed_by):
+			if Foods.accepts(species, str(stats.food), str(o.item_id)) and o.global_position.distance_to(global_position) < Ways.OFFER_SIGHT and not is_instance_valid(o.claimed_by):
 				_offer = o
 				o.claimed_by = self
 				break
@@ -2229,9 +2311,10 @@ func _offer_steer(delta: float) -> Vector2:
 	# It eats.
 	_face(to, true)
 	play_action("eat")
+	var favourite: bool = Foods.is_favourite(species, str(stats.food), str(_offer.item_id))
 	_offer.eaten()
 	_offer = null
-	trust += int(Ways.OFFER_TRUST.get(species, 1))
+	trust += int(Ways.OFFER_TRUST.get(species, 1)) * (2 if favourite else 1)
 	unease = 0.0
 	var sk := skills()
 	if sk: sk.gain("taming", float(sk.XP.feed))
@@ -2340,7 +2423,7 @@ func get_interaction_hint() -> String:
 	if tamed: return "%s · %s · E: next order" % [stats.name, order.capitalize()]
 	if int(stats.feeds) <= 0: return "%s · Untameable" % stats.name
 	if not baby and settle <= 0.0: return Ways.hint(self)
-	if baby: return "%s · Hand-feed %s (mind its parents) · Trust %d/%d" % [stats.name, "raw meat" if str(stats.food) == "trex_meat" else "berries", trust, int(stats.feeds)]
+	if baby: return "%s · Hand-feed %s (mind its parents) · Trust %d/%d" % [stats.name, Foods.plural(str(stats.food)), trust, int(stats.feeds)]
 	if bool(stats.predator): return "%s · Net, then raw meat · Trust %d/%d" % [stats.name, trust, int(stats.feeds)]
 	if settle > 0.0: return "%s · Back off and let it settle · Trust %d/%d" % [stats.name, trust, int(stats.feeds)]
 	return "%s · Hand-feed berries · Trust %d/%d" % [stats.name, trust, int(stats.feeds)]
@@ -2501,6 +2584,8 @@ func get_attack_damage() -> int:
 
 func _die() -> void:
 	if is_mounted(): _mount_controller.dismount(true)
+	# Its death cry (pass 15: the species' own voices, when made).
+	if is_instance_valid(voice) and not is_dead: voice.play_cue("death")
 	is_dead = true
 	bleed.clear()
 	moves.cancel()
@@ -2509,7 +2594,9 @@ func _die() -> void:
 	collision_layer = 0
 	$Hurtbox.set_deferred("monitorable", false)
 	SignalBus.creature_defeated.emit(self)
-	var loot := {"trex_meat": 1 if species == "dodo" or baby else 2}
+	# Pass 15: meat by the size of the beast (a longneck's rib, a trike's or a
+	# stego's haunch, a dodo's morsel, a hunter's prime cut).
+	var loot := Foods.meat(species, baby)
 	# Nothing to eat on a skeleton.
 	if species == "ossuar" or bool(VARIANTS.get(variant, {}).get("bone", false)): loot.clear()
 	for id in worker.cargo: loot[id]=int(loot.get(id,0))+int(worker.cargo[id])
@@ -2553,7 +2640,7 @@ func _die() -> void:
 	if species == "yuty":
 		loot["ashmane_fur"] = 4
 		loot["trex_scale"] = 5
-	if species == "compy": loot = {"trex_meat": 1} if _rng.randf() < 0.35 else {}
+	if species == "compy": loot = {"morsel": 1} if _rng.randf() < 0.35 else {}
 	# Pass 13: the new beasts' spoils (their weapons are made of these and
 	# their lands' ores).
 	if species == "utah":

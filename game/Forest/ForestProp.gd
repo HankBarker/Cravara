@@ -43,6 +43,15 @@ const ART = {
 	# Stone building (art/v6, tools/world/make_stone_art.py).
 	"stone_wall": preload("res://Forest/art/v6/stone_wall.png"),
 	"stone_floor": preload("res://Forest/art/v6/stone_floor.png"),
+	# Pass 15: each land's building stuff (art/v7, tools/world/make_material_art.py).
+	"bogwood_wall": preload("res://Forest/art/v7/bogwood_wall.png"),
+	"bogwood_floor": preload("res://Forest/art/v7/bogwood_floor.png"),
+	"palewood_wall": preload("res://Forest/art/v7/palewood_wall.png"),
+	"palewood_floor": preload("res://Forest/art/v7/palewood_floor.png"),
+	"sandstone_wall": preload("res://Forest/art/v7/sandstone_wall.png"),
+	"sandstone_floor": preload("res://Forest/art/v7/sandstone_floor.png"),
+	"crystal_wall": preload("res://Forest/art/v7/crystal_wall.png"),
+	"crystal_floor": preload("res://Forest/art/v7/crystal_floor.png"),
 	"workbench": preload("res://Forest/art/v5/workbench.png"),
 	"rock": preload("res://Forest/art/v2/rock.png"),
 	"tent": preload("res://Forest/art/v2/tent.png"),
@@ -142,11 +151,37 @@ const WILD := {
 	"sunstone_vein": {"solid": Rect2(-10, -5, 20, 10), "height": 22.0, "tool": "pickaxe", "hp": 6, "power": 2, "drop": ["sunstone", 2]},
 	"ashglass_vein": {"solid": Rect2(-10, -5, 20, 10), "height": 28.0, "tool": "pickaxe", "hp": 6, "power": 2, "drop": ["ashglass", 2]},
 	"bogiron_vein": {"solid": Rect2(-10, -5, 20, 10), "height": 22.0, "tool": "pickaxe", "hp": 6, "power": 2, "drop": ["bog_iron", 2]},
+	# Pass 15: the far lands' ore running through their outcrops' stone, a block
+	# of the rock like a wall (Minerals._seams; tools/world/make_seam_art.py).
+	"seam_rustiron": {"solid": Rect2(-8, -8, 16, 16), "height": 22.0, "tool": "pickaxe", "hp": 5, "power": 2, "drop": ["rustiron", 1]},
+	"seam_sunstone": {"solid": Rect2(-8, -8, 16, 16), "height": 22.0, "tool": "pickaxe", "hp": 5, "power": 2, "drop": ["sunstone", 1]},
+	"seam_ashglass": {"solid": Rect2(-8, -8, 16, 16), "height": 22.0, "tool": "pickaxe", "hp": 5, "power": 2, "drop": ["ashglass", 1]},
 	"dune_ribs": {"solid": Rect2(-28, -6, 56, 12), "height": 30.0, "landmark": true},
 	"dune_skull": {"solid": Rect2(-17, -6, 34, 11), "height": 32.0, "landmark": true},
 	"skyfang_spire": {"solid": Rect2(-12, -6, 24, 12), "height": 76.0, "tool": "pickaxe", "hp": 14, "power": 2, "drop": ["prism_crystal", 3]},
 	"meteor_rock": {"solid": Rect2(-9, -4, 18, 9), "height": 16.0, "tool": "pickaxe", "hp": 5, "power": 1, "drop": ["prism_crystal", 1]},
+	# Pass 15: each land's wild crop, where its first seeds come from (drawn as
+	# the ripe stage of its crop: FoodData.WILD_CROPS, tools/items/foods.py).
+	"wild_grain": {"solid": Rect2(), "height": 18.0, "tool": "", "hp": 1, "drop": ["redgrain", 2], "sway": [20.0, 2.0]},
+	"wild_lotus": {"solid": Rect2(), "height": 10.0, "tool": "", "hp": 1, "drop": ["mirelotus", 2]},
+	"wild_melon": {"solid": Rect2(), "height": 12.0, "tool": "", "hp": 1, "drop": ["sun_melon", 1], "extra": ["melon_seed", 2]},
+	"wild_pepper": {"solid": Rect2(), "height": 16.0, "tool": "", "hp": 1, "drop": ["ember_pepper", 2], "sway": [18.0, 1.6]},
+	"wild_gourd": {"solid": Rect2(), "height": 12.0, "tool": "", "hp": 1, "drop": ["marrow_gourd", 1], "extra": ["gourd_seed", 2]},
+	# Pass 15: the new villages' buildings (art/v7, tools/world/make_village_art.py):
+	# Stillwater's stilt huts, racks and lanterns, the oasis town's well and
+	# market canopy; and a cave's mouth.
+	"stilt_hut": {"solid": Rect2(-14, -6, 28, 10), "height": 40.0, "landmark": true},
+	"fish_rack": {"solid": Rect2(-10, -3, 20, 5), "height": 20.0, "landmark": true},
+	"well": {"solid": Rect2(-10, -6, 20, 10), "height": 28.0, "landmark": true},
+	"canopy": {"solid": Rect2(-18, -4, 36, 6), "height": 30.0, "landmark": true},
+	"reed_lantern": {"solid": Rect2(-3, -1, 6, 4), "height": 36.0, "landmark": true},
+	"cave_mouth": {"solid": Rect2(-22, -10, 44, 13), "height": 34.0, "landmark": true},
+	# Inside a cave: the way back out (a shaft of daylight, drawn), and the
+	# Drip Cave's lost explorer.
+	"cave_exit": {"solid": Rect2(), "height": 0.0, "landmark": true},
+	"explorer": {"solid": Rect2(-8, -4, 16, 8), "height": 16.0, "landmark": true},
 }
+const WILD_CROPS := preload("res://Forest/life/FoodData.gd").WILD_CROPS
 ## Pass 13: the great bones that can be searched through (like a bone pile).
 const BONES := ["bone_pile", "dune_ribs", "dune_skull"]
 static var _wild_art := {}
@@ -170,13 +205,58 @@ static func wild_art(prop_kind: String) -> Texture2D:
 	if _wild_art.has(prop_kind): return _wild_art[prop_kind]
 	var path := "res://Forest/art/pass11/%s.png" % prop_kind
 	var tex: Texture2D = null
-	if ResourceLoader.exists(path):
+	if WILD_CROPS.has(prop_kind):
+		# A wild crop is its crop's ripe stage.
+		var sheet: Texture2D = preload("res://Forest/Gardening.gd").sheet(str(WILD_CROPS[prop_kind][0]))
+		if sheet:
+			var ripe := AtlasTexture.new()
+			ripe.atlas = sheet
+			ripe.region = Rect2(sheet.get_width() / 4 * 3, 0, sheet.get_width() / 4, sheet.get_height())
+			tex = ripe
+	elif ResourceLoader.exists(path):
 		tex = load(path)
+	elif ResourceLoader.exists("res://Forest/art/v7/%s.png" % prop_kind):
+		tex = load("res://Forest/art/v7/%s.png" % prop_kind)
 	elif FileAccess.file_exists(path):
 		var img := Image.load_from_file(ProjectSettings.globalize_path(path))
 		if img: tex = ImageTexture.create_from_image(img)
 	_wild_art[prop_kind] = tex
 	return tex
+
+## A cave's mouth in its land's stone (pass 15: tools/world/make_village_art.py --caves).
+static var _mouths := {}
+static func cave_mouth_art(ground_kind: String) -> Texture2D:
+	var which: String = {"bog": "cave_mouth_bog", "sand": "cave_mouth_sand", "pale": "cave_mouth_pale"}.get(ground_kind, "cave_mouth")
+	if not _mouths.has(which):
+		var path := "res://Forest/art/v7/%s.png" % which
+		var tex: Texture2D = null
+		if ResourceLoader.exists(path): tex = load(path)
+		elif FileAccess.file_exists(path):
+			var img := Image.load_from_file(ProjectSettings.globalize_path(path))
+			if img: tex = ImageTexture.create_from_image(img)
+		_mouths[which] = tex
+	return _mouths[which]
+
+## The way out of a cave: daylight falling through a gap in the rock, dust
+## turning in it, a rope ladder up.
+func _draw_shaft() -> void:
+	var t := Time.get_ticks_msec() / 1000.0
+	for i in 6:
+		var w := 10.0 + float(i) * 3.0
+		draw_rect(Rect2(Vector2(-w / 2.0, -52.0 + float(i) * 8.0), Vector2(w, 9.0)), Color(1.0, 0.95, 0.75, 0.05 + float(i) * 0.012))
+	draw_set_transform(Vector2(0, 5), 0.0, Vector2(1.0, 0.35))
+	draw_circle(Vector2.ZERO, 13.0, Color(1.0, 0.94, 0.72, 0.18))
+	draw_circle(Vector2.ZERO, 8.0, Color(1.0, 0.96, 0.8, 0.16))
+	draw_set_transform(Vector2(_shake_offset(), 0))
+	for i in 5:
+		var k := fmod(t * 0.13 + float(i) * 0.21, 1.0)
+		var at := Vector2(sin(t * 0.7 + float(i) * 2.1) * 6.0, -46.0 + k * 50.0)
+		draw_rect(Rect2(at.round(), Vector2.ONE), Color(1.0, 0.97, 0.85, 0.6 * sin(k * PI)))
+	var rope := Color("6b4a2c")
+	draw_line(Vector2(-4, -40), Vector2(-4, 4), rope)
+	draw_line(Vector2(4, -40), Vector2(4, 4), rope)
+	for y in range(-36, 4, 6):
+		draw_line(Vector2(-4, y), Vector2(4, y), Color("8a6440"))
 
 ## This prop's whole drawing, when it has one (landmarks, decor, new kinds).
 func art_texture() -> Texture2D:
@@ -214,14 +294,14 @@ const STONE_DOOR_OPEN = preload("res://Forest/art/v6/stone_door_open.png")
 const SLATE = preload("res://Forest/art/v6/slate_roof.png")
 ## Building kinds, timber and stone: every wall, door, floor and roof behaves
 ## alike (housing counts them all).
-const WALLS := ["wood_wall","stone_wall"]
+const WALLS := ["wood_wall","stone_wall","bogwood_wall","palewood_wall","sandstone_wall","crystal_wall"]
 const DOORS := ["wood_door","stone_door","big_gate"]
 ## Pass 13: the pen gate (three tiles wide; E swings it open like a door) and
 ## the hitching post (a companion tied to it stays put).
 const GATE_ART := preload("res://Forest/art/pass11/big_gate.png")
 const GATE_OPEN_ART := preload("res://Forest/art/pass11/big_gate_open.png")
 const HITCH_ART := preload("res://Forest/art/pass11/hitching_post.png")
-const FLOORS := ["wood_floor","stone_floor"]
+const FLOORS := ["wood_floor","stone_floor","bogwood_floor","palewood_floor","sandstone_floor","crystal_floor"]
 const ROOFS := ["thatch_roof","slate_roof"]
 var _flicker := 0.0
 
@@ -242,7 +322,7 @@ func _process(delta: float) -> void:
 	var previous_alpha := modulate.a
 	modulate = Color(1.5,1.5,1.5) if _hit_flash > 0 else Color.WHITE
 	if kind in ROOFS: modulate.a=previous_alpha
-	if kind == "campfire":
+	if kind in ["campfire", "cooking_pot"]:
 		_flicker += delta
 		if _flicker > 0.14:
 			_flicker = 0.0
@@ -257,7 +337,7 @@ func _process(delta: float) -> void:
 	if has_node("PlacedObject/Sprite2D"):
 		get_node("PlacedObject/Sprite2D").position.x = _shake_offset()
 	queue_redraw()
-	if kind not in ["campfire","thatch_roof","slate_roof","chest"] and _hit_timer <= 0: set_process(false)
+	if kind not in ["campfire","cooking_pot","thatch_roof","slate_roof","chest","cave_exit"] and _hit_timer <= 0: set_process(false)
 
 func receive_hit(amount := 1) -> void:
 	hp = maxi(0,hp-amount)
@@ -300,7 +380,7 @@ func _ready() -> void:
 		material = _ashen_material
 	elif SWAY.has(kind): material = _sway_material(kind)
 	elif WILD.has(kind) and WILD[kind].has("sway"): material = _wild_sway(kind)
-	set_process(kind in ["campfire","thatch_roof","slate_roof","chest"])
+	set_process(kind in ["campfire","cooking_pot","thatch_roof","slate_roof","chest","cave_exit"])
 	collision_layer = 16
 	collision_mask = 0
 	if has_parts():
@@ -410,6 +490,80 @@ func _draw() -> void:
 			draw_rect(Rect2(-10,y,20,3),Color("2e241f"))
 			draw_rect(Rect2(-9,y+1,18*float(hp)/max_hp,1),Color("8fd4d6"))
 
+## Pass 15: where a structure meets the earth. A faint contact shadow under
+## its foot and a few tufts of the ground's own growth over its bottom edge,
+## so it stands in the ground rather than on it ("they look like they were
+## simply placed there"). ForestWorld.ground_kind_at sets `ground`.
+var ground := ""
+const GROUNDED := ["tent", "shrine", "folk_hut", "folk_camp", "bone_pile", "cache", "relic", "rock", "workbench",
+	"hide_bed", "sunward_tent", "ashen_tent", "sunward_stall", "ashen_totem", "chalk_rock", "pale_crystal",
+	"rustiron_vein", "sunstone_vein", "ashglass_vein", "bogiron_vein", "meteor_rock", "skyfang_spire", "dead_tree",
+	"dune_skull", "keeper_camp", "incubator", "sun_sail", "stilt_hut", "fish_rack", "well", "canopy", "reed_lantern", "cave_mouth"]
+const TUFT_TONES := {
+	"grass": [Color("2f5a2e"), Color("4f8a3c"), Color("86b755")],
+	"dirt": [Color("3f5a2a"), Color("5f7f3a"), Color("8a9a58")],
+	"sand": [Color("7d6240"), Color("a88a55"), Color("cdb47e")],
+	"bog": [Color("23301d"), Color("3b4e2c"), Color("66773f")],
+	"pale": [Color("55524b"), Color("7f7b70"), Color("a9a497")],
+	"stone": [Color("45454b"), Color("67676e"), Color("93939a")],
+}
+## Tufts as pixels (dx, dy, tone) from their foot: blades of grass, a dry
+## clump, a moss cushion, pebbles.
+const TUFTS := [
+	[[0, 0, 0], [1, 0, 0], [2, 0, 0], [0, -1, 1], [2, -1, 1], [1, -2, 2], [-1, -1, 1], [3, -2, 2]],
+	[[0, 0, 0], [1, 0, 0], [1, -1, 1], [1, -2, 2], [2, -1, 1], [3, 0, 0], [3, -1, 2]],
+	[[0, 0, 0], [1, 0, 1], [2, 0, 0], [-1, 0, 0], [0, -1, 2], [1, -1, 1], [2, -1, 2]],
+]
+const PEBBLES := [[[0, 0, 0], [1, 0, 1], [0, -1, 2]], [[0, 0, 0], [1, 0, 0], [2, 0, 1], [1, -1, 2]]]
+
+func _contact_back(width: float) -> void:
+	if not kind in GROUNDED: return
+	draw_set_transform(Vector2(0, 6), 0.0, Vector2(1.0, 0.26))
+	draw_circle(Vector2.ZERO, width * 0.46, Color(0.06, 0.04, 0.02, 0.16))
+	draw_circle(Vector2.ZERO, width * 0.32, Color(0.06, 0.04, 0.02, 0.14))
+	draw_set_transform(Vector2(_shake_offset(), 0))
+
+func _contact_front(width: float) -> void:
+	if not kind in GROUNDED: return
+	var tones: Array = TUFT_TONES.get(ground if ground != "" else "grass", TUFT_TONES.grass)
+	var h := absi(hash(cell))
+	var half := maxf(4.0, width * 0.46)
+	var count := 3 + h % 3
+	for i in count:
+		h = absi(hash(Vector2i(h, i)))
+		# Most at the corners of its foot, now and then one in front.
+		var side := -1.0 if i % 2 == 0 else 1.0
+		var x := side * (half - float(h % 7)) if i < 4 else float(h % int(half * 2.0 + 1.0)) - half
+		var y := 7.0 - float((h / 7) % 2)
+		var shape: Array = PEBBLES[h % PEBBLES.size()] if ground in ["stone", "sand"] and i == count - 1 else TUFTS[h % TUFTS.size()]
+		for px in shape:
+			draw_rect(Rect2(roundf(x) + float(px[0]), y + float(px[1]), 1, 1), tones[int(px[2])])
+
+## Pass 15: the cooking pot (tools/items/foods.py --art pot), with its fire
+## flickering under it and steam rising off the stew.
+static var _pot_art: Texture2D
+func _draw_pot() -> void:
+	if _pot_art == null:
+		var path := "res://Forest/art/crops/cooking_pot.png"
+		if ResourceLoader.exists(path): _pot_art = load(path)
+		elif FileAccess.file_exists(path):
+			var img := Image.load_from_file(ProjectSettings.globalize_path(path))
+			if img: _pot_art = ImageTexture.create_from_image(img)
+	if _pot_art:
+		_contact_back(float(_pot_art.get_width()) * 0.7)
+		draw_texture(_pot_art, Vector2(-_pot_art.get_width() / 2, 7 - _pot_art.get_height()))
+	else:
+		draw_texture_rect_region(FIRE, Rect2(-14,-17,28,24), Rect2((variant%4)*28,0,28,24))
+	# Embers under the pot, and wisps of steam.
+	var t := Time.get_ticks_msec() / 1000.0 + float(absi(hash(cell)) % 97) * 0.1
+	for i in 3:
+		var ember := Vector2(-5 + i * 5, 4 - float((variant + i) % 2))
+		draw_rect(Rect2(ember, Vector2.ONE), Color("ffb347") if (variant + i) % 3 else Color("ff6a2a"))
+	for i in 2:
+		var k := fmod(t * 0.55 + i * 0.5, 1.0)
+		var wisp := Vector2(-2 + i * 4 + sin(t * 2.0 + i) * 2.0, -16 - k * 12.0)
+		draw_rect(Rect2(wisp.round(), Vector2(2, 1)), Color(0.93, 0.93, 0.9, 0.5 * (1.0 - k)))
+
 func _draw_visual() -> void:
 	if kind == "big_gate":
 		var gate: Texture2D = GATE_OPEN_ART if opened else GATE_ART
@@ -434,17 +588,27 @@ func _draw_visual() -> void:
 		return
 	if kind in TRIBE_PROPS:
 		var art := tribe_art(kind)
-		if art: draw_texture(art, Vector2(-art.get_width() / 2, 7 - art.get_height()))
+		if art:
+			_contact_back(float(art.get_width()) * 0.8)
+			draw_texture(art, Vector2(-art.get_width() / 2, 7 - art.get_height()))
+			_contact_front(float(art.get_width()) * 0.8)
 		return
 	if kind == "boat":
 		# Moored: the rowboat as it was left (pass 12, BoatRide's 8 headings).
 		draw_texture_rect_region(ROWBOAT, Rect2(-17, -15, 34, 34), Rect2(heading * 34, 0, 34, 34))
 		return
+	if kind == "cave_exit":
+		_draw_shaft()
+		return
 	if WILD.has(kind):
-		var tex := wild_art(kind)
+		var tex := cave_mouth_art(ground) if kind == "cave_mouth" else wild_art(kind)
 		if tex:
 			var dim := Color(0.62, 0.62, 0.6) if kind == "clam_bed" and harvested else Color.WHITE
-			draw_texture(tex, Vector2(-tex.get_width() / 2, 7 - tex.get_height()), dim)
+			_contact_back(float(tex.get_width()) * 0.8)
+			# A seam is a block of the outcrop: it stands on the cell's edge like a wall.
+			var foot := 8 if kind.begins_with("seam_") else 7
+			draw_texture(tex, Vector2(-tex.get_width() / 2, foot - tex.get_height()), dim)
+			_contact_front(float(tex.get_width()) * 0.8)
 		return
 	if ART.has(kind):
 		# Child chest/torch scenes retain their interaction, storage and light logic.
@@ -453,11 +617,16 @@ func _draw_visual() -> void:
 		if has_parts(): return
 		var key := "wall_alt" if kind == "wall" and variant % 3 == 1 else kind
 		var texture: Texture2D = CHALK[key] if chalk and CHALK.has(key) else (SANDSTONE[key] if sandstone and SANDSTONE.has(key) else ART[key])
-		var bottom := 8 if kind in ["wall", "ore", "wood_wall", "wood_floor", "stone_wall", "stone_floor"] else 7
+		var bottom := 8 if kind in ["wall", "ore"] or kind in WALLS or kind in FLOORS else 7
+		_contact_back(float(texture.get_width()) * 0.8)
 		draw_texture(texture, Vector2(-texture.get_width()/2, bottom-texture.get_height()), Color("b99be8") if rich_vein else Color.WHITE)
+		_contact_front(float(texture.get_width()) * 0.8)
 		return
 	if kind == "campfire":
 		draw_texture_rect_region(FIRE, Rect2(-14,-17,28,24), Rect2((variant%4)*28,0,28,24))
+		return
+	if kind == "cooking_pot":
+		_draw_pot()
 		return
 	match kind:
 		"tree":
@@ -492,6 +661,7 @@ func get_collision_rect() -> Rect2:
 		var bounds := Rect2()
 		for rect in get_collision_rects(): bounds = rect if not bounds.has_area() else bounds.merge(rect)
 		return bounds
+	if kind in WALLS: return Rect2(-8,-8,16,16)
 	match kind:
 		"wall","ore","wood_wall","stone_wall": return Rect2(-8,-8,16,16)
 		"wood_door","stone_door": return Rect2() if opened else Rect2(-8,-8,16,16)
@@ -503,6 +673,7 @@ func get_collision_rect() -> Rect2:
 		"workbench": return Rect2(-15,-8,30,15)
 		"hide_bed": return Rect2(-12,-22,24,29)
 		"campfire": return Rect2(-12,-9,24,16)
+		"cooking_pot": return Rect2(-10,-6,20,11)
 		"shrine": return Rect2(-20,-13,40,20)
 		"chest": return Rect2(-7,-6,14,12)
 		"torch": return Rect2(-3,-1,6,6)
@@ -518,7 +689,7 @@ func get_shadow_footprint() -> Rect2:
 		# a dark box round the mesa, so it looked set down on the sand).
 		if not solid.has_area(): return Rect2(-4, 3, 8, 4)
 		return Rect2(solid.position.x * 0.8, 3, solid.size.x * 0.8, 4)
-	if kind in ["wood_floor","stone_floor","thatch_roof","slate_roof","flowers","mushroom","fern","bush","cattail","nest"]: return Rect2()
+	if kind in FLOORS or kind in ["thatch_roof","slate_roof","flowers","mushroom","fern","bush","cattail","nest"]: return Rect2()
 	return get_collision_rect()
 
 func get_target_rect() -> Rect2:
@@ -534,6 +705,8 @@ func get_target_rect() -> Rect2:
 		# The whole drawing, bottom-anchored like _draw_visual draws it.
 		var art: Texture2D = ART[kind]
 		return Rect2(-art.get_width()/2.0, 7.0-art.get_height(), art.get_width(), art.get_height()).grow(2)
+	if kind in FLOORS: return Rect2(-8,-8,16,16)
+	if kind in WALLS: return Rect2(-8,-20,16,28)
 	match kind:
 		"tree": return Rect2(-30,-65,60,72)
 		"rock": return Rect2(-20,-37,40,44)
@@ -543,6 +716,7 @@ func get_target_rect() -> Rect2:
 		"hide_bed": return Rect2(-15,-33,30,40)
 		"thatch_roof","wood_floor","slate_roof","stone_floor": return Rect2(-8,-8,16,16)
 		"campfire": return Rect2(-14,-17,28,24)
+		"cooking_pot": return Rect2(-15,-24,30,31)
 		"chest": return Rect2(-8,-13,16,20)
 		"torch": return Rect2(-7,-25,14,32)
 		"incubator": return Rect2(-14,-15,28,22)
@@ -560,7 +734,8 @@ func get_shadow_height() -> float:
 	if kind == "sun_sail": return 24.0
 	if kind == "big_gate": return 28.0
 	if kind == "hitching_post": return 30.0
-	return {"tree":65.0,"rock":31.0,"tent":43.0,"shrine":55.0,"workbench":12.0,"wood_wall":23.0,"wood_door":23.0,"stone_wall":23.0,"stone_door":23.0,"torch":22.0,"chest":13.0,"campfire":12.0,"thatch_roof":18.0,"slate_roof":18.0}.get(kind,18.0)
+	if kind in WALLS: return 23.0
+	return {"tree":65.0,"rock":31.0,"tent":43.0,"shrine":55.0,"workbench":12.0,"wood_wall":23.0,"wood_door":23.0,"stone_wall":23.0,"stone_door":23.0,"torch":22.0,"chest":13.0,"campfire":12.0,"cooking_pot":16.0,"thatch_roof":18.0,"slate_roof":18.0}.get(kind,18.0)
 
 ## A wild nest with its eggs, or the keeper's incubator with the egg it's
 ## warming (it rocks as it nears hatching; a bar shows how close it is).

@@ -96,11 +96,26 @@ func run():
 	await click(hud.slots[5])
 	check(stage.player.get_equipment("head")!=null and InventoryManager.inventory[5].item==null,"Armor click-release equips once")
 	var start: Vector2 = hud.slots[2].get_global_rect().get_center()
+	# Let go just past the pack's top edge: it goes back to its pocket.
+	var edge: Rect2 = hud.inventory_panel.get_global_rect()
+	var near := Vector2(edge.get_center().x, edge.position.y - 4.0)
+	await motion(start)
+	await mouse(start,true)
+	await motion(near,true)
+	await mouse(near,false)
+	check(InventoryManager.inventory[2].item.id=="stone" and InventoryManager.inventory[2].quantity==6,"A release just past the pack's edge safely cancels")
+	# Pass 15: well out over the world, the stack is dropped there (Hank: drop
+	# items "by dragging out").
 	await motion(start)
 	await mouse(start,true)
 	await motion(Vector2(465,20),true)
 	await mouse(Vector2(465,20),false)
-	check(InventoryManager.inventory[2].item.id=="stone" and InventoryManager.inventory[2].quantity==6,"Outside release safely cancels")
+	var dropped: Array = get_tree().get_nodes_in_group("dropped_items").filter(func(d): return is_instance_valid(d.item) and d.item.id == "stone" and d.quantity == 6)
+	check(InventoryManager.inventory[2].item == null and dropped.size() == 1, "A release out over the world drops the stack there")
+	for d in dropped: d.queue_free()
+	InventoryManager.inventory[2] = {"item": ItemDB.make("stone"), "quantity": 6}
+	InventoryManager.inventory_changed.emit()
+	await settle()
 	await capture("01-satchel")
 	var chest := Storage.new()
 	add_child(chest)

@@ -8,7 +8,7 @@ extends RefCounted
 ## here (FolkManager keeps who lives where, by room key).
 const MIN_TILES := 6
 const MAX_TILES := 60
-const WALLS := ["wood_wall","stone_wall","wood_door","stone_door"]
+const WALLS := ["wood_wall","stone_wall","wood_door","stone_door","bogwood_wall","palewood_wall","sandstone_wall","crystal_wall"]
 const DOORS := ["wood_door","stone_door"]
 const LIGHTS := ["torch","campfire"]
 const BEDS := ["hide_bed"]

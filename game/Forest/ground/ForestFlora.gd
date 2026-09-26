@@ -49,12 +49,16 @@ func setup(owner_world) -> void:
 	material_shared.shader = SHADER
 	material_shared.set_shader_parameter("atlas_cells", Vector2(columns, rows))
 	material_shared.set_shader_parameter("pushers", _no_pushers())
-	if world.get("PALE_HILLS") != null:
-		var hills: Rect2i = world.PALE_HILLS
-		material_shared.set_shader_parameter("pale_area", Vector4i(hills.position.x, hills.position.y, hills.end.x, hills.end.y))
+	# The ash's grey over the Pale Lands (pass 15: the ground's land map).
+	if world.get("surface") != null and world.surface.has_method("lands_to"): world.surface.lands_to(material_shared)
 	# Plants grouped by patch.
+	var timing := "--gen-timing" in OS.get_cmdline_user_args()
+	var t := Time.get_ticks_msec()
+	var scattered := _scatter(meta.kinds)
+	if timing: print("FLORA scatter %dms (%d plants)" % [Time.get_ticks_msec() - t, scattered.size()])
+	t = Time.get_ticks_msec()
 	var by_patch := {}
-	for p in _scatter(meta.kinds):
+	for p in scattered:
 		var index := _patch_of(p.cell)
 		if not by_patch.has(index): by_patch[index] = []
 		by_patch[index].append(p)
@@ -68,17 +72,36 @@ func setup(owner_world) -> void:
 		mm.instance_count = plants.size()
 		var roots := PackedVector2Array()
 		roots.resize(plants.size())
+		# Each plant's transform (an upright quad at its root), tint and custom
+		# data (atlas index, sway, root) written straight into the buffer:
+		# [1, 0, 0, x, 0, 1, 0, y, r, g, b, a, index, sway, x, y].
+		var buf := PackedFloat32Array()
+		buf.resize(plants.size() * 16)
+		var k := 0
 		for i in plants.size():
 			var p: Dictionary = plants[i]
-			roots[i] = p.root
-			mm.set_instance_transform_2d(i, Transform2D(0.0, p.root))
-			mm.set_instance_custom_data(i, Color(float(p.index), float(p.sway), p.root.x, p.root.y))
-			mm.set_instance_color(i, p.tint)
+			var root: Vector2 = p.root
+			var tint: Color = p.tint
+			roots[i] = root
+			buf[k] = 1.0
+			buf[k + 3] = root.x
+			buf[k + 5] = 1.0
+			buf[k + 7] = root.y
+			buf[k + 8] = tint.r
+			buf[k + 9] = tint.g
+			buf[k + 10] = tint.b
+			buf[k + 11] = tint.a
+			buf[k + 12] = float(p.index)
+			buf[k + 13] = float(p.sway)
+			buf[k + 14] = root.x
+			buf[k + 15] = root.y
+			k += 16
 			var c: Vector2i = p.cell
 			if not _cell_plants.has(c):
 				_cell_plants[c] = [index, []]
 				_shown[c] = true
 			_cell_plants[c][1].append(i)
+		mm.buffer = buf
 		var patch := MultiMeshInstance2D.new()
 		patch.name = "Patch_%d_%d" % [index.x, index.y]
 		patch.multimesh = mm
@@ -89,7 +112,10 @@ func setup(owner_world) -> void:
 		_patches[index] = patch
 		_roots[index] = roots
 		_total += plants.size()
+	if timing: print("FLORA patches %dms" % (Time.get_ticks_msec() - t))
+	t = Time.get_ticks_msec()
 	refresh()
+	if timing: print("FLORA refresh %dms" % (Time.get_ticks_msec() - t))
 
 
 func _patch_of(c: Vector2i) -> Vector2i:

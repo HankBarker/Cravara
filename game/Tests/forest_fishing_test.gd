@@ -136,11 +136,19 @@ func run():
 	for recipe in CraftingManager.personal_recipes:
 		if recipe.item_id=="fishing_rod" and recipe.get("station","")=="workbench": rod_recipe=true
 	check(rod_recipe,"Fishing rod has a workbench crafting recipe")
-	var species: Dictionary={}
+	# (Pass 15: every land's water has fish of its own, so there are more than
+	# three kinds now; each hole's fish is one of its own land's, and between
+	# them the waters offer every difficulty.)
+	var waters: Dictionary = preload("res://Forest/life/FoodData.gd").WATERS
+	var moods: Dictionary={}
+	var own_fish := true
 	for spot in fishing.spots:
-		species[spot.species]=true
+		var fish: Dictionary = fishing.FISH[int(spot.species)]
+		moods[str(fish.difficulty)]=true
+		if not str(fish.id) in waters.get(str(spot.get("land", "forest")), [[]])[0]: own_fish = false
 		check(stage.world.water.has(spot.cell),"Fishing hole occupies actual water")
-	check(species.size()==3,"Seeded river offers all three fishing difficulties")
+	check(own_fish,"Each fishing hole holds a fish of its own land's water")
+	check(moods.size()>=3,"Seeded waters offer every fishing difficulty (%s)" % [moods.keys()])
 	var first: Dictionary=fishing.spots[0]
 	stage.player.position=bank_for(first)
 	select_item("fishing_rod",1)

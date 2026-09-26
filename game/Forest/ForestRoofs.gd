@@ -26,7 +26,7 @@ const PALETTES := {
 	"thatch_roof": {"outline": Color("2e241f"), "dark": Color("6e5a3e"), "mid": Color("9c8348"), "light": Color("c7a85c"), "ridge": Color("5e7a33"), "ridge_dark": Color("3f5128")},
 }
 
-const WALL_KINDS := ["wood_wall", "stone_wall", "wood_door", "stone_door"]
+const WALL_KINDS := ["wood_wall", "stone_wall", "wood_door", "stone_door", "bogwood_wall", "palewood_wall", "sandstone_wall", "crystal_wall"]
 var world: Node
 var dirty := true
 ## [{cells: Dictionary, kind: String, texture: ImageTexture, origin: Vector2, tiles: Array}]

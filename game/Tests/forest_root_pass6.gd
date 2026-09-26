@@ -56,7 +56,9 @@ func run():
 	check(garden.use_at(point,"water_bucket") and InventoryManager.inventory[0].item.id=="bucket","watering returns the bucket in its slot")
 	check(not garden.use_at(point,"water_bucket"),"watered plot refuses a second bucket")
 	garden._process(45)
-	check(garden.plots[Vector2i(2,0)].growth==45,"watered crop advances only active time")
+	# Pass 15: a berry grows a quarter faster in its own land (the green).
+	var grown: float = 45.0 * (garden.HOME_SPEED if garden._at_home(Vector2i(2,0),"berry_seed") else 1.0)
+	check(is_equal_approx(float(garden.plots[Vector2i(2,0)].growth),grown),"watered crop advances only active time")
 	check(not garden.use_at(point,""),"unripe crop cannot be harvested")
 	player.apply_appearance({"skin":"umber","hair":"silver","hair_style":"tied","cloth":"river","trousers":"slate"})
 	check(stage.save_journey(SAVE),"garden and custom appearance save atomically")
@@ -64,7 +66,7 @@ func run():
 	garden.plots.clear()
 	check(stage._load_journey(SAVE),"new save restores")
 	check(player.appearance.skin=="umber" and player.appearance.hair_style=="tied","skin and hairstyle survive reload")
-	check(garden.plots[Vector2i(2,0)].growth==45 and garden.plots[Vector2i(2,0)].watered,"watering and partial growth survive reload")
+	check(is_equal_approx(float(garden.plots[Vector2i(2,0)].growth),grown) and garden.plots[Vector2i(2,0)].watered,"watering and partial growth survive reload")
 	player.global_position=Vector2.ZERO
 	player.set_physics_process(false)
 	garden.set_process(false)

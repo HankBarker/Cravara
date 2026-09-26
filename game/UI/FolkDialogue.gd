@@ -329,7 +329,7 @@ func show_tasks() -> void:
 		return
 	var status: String = quests.status(q)
 	var title := Label.new()
-	title.text = str(q.title) + ("  (taken)" if status == "active" else ("  (ready!)" if status == "ready" else ""))
+	title.text = _say(str(q.title)) + ("  (taken)" if status == "active" else ("  (ready!)" if status == "ready" else ""))
 	title.add_theme_color_override("font_color", UI.GOLD)
 	title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	title.custom_minimum_size = Vector2(WIDTH - 16, 0)
@@ -349,13 +349,13 @@ func show_tasks() -> void:
 	var grid := _grid(2)
 	match status:
 		"offer":
-			say(str(q.ask))
+			say(_say(str(q.ask)))
 			_button(grid, "I'll do it", func():
 				quests.accept(q.id)
 				show_tasks())
 			_button(grid, "Not now", func(): show_talk(""))
 		"active":
-			say("How's it going? " + str(q.ask))
+			say("How's it going? " + _say(str(q.ask)))
 			_button(grid, "Back", func(): show_talk(""))
 		"ready":
 			say("You've done it? Let me see...")
@@ -498,8 +498,11 @@ func show_advice() -> void:
 	list.add_child(grid)
 	for species in Folk.BEASTS:
 		var facts: Array = Folk.BEASTS[species]
+		# Pass 15: and what it loves (a favourite wins twice the trust).
+		var loves: String = preload("res://Forest/life/Foods.gd").loves(str(species))
+		var eats: String = str(facts[1]) + ((", and it loves " + loves) if loves != "" else "")
 		_button(grid, str(facts[0]), func():
-			say("%s. Eats: %s. %s %s" % [facts[0], facts[1], facts[2], facts[3]]))
+			say("%s. Eats: %s. %s %s" % [facts[0], eats, facts[2], facts[3]]))
 	_button(_content, "Back", func(): show_talk(""))
 	_refit()
 
@@ -555,3 +558,8 @@ func show_house() -> void:
 			show_house())
 	_button(row, "Back", func(): show_talk(""))
 	_refit()
+
+
+## A quest's words with the lands' ways in them (pass 15: Regions.say).
+func _say(text: String) -> String:
+	return preload("res://Forest/world/Regions.gd").say(text, get_tree().get_first_node_in_group("forest_world"))

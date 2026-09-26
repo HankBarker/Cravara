@@ -41,6 +41,8 @@ const EFFECTS := {
 	"luck": ["+%s%% rare finds", 100.0, 1.0],
 	"wisdom": ["+%s%% skill experience", 100.0, 0.5],
 	"wading": ["+%s%% wading pace", 100.0, 1.0],
+	# Pass 15: a meal's (Core Keeper's food): more vitality to have.
+	"vigor": ["+%s max vitality", 1.0, 100.0],
 }
 
 
@@ -57,6 +59,8 @@ static func value(keeper, effect: String) -> float:
 	if keeper.is_inside_tree():
 		var skills = keeper.get_tree().get_first_node_in_group("skills")
 		if skills: total += float(skills.value(effect))
+	# Pass 15: what the keeper last ate (a meal's buffs, for a while).
+	if keeper.has_method("food_buff"): total += float(keeper.food_buff(effect))
 	var cap: float = float(EFFECTS.get(effect, ["", 1.0, 999.0])[2])
 	return minf(total, cap)
 
@@ -87,8 +91,12 @@ static func lines(item) -> Array:
 	for effect in EFFECTS:
 		var amount := own(item, effect)
 		if amount == 0.0: continue
-		var row: Array = EFFECTS[effect]
-		var shown := amount * float(row[1])
-		var text := ("%d" % int(round(shown))) if absf(shown - round(shown)) < 0.05 else ("%.1f" % shown)
-		out.append(str(row[0]) % text if "%s" in str(row[0]) else str(row[0]))
+		out.append(line(effect, amount))
 	return out
+
+## One effect's line ("+15% melee damage").
+static func line(effect: String, amount: float) -> String:
+	var row: Array = EFFECTS.get(effect, ["%s " + effect, 1.0, 999.0])
+	var shown := amount * float(row[1])
+	var text := ("%d" % int(round(shown))) if absf(shown - round(shown)) < 0.05 else ("%.1f" % shown)
+	return str(row[0]) % text if "%s" in str(row[0]) else str(row[0])

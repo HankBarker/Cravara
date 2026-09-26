@@ -1,5 +1,178 @@
 # Cravera: The Skyfang Wilds
 
+## Fifteenth pass: a world in rings, caves, the larder, and a long road for skills
+
+**A new world every expedition (Core Keeper's rings)**
+1. **A new expedition raises a new world from a seed of its own.** Camp sits in the middle of the
+   plains. The next ring out holds the Mirefen Bog on one side and the Sunscar Dunes on the other.
+   Further out are the dangerous lands: the Pale Lands' ash and the Bonelands' ridges. Every land is
+   always there; which way each one lies changes with the seed, and the borders between them
+   wander.
+2. **Much bigger.** The world is 420 by 420 tiles (the old one was 336 by 276), and each land is
+   far larger than its old box. **An old journey keeps its old world exactly as it was.**
+3. **Small places inside the lands:**
+   - **The Red Meadow**: crimson grass on the plains, with wild red grain growing in it.
+   - **Stillwater Haven**: dry ground in the bog with a reed village. Hunters won't follow you in.
+   - **Oases**: palms and sweet water in the dunes (the Sunward town has its own).
+
+   Walking into one names it.
+4. **More villages and ruins.** Stillwater, the Sunward oasis town and the Ashen war camp are in
+   every world, and the tribes' camps pitch in their own lands. Six new ruins stand in the far
+   lands, each with a carving for the journal: the Drowned Hall, the Sunken Watch, the Sand Temple,
+   the Buried Arches, the Ash Moot and the Bone Shrine.
+5. **The map (M) keeps the world's real shape** (a ring world is square). The key sits beside it,
+   caves are marked, and it lists which way each land lies. Underground, you show at the mouth you
+   went in by.
+6. **"The wilds are waking"** shows while a world is raised or a journey loads. A new world takes a
+   few seconds.
+
+**Caves (two in every land, all different)**
+7. **Ten caves**, each with an obvious stone mouth in its land's rock. Press E at the mouth to go in,
+   and E at the shaft of daylight inside to come back out. It's dark down there whatever the hour:
+   the crystal gives a cold blue light, and a torch shows the rest.
+   - **Hollows**: small caves with a pocket or two of crystal and a cache.
+   - **Compy Warrens** (plains, dunes): nine compies chittering in the dark, with bones and a trove.
+   - **Crystal Grottos** (Pale Lands, Bonelands): crystal on every wall, and the aggressive
+     crystal-sick raptors and an allosaur that den there.
+   - **The Drip Cave** (the bog): a lost explorer, hurt and dying. Bring a **Mushroom Tonic** (made
+     at a campfire). Save them and they give you 30 ancient coins, their Old Compass and two prism
+     crystals, and tell you where the Sleeper lies.
+   - **The Sleeper's Lair** (dunes) and **the Ridge Lair** (Bonelands): a huge crystal-grown tyrant
+     asleep on its bones, with Zs rising. Come within about seven tiles or strike it and it wakes
+     with a roar and a boss bar. It has two and a half times a rex's health. It drops **the
+     Sleeper's Fang**, a trinket (you hit like a tyrant and every kill feeds you), plus scale and
+     prime meat. Get far enough away and it goes back to sleep.
+
+**Skills: the long road** (you said you'd killed two dinosaurs and were already level four)
+8. **Fifty levels a skill, each dearer than the last**: 50 XP for level 2, about 900 for level 11,
+   about 7,700 for level 50.
+9. **A kill teaches by the beast, not by the blows**: a compy 3, a raptor 12, a trike or stego 30, an
+   allosaur 45, a rex 110, a spinosaur 150, and the bosses far more.
+   - A Skytouched beast teaches a third more, a Crystalback 60% more and a mutant a fifth more; a
+     baby teaches a quarter as much.
+   - Each blow that lands teaches a little of its own.
+10. **One star point a level, and one more every tenth.** Every level also gives a small boost.
+    Several levels at once (a great kill) make one banner rather than a queue of them.
+11. **Much bigger trees: 28 stars a skill** (ten new in each), and many can be lit two or three
+    times. Each rank costs a point, opens five levels after the last, and gives its effect again.
+    A mastered skill (level 50) has earned exactly enough to light everything.
+12. **The sword's new edges**:
+    - Crimson Tide: your blows heal you.
+    - Whirlwind: stronger sweeps. Earthshaker: stronger smashes.
+    - Executioner: extra damage to a foe below a third of its health.
+    - Titan's Grip: more knockback, and you take less.
+    - Juggernaut and Vital Surge: more vitality.
+    - Blood Rush: each blow in a quick string lands harder.
+    - Last Stand: more damage and defence below half health.
+    - Iron Hide: more defence.
+
+    Every other skill gains ten stars along the same lines.
+13. **An older journey's XP is counted again on the new road**, so its levels follow from what it
+    earned. Its lit stars stay lit, at rank one.
+
+**The larder: crops, meat, meals (Core Keeper's cooking)**
+14. **Crops for every land**, each growing a quarter faster in its home land:
+    - Plains: berries, tubers and red grain.
+    - Bog: mushrooms and mirelotus.
+    - Dunes: sun melons and cactus fruit.
+    - Pale Lands: ember peppers.
+    - Bonelands: marrow gourds.
+15. **The far crops grow wild in their lands** (red grain in the Red Meadow, lotus in the bog, melons,
+    peppers and gourds out beyond). Press E to gather them and take their first seeds. The Sunward
+    trade seeds too, and old caches sometimes hold them.
+16. **Farming fits in now.** Tilled beds are furrowed soil blended into the ground around them, and
+    crops stand in the earth with their own shade and sway when you brush past.
+17. **Meat by the size of the beast**:
+    - a **morsel** from a dodo, compy, lystro or proto
+    - **meat** from raptors and parasaurs
+    - a **haunch** from a trike, stego or anky (trike and stego give the same)
+    - a **titan rib** from a longneck
+    - **prime meat** from the big hunters (allosaur, carno, rex, spino...)
+18. **The Cooking Pot** (at the workbench: 10 stone, 3 planks, 2 fibre) cooks 16 dishes, and every
+    dish is a timed buff:
+    - Redgrain Loaf: slower hunger. Tuber Mash: healing over time. Mushroom Stew: more vitality.
+    - Lotus Broth: wading and fishing. Melon Cooler: speed. Cactus Jelly: dodging and speed.
+    - Ember Chili: melee damage and warmth. Gourd Porridge: defence.
+    - Hunter's Stew: harder hits and crits. Pepper Steak: melee damage and crits.
+    - Titan Pot Roast: +40 vitality and healing over time. Fisher's Chowder: fishing and luck.
+    - Forager's Salad: bigger harvests and gathering. Miner's Pie: gathering and light.
+    - Beast Treat and Bloody Bait: for taming (below).
+
+    The campfire roasts the plain cuts: a Seared Morsel, a Haunch Roast (defence), a Titan Rib
+    Roast (vitality) and a Prime Steak (melee). What you last ate and how long its buff lasts shows
+    under your health. Different dishes' buffs stack; the same buff is replaced by the newer meal.
+    A buff meal can be eaten when you're full.
+19. **Taming by diet**: every beast eats its own diet, and **a favourite food wins twice the trust**:
+    - trikes: sun melon
+    - stegos and ankys: marrow gourd
+    - parasaurs and longnecks: mirelotus
+    - dodos: red grain
+    - lystros: tubers
+    - protos: cactus fruit
+    - the hunters: prime meat
+    - the spinosaur and Suchomimus: mire eel
+
+    The big hunters scorn a morsel. A Beast Treat counts as a favourite for any plant-eater, and
+    Bloody Bait for any hunter.
+
+**Fish**
+20. **Every land's water has its own fish**, newly drawn and shown full size on the line:
+    - Plains: reed perch, shardfin, moonscale.
+    - Bog: mire eel and fen pike.
+    - Dunes: oasis carp and sunfin.
+    - Pale Lands: ash char and frostjaw.
+    - Bonelands: rust catfish and bonegill.
+
+**Building from each land**
+21. **Each land's own stuff**: the bog's trees give mirewood, the Pale Lands' trees palewood, the
+    dunes' and Bonelands' rock sandstone, and crystal builds too. Each makes walls and floors, and
+    houses count them.
+22. **Placed things stand in the ground.** Tents, huts, workbenches, beds, stalls, veins and rocks
+    get a soft contact shadow and tufts of the ground they stand on (grass, dry grass, moss) instead
+    of a hard bottom edge.
+
+**Ore**
+23. **Much more ore, set into the stone.** Each far land's ore now also runs in short seams along
+    its outcrops' rock faces, so it reads as part of the rock. The clusters around the beasts'
+    grounds are bigger too.
+
+**The beasts**
+24. **Raptors hunt as a pack** (deinonychus, Sandblades and compy swarms too). When a pack spots you
+    it holds off out of reach and gathers, chirping. Then it spreads round you and they all go in
+    together, darting back out between slashes. A lone raptor, or a pack after a dodo, just comes
+    straight in.
+25. **The allosaur ambushes.** It slips away to a tree or rock between you, waits still and silent,
+    and bursts out roaring when you come close or turn your back. Strike it first and it simply
+    fights.
+26. **More life in their moments.** Beasts stop to look around, the herds lie down to rest, and
+    hunters stalk low. These are new animations for nineteen species.
+27. **Mutations in two colours**: a mutant's body and its spikes, plates, crest or sail now take
+    different colours (a rose beast is pink with blue spikes). **The allosaur's odd spots are
+    gone**; older speckled beasts show faded bands.
+28. **The wild keeps its numbers**: beasts in caves stay in their caves, and a hunter won't follow
+    you into Stillwater.
+
+**Events**
+29. **Stampede** (by day): a herd of the land's beasts thunders past close by (trikes on the plains,
+    parasaurs in the bog, protoceratops in the dunes, stegos in the Bonelands). The ground shakes
+    harder as they come, and standing in their way gets you trampled. The ones that stay near are a
+    herd like any other.
+30. **A trade caravan**: Sunward traders stop near you for about four minutes, with the far lands'
+    seeds among their wares. (Travelling bands also walk on properly after resting now; before,
+    they stopped for good at their first stop.)
+
+**The pack and the world's chests**
+31. **Dropping**: Q over a pocket of the open pack drops one; Shift or Ctrl with Q drops the stack.
+    You can also drag a stack out of the pack and let go over the world (let go just past a panel's
+    edge and it goes back instead).
+32. **Ancient caches open like chests.** Look through one and take what you want; what you leave
+    stays there (saved). It closes when you walk away.
+
+**Still to come**
+33. **Dinosaur voices from ElevenLabs** (light, occasional, ARK-like calls, a death cry, babies
+    pitched higher): the game and the tool are ready and only need your key.
+34. **The jungle** joins the outer ring next pass.
+
 ## Fourteenth pass: the pack, trinkets, the sickness in the herds, skills among the stars
 
 **The breath is gone**

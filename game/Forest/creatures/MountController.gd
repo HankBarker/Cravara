@@ -290,9 +290,10 @@ func _tick_press(delta: float) -> void:
 
 func feed_mount() -> bool:
 	if not is_mounted() or creature.is_dead or rider.controls_locked or _heal_cooldown > 0 or creature.health >= int(creature.stats.hp): return false
-	var food: String = str(creature.stats.food)
-	if not InventoryManager.remove_item(food,1):
-		creature.notice.emit("Your mount needs berries.")
+	# Pass 15: anything of its diet (Foods.pick).
+	var food: String = preload("res://Forest/life/Foods.gd").pick(creature.species, str(creature.stats.food))
+	if food == "" or not InventoryManager.remove_item(food,1):
+		creature.notice.emit("Your mount needs %s." % preload("res://Forest/life/Foods.gd").plural(str(creature.stats.food)))
 		return false
 	creature.health = mini(int(creature.stats.hp),creature.health+18)
 	_heal_cooldown = 2.5

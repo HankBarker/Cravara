@@ -143,8 +143,8 @@ func _physics_process(delta: float):
 				target.take_damage(dealt,player)
 			# Archery: every arrow that lands teaches; a kill teaches more.
 			if alive and sk:
-				var xp := minf(float(dealt), 40.0) * 0.6
-				if target.is_dead: xp += clampf(float(target.get("stats").hp if target.get("stats") != null else 60) / 10.0, 4.0, 60.0)
+				var xp: float = sk.hit_xp(float(dealt))
+				if target.is_dead: xp += sk.kill_xp(target)
 				sk.gain("archery", xp)
 			# A piercing shot goes on through the first beast.
 			if alive and beast and int(arrow.get("pierce", 0)) > 0:

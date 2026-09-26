@@ -16,10 +16,21 @@ extends RefCounted
 ## (Skarn, the Buried King, Old Maw): the Sky-Fang lens (`lens`).
 
 const SHADER := preload("res://Forest/creatures/genes.gdshader")
+## A mutation's two colours (pass 15): its body, and its accents (the spikes,
+## plates, crest or sail), so a rose beast is pink with blue spikes rather than
+## one flat colour. The ids stay the same for older saves.
 const MUTATIONS := {
-	"purple": Color(0.62, 0.38, 0.92), "white": Color(0.98, 0.96, 0.9), "black": Color(0.2, 0.2, 0.25),
-	"gold": Color(1.0, 0.78, 0.32), "crimson": Color(0.92, 0.22, 0.2), "azure": Color(0.3, 0.62, 1.0),
+	"purple": [Color(0.58, 0.36, 0.88), Color(1.0, 0.8, 0.32)],
+	"white": [Color(0.95, 0.94, 0.9), Color(0.52, 0.76, 1.0)],
+	"black": [Color(0.2, 0.2, 0.25), Color(0.9, 0.26, 0.2)],
+	"gold": [Color(1.0, 0.78, 0.32), Color(0.42, 0.24, 0.12)],
+	"crimson": [Color(0.86, 0.24, 0.2), Color(0.95, 0.82, 0.5)],
+	"azure": [Color(0.3, 0.6, 1.0), Color(0.98, 0.95, 0.85)],
+	"rose": [Color(0.93, 0.52, 0.66), Color(0.32, 0.64, 0.96)],
+	"jade": [Color(0.32, 0.74, 0.56), Color(0.98, 0.8, 0.36)],
 }
+## Speckled (pass 13) read as spots that weren't part of the drawing: it is
+## no longer rolled, and an older beast's speckles show as faded bands.
 const MARKINGS := ["", "bold", "faded", "speckled"]
 const TEMPERS := ["calm", "bold", "skittish", "fierce"]
 const TRAITS := {
@@ -107,10 +118,9 @@ static func _spread(rng: RandomNumberGenerator) -> float:
 
 static func _pick_marking(rng: RandomNumberGenerator) -> String:
 	var r := rng.randf()
-	if r < 0.4: return ""
-	if r < 0.65: return "bold"
-	if r < 0.85: return "faded"
-	return "speckled"
+	if r < 0.45: return ""
+	if r < 0.72: return "bold"
+	return "faded"
 
 
 static func _pick_temper(rng: RandomNumberGenerator) -> String:
@@ -204,16 +214,53 @@ static func apply(m: ShaderMaterial, g: Dictionary, frame_size: Vector2) -> void
 	m.set_shader_parameter("val", float(g.get("val", 1.0)))
 	var mut := str(g.get("mutation", ""))
 	if MUTATIONS.has(mut):
-		var c: Color = MUTATIONS[mut]
+		var c: Color = MUTATIONS[mut][0]
+		var a: Color = MUTATIONS[mut][1]
 		m.set_shader_parameter("mutation", Vector4(c.r, c.g, c.b, 0.92 if mut in ["white", "black"] else 0.86))
+		m.set_shader_parameter("mutation_accent", Vector4(a.r, a.g, a.b, 1.0))
 	else:
 		m.set_shader_parameter("mutation", Vector4(0, 0, 0, 0))
-	m.set_shader_parameter("marking", MARKINGS.find(str(g.get("marking", ""))))
-	var tones := [Color(0.1, 0.08, 0.08), Color(0.3, 0.16, 0.08), Color(0.9, 0.86, 0.74)]
+		m.set_shader_parameter("mutation_accent", Vector4(0, 0, 0, 0))
+	var marking := str(g.get("marking", ""))
+	m.set_shader_parameter("marking", 2 if marking == "speckled" else MARKINGS.find(marking))
+	# Bands in dark tones only (a pale band read as blotches on a dark hide).
+	var tones := [Color(0.1, 0.08, 0.08), Color(0.3, 0.16, 0.08), Color(0.2, 0.13, 0.1)]
 	var tone: Color = tones[clampi(int(g.get("mark_tone", 0)), 0, 2)]
 	m.set_shader_parameter("mark_color", Vector4(tone.r, tone.g, tone.b, 1.0))
 	m.set_shader_parameter("mark_seed", float(g.get("mark_seed", 0.0)))
 	m.set_shader_parameter("frame_size", frame_size)
+
+
+## The drawing's own body hue (turns), read once per art key from its resting
+## side frame: the commonest hue among its coloured, mid-bright pixels; and
+## whether it has accents of another hue at all (y: 1 when under 5% of its
+## coloured pixels are away from the body hue, so the accents take its bands).
+static var _body_looks := {}
+static func body_look(key: String) -> Vector2:
+	if _body_looks.has(key): return _body_looks[key]
+	var look := Vector2.ZERO
+	var DinoArt = load("res://Forest/creatures/DinoArt.gd")
+	var img: Image = DinoArt.frame_image(key, "idle", "side", 0) if DinoArt.has_key(key) else null
+	if img:
+		var buckets := PackedFloat32Array()
+		buckets.resize(36)
+		var hues := PackedFloat32Array()
+		for y in img.get_height():
+			for x in img.get_width():
+				var c := img.get_pixel(x, y)
+				if c.a < 0.5 or c.s < 0.25 or c.v < 0.2 or c.v > 0.92: continue
+				buckets[int(c.h * 36.0) % 36] += 1.0
+				hues.append(c.h)
+		var best := 0
+		for i in 36:
+			if buckets[i] > buckets[best]: best = i
+		look.x = (float(best) + 0.5) / 36.0
+		var away := 0
+		for h in hues:
+			if absf(fposmod(h - look.x + 0.5, 1.0) - 0.5) > 0.11: away += 1
+		look.y = 1.0 if hues.size() > 0 and float(away) / float(hues.size()) < 0.05 else 0.0
+	_body_looks[key] = look
+	return look
 
 
 # ------------------------------------------------------------------ reading them
