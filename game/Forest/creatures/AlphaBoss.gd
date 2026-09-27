@@ -58,13 +58,15 @@ func prepare() -> void:
 	alpha = null
 	den = _find_den()
 	_dress_den()
-	if not beaten(): _raise_alpha()
+	if not session.boss_down("alpha"): _raise_alpha()
 	if is_instance_valid(session.hud): session.hud.hide_boss()
 
 
 ## Dry ground near DEN_NEAR with no ruin inside the clearing: the first spot,
 ## ring by ring, with no water in it (or the least).
 func _find_den() -> Vector2i:
+	# A streamed world's den is the plan's (cleared and boned by it: ChunkGen._plan_den).
+	if world.get("gen") != null and world.gen.den != Vector2i(9999, 9999): return world.gen.den
 	var best := DEN_NEAR
 	var best_wet := 1 << 30
 	for r in range(0, 11):
@@ -89,6 +91,7 @@ func _find_den() -> Vector2i:
 
 
 func _dress_den() -> void:
+	if world.get("gen") != null: return
 	for dy in range(-CLEAR, CLEAR + 1):
 		for dx in range(-CLEAR, CLEAR + 1):
 			var r2 := dx * dx + dy * dy
@@ -122,6 +125,10 @@ func _process(_delta: float) -> void:
 	if not is_instance_valid(session) or den == Vector2i(9999, 9999): return
 	if not is_instance_valid(alpha) or alpha.is_dead:
 		if awake: _victory()
+		# Pass 16: back at its den once its time is up, while the keeper is
+		# well away from it.
+		elif not session.boss_down("alpha") and is_instance_valid(session.player) and session.player.global_position.distance_to(centre()) > 640.0:
+			_raise_alpha()
 		return
 	var keeper: Node2D = session.player
 	if not is_instance_valid(keeper): return
@@ -147,7 +154,7 @@ func _wake() -> void:
 	alpha._face(alpha.global_position.direction_to(session.player.global_position), true)
 	alpha.play_action("roar", 0.9)
 	alpha._shake_near(0.55, 999.0)
-	AudioManager.play_music(MUSIC)
+	session.fight_music("alpha", true)
 	session.hud.show_boss(str(alpha.stats.name), 1.0)
 	session._toast("Skarn, the Shardback Alpha, wakes!")
 
@@ -185,13 +192,14 @@ func _rest() -> void:
 	alpha._threat = null
 	alpha.moves.cancel()
 	session.hud.hide_boss()
-	AudioManager.play_music(session.FOREST_MUSIC)
+	session.fight_music("alpha", false)
 
 
 func _victory() -> void:
 	awake = false
 	session._milestones["alpha"] = true
+	session.boss_fell("alpha")
 	session.hud.show_boss("Skarn has fallen", 0.0)
 	get_tree().create_timer(2.5).timeout.connect(func(): if is_instance_valid(session) and is_instance_valid(session.hud): session.hud.hide_boss())
-	AudioManager.play_music(session.FOREST_MUSIC)
+	session.fight_music("alpha", false)
 	session.hud.show_banner("Skarn has fallen", "The Shardback pack has lost its leader. Its crest lies where it fell.", load("res://Forest/art/items/alpha_crest.png"))

@@ -76,8 +76,24 @@ static func base_frames() -> SpriteFrames:
 			frames.set_animation_speed(clip, float(info.fps))
 			frames.set_animation_loop(clip, bool(info.loop))
 	var skin = load("res://Forest/keeper/KeeperSkin.gd").new()
-	_base = skin._render_all(frames, {}, null, {}, "")
+	# Pass 16: in a window only the standing clips are painted now (it cost a
+	# second of every journey's start); the rest over the next frames
+	# (pump_base, from the live keeper, whose own frames the rig dresses
+	# straight away: to it the base is its clip list). Headless runs, the
+	# tests and tools, get every cel at once as before.
+	var progressive := DisplayServer.get_name() != "headless"
+	_base = skin._render_all(frames, {}, null, {}, "", {}, progressive, ["idle_down", "idle_up", "idle_left", "idle_right"])
+	_base_skin = skin if progressive else null
 	return _base
+
+
+static var _base_skin = null
+
+## Paint the base's clips still waiting, for up to `budget_ms`.
+static func pump_base(budget_ms := 1.0) -> void:
+	if _base_skin == null: return
+	_base_skin.pump(budget_ms)
+	if _base_skin.pending_count() == 0: _base_skin = null
 
 
 ## Dress `source`'s clips. Clips the rig does not know are copied untouched.

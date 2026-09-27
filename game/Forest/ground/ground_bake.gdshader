@@ -30,15 +30,22 @@ uniform float bog_fade = 12.0;
 uniform sampler2D land_map : filter_nearest, repeat_disable;
 uniform ivec2 land_origin = ivec2(0, 0);
 uniform ivec2 land_size = ivec2(1, 1);
+// Pass 16: a streamed world's land map wraps (land_wrap cells a side).
+uniform int land_wrap = 0;
+ivec2 land_texel(ivec2 cell) {
+	return cell - land_wrap * ivec2(floor(vec2(cell) / float(land_wrap)));
+}
 ivec2 land_of(ivec2 cell) {
 	ivec2 t = cell - land_origin;
-	if (t.x < 0 || t.y < 0 || t.x >= land_size.x || t.y >= land_size.y) return ivec2(0, 999);
+	if (land_wrap > 0) t = land_texel(cell);
+	else if (t.x < 0 || t.y < 0 || t.x >= land_size.x || t.y >= land_size.y) return ivec2(0, 999);
 	vec4 v = texelFetch(land_map, t, 0);
 	return ivec2(int(v.r * 255.0 + 0.5), int(v.g * 255.0 + 0.5));
 }
 int micro_of(ivec2 cell) {
 	ivec2 t = cell - land_origin;
-	if (t.x < 0 || t.y < 0 || t.x >= land_size.x || t.y >= land_size.y) return 0;
+	if (land_wrap > 0) t = land_texel(cell);
+	else if (t.x < 0 || t.y < 0 || t.x >= land_size.x || t.y >= land_size.y) return 0;
 	return int(texelFetch(land_map, t, 0).b * 255.0 + 0.5);
 }
 // Whether a pixel lies in a small place (pass 15; 1 the red meadow, 2 the

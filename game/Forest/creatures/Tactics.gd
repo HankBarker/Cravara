@@ -42,6 +42,9 @@ static func _now() -> float:
 ## (a keeper, the folk, a tamed beast): a lone raptor, or a pack after a dodo,
 ## just goes in.
 static func pack(c, target: Node2D, _delta: float) -> Vector2:
+	# A bold or fierce one (and any underground) doesn't wait for the others
+	# (pass 16).
+	if c.reckless(): return Vector2.INF
 	var tid := target.get_instance_id()
 	var now := _now()
 	var plan: Dictionary = plans.get(tid, {})

@@ -17,6 +17,7 @@ const SITE_PROPS := {"hut": "folk_hut", "stranded": "folk_camp", "caged": "folk_
 ## Where each is found, measured from the first camp (cells).
 const NEAREST := 18.0
 const FARTHEST := 34.0
+const NO_SITE := Vector2i(9999, 9999)
 
 signal changed
 var session: Node
@@ -67,6 +68,60 @@ func check_arrivals() -> void:
 			arrive(id)
 		elif when.begins_with("tames:") and trusted() >= int(when.split(":")[1]):
 			arrive(id)
+		# Pass 17: Harrow, underground; Nell, once eggs are taken; Rusk, once beasts fall.
+		elif when == "cave" and _underground():
+			arrive(id)
+		elif when.begins_with("eggs:") and _tally("egg") >= int(when.split(":")[1]):
+			arrive(id)
+		elif when.begins_with("kills:") and _kills() >= int(when.split(":")[1]):
+			arrive(id)
+
+
+func _tally(key: String) -> int:
+	var quests = session.get("quests")
+	return int(quests.tally.get(key, 0)) if quests else 0
+
+
+func _kills() -> int:
+	var quests = session.get("quests")
+	if quests == null: return 0
+	var n := 0
+	for key in quests.tally:
+		if str(key).begins_with("defeat:"): n += int(quests.tally[key])
+	return n
+
+
+func _underground() -> bool:
+	var keeper: Node2D = session.player
+	return is_instance_valid(keeper) and world.region_of(world.to_cell(keeper.global_position)) == "caves"
+
+
+## Pass 17: Harrow's spot, in the cave the keeper is in: open floor a good way
+## in from the way down (8 to 22 cells), room round it for his cold camp.
+func cave_site() -> Vector2i:
+	var keeper: Node2D = session.player
+	var here: Vector2i = world.to_cell(keeper.global_position)
+	var cave: Dictionary = world.caves.cave_at(here) if world.get("caves") else {}
+	if cave.is_empty(): return NO_SITE
+	var entry: Vector2i = cave.get("entry", here)
+	var ranked: Array = []
+	var box: Rect2i = cave.box
+	for y in range(box.position.y, box.end.y):
+		for x in range(box.position.x, box.end.x):
+			var c := Vector2i(x, y)
+			var d := Vector2(c - entry).length()
+			if d < 8.0 or d > 22.0 or not _cave_room(c): continue
+			ranked.append(Vector3i(posmod(hash(Vector3i(c.x, c.y, int(world.world_seed))), 1000003), c.x, c.y))
+	ranked.sort()
+	return Vector2i(ranked[0].y, ranked[0].z) if not ranked.is_empty() else NO_SITE
+
+
+func _cave_room(c: Vector2i) -> bool:
+	for y in range(-1, 2):
+		for x in range(-2, 4):
+			var n := c + Vector2i(x, y)
+			if not world.terrain.has(n) or world.water.has(n) or world.props.has(n): return false
+	return true
 
 
 ## Beasts that trust the keeper: every tame counted, or at least those alive now.
@@ -90,6 +145,17 @@ func arrive(id: String) -> void:
 		return
 	var found: Array = who.found
 	var kind: String = found[posmod(hash(str(world.world_seed) + id), found.size())]
+	# Pass 17: Harrow is underground, in the cave the keeper has gone down into.
+	if str(who.arrives) == "cave":
+		var spot := cave_site()
+		if spot == NO_SITE: return
+		folk[id] = {"stage": "wild", "freed": true, "home": ""}
+		folk[id].site = {"cell": [spot.x, spot.y], "kind": "stranded"}
+		_raise_site(id)
+		_raise(id, _site_spot(id))
+		_banner(id, "Someone down here...", "A lamp's glow ahead in the dark. Somebody else is underground.")
+		changed.emit()
+		return
 	folk[id] = {"stage": "wild", "freed": kind != "caged", "home": ""}
 	var cell := place_site(id, kind)
 	_banner(id, "%s has come to the wilds" % who.name, "Seek %s %s. The map marks the place." % [_pronoun(id), _direction(Vector2(cell))])
@@ -185,7 +251,12 @@ func _raise_site(id: String) -> void:
 	if site.kind == "caged" and bool(folk[id].get("freed", false)): kind = "folk_cage_open"
 	if world.props.has(cell) and world.props[cell].kind != kind: world._remove_prop(cell)
 	if not world.props.has(cell): world._spawn_prop(cell, kind)
-	world.props[cell].set_meta("folk", id)
+	if world.props.has(cell): world.props[cell].set_meta("folk", id)
+	# (Pass 17: a streamed world keeps it with the world's events' things, so it
+	# comes back with its chunk.)
+	if world.get("chunks") != null:
+		world.mined.erase(cell)
+		world.event_props[cell] = kind
 
 
 ## Where someone stands at their site: in front of the hut door, beside the
@@ -437,39 +508,19 @@ func tend() -> String:
 		creature.health = int(creature.stats.hp)
 		if creature.get("bleed") != null: creature.bleed.clear()
 	AudioManager.play_sfx("harvest_plant")
+	SignalBus.place_visited.emit("tend")
 	return "Patched up %d companion%s. Good as new." % [hurt.size(), "" if hurt.size() == 1 else "s"]
 
 
-## The guide's next piece of advice, from what the keeper has done so far.
+## The guide's next piece of advice (pass 17: quests/Advice.gd reads the
+## keeper's gear and progress).
 func help() -> String:
-	var m: Dictionary = session._milestones
-	if not bool(m.get("gather_log", false)):
-		return "Timber first. Take your axe to a tree. Everything else grows from the wood."
-	if not bool(m.get("craft_workbench", false)) and not _built("workbench"):
-		return "Build a workbench (Tab opens your satchel). Tools, saddles and stone all come from the bench."
-	if not bool(m.get("gather_stone", false)):
-		return "Take your pickaxe to the grey outcrops. Stone makes walls a raptor can't chew through."
-	if not bool(m.get("tame", false)):
-		return "The gentle beasts eat from your hand. Offer berries to a dodo or a stego, and be patient."
-	for id in folk:
-		if folk[id].stage == "ready":
-			return "%s is waiting for a house: walls all round, a door, a floor, a roof over every tile, a torch and a bed. Press H to see every house and what it still needs." % Folk.info(id).name
-	if not bool(m.get("cache", false)):
-		return "The first builders hid coin in stone caches near their ruins. Look for the gold bands."
-	var read := 0
-	for key in m:
-		if str(key).begins_with("lore_"): read += 1
-	if read < 3:
-		return "The old ones carved their story into the ruins. Read the carvings (E) and your journal keeps them."
-	if not bool(m.get("alpha", false)):
-		return "The raptors have a leader: Skarn, the Shardback Alpha. It dens in the north-east (your map marks it red). Go with armour, arrows and beasts at your side."
-	return preload("res://Forest/world/Regions.gd").say("You're doing well. The crystal grows thickest the further out you go, and the rex roams the dunes to the {dir:dunes}.", world)
+	return preload("res://Forest/quests/Advice.gd").next("guide", session)
 
 
-func _built(kind: String) -> bool:
-	for c in world.placed:
-		if world.placed[c] == kind: return true
-	return false
+## Anyone's "What next?" (pass 17).
+func advise(folk_id: String) -> String:
+	return preload("res://Forest/quests/Advice.gd").next(folk_id, session)
 
 
 # --- saving ---------------------------------------------------------------------
@@ -526,7 +577,7 @@ func _banner(id: String, title: String, text: String) -> void:
 
 
 func _pronoun(id: String) -> String:
-	return "him" if id == "guide" else "her"
+	return str(Folk.info(id).get("pronoun", "her"))
 
 
 func _direction(cell: Vector2) -> String:

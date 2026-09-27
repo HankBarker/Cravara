@@ -203,9 +203,45 @@ func remaining() -> float:
 	return maxf(0.01, _strike_length() - t)
 
 
-## Gap between this body's edge and the target's.
+## Gap between this body's edge and the target's: a biter's measured from its
+## jaws (snout), the gap it closes to and holds at.
 func gap(to: Node2D) -> float:
+	var d: Vector2 = to.global_position - c.global_position
+	if _bites(): d -= snout(d)
+	return d.length() - float(c.stats.radius) - _radius(to)
+
+
+## The plain gap, body to body (a tail's sweep, a stomp's ring).
+func body_gap(to: Node2D) -> float:
 	return c.global_position.distance_to(to.global_position) - float(c.stats.radius) - _radius(to)
+
+
+## Pass 17: where the jaws are, facing `dir` (Hank: side-on the dimetrodon
+## "doesn't attack unless it's, like, completely on top of you. If it's moving
+## up or down, it has a much more of, like, a wider attack range"). A beast's
+## reach was measured from the middle of its body's circle; drawn side-on its
+## head is well out in front of that (half its drawn length, less the circle),
+## so a side-on bite only reached the keeper once they stood at the snout's
+## tip. Facing up or down the head is over the body. Easing from the one to
+## the other between 30 and 60 degrees off the horizontal, so the reach never
+## jumps as it turns.
+func snout(dir: Vector2) -> Vector2:
+	var n := dir.normalized()
+	if n == Vector2.ZERO: return Vector2.ZERO
+	var side := clampf((absf(n.x) - 0.5) / 0.366, 0.0, 1.0)
+	if side <= 0.0: return Vector2.ZERO
+	var ahead := maxf(0.0, float(c.stats.get("width", 0.0)) * 0.5 - float(c.stats.radius) - 6.0)
+	return Vector2(signf(n.x) * ahead * side, 0.0)
+
+
+## Whether its moves are bites and claws (a hunter's), not tails and stomps.
+var _biter := -1
+func _bites() -> bool:
+	if _biter < 0:
+		_biter = 0
+		for m in moves():
+			if str(m.get("shape", "")) in ["jaws", "claws"]: _biter = 1
+	return _biter == 1
 
 
 func _radius(node: Node2D) -> float:
@@ -214,10 +250,12 @@ func _radius(node: Node2D) -> float:
 
 ## The best move for this target right now, or {}.
 func choose(to: Node2D) -> Dictionary:
-	var g := gap(to)
+	var jaws_gap := gap(to)
+	var plain := body_gap(to)
 	for m in moves():
 		if not is_ready(m.id):
 			continue
+		var g := jaws_gap if str(m.get("shape", "")) in ["jaws", "claws"] else plain
 		if (float(m.range[0]) > 0.0 and g < float(m.range[0])) or g > float(m.range[1]):
 			continue
 		if m.has("chance") and _rng.randf() > float(m.chance):
@@ -648,9 +686,11 @@ func _in_shape(shape: String, victim: Node2D) -> bool:
 	var edge := to.length() - float(c.stats.radius) - _radius(victim)
 	match shape:
 		"jaws":
-			if edge > float(move.reach):
+			# (From the snout: pass 17.)
+			var from_jaws := to - snout(aim)
+			if from_jaws.length() - float(c.stats.radius) - _radius(victim) > float(move.reach):
 				return false
-			return to.length() < 1.0 or rad_to_deg(absf(aim.angle_to(to))) <= float(move.arc) * 0.5
+			return to.length() < 1.0 or from_jaws.length() < 1.0 or rad_to_deg(absf(aim.angle_to(to))) <= float(move.arc) * 0.5
 		"tail":
 			if edge > float(move.reach):
 				return false
@@ -666,7 +706,7 @@ func _in_shape(shape: String, victim: Node2D) -> bool:
 		"ring":
 			return _shape_centre().distance_to(victim.global_position) <= float(move.radius) + _radius(victim)
 		"claws":
-			return edge <= float(move.reach)
+			return (to - snout(aim)).length() - float(c.stats.radius) - _radius(victim) <= float(move.reach)
 	return false
 
 

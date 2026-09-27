@@ -107,6 +107,12 @@ var personal_recipes: Array = [
 	{"name":"River Totem", "item_id":"river_totem", "ingredients":{"crystal_shard":3,"log":2,"plant_fiber":3}, "station":"workbench", "category":"Relics", "description":"A carved river charm improves shallow-water movement."},
 	{"name":"Shard Lantern", "item_id":"lantern", "ingredients":{"crystal_shard":5,"plank":2,"plant_fiber":2}, "station":"workbench", "category":"Relics", "description":"Equip a cool crystal light in your light slot."},
 	{"name":"Wooden Plank", "item_id":"plank", "quantity":2, "ingredients":{"log":1}, "category":"Materials", "description":"Split a log into two sturdy boards."},
+	# Pass 17: furniture like the fallen houses' (Hank: "we don't have chairs, but we could add in chairs").
+	{"name":"Wooden Chair", "item_id":"chair", "ingredients":{"plank":3}, "station":"workbench", "category":"Building", "description":"A plain chair for your house."},
+	{"name":"Wooden Table", "item_id":"table", "ingredients":{"plank":5}, "station":"workbench", "category":"Building", "description":"A sturdy table for your house."},
+	{"name":"Barrel", "item_id":"barrel", "ingredients":{"plank":4,"plant_fiber":2}, "station":"workbench", "category":"Building", "description":"A barrel, bound in fibre."},
+	# Pass 17: Harrow the Delver's bombs (his task "Powder and crystal" teaches them).
+	{"name":"Blasting Bomb", "item_id":"bomb", "quantity":2, "ingredients":{"crystal_shard":3,"plant_fiber":2,"stone":2}, "station":"workbench", "category":"Tools", "hidden_until":"learned_bombs", "description":"Crushed Sky-Fang crystal packed in stone and fibre. Click to throw: it blasts rock, ore and trees apart. Keep clear!"},
 	{"name":"Torch", "item_id":"torch", "quantity":2, "ingredients":{"log":1,"plant_fiber":1}, "category":"Building", "description":"Light the edge of the wild."},
 	{"name":"Workbench", "item_id":"workbench", "ingredients":{"log":5,"stone":3}, "category":"Building", "description":"Place a tribal crafting station."},
 	{"name":"Campfire", "item_id":"campfire", "ingredients":{"log":3,"stone":4}, "category":"Building", "description":"Place a fire; stand nearby to roast meat."},

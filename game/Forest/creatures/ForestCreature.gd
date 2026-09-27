@@ -36,6 +36,9 @@ const Trinkets = preload("res://Forest/items/Trinkets.gd")
 var crystal := -1
 const CRYSTAL_FROM := 1120.0
 const CRYSTAL_RIM := 2720.0
+## Pass 16: how much farther out a world's lands lie (a streamed world's six
+## times: the sickness, and the wilder genes, start and deepen that much later).
+static var far_scale := 1.0
 ## How much tougher: [hp, damage] for each level.
 const CRYSTAL_STATS := {1: [1.15, 1.1], 2: [1.4, 1.2]}
 
@@ -43,7 +46,7 @@ const CRYSTAL_STATS := {1: [1.15, 1.1], 2: [1.4, 1.2]}
 func _roll_crystal() -> void:
 	crystal = 0
 	if baby or tamed or bool(SPECIES[species].get("boss", false)) or variant != "" or is_instance_valid(master): return
-	var far := clampf((position.length() - CRYSTAL_FROM) / (CRYSTAL_RIM - CRYSTAL_FROM), 0.0, 1.0)
+	var far := clampf((position.length() - CRYSTAL_FROM * far_scale) / ((CRYSTAL_RIM - CRYSTAL_FROM) * far_scale), 0.0, 1.0)
 	if far <= 0.0: return
 	var r := RandomNumberGenerator.new()
 	r.seed = int(position.x * 311 + position.y * 173) + species.hash() + 0xC4157
@@ -117,6 +120,9 @@ const VARIANTS := {
 	# asleep in its lair (world/CaveLife.gd) who drops its fang.
 	"grotto": {"name": "Grotto %s", "hp": 1.6, "damage": 1.3, "speed": 1.06, "art": "crystal", "hostile": true, "loot": {"crystal_shard": 3, "prism_crystal": 1}},
 	"sleeper": {"title": "The Sleeper", "hp": 2.6, "damage": 1.35, "speed": 1.0, "tint": Color(0.86, 0.9, 1.0), "hostile": true, "loot": {"sleeper_fang": 1, "trex_scale": 8, "prime_meat": 3}},
+	# Pass 17: a spinosaur of one of the bog's lakes (Spawners: at its heart), a
+	# lesser one than the Sailking: no mini-boss, no name over it (`plain`).
+	"lake": {"name": "Lake %s", "hp": 0.45, "damage": 0.8, "speed": 0.95, "tint": Color(0.9, 0.98, 1.0), "plain": true},
 }
 const BONE_LOOK := preload("res://Forest/creatures/bone.gdshader")
 ## Taming. The dodo and the lystrosaurus eat from any hand. Everything else
@@ -243,7 +249,13 @@ var tether_cell := NO_POST
 const SIEGE_SECONDS := {"rex": 35.0, "spino": 35.0, "anky": 40.0, "carno": 45.0, "yuty": 45.0, "trike": 45.0,
 	"longneck": 50.0, "stego": 55.0, "allo": 55.0, "sucho": 60.0, "alpha": 60.0, "ossuar": 45.0, "utah": 90.0,
 	"dimetrodon": 90.0, "parasaur": 90.0, "raptor": 150.0, "deino": 140.0}
-const TREE_BREAKERS := ["rex", "spino", "anky", "longneck", "stego", "trike", "carno", "yuty", "ossuar"]
+## (Pass 17, Hank: "most dinosaurs should be able to break down trees.
+## Raptors maybe not, but, like, trikes, stegos, and long necks should be
+## able to": every big beast now; never the raptors, the compies or the small
+## grazers.)
+const TREE_BREAKERS := ["rex", "spino", "anky", "longneck", "stego", "trike", "carno", "yuty", "ossuar", "allo", "sucho", "dimetrodon", "parasaur", "alpha"]
+## The clips a beast bashes a tree or a wall with, the first it has.
+const BASH_CLIPS := ["gore", "stomp", "tail_swing", "chomp", "bite", "slash", "peck"]
 const TREES := ["tree", "palm", "pine", "birch", "dead_tree"]
 ## Pass 13: the Mirefen's water hunters. In water they keep most of their pace
 ## (AQUATIC: the rest wade at WATER_SPEED_MULTIPLIER); the spinosaur walks
@@ -256,6 +268,10 @@ const STONE_BUILT := ["stone_wall", "stone_door", "stone_floor", "sandstone_wall
 const STONE_SLOW := 2.2
 const TREE_SECONDS := 7.0
 var _siege_cell := NO_POST
+## Pass 17: a tree it's shouldering down on its way (no quarry: grazing, going
+## home, following the keeper), and how often in a row it has been stuck.
+var _siege_free := false
+var _stuck_strikes := 0
 var _siege_swing := 0.0
 var _train_rest := 0.0
 const STANCES := ["neutral", "passive", "aggressive"]
@@ -305,6 +321,8 @@ var _stuck_from := Vector2.INF
 var _stuck_side := 1.0
 var _unstick_time := 0.0
 var _unstick_dir := Vector2.ZERO
+## (Pass 17: a sidestep at the pace it was going, a slow grazer's slow.)
+var _unstick_speed := 30.0
 var _path_boost := 0.0
 ## Out of reach for a moment (the Buried King under the sand): no blow lands.
 var untouchable := false
@@ -450,7 +468,10 @@ static var _bucket_tick := -1
 
 static func near(tree: SceneTree, at: Vector2, radius: float) -> Array:
 	var tick := Engine.get_physics_frames()
-	if tick != _bucket_tick or _roster_tick == -1:
+	# Pass 16: sorted again every third tick (a beast moves a pixel or two a
+	# tick; a scan checks distances itself). A beast arriving or leaving the
+	# tree sorts them afresh at once (_enter_tree, _exit_tree).
+	if tick - _bucket_tick >= 3 or tick < _bucket_tick or _bucket_tick == -1 or _roster_tick == -1:
 		var all := roster(tree)
 		_bucket_tick = tick
 		_buckets.clear()
@@ -484,7 +505,7 @@ func _ready() -> void:
 	if genes.is_empty() and not bool(SPECIES[species].get("boss", false)):
 		var grng := RandomNumberGenerator.new()
 		grng.seed = int(position.x * 735 + position.y * 97) + species.hash() + 7919
-		genes = Genes.roll(grng, clampf(position.length() / FAR_EDGE, 0.0, 1.0))
+		genes = Genes.roll(grng, clampf(position.length() / (FAR_EDGE * far_scale), 0.0, 1.0))
 	_stage_stats()
 	health = int(stats.hp) if health <= 0 else health
 	home = position
@@ -604,6 +625,8 @@ func set_variant(value: String) -> void:
 			_sprite.material = look
 		elif _sprite.material is ShaderMaterial and (_sprite.material as ShaderMaterial).shader == BONE_LOOK:
 			_sprite.material = null
+	if bool(VARIANTS.get(value, {}).get("plain", false)) and get_node_or_null("Nameplate") != null:
+		get_node("Nameplate").queue_free()
 	if VARIANTS.get(value, {}).has("title") and get_node_or_null("Nameplate") == null:
 		var plate = preload("res://Forest/creatures/Nameplate.gd").new()
 		add_child(plate)
@@ -824,7 +847,9 @@ func _physics_process(delta: float) -> void:
 	if _action_time > 0.0:
 		_action_time = maxf(0.0, _action_time - delta)
 		if _action_time <= 0.0: _action = ""
-	_sprite.modulate = Color(1.8, 1.6, 1.3) if _hurt_time > 0 else (Color(1.3, 0.74, 0.74) if _bleed_flash > 0 else _tint)
+	# (Set only when it changes: each set redraws the sprite.)
+	var tint: Color = Color(1.8, 1.6, 1.3) if _hurt_time > 0 else (Color(1.3, 0.74, 0.74) if _bleed_flash > 0 else _tint)
+	if _sprite.modulate != tint: _sprite.modulate = tint
 	if not is_instance_valid(_player):
 		_player = get_tree().get_first_node_in_group("player")
 	if is_mounted():
@@ -894,9 +919,14 @@ func _physics_process(delta: float) -> void:
 	else:
 		master = null
 		wanted = _wild_behaviour(delta) * haste * _sun_pace()
+	# Pass 17: wedged against a tree on its way, a big beast shoulders it
+	# down (_watch_stuck sets it about it).
+	if _siege_free and _siege_cell != NO_POST:
+		var bash := _tick_siege(delta, null)
+		if bash != Vector2.INF: wanted = bash
 	if _unstick_time > 0.0 and wanted.length() > 0.0:
 		_unstick_time -= delta
-		wanted = _unstick_dir * maxf(float(stats.speed), 30.0)
+		wanted = _unstick_dir * _unstick_speed
 	if moves.busy():
 		# The move owns the body: planted strikes, lunges, the charge lane, the leap.
 		_move_velocity = Vector2.ZERO
@@ -949,6 +979,8 @@ var _idle_count := 0
 ## Idle life while not fighting: graze, sniff or roar now and then.
 func _resting_behaviour(delta: float, wanted: Vector2) -> void:
 	if moves.busy() or _action_time > 0.0 or wanted.length() > 2.0 or velocity.length() > 4.0: return
+	# (Asleep for the night: no grazing, no looking about, pass 16.)
+	if asleep(): return
 	_idle_timer -= delta
 	if _idle_timer > 0.0: return
 	_idle_timer = _rng.randf_range(float(body.idle_every) * 0.6, float(body.idle_every) * 1.4)
@@ -963,6 +995,10 @@ func _resting_behaviour(delta: float, wanted: Vector2) -> void:
 ## Play a one-shot clip (graze, sniff, roar, warning) while standing still.
 func play_action(clip: String, speed := 1.0) -> bool:
 	if is_dead or moves.busy() or not DinoArt.has_clip(art_key, clip): return false
+	# Pass 16: a beast asleep for the night stays lying down (Hank: a stego fed
+	# in its sleep stood up, lay down, stood up...). Only a blow or a threat
+	# wakes it; feeding it doesn't.
+	if asleep() and provoked_time <= 0.0: return false
 	_action = clip
 	_action_time = DinoArt.duration(art_key, clip) / speed
 	stop()
@@ -1121,6 +1157,8 @@ func _alert_needed(target: Node2D) -> bool:
 func _begin_alert(target: Node2D) -> Vector2:
 	_alerted_for = target
 	var seconds: float = ALERT_STRUCK if _struck_clock > 0.0 else float(ALERT_TIME.get(species, 0.7))
+	# Underground the warning is a snarl, not a display (pass 16).
+	if in_cave(): seconds *= 0.5
 	_alert_left = seconds
 	_alert_mark = seconds + 0.45
 	state = "alert"
@@ -1176,7 +1214,8 @@ func _hunt(target: Node2D, delta: float) -> Vector2:
 		if _chase_time > float(body.get("tire", 10.0)) * Genes.temper(genes, "tire") and _winded <= 0.0 and not bool(stats.get("boss", false)):
 			_chase_time = 0.0
 			_winded = 7.0
-		if _winded > 0.0 and g > 170.0:
+		# (Far off body to body: the snout's reach is for striking, pass 17.)
+		if _winded > 0.0 and moves.body_gap(target) > 170.0:
 			_give_up()
 			return Vector2.ZERO
 	else:
@@ -1230,26 +1269,43 @@ func _hunt(target: Node2D, delta: float) -> Vector2:
 ## wall): a sidestep one way, next time the other, and for a few seconds it
 ## paths round (A*) whatever it is after.
 func _watch_stuck(delta: float, wanted: Vector2) -> void:
-	if moves.busy() or wanted.length() < 20.0 or net_time > 0.0 or (tamed and order == "stay"):
+	# (Pass 17: a slow walker counts too: a grazing trike wanders at a few px/s,
+	# far under the old 20, and so was never found stuck on a tree.)
+	if moves.busy() or wanted.length() < maxf(5.0, float(stats.speed) * 0.25) or net_time > 0.0 or (tamed and order == "stay"):
 		_stuck_clock = 0.0
 		_stuck_from = global_position
 		return
 	_stuck_clock += delta
 	if _stuck_clock < 0.9: return
+	var stuck: bool = _stuck_from != Vector2.INF and global_position.distance_to(_stuck_from) < minf(5.0, wanted.length() * _stuck_clock * 0.35)
+	_stuck_strikes = _stuck_strikes + 1 if stuck else 0
 	# Hunting and blocked by the keeper's building (or a tree, for the big
 	# ones): it sets about breaking through.
-	if not tamed and _stuck_from != Vector2.INF and global_position.distance_to(_stuck_from) < 5.0 and _siege_cell == NO_POST:
+	if not tamed and stuck and _siege_cell == NO_POST:
 		var quarry: Node2D = _threat if provoked_time > 0.0 and _valid_target(_threat) else (_hunt_target if is_instance_valid(_hunt_target) else null)
 		if quarry != null:
 			var blocker := _find_blocker(quarry)
 			if blocker != NO_POST:
 				_siege_cell = blocker
+				_siege_free = false
 				_siege_swing = 0.0
 				_stuck_clock = 0.0
 				return
-	if _stuck_from != Vector2.INF and global_position.distance_to(_stuck_from) < 5.0:
+	# Pass 17: on its way somewhere else, stuck twice over on a tree (the
+	# sidestep didn't get it round), a big beast knocks the tree down.
+	if stuck and _stuck_strikes >= 2 and _siege_cell == NO_POST and species in TREE_BREAKERS and not baby:
+		var tree := _tree_ahead(wanted)
+		if tree != NO_POST:
+			_siege_cell = tree
+			_siege_free = true
+			_siege_swing = 0.0
+			_stuck_clock = 0.0
+			_stuck_strikes = 0
+			return
+	if stuck:
 		_stuck_side = -_stuck_side
 		_unstick_dir = wanted.normalized().rotated(_stuck_side * PI * 0.5)
+		_unstick_speed = clampf(wanted.length() * 1.5, 10.0, maxf(float(stats.speed), 30.0))
 		_unstick_time = 0.8
 		_path_boost = 4.0
 	_stuck_clock = 0.0
@@ -1263,7 +1319,7 @@ func _find_blocker(quarry: Node2D) -> Vector2i:
 	var to := global_position.direction_to(quarry.global_position)
 	var ray := PhysicsRayQueryParameters2D.create(global_position, global_position + to * (float(stats.radius) + 24.0), 16)
 	var hit := get_world_2d().direct_space_state.intersect_ray(ray)
-	if hit.is_empty(): return NO_POST
+	if hit.is_empty(): return _tree_ahead(to) if species in TREE_BREAKERS else NO_POST
 	var body = hit.collider
 	var prop = body if body.get("kind") != null else body.get_parent()
 	if prop == null or prop.get("kind") == null or prop.get("cell") == null: return NO_POST
@@ -1271,23 +1327,54 @@ func _find_blocker(quarry: Node2D) -> Vector2i:
 	if str(prop.kind) in TREES and species in TREE_BREAKERS: return prop.cell
 	return NO_POST
 
+
+## Pass 17: a tree a body this size is pressed against, heading `dir` (the
+## ray to the quarry is one thin line: a trunk off to one side of a wide body
+## held it fast unseen). Its cell, or NO_POST.
+func _tree_ahead(dir: Vector2) -> Vector2i:
+	if not is_instance_valid(_world) or dir == Vector2.ZERO: return NO_POST
+	var probe := global_position + dir.normalized() * (float(stats.radius) + 6.0)
+	var c: Vector2i = _world.to_cell(probe)
+	var best := NO_POST
+	var nearest := INF
+	for y in range(-2, 3):
+		for x in range(-2, 3):
+			var p = _world.props.get(c + Vector2i(x, y))
+			if not is_instance_valid(p) or not str(p.kind) in TREES or p.is_placed: continue
+			var rect: Rect2 = p.get_collision_rect()
+			if not Rect2(p.global_position + rect.position, rect.size).grow(float(stats.radius) * 0.7).has_point(probe): continue
+			var d: float = p.global_position.distance_to(global_position)
+			if d < nearest:
+				nearest = d
+				best = p.cell
+	return best
+
 ## Breaking through: it faces the thing, strikes at it now and then, and wears
 ## it down. Vector2.INF when it's done (broken, or no longer worth it).
 func _tick_siege(delta: float, quarry: Node2D) -> Vector2:
 	var p = _world.props.get(_siege_cell) if is_instance_valid(_world) else null
-	if not is_instance_valid(p) or quarry == null or not _valid_target(quarry) or global_position.distance_to(p.global_position) > float(stats.radius) + 40.0:
+	# (A tree on its way has no quarry: pass 17.)
+	var lost: bool = (quarry == null and not _siege_free) or (quarry != null and not _valid_target(quarry))
+	if not is_instance_valid(p) or lost or global_position.distance_to(p.global_position) > float(stats.radius) + 40.0 or (_siege_free and not str(p.kind) in TREES):
 		_siege_cell = NO_POST
+		_siege_free = false
 		return Vector2.INF
 	state = "attack"
 	_face(global_position.direction_to(p.global_position), true)
 	_siege_swing -= delta
 	if _siege_swing <= 0.0:
 		_siege_swing = 1.5
+		# (A bash clip first: the trike's first move is its ram, a run.)
 		var clip := ""
-		for m in moves.moves():
-			if DinoArt.has_clip(art_key, str(m.clip)):
-				clip = str(m.clip)
+		for bash_clip in BASH_CLIPS:
+			if DinoArt.has_clip(art_key, bash_clip):
+				clip = bash_clip
 				break
+		if clip == "":
+			for m in moves.moves():
+				if DinoArt.has_clip(art_key, str(m.clip)):
+					clip = str(m.clip)
+					break
 		if clip != "": play_action(clip)
 		_play_fx("thud", -9.0, 0.9)
 		_shake_near(0.1, 180.0)
@@ -1295,6 +1382,7 @@ func _tick_siege(delta: float, quarry: Node2D) -> Vector2:
 	var seconds: float = TREE_SECONDS if tree else float(SIEGE_SECONDS.get(species, 90.0)) * (STONE_SLOW if str(p.kind) in STONE_BUILT else 1.0)
 	if _world.siege_hit(_siege_cell, float(p.max_hp) / seconds * delta, str(stats.name)):
 		_siege_cell = NO_POST
+		_siege_free = false
 		_stuck_clock = 0.0
 		return Vector2.INF
 	return Vector2.ZERO
@@ -1302,7 +1390,26 @@ func _tick_siege(delta: float, quarry: Node2D) -> Vector2:
 ## The quarry got away: back to its own business for a while.
 ## An allosaur lies in wait for a keeper rather than charge (Tactics.ambush).
 func _will_ambush(target: Node2D) -> bool:
-	return species == "allo" and not tamed and variant == "" and target == _player and provoked_time <= 0.0 and ambush_state.get("phase", "") != "burst"
+	return species == "allo" and not tamed and variant == "" and target == _player and provoked_time <= 0.0 and ambush_state.get("phase", "") != "burst" and not reckless()
+
+## Pass 16: whether it goes straight in rather than playing tactics (Hank: "they
+## should have the variation where they can just straight up attack, and the
+## variation where they do something different"). Its temper says (a bold or a
+## fierce beast charges; a calm or skittish one waits, gathers or lurks), and
+## underground everything charges: a cave is where a keeper gets jumped.
+func reckless() -> bool:
+	return in_cave() or str(genes.get("temper", "calm")) in ["bold", "fierce"]
+
+## Whether it's underground (asked again every couple of seconds).
+var _cave_seen := false
+var _cave_check := 0.0
+func in_cave() -> bool:
+	var now := Time.get_ticks_msec() / 1000.0
+	if now >= _cave_check and is_instance_valid(_world):
+		_cave_check = now + 2.0
+		# (A test's stand-in world may know no regions.)
+		_cave_seen = _world.has_method("region_of") and _world.has_method("to_cell") and _world.region_of(_world.to_cell(global_position)) == "caves"
+	return _cave_seen
 
 ## Whether a point is in a haven, where no wild hunter goes (pass 15).
 func in_haven(at: Vector2) -> bool:
@@ -1311,6 +1418,8 @@ func in_haven(at: Vector2) -> bool:
 
 func _give_up() -> void:
 	ambush_state = {}
+	# (A siege on the quarry's account ends with the chase: pass 17.)
+	if not _siege_free: _siege_cell = NO_POST
 	provoked_time = 0.0
 	_threat = null
 	_hunt_target = null
@@ -1434,6 +1543,8 @@ func _play_clip(clip: String, restart := false, speed := 1.0) -> void:
 ## small hysteresis and a short hold stop diagonal travel from flickering.
 func _face(direction: Vector2, force := false) -> void:
 	if direction.length() < 0.01: return
+	# Lying asleep it doesn't turn over to look at things (pass 16).
+	if asleep() and provoked_time <= 0.0 and velocity.length() < 4.0: return
 	if not force and _face_hold > 0.0: return
 	var next := _facing
 	if absf(direction.y) > absf(direction.x) * (1.0 if force else 1.2): next = "up" if direction.y < 0 else "down"
@@ -1717,8 +1828,11 @@ func _wild_target() -> Node2D:
 	# Far out of its own ground, a hunter picks no new quarry: it heads home.
 	if _out_of_territory(0.0): return null
 	var reach: float = float(NOTICE.get(species, 105.0)) * Genes.temper(genes, "notice")
+	# Underground it knows the keeper is there from further off (pass 16).
+	var underground := in_cave()
+	if underground: reach *= 1.4
 	var prey: Array = PREY.get(species, [])
-	var hungry := species == "rex" or sated <= 0.0
+	var hungry := species == "rex" or sated <= 0.0 or underground
 	var hunting := 200.0 if hungry else 0.0
 	var pack := _pack_size() if species in ["raptor", "deino"] else 0
 	var closest: Node2D
@@ -1728,7 +1842,7 @@ func _wild_target() -> Node2D:
 	if species == "compy" and _pack_size() < 3: shadowed = true
 	# Pass 13: noticing is not hunting. Fed, it lets the keeper be unless they
 	# walk into its DANGER ring; hungry, the keeper is prey within NOTICE.
-	var keeper_reach: float = reach if (sated <= 0.0 or bool(stats.get("predator_like", false))) else float(DANGER.get(species, reach * 0.45)) * Genes.temper(genes, "notice")
+	var keeper_reach: float = reach if (sated <= 0.0 or underground or bool(stats.get("predator_like", false))) else float(DANGER.get(species, reach * 0.45)) * Genes.temper(genes, "notice")
 	# Pass 13: in its kin's armour the keeper smells like one of its own; a beast
 	# the keeper has earned (respect, a dodged charge) lets them be.
 	if wearing_kin() or (Ways.marks_needed(species) > 0 and tame_marks >= Ways.marks_needed(species) and Ways.way(species) in ["respect", "dodge"]): keeper_reach = 0.0
@@ -1740,15 +1854,19 @@ func _wild_target() -> Node2D:
 		distance = global_position.distance_to(_player.global_position)
 	# The tribes' folk are fair game too (pass 12), as near as the keeper.
 	if not shadowed:
+		# (Nearness first: the checks on a person's state are the dear part.)
+		var folk_reach := minf(reach, 150.0)
 		for person in folk(get_tree()):
-			if not _valid_target(person): continue
+			if not is_instance_valid(person): continue
 			var fd: float = global_position.distance_to(person.global_position)
-			if fd < minf(reach, 150.0) and fd < distance:
-				closest = person
-				distance = fd
-	for other in near(get_tree(), global_position, maxf(reach, hunting)):
-		if other == self or not _valid_target(other): continue
+			if fd >= folk_reach or fd >= distance or not _valid_target(person): continue
+			closest = person
+			distance = fd
+	var scan := maxf(reach, hunting)
+	for other in near(get_tree(), global_position, scan):
+		if other == self: continue
 		var d := global_position.distance_to(other.global_position)
+		if d >= scan or not _valid_target(other): continue
 		# Hungry, it takes the wild prey it knows before a keeper not much
 		# nearer (a third again as far off).
 		var wild_prey: bool = not other.tamed and d < hunting and (other.species in prey or (pack >= 3 and other.species in PACK_PREY))
@@ -1771,6 +1889,10 @@ const TERRITORY := {"raptor": 420.0, "allo": 480.0, "rex": 560.0, "carno": 560.0
 
 func _out_of_territory(extra: float) -> bool:
 	if not TERRITORY.has(species) or tamed or bool(stats.get("boss", false)) or is_instance_valid(master): return false
+	# Pass 16: a cave is all its hunters' ground. (Always hungry down there, a
+	# hunter told it was out of its ground gave up and took the keeper again
+	# the next tick: it stood and stared.)
+	if in_cave(): return false
 	return global_position.distance_to(home) > float(TERRITORY[species]) + extra
 
 
@@ -1896,6 +2018,10 @@ func _find_hostile() -> Node2D:
 ## Past the world's walls (a shove through a gap): steer home.
 func _outside_world() -> bool:
 	if not is_instance_valid(_world) or not _world.has_method("bounds"): return absf(global_position.x) > 865 or absf(global_position.y) > 865
+	# Pass 16: the caves' insides lie in a strip east of the world's bounds, and
+	# their beasts were steered "back" home every tick: they stood and stared
+	# at a keeper until one came into biting range. A cave is in the world.
+	if in_cave(): return false
 	var b: Rect2i = _world.bounds()
 	return not Rect2(Vector2(b.position * 16) + Vector2(31, 31), Vector2(b.size * 16) - Vector2(62, 62)).has_point(global_position)
 
@@ -2259,9 +2385,11 @@ func feeds_needed() -> int:
 	var ease := Trinkets.of(get_tree(), "taming") if not baby else 0.0
 	return maxi(1, int(round(float(need) * (1.0 - ease))))
 
-## Asleep: a herbivore settled for the night (the stego's way).
+## Asleep: a herbivore settled for the night (the stego's way). Pass 16: from
+## the moment the herd lies down (CreatureLife: the light gone, not the clock's
+## "night", which comes later) till it rises, so it sleeps the night through.
 func asleep() -> bool:
-	return life != null and str(life.goal) == "rest" and state == "rest" and TimeCycle.is_night()
+	return life != null and str(life.goal) == "rest" and state == "rest" and sin((TimeCycle.time_of_day - 0.25) * TAU) < -0.2
 
 ## The keeper wears this beast's kin-smell (the allosaur's Rustback...).
 func wearing_kin() -> bool:
@@ -2435,6 +2563,12 @@ func get_interaction_hint() -> String:
 func _tick_patience(delta: float) -> void:
 	if tamed or baby or species in EASY or trust <= 0 or net_time > 0.0 or not is_instance_valid(_player):
 		unease = 0.0
+		return
+	# Pass 16: asleep (the stego at night), it neither watches the keeper nor
+	# minds them close: fed where it lies, it sleeps on.
+	if asleep():
+		unease = 0.0
+		settle = maxf(0.0, settle - delta)
 		return
 	var d := global_position.distance_to(_player.global_position) - float(stats.radius)
 	if d > SPACE * 1.5: settle = maxf(0.0, settle - delta)
@@ -2740,7 +2874,7 @@ func restore(data: Dictionary) -> void:
 		# A beast from before pass 13: its own genes, from where it stands.
 		var grng := RandomNumberGenerator.new()
 		grng.seed = int(position.x * 735 + position.y * 97) + species.hash() + 7919
-		set_genes(Genes.roll(grng, clampf(position.length() / FAR_EDGE, 0.0, 1.0)), true)
+		set_genes(Genes.roll(grng, clampf(position.length() / (FAR_EDGE * far_scale), 0.0, 1.0)), true)
 	# The sickness (pass 14): saved with it; a beast from before rolls from where it stands.
 	if data.has("crystal"): crystal = int(data.crystal)
 	else: _roll_crystal()

@@ -18,7 +18,41 @@ const ROOTS := [["wild_tuber", 1, 3, 90], ["berry_seed", 1, 1, 10]]
 ## Pass 14: which trinkets a kind of chest can hold and which beast drops which
 ## (written by tools/items/trinkets.py), and a chest's chance of holding one.
 const Sources = preload("res://Forest/items/TrinketSources.gd")
-const FIND_CHANCE := {"cache": 0.22, "relic": 0.12, "bones": 0.03}
+const FIND_CHANCE := {"cache": 0.22, "relic": 0.12, "bones": 0.03, "treasure": 0.45, "house": 0.1, "camp": 0.08}
+## Pass 17: the wilds' new chests (chest()): a lake island's hoard, a fallen
+## house's chest, an old inn's larder, a lost camp's pack; and what a barrel in
+## a fallen building kept.
+const TREASURE := [
+	["glass_pearl", 1, 2, 12], ["prism_crystal", 1, 2, 10], ["crystal_shard", 3, 6, 10], ["fossil_bone", 1, 3, 8],
+	["sky_idol", 1, 1, 6], ["mushroom_potion", 1, 2, 6], ["bog_iron", 2, 4, 8], ["ancient_coin", 3, 6, 10],
+	["mire_eel", 1, 2, 4], ["bogiron_harpoon", 1, 1, 2], ["moonscale", 1, 1, 3],
+]
+const HOUSE := [
+	["plank", 4, 8, 14], ["log", 3, 6, 10], ["stone", 4, 8, 10], ["plant_fiber", 4, 8, 10], ["ancient_coin", 1, 4, 12],
+	["torch", 1, 2, 6], ["lead_rope", 1, 1, 3], ["bucket", 1, 1, 3], ["baked_tuber", 1, 2, 6], ["cooked_meat", 1, 2, 6],
+	["redgrain", 2, 4, 5], ["berry_seed", 1, 2, 4], ["mushroom_potion", 1, 1, 3], ["net", 1, 1, 2], ["bone_arrow", 3, 6, 4],
+]
+const LARDER := [
+	["redgrain_loaf", 1, 3, 14], ["cooked_meat", 1, 3, 14], ["baked_tuber", 1, 3, 10], ["mushroom_stew", 1, 2, 8],
+	["hunters_stew", 1, 1, 6], ["berry_compote", 1, 2, 8], ["gourd_porridge", 1, 2, 6], ["haunch_roast", 1, 1, 4],
+	["redgrain", 3, 6, 8], ["mushroom", 2, 4, 6], ["berry", 3, 6, 6], ["water_flask", 1, 1, 3],
+]
+const CAMP := [
+	["plant_fiber", 3, 6, 12], ["log", 2, 4, 10], ["cooked_meat", 1, 2, 10], ["bone_arrow", 3, 6, 8], ["torch", 1, 1, 6],
+	["ancient_coin", 1, 3, 10], ["old_bone", 2, 3, 8], ["bloody_bait", 1, 1, 5], ["net", 1, 1, 3], ["raptor_fang", 1, 2, 4],
+	["water_flask", 1, 1, 3],
+]
+const BARREL := [
+	["redgrain", 2, 4, 14], ["berry", 3, 6, 12], ["plant_fiber", 3, 6, 12], ["water_flask", 1, 1, 6], ["mushroom", 2, 3, 8],
+	["plank", 2, 4, 8], ["ancient_coin", 1, 2, 6], ["cooked_fish", 1, 2, 5], ["bone_arrow", 2, 4, 5],
+]
+## kind -> [table, coins [least, most], draws, its name, what the keeper opens]
+const CHESTS := {
+	"treasure": [TREASURE, [4, 9], 4, "A Sunken Hoard", "the hoard"],
+	"house": [HOUSE, [0, 3], 3, "An Old Chest", "the old chest"],
+	"larder": [LARDER, [0, 0], 4, "The Inn's Larder", "the larder"],
+	"camp": [CAMP, [1, 3], 3, "A Traveller's Pack", "the pack"],
+}
 
 
 static func _rng(cell: Vector2i, salt: int) -> RandomNumberGenerator:
@@ -48,6 +82,37 @@ static func cache(cell: Vector2i, seed: int) -> Dictionary:
 	return loot
 
 
+## A pass-17 chest's contents (an ancient cache's for any other kind).
+static func chest(kind: String, cell: Vector2i, seed: int) -> Dictionary:
+	if not CHESTS.has(kind): return cache(cell, seed)
+	var spec: Array = CHESTS[kind]
+	var r := _rng(cell, seed ^ 0xC4E57 ^ hash(kind))
+	var loot := {}
+	var coins := r.randi_range(int(spec[1][0]), int(spec[1][1]))
+	if coins > 0: loot["ancient_coin"] = coins
+	for i in int(spec[2]):
+		_draw(spec[0], r, loot)
+	return loot
+
+
+static func chest_name(kind: String) -> String:
+	return str(CHESTS[kind][3]) if CHESTS.has(kind) else "Ancient Cache"
+
+
+## What the keeper opens: "the ancient cache", "the old chest"...
+static func chest_phrase(kind: String) -> String:
+	return str(CHESTS[kind][4]) if CHESTS.has(kind) else "the ancient cache"
+
+
+## `count` draws from a table at a cell (a laid table's meal, a barrel's stores).
+static func draws(table: Array, count: int, cell: Vector2i, seed: int) -> Dictionary:
+	var r := _rng(cell, seed ^ 0xBA22E1)
+	var loot := {}
+	for i in count:
+		_draw(table, r, loot)
+	return loot
+
+
 static func relic(cell: Vector2i, seed: int) -> Dictionary:
 	var loot := {}
 	_draw(RELIC, _rng(cell, seed ^ 0x2E71C), loot)
@@ -57,7 +122,8 @@ static func relic(cell: Vector2i, seed: int) -> Dictionary:
 ## A trinket in a kind of chest at `cell`, or "": the same spot always rolls
 ## the same; the keeper's luck raises the chance.
 static func find(kind: String, cell: Vector2i, seed: int, luck := 0.0) -> String:
-	var pool: Array = Sources.CHEST.get(kind, [])
+	# (The new chests hold what an ancient cache might.)
+	var pool: Array = Sources.CHEST.get(kind, Sources.CHEST.get("cache", []) if CHESTS.has(kind) else [])
 	if pool.is_empty(): return ""
 	var r := _rng(cell, seed ^ 0x7A1C)
 	if r.randf() >= float(FIND_CHANCE.get(kind, 0.0)) * (1.0 + luck): return ""

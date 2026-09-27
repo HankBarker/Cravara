@@ -51,6 +51,10 @@ func setup(owner_world) -> void:
 	material_shared.set_shader_parameter("pushers", _no_pushers())
 	# The ash's grey over the Pale Lands (pass 15: the ground's land map).
 	if world.get("surface") != null and world.surface.has_method("lands_to"): world.surface.lands_to(material_shared)
+	_kinds = meta.kinds
+	_quad = quad
+	# Pass 16: a streamed world's plants come and go with its chunks (add_chunk).
+	if world.get("layout") != null and world.layout.is_streamed(): return
 	# Plants grouped by patch.
 	var timing := "--gen-timing" in OS.get_cmdline_user_args()
 	var t := Time.get_ticks_msec()
@@ -63,59 +67,230 @@ func setup(owner_world) -> void:
 		if not by_patch.has(index): by_patch[index] = []
 		by_patch[index].append(p)
 	for index in by_patch:
-		var plants: Array = by_patch[index]
-		var mm := MultiMesh.new()
-		mm.transform_format = MultiMesh.TRANSFORM_2D
-		mm.use_custom_data = true
-		mm.use_colors = true
-		mm.mesh = quad
-		mm.instance_count = plants.size()
-		var roots := PackedVector2Array()
-		roots.resize(plants.size())
-		# Each plant's transform (an upright quad at its root), tint and custom
-		# data (atlas index, sway, root) written straight into the buffer:
-		# [1, 0, 0, x, 0, 1, 0, y, r, g, b, a, index, sway, x, y].
-		var buf := PackedFloat32Array()
-		buf.resize(plants.size() * 16)
-		var k := 0
-		for i in plants.size():
-			var p: Dictionary = plants[i]
-			var root: Vector2 = p.root
-			var tint: Color = p.tint
-			roots[i] = root
-			buf[k] = 1.0
-			buf[k + 3] = root.x
-			buf[k + 5] = 1.0
-			buf[k + 7] = root.y
-			buf[k + 8] = tint.r
-			buf[k + 9] = tint.g
-			buf[k + 10] = tint.b
-			buf[k + 11] = tint.a
-			buf[k + 12] = float(p.index)
-			buf[k + 13] = float(p.sway)
-			buf[k + 14] = root.x
-			buf[k + 15] = root.y
-			k += 16
-			var c: Vector2i = p.cell
-			if not _cell_plants.has(c):
-				_cell_plants[c] = [index, []]
-				_shown[c] = true
-			_cell_plants[c][1].append(i)
-		mm.buffer = buf
-		var patch := MultiMeshInstance2D.new()
-		patch.name = "Patch_%d_%d" % [index.x, index.y]
-		patch.multimesh = mm
-		patch.texture = ATLAS
-		patch.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-		patch.material = material_shared
-		add_child(patch)
-		_patches[index] = patch
-		_roots[index] = roots
-		_total += plants.size()
+		_build_patch(index, by_patch[index])
 	if timing: print("FLORA patches %dms" % (Time.get_ticks_msec() - t))
 	t = Time.get_ticks_msec()
 	refresh()
 	if timing: print("FLORA refresh %dms" % (Time.get_ticks_msec() - t))
+
+
+var _kinds: Dictionary = {}
+var _quad: ArrayMesh
+
+## Pass 16: a streamed world's chunk came in: its plants, one patch (their
+## scatter worked out on the chunk worker with the chunk: scatter_chunk).
+func add_chunk(chunk: Vector2i) -> void:
+	if _patches.has(chunk) or _kinds.is_empty(): return
+	var here = world.chunks.loaded.get(chunk) if world.get("chunks") != null else null
+	if here != null and here.data.has("flora"):
+		_build_patch_made(chunk, here.data.flora)
+		return
+	# The seed's props here stand up over the next frames: none under them.
+	var taken := {}
+	if here != null:
+		for entry in here.data.props: taken[int(entry[0])] = true
+	var cells: Array = []
+	var k := 0
+	for y in range(chunk.y * CHUNK, chunk.y * CHUNK + CHUNK):
+		for x in range(chunk.x * CHUNK, chunk.x * CHUNK + CHUNK):
+			var c := Vector2i(x, y)
+			if world.terrain.has(c) and (not taken.has(k) or world.mined.has(c)): cells.append(c)
+			k += 1
+	var plants := _scatter_cells(_kinds, cells)
+	if plants.is_empty(): return
+	_build_patch(chunk, plants)
+	refresh_cells(cells)
+
+
+## ... and went: its plants with it.
+func remove_chunk(chunk: Vector2i) -> void:
+	if not _patches.has(chunk): return
+	var patch = _patches[chunk]
+	_total -= patch.multimesh.instance_count
+	patch.queue_free()
+	_patches.erase(chunk)
+	_roots.erase(chunk)
+	for y in range(chunk.y * CHUNK, chunk.y * CHUNK + CHUNK):
+		for x in range(chunk.x * CHUNK, chunk.x * CHUNK + CHUNK):
+			var c := Vector2i(x, y)
+			_cell_plants.erase(c)
+			_shown.erase(c)
+
+
+## A patch from a scatter worked out on the chunk worker.
+func _build_patch_made(index: Vector2i, made: Dictionary) -> void:
+	var count := int(made.count)
+	if count <= 0: return
+	var mm := MultiMesh.new()
+	mm.transform_format = MultiMesh.TRANSFORM_2D
+	mm.use_custom_data = true
+	mm.use_colors = true
+	mm.mesh = _quad
+	mm.instance_count = count
+	mm.buffer = made.buf
+	var cells: Dictionary = made.cells
+	for c in cells:
+		_cell_plants[c] = [index, cells[c]]
+		_shown[c] = true
+	var patch := MultiMeshInstance2D.new()
+	patch.name = "Patch_%d_%d" % [index.x, index.y]
+	patch.multimesh = mm
+	patch.texture = ATLAS
+	patch.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	patch.material = material_shared
+	add_child(patch)
+	_patches[index] = patch
+	_roots[index] = made.roots
+	_total += count
+	refresh_cells(cells.keys())
+
+
+## Pass 16: a streamed chunk's plants from its cells alone (the chunk worker
+## calls this as it makes the chunk; nothing here touches the world's nodes or
+## dictionaries): the MultiMesh buffer ready, each plant's root, each cell's
+## plants. The old worlds' own scatter (_scatter_cells) as far as the chunk
+## tells it: no plants under the seed's props, the ash's grey from how far
+## into the Pale Lands a cell is.
+static func scatter_chunk(kinds: Dictionary, d: Dictionary, noise: FastNoiseLite, world_seed: int) -> Dictionary:
+	var origin := Vector2i(int(d.cx), int(d.cy)) * CHUNK
+	var terrain: PackedByteArray = d.terrain
+	var style: PackedByteArray = d.style
+	var lands: PackedByteArray = d.land
+	var inner: PackedByteArray = d.inner
+	var taken := {}
+	for entry in d.props: taken[int(entry[0])] = true
+	var styles := ["", "sand", "stone", "mud", "hardpan"]
+	var plants: Array = []
+	var r := RandomNumberGenerator.new()
+	for k in CHUNK * CHUNK:
+		var t := int(terrain[k])
+		if t == 255 or t == 1 or t == 2 or taken.has(k): continue
+		var c := origin + Vector2i(k % CHUNK, k / CHUNK)
+		if Vector2(c).length() < 5.0: continue
+		r.seed = hash(Vector3i(c.x, c.y, world_seed ^ 0x5eed))
+		var s := str(styles[int(style[k])]) if int(style[k]) < styles.size() else ""
+		var sand: bool = s == "sand"
+		if s == "stone" and r.randf() < 0.8: continue
+		if s == "hardpan":
+			if r.randf() < 0.1 and kinds.has("scrub"):
+				plants.append(_plant_at(c, kinds.scrub, r, Color(1, 1, 1), r.randf_range(0.2, 0.4)))
+			continue
+		var tufts := 0
+		var flower := ""
+		var bush := ""
+		var roll := r.randf()
+		if sand:
+			if roll < 0.035:
+				flower = "sprigs"
+			elif roll < 0.15 and kinds.has("scrub"):
+				bush = "scrub"
+		else:
+			var lush: float = noise.get_noise_2d(c.x * 1.9 + 900.0, c.y * 1.9 - 300.0)
+			var odds := clampf(0.6 + lush * 0.7, 0.15, 0.96)
+			tufts = (1 if roll < odds else 0) + (1 if r.randf() < odds - 0.35 else 0)
+			if t == 3:
+				tufts = mini(tufts + 1, 2)
+			if r.randf() < (0.1 if t == 0 else 0.04):
+				var f := r.randf()
+				flower = "blossoms" if f < 0.45 else ("sprigs" if f < 0.75 else "clumps")
+			var undergrowth := r.randf()
+			if t == 3 and undergrowth < 0.07 and kinds.has("ferns"):
+				bush = "ferns"
+			elif t == 0 and undergrowth < 0.025 + maxf(0.0, lush) * 0.06 and kinds.has("shrubs"):
+				bush = "shrubs"
+		var tint := Color(0.72, 0.86, 0.8) if t == 3 else Color(1, 1, 1)
+		if int(lands[k]) == 3: tint *= Color.WHITE.lerp(Color(0.8, 0.78, 0.72), clampf(float(inner[k]) / 10.0, 0.0, 1.0))
+		for i in tufts:
+			plants.append(_plant_at(c, kinds.tufts, r, tint, r.randf_range(0.75, 1.0)))
+		if flower != "":
+			plants.append(_plant_at(c, kinds[flower], r, Color(1, 1, 1), r.randf_range(0.45, 0.7)))
+		if bush != "":
+			plants.append(_plant_at(c, kinds[bush], r, tint if bush != "scrub" else Color(1, 1, 1), r.randf_range(0.2, 0.4)))
+	var buf := PackedFloat32Array()
+	buf.resize(plants.size() * 16)
+	var roots := PackedVector2Array()
+	roots.resize(plants.size())
+	var cells := {}
+	var j := 0
+	for i in plants.size():
+		var p: Dictionary = plants[i]
+		var root: Vector2 = p.root
+		var tint: Color = p.tint
+		roots[i] = root
+		buf[j] = 1.0
+		buf[j + 3] = root.x
+		buf[j + 5] = 1.0
+		buf[j + 7] = root.y
+		buf[j + 8] = tint.r
+		buf[j + 9] = tint.g
+		buf[j + 10] = tint.b
+		buf[j + 11] = tint.a
+		buf[j + 12] = float(p.index)
+		buf[j + 13] = float(p.sway)
+		buf[j + 14] = root.x
+		buf[j + 15] = root.y
+		j += 16
+		var cell: Vector2i = p.cell
+		if not cells.has(cell): cells[cell] = []
+		cells[cell].append(i)
+	return {"count": plants.size(), "buf": buf, "roots": roots, "cells": cells}
+
+
+static func _plant_at(c: Vector2i, kind: Dictionary, r: RandomNumberGenerator, tint: Color, sway: float) -> Dictionary:
+	var root := Vector2(c * CELL) + Vector2(r.randi_range(2, 14), r.randi_range(5, 15))
+	var index := int(kind.first) + r.randi_range(0, int(kind.count) - 1)
+	return {"cell": c, "root": root, "index": index, "tint": tint, "sway": sway}
+
+
+func _build_patch(index: Vector2i, plants: Array) -> void:
+	var mm := MultiMesh.new()
+	mm.transform_format = MultiMesh.TRANSFORM_2D
+	mm.use_custom_data = true
+	mm.use_colors = true
+	mm.mesh = _quad
+	mm.instance_count = plants.size()
+	var roots := PackedVector2Array()
+	roots.resize(plants.size())
+	# Each plant's transform (an upright quad at its root), tint and custom
+	# data (atlas index, sway, root) written straight into the buffer:
+	# [1, 0, 0, x, 0, 1, 0, y, r, g, b, a, index, sway, x, y].
+	var buf := PackedFloat32Array()
+	buf.resize(plants.size() * 16)
+	var k := 0
+	for i in plants.size():
+		var p: Dictionary = plants[i]
+		var root: Vector2 = p.root
+		var tint: Color = p.tint
+		roots[i] = root
+		buf[k] = 1.0
+		buf[k + 3] = root.x
+		buf[k + 5] = 1.0
+		buf[k + 7] = root.y
+		buf[k + 8] = tint.r
+		buf[k + 9] = tint.g
+		buf[k + 10] = tint.b
+		buf[k + 11] = tint.a
+		buf[k + 12] = float(p.index)
+		buf[k + 13] = float(p.sway)
+		buf[k + 14] = root.x
+		buf[k + 15] = root.y
+		k += 16
+		var c: Vector2i = p.cell
+		if not _cell_plants.has(c):
+			_cell_plants[c] = [index, []]
+			_shown[c] = true
+		_cell_plants[c][1].append(i)
+	mm.buffer = buf
+	var patch := MultiMeshInstance2D.new()
+	patch.name = "Patch_%d_%d" % [index.x, index.y]
+	patch.multimesh = mm
+	patch.texture = ATLAS
+	patch.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	patch.material = material_shared
+	add_child(patch)
+	_patches[index] = patch
+	_roots[index] = roots
+	_total += plants.size()
 
 
 func _patch_of(c: Vector2i) -> Vector2i:
@@ -128,9 +303,13 @@ func instance_count() -> int:
 
 
 func _scatter(kinds: Dictionary) -> Array:
+	return _scatter_cells(kinds, world.terrain.keys())
+
+
+func _scatter_cells(kinds: Dictionary, cells: Array) -> Array:
 	var plants: Array = []
 	var r := RandomNumberGenerator.new()
-	for c in world.terrain:
+	for c in cells:
 		var t: int = world.terrain[c]
 		if t == 1 or t == 2 or Vector2(c).length() < 5.0:
 			continue

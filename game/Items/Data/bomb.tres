@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/art/items/bomb.png" id="2"]
+[resource]
+script = ExtResource("1")
+id = "bomb"
+name = "Blasting Bomb"
+description = "Harrow the Delver's recipe: crushed Sky-Fang crystal packed tight in stone and fibre. Hold it and click to throw. It breaks rock, ore and trees apart, and hurts anything close by. Get clear!"
+icon = ExtResource("2")
+max_stack = 20
+rarity = "uncommon"
+tool_type = "bomb"

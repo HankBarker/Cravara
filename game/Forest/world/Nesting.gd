@@ -228,6 +228,8 @@ func restore(data: Dictionary) -> void:
 	for entry in data.get("incubators", []):
 		var c := Vector2i(int(entry[0]), int(entry[1]))
 		var p = world.props.get(c)
-		if not (is_instance_valid(p) and p.kind == "incubator"): continue
+		# (A streamed world's incubator may stand in a chunk not in yet.)
+		var away: bool = world.get("chunks") != null and str(world.placed.get(c, "")) == "incubator"
+		if not (is_instance_valid(p) and p.kind == "incubator") and not away: continue
 		incubators[c] = {} if str(entry[2]) == "" else {"egg": str(entry[2]), "time": float(entry[3])}
 		_redraw(c)

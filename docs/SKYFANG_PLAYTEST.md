@@ -1,5 +1,254 @@
 # Cravera: The Skyfang Wilds
 
+## Seventeenth pass: a livelier world, fallen houses and lake hoards, a real earthquake, bombs, quest lines and three new folk
+
+All of this is in a **new expedition's** world. An expedition started in pass 16 gets it too, but
+its landscape changes: the lakes, buildings, camps and nests are new, and the plains have fewer
+trees. What you did there (felled trees, built walls, opened chests) still stands.
+
+**More life** ("I would be walking on the path for, like, a minute or two without seeing a dinosaur")
+1. **About twice the beasts**: most chunks of the world now have a herd, pack or hunter's home
+   spot, often two, and they sit closer together. Still not everywhere at once.
+2. **Nests all over**: about 370 wild nests in a world (there were 22), about 75 of them in the
+   plains, each with its guardians. Raptor nests only well out from camp.
+3. **Fewer trees in the plains**: open meadows over about a third of them, a lighter scatter
+   elsewhere, thickets a little rarer. That makes room for the herds, and it reads better.
+4. **More people**: Sunward bands walk the green from four minutes in (it was twenty), more often,
+   up to three at once.
+
+**Big beasts break trees** ("trikes, stegos, and long necks should be able to. Raptors maybe not")
+5. **Every big beast shoulders a tree down** when one pins it against its way: stegos, trikes,
+   longnecks, allosaurs, the dimetrodon, parasaurs, Suchomimus, the rex and the other great hunters.
+   It does this while grazing, going home or following you, not only while hunting. Raptors,
+   deinos, compies and the small grazers go round instead.
+
+**The bog's lakes** ("larger lakes, with islands in the middle... chests on them... spinos...
+in the epicenters... the old maw")
+6. **12 to 16 round lakes** lie through the Mirefen, deep but for their rims, each with a wooded
+   island at its heart and an islet or two. About half have a causeway out to the heart; the rest
+   need a boat or a wade through the reeds.
+7. **Most hearts hold a sunken hoard**: pearls, prism, fossil bone, bog iron, coin, often a
+   trinket.
+8. **A Lake Spinosaurus keeps each heart**: a lesser cousin of the Sailking (no name over it), one
+   to a lake. Old Maw now rises in whichever mere or lake you're nearest, one Maw at a time.
+
+**Fallen buildings and more chests** ("an old dilapidated stone building... a stone in front of the
+door... chairs... a bed and a chest... an old dining hall with food in it, or an old inn")
+9. **About 80 fallen buildings** across the lands: houses, inns, huts and cottages. Each is built
+   of its land's stuff: stone or timber in the plains, bogwood in the bog, sandstone in the dunes
+   and Bonelands, palewood in the Pale Lands.
+10. **Most have fallen in**: walls down to gaps and rubble, floor broken to bare earth. About a
+    third stand whole and **shut, with a boulder against the door**: break it with a pickaxe, or a
+    bomb. Break any piece you like; what you break stays broken.
+11. **Inside**: **chairs, tables, barrels and beds** (new art) and **a chest**. An old house's
+    chest holds tools, timber, coin and a little food. **An inn's larder holds meals**, and its
+    **laid tables still have a meal on them** (E takes it). **Barrels** pry open once for what was
+    kept in them. A bed there sets your respawn like your own. **Chairs, tables and barrels are
+    craftable** now too (planks at the workbench), for your own houses. Strike one to pick it up.
+12. **More chests everywhere**:
+    - an ancient cache here and there, often by old bones;
+    - **lost camps**: a traveller's tent, their pack, a barrel;
+    - the lake hoards.
+    With the buildings' chests, a world has about 190 chests (there were a couple of dozen).
+    The map marks old places once you've seen them.
+
+**The earthquake** ("it needs to shake the screen... much more of a holy crap moment... splits in
+the ground... rocks... dropping from the sky... you have to avoid those... they become those boulders")
+13. **A real quake**: a rumble building to a **hard screen shake** for about 12 seconds, with jolts
+    and brown dust hanging in the air and grit falling across the screen. (The old one's shake
+    never reached a whole pixel.)
+14. **The ground tears open** round you: jagged cracks race out, dust spurting along them, and
+    close again a while after.
+15. **Rock falls out of the sky**: a dark shadow grows on the ground where each will land, with a
+    red warning rim, then it drops. About half are aimed at where you stand. **Get out from under
+    it or roll** (a roll dodges it). One that lands clear stays **as a boulder** (pickaxe it for
+    stone); one that lands on something breaks into rubble and a stone or two. New sounds from
+    ElevenLabs: the rumble, the ground cracking, the boulders landing.
+
+**Fixes**
+16. **The dimetrodon**: its side-on walk now actually steps (it used to slide with its legs still),
+    and its far hind leg no longer flashes as a black blob when it runs. **Every hunter bites from
+    its snout now**: side-on the dimetrodon had to stand on top of you to reach, because reach was
+    measured from the middle of its body.
+17. **The axe and pickaxe reach only as far as your swing** (about a tile past you, measured to
+    the trunk's foot). It used to be almost three tiles. Swing from too far and it says so.
+18. **Words stay in their bubbles**: a villager's long line wraps inside its bubble instead of
+    running off the side of the screen. Names over the folk are centred on them, and a long title
+    never widens the talk panel. The talk panel lays each line out before typing it, so words no
+    longer jump lines. Banners grow to hold a third line.
+19. **A carving's words sit in the middle of the screen**, the frame fitted round them (they sat
+    at the top of a tall, empty frame).
+
+**Statues teach** ("they give you a little bit of experience towards a certain skill tree")
+20. **The first read of each carving teaches its story's skill**: 60 to 100 XP. The Star-God and
+    the Kingstone teach Combat, the Watchtower Archery, the Moot and the Wolf Idol Taming, the
+    Fishers' Shrine Fishing, the Grove and the Deer Farming, the halls and arches Gathering, and
+    the Sand Temple and the Bone Shrine Breeding.
+
+**The map** ("icons for everything instead of... little dots... I can add my own icons... name them")
+21. **Every mark is a little icon**: a skull for a boss, a cave's door, a temple for ruins, a hut
+    for a village (red for the Ashen), a tent for your camp, a paw for your beasts, a warning claw
+    for a great beast, a nest with eggs, a person for the folk, a house for an old place, a flame
+    or a crystal for an event, and a star for you. Zoomed right out, the small things are dots.
+    The key shows them two to a row.
+22. **Your own pins**: right-click the map to set a pin, name it in the key, change its icon (flag,
+    star, X, house, skull, chest) and colour, or remove it. Pins are kept with the journey.
+
+**Quest lines and "What next?"** ("a bunch of quests... recommend what you should do next... multiple
+quest lines... depending on where you're at with what your gear is")
+23. **62 tasks in 10 lines** (there were 28). Every line offers its next task at once. The Tasks
+    page lists them ("!" to take, "?" ready to hand in) and a task opens on its own page. Rewards
+    include skill XP, and six tasks **teach a star of the skills outright**:
+    - Harrow: Stonecutter and Miner;
+    - Nell: Warm Nest;
+    - Rusk: Hardened and Second Wind;
+    - Kaya: Calm Voice.
+    Harrow's also teaches the bomb.
+    - **Orrin**: First Steps (timber and stone, a bench, tools, a keener axe, fire, armour, a
+      home), The Wide Wilds (carvings, old places, the Bonelands, the bog, the lake hoards, the
+      caves, the Sunward, the north) and The Great Threats (Skarn, the Ashen, the Buried King, Old
+      Maw).
+    - **Tamsin's tasks can be taken now.** They were unreachable before, a mislabelled giver.
+    - **Kaya**: taming (a little herd, a deino), the young, and riding (a saddle, time in the
+      saddle, tending).
+24. **"What next?" reads your gear and progress.** Orrin, Kaya and the three new folk each check
+    your tools, your weapon's damage, the armour you wear, your companions, what you've done and
+    where you've been. Then they say the most useful next step ("Skarn will tear you apart as you
+    are: a weapon of sixteen or more, armour of fourteen, then go"), and point you at one of their
+    tasks.
+
+**Three new folk** (new PixelLab characters, drawn to match Orrin, Tamsin and Kaya)
+25. **Harrow, the Delver**: a miner **found in a cave** the first time you go underground,
+    lamp out and rope cut. He has mining tips, sells torches, a lantern, picks and bombs, and his
+    task line runs: stone for pit props, **Powder and crystal (he teaches the bomb)**, blasting,
+    rustiron, prism, every vein.
+26. **Nell, the Brood-Keeper**: comes once you've taken an egg. She has raising tips, sells
+    incubators, treats and easy eggs, and her task line runs: a clutch, hatchlings, raising, a pair
+    that lays, a raptor egg, a bloodline.
+27. **Rusk, the Old Blade**: comes once eight beasts have fallen. He has fighting tips, sells
+    arrows, a bow and charms, and his task line runs: raptors, a bow, Fangbound armour, thirty
+    hunts, an allosaur, the Scarhorn, the rex.
+
+**Bombs** ("maybe you can learn how to create bombs... adding in bombs would be a really
+interesting piece")
+28. **Blasting bombs**: 3 crystal shards, 2 fibre and 2 stone make two at a workbench, once Harrow
+    has taught you. Hold one and click to throw it (about seven tiles at most). It lies hissing,
+    blinking red, with its reach marked on the ground, then blows: a flash, fire, dust and a
+    scorch mark.
+    - It **breaks rock, ore and the far lands' veins, trees, brush, rubble, boulders and fallen
+      buildings' pieces**, drops and all.
+    - It hurts beasts (your companions half as much) and you, if you didn't get clear. A roll
+      dodges it.
+    - It never harms your own buildings, landmarks, chests or nests.
+
+**Music**
+29. **Your new tracks, a playlist a land**: Sparse Wandering Melody joins the plains; Prehistoric
+    Bog (both), Jungle Deep and the Jungle travel music play in the bog; Des Enigme with the Cravara
+    OST in the dunes; Volcanic Drones and Prehistoric Unease in the Pale Lands; Prehistoric Stalking
+    and Untitled in the Bonelands; Prehistoric Stalking (1) with the cave music underground; **The
+    Final Rumble for every boss fight**. A land plays its tunes one after another, each levelled to
+    the others. The two stand-ins made last pass are gone.
+
+**Performance**
+30. **More life hasn't cost frames.** A new journey still runs at about 10 ms a frame everywhere,
+    with about 110 beasts round camp (there were 42) and 15 to 45 in the far lands (there were 5 to
+    18). The first seconds at camp stutter less than before: the worst frames were 82 ms and are
+    now 55. Measured the same way as pass 16; see `art/forest-playtest/perf-p17-stream.txt`.
+
+## Sixteenth pass: a world six times as big, a map you fill in, beasts that come back, lodges and music
+
+**A much bigger world** (you said the Mirefen was too close: "at least a two- or three-minute walk")
+1. **A new expedition's world is 2,400 tiles across**, about 33 times the area of the old 420-tile
+   ring world. The plains round camp reach about 460 tiles out, so **the Mirefen Bog and the Sunscar
+   Dunes are about 450 tiles from camp: over two minutes' walk (about 80 seconds sprinting)**. The
+   Pale Lands and the Bonelands lie beyond them, out to the edge. Every land is far bigger, and so
+   is everything in it:
+   - four meres in the bog, the fishers' shrine on the nearest;
+   - eight wild oases in the dunes;
+   - twice the nests, three times the veins and wild crops;
+   - the caves spread through their lands.
+2. **The world is made around you as you go.** Only the ground within a couple of hundred tiles of
+   you is in the game at once; the rest is made from the world's seed when you come near. What you
+   change stays changed: felled trees, dug ore, built walls, opened caches and chests, doors, water
+   you poured.
+3. **Old journeys keep their old worlds exactly as they were**: the original forest and pass 15's
+   ring worlds are untouched.
+
+**The map (M): Terraria-style**
+4. **A new journey's map starts dark.** It shows only what you've been close to, filling in as you
+   walk. Big points of interest show through the dark: the bosses (Skarn's den, the Ossuary, Old
+   Maw, a sleeping Sleeper's lair), world events, and what your parasaur heard.
+5. **Choose what the map marks.** The key beside the map is a list of switches: bosses, caves, ruins
+   and shrines, villages and camps, your camp, your beasts, great beasts, nests, wild animals, folk.
+   Click a line (or press its number) to hide or show it. Your choices are kept with the journey.
+6. **Zoom and move it**: the mouse wheel or +/- to zoom, drag or WASD to move, C to find yourself.
+7. An old journey's map stays fully filled in (you had seen all of it before).
+
+**Beasts come back** ("they respawn and are checking to respawn every minute")
+8. **Every herd, pack, lone hunter and nest has a home spot and a radius.** About once a minute
+   each one near you checks for its kind within that radius. If there are none left, a new group
+   comes, out of your sight. Now and then one is a variant: the land's coat, or crystal-grown far
+   out.
+9. **In the big world, beasts come and go with the ground**: the lands fill as you walk into them,
+   and wild beasts you leave far behind go. Your own beasts stay where you left them, waiting.
+10. **Bosses come back 10 to 15 minutes after they fall**: Skarn in its den, the Buried King at the
+    Ossuary, Old Maw in the deep, each lair's Sleeper, and the great roaming beasts (the Scarhorn,
+    the Ashmane, the Sailking, the Dunestalker, Old Greyhorn, the Emerald Tyrant). A cave emptied of
+    its compies or crystal beasts fills again when you walk back in.
+
+**Hunters that mean it** (the raptors in the cave stood and stared; the allosaur tried to sneak)
+11. **In a cave, everything jumps you**: raptors come straight in (no waiting for the pack), an
+    allosaur strikes instead of stalking, and they notice you from further off.
+12. **Every beast has a temperament of its own** (its genes). A bold or fierce one charges straight
+    in; a calm or skittish one uses its head: raptors gather and surround, an allosaur lies in wait.
+
+**Sleep** (the stego stood up after two seconds)
+13. **A sleeping beast sleeps the night through**, from when its herd lies down until morning,
+    unless something attacks it. You can walk up to it and feed a stego berries where it lies: it
+    stays asleep and doesn't mind you close.
+
+**Lodges** ("they actually build a real base... you could run and hide in there")
+14. **Sunward bands build lodges.** A band that has walked a while in a land well away from camp
+    stops, says "Here. We build here", and raises a lodge a piece at a time:
+    - walls of the land's own stuff (mirewood in the bog, palewood in the Pale Lands, sandstone in
+      the dunes and Bonelands, timber elsewhere) round a floor, with a door and a thatch roof;
+    - a bed and a chest inside;
+    - a campfire and torches out front.
+15. **Then it's a camp of theirs**: on the map, trading like the oasis, and peopled again each time
+    you come back. **Its folk stand guard**: any hunter that comes near the lodge, or near you while
+    you shelter with them, gets their spears and arrows.
+
+**Music: each land its own**
+16. **The plains, the bog, the dunes, the Pale Lands, the Bonelands and the caves each play their
+    own music**, crossfading as you walk from one to the next, and each picks up where it left off.
+    Boss fights have their own. The bog uses your unused "Travel Music (Jungle)", the dunes the
+    Cravara OST, and the Pale Lands the main theme. The Bonelands and the boss fights have
+    placeholder versions made from your tracks until new music is made (the ElevenLabs music
+    generator needs a paid plan; see `game/Forest/audio/music/PROVENANCE.md`).
+17. **Every beast has its own voice**: 75 new ElevenLabs calls, roars, cries and death cries for the
+    Scarhorn, Ashmane, dimetrodon, ankylosaur, protoceratops, compies, Sandblades, deinonychus,
+    Suchomimus and Sailking (no more borrowed voices), plus death cries for the rest.
+
+**Performance** ("this game really shouldn't be hard to run")
+18. **A new journey runs at about 10 ms a frame (100 fps) everywhere.** That's with the renderer at
+    about 7 ms, scripts about 1.5 ms and physics under 1.5 ms; the old world takes 15 to 60 ms.
+    Only the ground near you is in the game, so a new journey has 5 to 50 beasts ticking rather
+    than 330. Measured on this laptop, rendered, `Tests/PerfStream.tscn`; see
+    `art/forest-playtest/perf-p16-stream.txt`.
+19. **A new journey starts in under 3 seconds**, down from about 21 when this pass began:
+    - the world plans itself in 0.4 s (it was 2.1);
+    - the first ground is made on every core at once;
+    - only the chunks round you stand up straight away;
+    - the Keeper's clips are painted as they're needed rather than a second's worth up front.
+20. **No hitches while you walk**:
+    - the world's chunks and their grass are worked out on a background thread;
+    - a species' art loads on the loader's threads before its first beast arrives;
+    - each frame does at most one heavy streaming step.
+21. **Old journeys run faster too.** Measured back to back against pass 15 on the same afternoon:
+    - frames averaged 27 to 29 ms against 33 to 46;
+    - script time about halved: the interaction hints, lighting and a beast's search for prey no
+      longer scan the whole world.
+
 ## Fifteenth pass: a world in rings, caves, the larder, and a long road for skills
 
 **A new world every expedition (Core Keeper's rings)**

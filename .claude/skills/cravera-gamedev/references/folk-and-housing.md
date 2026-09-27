@@ -305,3 +305,60 @@ saved (only their memory is).
   beasts. Every sub-test uses the same patch of dunes: `_clear_folk()` stops tribesmen, beasts and
   arrows as well as freeing them, or a node freed at a frame's start swings or shoots once more
   into the next test.
+
+## Pass 16: bands build lodges; villages stream
+
+- **A Sunward band settles** (`TribeKeeper._maybe_settle`, on reaching a goal):
+  - It needs `SETTLE_AFTER` 3 goals walked, `SETTLE_ODDS` 0.35, fewer than `MAX_SETTLEMENTS` 6,
+    no other lodge still going up, `SETTLE_FROM_CAMP` 60 cells out, and `SETTLE_GAP` 70 from
+    every village, camp and lodge.
+  - The ground is a 9x11 footprint (`_lodge_fits`): loaded, dry, only clearable brush on it,
+    and 24 cells from any POI (cave mouths are POIs in a streamed world).
+- **The lodge** (`_lodge_pieces`) is a 5x4 floor (the land's floor), the land's walls round it
+  (`LODGE_WALL`: bogwood, palewood, sandstone, else timber), a wood door south, a thatch roof over
+  the floor, a hide bed and a chest inside, and a campfire and two torches out front.
+  - A piece goes up every `BUILD_EVERY` 1.2 s while the builders are within 140 px (and, streamed,
+    the site is loaded). One of them `hammer()`s (the sword clip, no one struck).
+  - Pieces are set by `ForestWorld.build_piece`, so they persist like the keeper's own. A building
+    band doesn't disband when the keeper leaves.
+- **Done** (`_finish_lodge`): it becomes a village (`villages[vid]`, `world.villages`, a POI named
+  "The <X> Lodge"), with standing and requests like the camps.
+  - Its band's `guard` is the lodge's heart. `Tribesman._choose_foe` then engages any wild hunter
+    (`FC.PREY` species, provoked, or hunting) within `GUARD_REACH` 150 px of it, or within 120 px
+    of a keeper sheltering there.
+  - Saved in `serialize().lodges`. On load, `populate()` re-adds them as villages. An unfinished
+    lodge resumes with its village folk as builders (`_builders`).
+- **Streamed worlds**: a village's folk (and penned beasts, `v.beasts`) are there only while its
+  cell is loaded (`_stream_villages`, every 1 s).
+  - The small camps are sited from the plan (`_site_ok_streamed`: `gen.open_at`, shore probe,
+    spacing, only clearable seeded props via `_seeded_props`), after `chunks._finish_task()`.
+  - Their tents and fires are world `event_props`; only their seeded clearable brush is mined.
+
+## Pass 17: task lines, advice, three new folk
+
+- **Task lines** (`QuestData`): each task has a `line` (default: its giver), and
+  `QuestManager.open_for(giver)` gives the next of every line at once. `current(giver)` is the one
+  to see to first (ready, then under way, then the first offered), and `marker` follows it.
+  `accept` needs the task to be open. New goal types:
+  - `deed` (a `place_visited` id, counted, not capped: chest:KIND, blast, bred, ride, tend, meal);
+  - `kills`, `herd`, `saddle`;
+  - `ids` on `have` and `craft`.
+  New reward keys: `"xp:SKILL"` (Skills.gain), `"milestone:ID"` (e.g. `learned_bombs`, which
+  shows the bomb recipe: `hidden_until`) and `"perk:ID"` (`Skills.grant`, a star taught outright,
+  its prerequisites aside). A `"streamed"` need is a v2 world. Tamsin's tasks said
+  `"trader"`; her folk id is `"merchant"`, so they were never offered. Fixed.
+- **Advice** (`quests/Advice.gd`, "What next?"): per NPC, reads `tool_power`, `weapon_damage`,
+  `defence`, companions, milestones, the tasks' tallies and regions. It picks from the WEAPONS
+  and ARMOUR ladders and appends the NPC's current task. `FolkManager.help()` (Orrin) and
+  `advise(id)` (the "next" service) call it.
+- **New folk** (`Folk.CAST`: `pronoun`, `tips` for the "lore_tips" service, STOCK). Art via
+  `tools/folk/import_folk.py` (PixelLab pro-flash 32x32, Orrin's south view as style).
+  - **Harrow** (`miner`, arrives `"cave"`): placed by `FolkManager.cave_site()` in the cave the
+    keeper is in, 8-22 cells from its entry, with room for a cold camp.
+  - **Nell** (`breeder`, `"eggs:1"`).
+  - **Rusk** (`fighter`, `"kills:8"`). His first draw copied Orrin's look outright (hood, beard,
+    palette). Redrawn with `style_options.color_palette = false` and a usage note: "copy only the
+    rendering, not the clothes or colours".
+- **Sites persist in a streamed world**: `_raise_site` records the hut, camp or trap in
+  `world.event_props` (their kinds are `ForestWorld.EVENT_KINDS`). Without that, the prop
+  vanished when its chunk unloaded.

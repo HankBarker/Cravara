@@ -53,22 +53,38 @@ var _chunks := {}
 var _dirty_all := false
 var _dirty_cells := {}
 var _stamp_meta: Dictionary
+## Pass 16: a streamed world (world/Chunks.gd) is drawn from maps that wrap,
+## WRAP cells a side (the shaders' map_wrap / land_wrap): each chunk paints its
+## cells in as it comes (paint_chunk) and the maps go up once a frame. Only the
+## ground chunks round the view whose world chunk is in are made.
+const WRAP := 512
+var wrap := 0
+var land_image: Image
+var _upload := false
 
 
 func setup(owner_world) -> void:
 	world = owner_world
 	extent = int(world.EXTENT)
-	var b: Rect2i = world.render_bounds() if world.has_method("render_bounds") else (world.bounds() if world.has_method("bounds") else Rect2i(-extent, -extent, extent * 2, extent * 2))
-	origin = b.position
-	cells = b.size
-	map_image = Image.create(cells.x, cells.y, false, Image.FORMAT_RGBA8)
+	var streamed: bool = world.get("layout") != null and world.layout.is_streamed()
 	var timing := "--gen-timing" in OS.get_cmdline_user_args()
 	var t := Time.get_ticks_msec()
-	depth = _water_depth()
-	if timing: print("GROUND depth %dms" % (Time.get_ticks_msec() - t))
-	t = Time.get_ticks_msec()
-	_fill_map(Rect2i(origin, cells))
-	if timing: print("GROUND fill %dms (%s cells)" % [Time.get_ticks_msec() - t, cells])
+	if streamed:
+		wrap = WRAP
+		origin = Vector2i.ZERO
+		cells = Vector2i(WRAP, WRAP)
+		map_image = Image.create(WRAP, WRAP, false, Image.FORMAT_RGBA8)
+		land_image = Image.create(WRAP, WRAP, false, Image.FORMAT_RGBA8)
+	else:
+		var b: Rect2i = world.render_bounds() if world.has_method("render_bounds") else (world.bounds() if world.has_method("bounds") else Rect2i(-extent, -extent, extent * 2, extent * 2))
+		origin = b.position
+		cells = b.size
+		map_image = Image.create(cells.x, cells.y, false, Image.FORMAT_RGBA8)
+		depth = _water_depth()
+		if timing: print("GROUND depth %dms" % (Time.get_ticks_msec() - t))
+		t = Time.get_ticks_msec()
+		_fill_map(Rect2i(origin, cells))
+		if timing: print("GROUND fill %dms (%s cells)" % [Time.get_ticks_msec() - t, cells])
 	map_texture = ImageTexture.create_from_image(map_image)
 	_stamp_meta = JSON.parse_string(FileAccess.get_file_as_string("res://Forest/ground/art/stamps.json"))
 	_bake_material = _material(BAKE)
@@ -78,7 +94,7 @@ func setup(owner_world) -> void:
 		var entry: Dictionary = _stamp_meta.kinds.get(kind, {"first": 0, "count": 0})
 		_bake_material.set_shader_parameter("st_" + kind, Vector2i(int(entry.first), int(entry.count)))
 	t = Time.get_ticks_msec()
-	land_texture = _land_map()
+	land_texture = ImageTexture.create_from_image(land_image) if streamed else _land_map()
 	if timing: print("GROUND lands %dms" % (Time.get_ticks_msec() - t))
 	lands_to(_bake_material)
 	_field_material = _material(FIELD)
@@ -93,6 +109,7 @@ func _material(shader: Shader) -> ShaderMaterial:
 	m.set_shader_parameter("terrain_map", map_texture)
 	m.set_shader_parameter("map_size", cells)
 	m.set_shader_parameter("map_origin", origin)
+	m.set_shader_parameter("map_wrap", wrap)
 	m.set_shader_parameter("world_seed", int(world.world_seed))
 	return m
 
@@ -100,12 +117,14 @@ func _material(shader: Shader) -> ShaderMaterial:
 # --- chunks ----------------------------------------------------------------------------
 
 func _chunk_rect(index: Vector2i) -> Rect2i:
+	if wrap > 0: return Rect2i(index * CHUNK, Vector2i(CHUNK, CHUNK))
 	var top_left := origin + index * CHUNK
 	var size := Vector2i(mini(CHUNK, origin.x + cells.x - top_left.x), mini(CHUNK, origin.y + cells.y - top_left.y))
 	return Rect2i(top_left, size)
 
 
 func _chunk_of(c: Vector2i) -> Vector2i:
+	if wrap > 0: return Vector2i(floori(float(c.x) / CHUNK), floori(float(c.y) / CHUNK))
 	return Vector2i(floori(float(c.x - origin.x) / CHUNK), floori(float(c.y - origin.y) / CHUNK))
 
 
@@ -126,8 +145,23 @@ func _update_chunks(all_now := false) -> void:
 	var half := Vector2(240, 135)
 	var near := Rect2(eye - half - Vector2(MARGIN, MARGIN), half * 2.0 + Vector2(MARGIN, MARGIN) * 2.0)
 	var keep := Rect2(eye - half - Vector2(KEEP, KEEP), half * 2.0 + Vector2(KEEP, KEEP) * 2.0)
-	var count := _chunk_count()
 	var bakes := 0
+	if wrap > 0:
+		# A streamed world: only the chunks round the view, and only those whose
+		# world chunk is in (Chunks.loaded).
+		var span := float(CHUNK * CELL)
+		for index in _chunks.keys():
+			var r0 := _chunk_rect(index)
+			if not Rect2(Vector2(r0.position * CELL), Vector2(r0.size * CELL)).intersects(keep) or not world.chunks.loaded.has(index): _free_chunk(index)
+		for j in range(floori(near.position.y / span), floori(near.end.y / span) + 1):
+			for i in range(floori(near.position.x / span), floori(near.end.x / span) + 1):
+				var index := Vector2i(i, j)
+				if _chunks.has(index) or not world.chunks.loaded.has(index): continue
+				if all_now or bakes < BAKES_PER_FRAME:
+					_make_chunk(index)
+					bakes += 1
+		return
+	var count := _chunk_count()
 	for j in count.y:
 		for i in count.x:
 			var index := Vector2i(i, j)
@@ -229,7 +263,10 @@ func _process(_delta: float) -> void:
 		_dirty_all = false
 		_dirty_cells.clear()
 		depth = _water_depth()
-		_fill_map(Rect2i(origin, cells))
+		if wrap > 0:
+			for chunk in world.chunks.loaded: _fill_map(Rect2i(chunk * CHUNK, Vector2i(CHUNK, CHUNK)))
+		else:
+			_fill_map(Rect2i(origin, cells))
 		map_texture.update(map_image)
 		for index in _chunks: _bake_chunk(index)
 	elif not _dirty_cells.is_empty():
@@ -242,7 +279,8 @@ func _process(_delta: float) -> void:
 		_dirty_cells.clear()
 		if water_changed: depth = _water_depth()
 		# Shores and depths reach a few cells round a change.
-		box = box.grow(9 if water_changed else 2).intersection(Rect2i(origin, cells))
+		box = box.grow(9 if water_changed else 2)
+		if wrap == 0: box = box.intersection(Rect2i(origin, cells))
 		_fill_map(box)
 		map_texture.update(map_image)
 		for y in range(box.position.y, box.end.y, CHUNK / 2):
@@ -253,7 +291,40 @@ func _process(_delta: float) -> void:
 		touched[_chunk_of(Vector2i(box.end.x - 1, box.position.y))] = true
 		for index in touched:
 			if _chunks.has(index): _bake_chunk(index)
+	if _upload:
+		_upload = false
+		map_texture.update(map_image)
+		land_texture.update(land_image)
 	_update_chunks()
+
+
+## A streamed world's chunk came in: its cells into the maps (terrain, depth,
+## land, micro places), and the ground round it baked again (its edges meet
+## the chunks beside it).
+func paint_chunk(chunk: Vector2i, data: Dictionary) -> void:
+	if wrap == 0: return
+	var r := Rect2i(chunk * CHUNK, Vector2i(CHUNK, CHUNK))
+	var dep: PackedByteArray = data.depth
+	var lands: PackedByteArray = data.land
+	var inner: PackedByteArray = data.inner
+	var micro: PackedByteArray = data.micro
+	var terrain: PackedByteArray = data.terrain
+	var inside: Rect2i = world.bounds()
+	for k in CHUNK * CHUNK:
+		var c := r.position + Vector2i(k % CHUNK, k / CHUNK)
+		if dep[k] > 0 and world.water.has(c): depth[c] = int(dep[k])
+		else: depth.erase(c)
+		# Nothing past the world's edge (the gap before the caves' strip, seen
+		# from a cave's way in): underground rock, not a meadow.
+		var land := int(lands[k])
+		if terrain[k] == 255 and not inside.has_point(c): land = 5
+		land_image.set_pixel(posmod(c.x, wrap), posmod(c.y, wrap), Color8(land, int(inner[k]), int(micro[k]), 255))
+	_fill_map(r)
+	_upload = true
+	for dy in range(-1, 2):
+		for dx in range(-1, 2):
+			var index := chunk + Vector2i(dx, dy)
+			if _chunks.has(index): _bake_chunk(index)
 
 
 ## One texel per cell: kind, water depth (cells to land) and flags.
@@ -293,6 +364,7 @@ func lands_to(m: ShaderMaterial) -> void:
 	m.set_shader_parameter("land_map", land_texture)
 	m.set_shader_parameter("land_origin", origin)
 	m.set_shader_parameter("land_size", cells)
+	m.set_shader_parameter("land_wrap", wrap)
 
 func _fill_map(area: Rect2i) -> void:
 	for y in range(area.position.y, area.end.y):
@@ -314,7 +386,8 @@ func _fill_map(area: Rect2i) -> void:
 			elif world.is_river_cell(c):
 				flags |= F_RIVER
 			var d: float = clampf(float(depth.get(c, 0)) / 8.0, 0.0, 1.0)
-			map_image.set_pixel(x - origin.x, y - origin.y, Color8(kind, int(round(d * 255.0)), flags, 255))
+			if wrap > 0: map_image.set_pixel(posmod(x, wrap), posmod(y, wrap), Color8(kind, int(round(d * 255.0)), flags, 255))
+			else: map_image.set_pixel(x - origin.x, y - origin.y, Color8(kind, int(round(d * 255.0)), flags, 255))
 
 
 ## Cells from each water cell to the nearest land cell (8-way steps).

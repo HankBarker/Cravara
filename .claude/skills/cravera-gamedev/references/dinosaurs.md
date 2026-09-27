@@ -492,3 +492,15 @@ Result: 10-19 ms a frame across runs (camp ~11-14, the villages ~10-18, a sandst
   `_retreat_from` needs an `is_dead` property.
 - **Two-tone mutations** (`Genes.gd`): body and accent hues separately; speckles no longer roll
   (they read as stray spots on the allosaur).
+
+## Pass 17: the dimetrodon's side legs
+- Its side **walk** was PixelLab's walk-in-place with legs that never moved (feet travel 2 px/s:
+  `tools/dino/stride.py`). `tools/dino/dimetro_side.py` rebuilds it from the side **run**'s stride,
+  and `clips.json` override `"dimetrodon/walk_side": {"fps": 4.3}` slows that one facing so its
+  feet keep pace with its 15 px/s walk. export.py writes a per-facing pace as the clip's
+  `fps_view`, and `DinoArt.frames` plays it.
+- Its side **run** drew the far hind leg as a solid pure-black blob in frames 2-5. The inside of
+  each thick black patch below the belly (black with black all round) becomes a shaded leg, and the
+  rim stays as outline. Don't recolour every interior black pixel: the drawing uses black for its
+  belly shade, and doing so washed the whole lower body out.
+- The originals are kept in `art/dino-v2/fix/dimetrodon/`, and the tool always starts from them.

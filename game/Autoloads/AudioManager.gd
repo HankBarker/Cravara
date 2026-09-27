@@ -44,27 +44,59 @@ func stop_music():
 	if is_instance_valid(_music_player):
 		_music_player.stop()
 		_music_player.stream = null
+	for old in _fading:
+		if is_instance_valid(old): old.queue_free()
+	_fading.clear()
 	_music_path = ""
 
-func play_music(path: String):
+## Pass 16: one tune gives way to the next over MUSIC_FADE seconds (a land's
+## own as the keeper walks into it), and a tune comes back where it left off.
+const MUSIC_FADE := 1.8
+var _fading: Array = []
+var _music_at := {}
+## Pass 17: a tune that doesn't loop says when it's over (a land's playlist
+## moves on to its next: ForestPlaytest.biome_music).
+signal music_finished(path: String)
+
+func play_music(path: String, volume_db := -8.0, loop := true):
 	if DisplayServer.get_name() == "headless":
 		return
 	if path == _music_path and is_instance_valid(_music_player) and _music_player.playing:
 		return
 	if not ResourceLoader.exists(path):
 		return
-	if not is_instance_valid(_music_player):
-		_music_player = AudioStreamPlayer.new()
-		_music_player.bus = "Music"
-		_music_player.process_mode = Node.PROCESS_MODE_ALWAYS
-		add_child(_music_player)
+	# The tune playing fades out (and is remembered where it was).
+	if is_instance_valid(_music_player):
+		if _music_player.playing and _music_path != "": _music_at[_music_path] = _music_player.get_playback_position()
+		var old := _music_player
+		_fading = _fading.filter(func(f): return is_instance_valid(f))
+		_fading.append(old)
+		# (The fade is the player's own: freed early by stop_music, it goes with it.)
+		var out := old.create_tween()
+		out.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+		out.tween_property(old, "volume_db", -60.0, MUSIC_FADE)
+		out.tween_callback(old.queue_free)
+	_music_player = AudioStreamPlayer.new()
+	_music_player.bus = "Music"
+	_music_player.process_mode = Node.PROCESS_MODE_ALWAYS
+	add_child(_music_player)
 	_music_path = path
 	var stream = load(path)
 	if stream is AudioStreamMP3:
-		stream.loop = true
+		stream.loop = loop
 	_music_player.stream = stream
-	_music_player.volume_db = -8
-	_music_player.play()
+	_music_player.volume_db = -60.0
+	if not loop:
+		var ended := path
+		_music_player.finished.connect(func():
+			_music_at.erase(ended)
+			music_finished.emit(ended))
+	var from := float(_music_at.get(path, 0.0))
+	if stream and from >= stream.get_length() - 1.0: from = 0.0
+	_music_player.play(from)
+	var fade_in := _music_player.create_tween()
+	fade_in.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	fade_in.tween_property(_music_player, "volume_db", volume_db, MUSIC_FADE)
 
 func _ready():
 	# Create audio buses if they don't exist
@@ -221,6 +253,30 @@ func _play_sample(path: String, volume: float):
 	add_child(voice)
 	voice.finished.connect(voice.queue_free)
 	voice.play()
+
+## Pass 17: a one-shot sound from a file: at a place in the world (fading
+## with distance: `reach` px) or, with `at` INF, heard everywhere. The player
+## (null when silent: headless, the sound turned off, no such file).
+func play_at(path: String, at := Vector2.INF, volume_db := 0.0, pitch := 1.0, reach := 700.0) -> Node:
+	if sfx_volume <= 0.01 or DisplayServer.get_name() == "headless" or not ResourceLoader.exists(path):
+		return null
+	var voice: Node
+	if at == Vector2.INF:
+		voice = AudioStreamPlayer.new()
+	else:
+		var placed := AudioStreamPlayer2D.new()
+		placed.position = at
+		placed.max_distance = reach
+		placed.attenuation = 1.4
+		voice = placed
+	voice.bus = "SFX"
+	voice.stream = load(path)
+	voice.volume_db = volume_db
+	voice.pitch_scale = pitch
+	add_child(voice)
+	voice.finished.connect(voice.queue_free)
+	voice.play()
+	return voice
 
 ## Quiet generated foley (footsteps, splashes, whooshes, hits). volume_db is
 ## the playback level (footsteps sit around -16..-20 dB); pitch multiplies the

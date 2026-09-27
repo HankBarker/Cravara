@@ -97,19 +97,30 @@ func open(folk_id: String, folk_manager: Object) -> void:
 	face.add_child(portrait)
 	var names := VBoxContainer.new()
 	names.add_theme_constant_override("separation", 1)
+	# (Pass 17: a long name or title is clipped to the panel, never widens it.)
+	names.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	names.custom_minimum_size.x = WIDTH - 14 - 36 - 5
 	header.add_child(names)
 	var who := Folk.info(folk_id)
 	var name_label := Label.new()
 	name_label.text = str(who.name)
 	UI.style_title(name_label, 11)
+	name_label.clip_text = true
+	name_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	names.add_child(name_label)
 	var title := Label.new()
 	title.text = str(who.title).to_upper()
 	title.add_theme_color_override("font_color", UI.MINT)
+	title.clip_text = true
+	title.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	names.add_child(title)
 	_words = Label.new()
 	_words.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_words.custom_minimum_size.x = WIDTH - 14
+	# (Pass 17: the words laid out whole before they're typed out, so a word
+	# never starts on one line and jumps to the next, and the panel is the
+	# right size from the first letter.)
+	_words.visible_characters_behavior = TextServer.VC_CHARS_AFTER_SHAPING
 	column.add_child(_words)
 	_content = VBoxContainer.new()
 	_content.add_theme_constant_override("separation", 3)
@@ -291,6 +302,9 @@ func show_talk(words: String) -> void:
 	for service in Folk.info(id).get("services", []):
 		match service:
 			"help": _button(grid, "What next?", func(): say(manager.help()))
+			# Pass 17: anyone's advice, and their own know-how.
+			"next": _button(grid, "What next?", func(): say(manager.advise(id) if manager.has_method("advise") else ""))
+			"lore_tips": _button(grid, {"miner": "Mining tips", "breeder": "Raising tips", "fighter": "Fighting tips"}.get(id, "Tips"), func(): say(_pick(Folk.info(id).get("tips", []))))
 			"recipes": _button(grid, "Recipes", show_recipes)
 			"lore": _button(grid, "A story", func(): say(_pick(Folk.info(id).lore)))
 			"trade": _button(grid, "Trade", show_trade)
@@ -312,13 +326,33 @@ func _quests():
 	return session.get("quests") if session else null
 
 
-## Their task: what they ask (take it or leave it), how it's going, or hand
-## it in for the reward.
-func show_tasks() -> void:
+## Their tasks (pass 17: one from each of their lines at once): a list to pick
+## from, then the one picked: what they ask (take it or leave it), how it's
+## going, or hand it in for the reward. `pick`: the task to show (else the
+## one to see to first).
+func show_tasks(pick := "") -> void:
 	page = "tasks"
 	_clear()
 	var quests = _quests()
-	var q: Dictionary = quests.current(id) if quests else {}
+	var open: Array = quests.open_for(id) if quests else []
+	var q: Dictionary = {}
+	for task in open:
+		if str(task.id) == pick: q = task
+	# Several open and none picked: the list first, a page of its own (with a
+	# task's words under it the panel would run down past the hotbar).
+	if q.is_empty() and open.size() > 1:
+		say("Here's what I've got for you. Pick one.")
+		var list := _list(minf(19.0 * open.size(), 76.0))
+		for task in open:
+			var st: String = quests.status(task)
+			var tag := "? " if st == "ready" else ("! " if st == "offer" else "- ")
+			var b := _button(list, tag + _say(str(task.title)), func(): show_tasks(str(task.id)))
+			b.alignment = HORIZONTAL_ALIGNMENT_LEFT
+			if st == "ready": b.add_theme_color_override("font_color", UI.GOLD)
+		_button(_content, "Back", func(): show_talk(""))
+		_refit()
+		return
+	if q.is_empty() and quests: q = quests.current(id)
 	if q.is_empty():
 		var any_left := false
 		for task in QuestData.for_giver(id):
@@ -352,11 +386,11 @@ func show_tasks() -> void:
 			say(_say(str(q.ask)))
 			_button(grid, "I'll do it", func():
 				quests.accept(q.id)
-				show_tasks())
-			_button(grid, "Not now", func(): show_talk(""))
+				show_tasks(str(q.id)))
+			_button(grid, "Not now", func(): show_tasks() if open.size() > 1 else show_talk(""))
 		"active":
 			say("How's it going? " + _say(str(q.ask)))
-			_button(grid, "Back", func(): show_talk(""))
+			_button(grid, "Back", func(): show_tasks() if open.size() > 1 else show_talk(""))
 		"ready":
 			say("You've done it? Let me see...")
 			_button(grid, "Hand it in", func():
@@ -519,7 +553,9 @@ func show_house() -> void:
 		"home": say("I live in the %s. Suits me fine." % Housing.describe(home).to_lower())
 		"camp": say("I'm camped by the fire for now. Build me a house and I'll move in.")
 		_: say("I'd live by your camp if there were a house for me.")
-	var list := _list(74)
+	# (Pass 17: the words are laid out whole from the first letter, so the
+	# list gives up a line to keep the panel clear of the hotbar.)
+	var list := _list(64)
 	if rooms.is_empty():
 		var none := Label.new()
 		none.text = "No houses yet: walls all round, a door, a floor, a roof over every tile, a torch and a bed."

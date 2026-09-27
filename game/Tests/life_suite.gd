@@ -352,8 +352,11 @@ func _gifts() -> void:
 
 func _quests() -> void:
 	var q = stage.quests
+	# (Pass 17: his first steps' line begins with timber and a bench.)
+	check(q.current("guide").get("id", "") == "guide_timber", "Orrin's first task is timber and stone")
+	for id in ["guide_timber", "guide_bench"]: q.state[id] = "done"
 	var first: Dictionary = q.current("guide")
-	check(first.get("id", "") == "guide_tools", "Orrin's first task is better tools")
+	check(first.get("id", "") == "guide_tools", "then better tools")
 	check(q.status(first) == "offer" and q.marker("guide") == "!", "offered, with a ! over his head")
 	check(q.accept("guide_tools") and q.status(first) == "active", "taken")
 	check(q.tracked().has(first), "and followed on the HUD")
@@ -364,10 +367,11 @@ func _quests() -> void:
 	check(q.status(first) == "ready" and q.marker("guide") == "?", "made the pickaxe: ready, with a ?")
 	check(q.turn_in("guide_tools"), "handed in")
 	check(InventoryManager.get_item_count("torch") == torches + 4 and InventoryManager.get_item_count("ancient_coin") == coins + 3, "the reward is paid")
-	check(q.current("guide").get("id", "") == "guide_carvings", "the next task opens")
+	check(q.current("guide").get("id", "") == "guide_axe", "the next task of that line opens")
+	check(q.open_for("guide").map(func(t): return t.id).has("guide_carvings"), "and his other lines are on offer too")
 	# Tamsin's: bring things (taken on hand-in).
 	InventoryManager.add_item(ItemDB.make("fossil_bone"), 3)
-	check(q.accept("trader_fossils") and q.complete(q.current("trader")), "three fossils in the satchel: done")
+	check(q.accept("trader_fossils") and q.complete(q.current("merchant")), "three fossils in the satchel: done")
 	var fossils := InventoryManager.get_item_count("fossil_bone")
 	check(q.turn_in("trader_fossils") and InventoryManager.get_item_count("fossil_bone") == fossils - 3, "and she takes them")
 	# Kaya's: a lystro already tamed counts.

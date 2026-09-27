@@ -1,8 +1,10 @@
 extends Node
 ## Pass 13: the world stirs. Now and then (EVERY seconds) something happens,
 ## announced with a banner and marked on the map:
-##  - quake: the ground shakes for a few seconds; loose rock tumbles down
-##    round the keeper; the herds bolt and the hunters lose their nerve.
+##  - quake: the ground heaves, harder and harder (pass 17: a real shake, dust
+##    in the air, the ground tearing open round the keeper, rock falling out of
+##    the sky, a shadow first: roll clear; what lands on open ground stays as
+##    a boulder); the herds bolt and the hunters lose their nerve.
 ##  - snow: snow drifts down for a few minutes (strongest up in the Pale
 ##    Lands); out under the open sky the cold makes the keeper hungrier.
 ##  - fire: a wildfire catches in dry scrub (the dunes' edges, the grass) and
@@ -48,6 +50,20 @@ var spire := Vector2i(9999, 9999)
 var _surge_clock := 0.0
 var _surge_beasts: Array = []
 var _quake_clock := 0.0
+## Pass 17: the quake's run: how long it's been going, the rocks and cracks
+## still to come, its rumble and the dust in the air.
+var _quake_age := 0.0
+var _rocks_left := 0
+var _rock_clock := 0.0
+var _boulders_left := 0
+var _cracks_left := 0
+var _crack_clock := 0.0
+var _jolt_clock := 0.0
+var _rumble: AudioStreamPlayer
+var _haze: ColorRect
+var _debris: CPUParticles2D
+var rocks: Array = []
+var cracks: Array = []
 var _meteors_left := 0
 var _meteor_clock := 0.0
 ## The stampede: its beasts, what they flee from, and the trampling's pause.
@@ -99,6 +115,29 @@ func setup(owner_session) -> void:
 	_layer.add_child(_snow)
 	_sky = Streaks.new()
 	_layer.add_child(_sky)
+	# The quake's dust: a brown haze, and grit falling across the screen.
+	_haze = ColorRect.new()
+	_haze.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_haze.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_haze.color = Color(0.42, 0.33, 0.22, 0.0)
+	_layer.add_child(_haze)
+	_debris = CPUParticles2D.new()
+	_debris.amount = 90
+	_debris.lifetime = 1.1
+	_debris.emission_shape = CPUParticles2D.EMISSION_SHAPE_RECTANGLE
+	_debris.emission_rect_extents = Vector2(260, 4)
+	_debris.position = Vector2(240, -6)
+	_debris.direction = Vector2(0.1, 1.0)
+	_debris.spread = 12.0
+	_debris.initial_velocity_min = 60.0
+	_debris.initial_velocity_max = 140.0
+	_debris.gravity = Vector2(0, 320)
+	_debris.scale_amount_min = 1.0
+	_debris.scale_amount_max = 2.0
+	_debris.color = Color(0.5, 0.43, 0.34, 0.85)
+	_debris.emitting = false
+	_debris.visible = false
+	_layer.add_child(_debris)
 	_flames = Flames.new()
 	_flames.events = self
 	_flames.z_index = 12
@@ -118,11 +157,11 @@ func cold() -> bool:
 func markers() -> Array:
 	var out: Array = []
 	if spire != Vector2i(9999, 9999) and kind == "surge":
-		out.append({"at": Vector2(spire * 16) + Vector2(8, 8), "color": Color("7fe6ff")})
+		out.append({"at": Vector2(spire * 16) + Vector2(8, 8), "color": Color("7fe6ff"), "icon": "crystal"})
 	if not burning.is_empty():
 		var sum := Vector2.ZERO
 		for c in burning: sum += Vector2(c * 16)
-		out.append({"at": sum / float(burning.size()) + Vector2(8, 8), "color": Color("ff7a2a")})
+		out.append({"at": sum / float(burning.size()) + Vector2(8, 8), "color": Color("ff7a2a"), "icon": "flame"})
 	return out
 
 
@@ -181,11 +220,8 @@ func start(what: String) -> bool:
 	var hud = session.get("hud")
 	match what:
 		"quake":
-			left = 7.0
-			_quake_clock = 0.0
-			_tumble_rocks()
-			_scatter_beasts(420.0)
-			if hud: hud.show_banner("Earthquake", "The ground heaves! Loose rock tumbles down.", null)
+			_begin_quake()
+			if hud: hud.show_banner("EARTHQUAKE!", "The ground heaves and rock is falling! Watch for shadows and roll clear.", null)
 		"snow":
 			left = _rng.randf_range(150.0, 240.0)
 			if hud: hud.show_banner("Snowfall", "Snow drifts down. Out in the open the cold makes you hungry.", null)
@@ -227,6 +263,7 @@ func start(what: String) -> bool:
 
 func _end() -> void:
 	match kind:
+		"quake": _end_quake()
 		"snow": session._toast("The snow stops.")
 		"meteors": (_sky as Streaks).on = false
 		"surge": session._toast("The spire goes quiet. Its crystal is still there for the taking.")
@@ -336,24 +373,149 @@ func _send_caravan_on() -> void:
 
 
 # ------------------------------------------------------------------ quake
+## Pass 17 (Hank: "the earthquake needs to, like, shake the screen, and it
+## needs to be, like, much more of, like, a holy crap moment"): QUAKE_TIME
+## seconds; the shake builds over the first second and a half to a hard
+## shake (the camera's trauma held at QUAKE_SHAKE, jolts on top: the old one's
+## never came to a whole pixel) and eases off over the last few. Cracks tear
+## open round the keeper; rock falls (a share of it aimed at where the keeper
+## stands: QUAKE_AIMED), a few of them staying as boulders (QUAKE_BOULDERS).
+const QUAKE_TIME := 12.0
+const QUAKE_SHAKE := 0.92
+const QUAKE_ROCKS := Vector2i(12, 18)
+const QUAKE_AIMED := 0.45
+const QUAKE_BOULDERS := 8
+const QUAKE_CRACKS := Vector2i(4, 7)
+const RUMBLE := "res://Forest/audio/events/quake-rumble.mp3"
+const CRACK_SOUND := "res://Forest/audio/events/ground-crack.mp3"
+const FALLING_ROCK = preload("res://Forest/fx/FallingRock.gd")
+const QUAKE_CRACK = preload("res://Forest/fx/QuakeCrack.gd")
+
+func _begin_quake() -> void:
+	left = QUAKE_TIME
+	_quake_age = 0.0
+	_quake_clock = 0.0
+	_rocks_left = _rng.randi_range(QUAKE_ROCKS.x, QUAKE_ROCKS.y)
+	_boulders_left = QUAKE_BOULDERS
+	_rock_clock = 1.3
+	_cracks_left = _rng.randi_range(QUAKE_CRACKS.x, QUAKE_CRACKS.y)
+	_crack_clock = 0.7
+	_jolt_clock = 0.4
+	rocks.clear()
+	cracks = cracks.filter(func(c): return is_instance_valid(c))
+	_scatter_beasts(420.0)
+	if DisplayServer.get_name() != "headless" and ResourceLoader.exists(RUMBLE):
+		var stream = load(RUMBLE).duplicate()
+		if stream is AudioStreamMP3: stream.loop = true
+		_rumble = AudioStreamPlayer.new()
+		_rumble.bus = "SFX"
+		_rumble.stream = stream
+		_rumble.volume_db = -8.0
+		add_child(_rumble)
+		_rumble.play()
+
+
+## How hard it's shaking now (0..1).
+func quake_strength() -> float:
+	if kind != "quake": return 0.0
+	return clampf(_quake_age / 1.5, 0.0, 1.0) * clampf(left / 3.0, 0.0, 1.0)
+
+
 func _tick_quake(delta: float) -> void:
-	_quake_clock -= delta
-	if _quake_clock <= 0.0:
-		_quake_clock = 0.3
-		var feel = session.player.get("feel")
-		if feel != null: feel.shake(0.16 + 0.1 * clampf(left / 7.0, 0.0, 1.0))
+	_quake_age += delta
+	var keeper: Node2D = session.player
+	var strength := quake_strength()
+	# The first great jolt, as the shaking comes to its worst.
+	if _quake_age >= 1.0 and _quake_age - delta < 1.0: _jolt(keeper)
+	# The shake held hard (it decays by itself: made up every frame).
+	var camera = keeper.get_node_or_null("Camera2D")
+	var feel = keeper.get("feel")
+	if camera and camera.get("trauma") != null and feel != null:
+		var want := QUAKE_SHAKE * strength
+		if float(camera.trauma) < want: feel.shake(want - float(camera.trauma))
+		_jolt_clock -= delta
+		if _jolt_clock <= 0.0 and strength > 0.3:
+			_jolt_clock = _rng.randf_range(0.3, 0.65)
+			feel.shake(0.0, Vector2.from_angle(_rng.randf() * TAU) * _rng.randf_range(1.5, 3.0) * strength)
+	if is_instance_valid(_rumble): _rumble.volume_db = lerpf(-14.0, 1.0, strength)
+	_haze.color.a = 0.17 * strength
+	_debris.emitting = strength > 0.35
+	_debris.visible = _debris.emitting or strength > 0.0
+	# The ground tears open.
+	_crack_clock -= delta
+	if _crack_clock <= 0.0 and _cracks_left > 0:
+		_crack_clock = _rng.randf_range(0.9, 1.7)
+		if _open_crack(keeper): _cracks_left -= 1
+	# And rock comes down.
+	_rock_clock -= delta
+	if _rock_clock <= 0.0 and _rocks_left > 0 and left > 1.6:
+		_rock_clock = _rng.randf_range(0.4, 0.85)
+		if _drop_rock(keeper): _rocks_left -= 1
 
 
-func _tumble_rocks() -> void:
+## The quake's first great jolt: the hardest kick of the shake, and dust
+## bursting up off the ground all round the keeper.
+const JOLT_DUST := {"puff": Color(0.62, 0.54, 0.42, 0.85), "bits": [Color(0.45, 0.38, 0.28), Color(0.6, 0.52, 0.4), Color(0.35, 0.3, 0.24)], "alpha": 0.85}
+func _jolt(keeper: Node2D) -> void:
+	var feel = keeper.get("feel")
+	if feel != null: feel.shake(1.0, Vector2.from_angle(_rng.randf() * TAU) * 5.0)
+	AudioManager.play_at(CRACK_SOUND, Vector2.INF, 2.0, 0.8)
+	for i in 8:
+		var at: Vector2 = keeper.global_position + Vector2.from_angle(float(i) / 8.0 * TAU + _rng.randf_range(-0.3, 0.3)) * _rng.randf_range(30.0, 90.0)
+		if session.world.is_water_at(at): continue
+		var puff = preload("res://Forest/fx/Puff.gd").new()
+		puff.dust(Vector2.ZERO, Vector2.UP, JOLT_DUST, 3, 5, 1.5)
+		puff.spawn(session, at, 2.0)
+
+
+## A crack opening somewhere round the keeper (not under them, not in water).
+func _open_crack(keeper: Node2D) -> bool:
 	var world = session.world
-	var here: Vector2i = world.to_cell(session.player.global_position)
-	var laid := 0
-	for attempt in 40:
-		if laid >= 4: break
-		var c: Vector2i = here + Vector2i(_rng.randi_range(-12, 12), _rng.randi_range(-10, 10))
-		if (c - here).length() < 4.0 or not _free(c): continue
-		world._spawn_prop(c, "rock")
-		laid += 1
+	var here: Vector2i = world.to_cell(keeper.global_position)
+	for attempt in 20:
+		var c: Vector2i = here + Vector2i(_rng.randi_range(-13, 13), _rng.randi_range(-9, 9))
+		if (c - here).length() < 3.0 or not world.terrain.has(c) or world.water.has(c): continue
+		var crack = QUAKE_CRACK.new()
+		crack.setup(Vector2(c * 16) + Vector2(8, 8), _rng.randf() * TAU, _rng.randf_range(60.0, 140.0), world.ground_kind_at(c), _rng.randi())
+		world.add_child(crack)
+		cracks.append(crack)
+		AudioManager.play_at(CRACK_SOUND, crack.global_position, 0.0, _rng.randf_range(0.9, 1.1), 560.0)
+		var feel = keeper.get("feel")
+		if feel != null: feel.shake(0.2, (keeper.global_position - crack.global_position).normalized() * 2.0)
+		return true
+	return false
+
+
+## A rock coming down: now and then right where the keeper stands, otherwise
+## somewhere round them; the first few that land clear stay as boulders.
+func _drop_rock(keeper: Node2D) -> bool:
+	var world = session.world
+	var here: Vector2i = world.to_cell(keeper.global_position + Vector2(0, 6))
+	var aimed := _rng.randf() < QUAKE_AIMED
+	for attempt in 16:
+		var c: Vector2i = here if aimed and attempt == 0 else here + Vector2i(_rng.randi_range(-11, 11), _rng.randi_range(-8, 8))
+		if not world.terrain.has(c) or world.on_edge(c): continue
+		if not aimed and (c - here).length() < 2.0: continue
+		var rock = FALLING_ROCK.new()
+		rock.setup(Vector2(c * 16) + Vector2(8, 8), world, self, _boulders_left > 0 and _rng.randf() < 0.75)
+		if rock.may_stay: _boulders_left -= 1
+		session.add_child(rock)
+		rocks.append(rock)
+		return true
+	return false
+
+
+func _end_quake() -> void:
+	_haze.color.a = 0.0
+	_debris.emitting = false
+	_debris.visible = false
+	if is_instance_valid(_rumble):
+		var fading := _rumble
+		_rumble = null
+		var tween := fading.create_tween()
+		tween.tween_property(fading, "volume_db", -40.0, 2.0)
+		tween.tween_callback(fading.queue_free)
+	session._toast("The shaking stops. Fallen rock litters the ground.")
 
 
 func _scatter_beasts(reach: float) -> void:

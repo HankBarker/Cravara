@@ -29,6 +29,9 @@
   "walk": {
    "fps": 9,
    "loop": true,
+   "fps_view": {
+    "side": 4.3
+   },
    "frames": 8
   },
   "run": {

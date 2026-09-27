@@ -54,6 +54,13 @@ var caves: Array = []
 var strip := Rect2i()
 ## The caves' outer rock (never broken: ForestWorld.on_edge).
 var deep_rock := {}
+## Pass 16: in a streamed world (Layout version 2) the insides are carved into
+## the caves' own cells (cell -> terrain, cell -> prop), which each chunk of the
+## strip reads as it loads (sink_cell); the mouths are the plan's
+## (ChunkGen._plan_caves).
+var streamed := false
+var sink_t := {}
+var sink_p := {}
 
 
 func _init(world) -> void:
@@ -112,6 +119,72 @@ func place() -> void:
 	for cave in caves: strip = cave.box if not strip.has_area() else strip.merge(cave.box)
 	strip = strip.grow(2)
 	w.rng = forest_rng
+
+
+## Pass 16: a streamed world's caves: every inside carved into the caves' own
+## cells, in the strip east of the world, each from numbers of its own (their
+## mouths come with the plan, ChunkGen._plan_caves).
+func place_streamed() -> void:
+	streamed = true
+	caves.clear()
+	deep_rock.clear()
+	sink_t.clear()
+	sink_p.clear()
+	var b: Rect2i = w.bounds()
+	var x0 := b.end.x + 12
+	var y := b.position.y
+	var col_w := 0
+	for land in PLAN:
+		for kind in PLAN[land]:
+			var size: Vector2i = KINDS[kind].size
+			if y + size.y > b.end.y:
+				x0 += col_w + GAP
+				y = b.position.y
+				col_w = 0
+			var box := Rect2i(x0, y, size.x, size.y)
+			y += size.y + GAP
+			col_w = maxi(col_w, size.x)
+			var cave := {"id": "%s_%s" % [land, kind], "kind": kind, "land": land, "name": str(NAMES.get(land, {}).get(kind, KINDS[kind].name)),
+				"box": box, "mouth": Vector2i(9999, 9999), "out": Vector2i(9999, 9999)}
+			var cr := RandomNumberGenerator.new()
+			cr.seed = int(w.world_seed) ^ hash(str(cave.id))
+			_carve(cave, cr)
+			_furnish(cave, cr)
+			caves.append(cave)
+	strip = Rect2i()
+	for cave in caves: strip = cave.box if not strip.has_area() else strip.merge(cave.box)
+	strip = strip.grow(2)
+
+
+## A strip cell as a streamed chunk takes it: [terrain (255 for none), prop].
+func sink_cell(c: Vector2i) -> Array:
+	if not sink_t.has(c): return [255, ""]
+	return [int(sink_t[c]), str(sink_p.get(c, ""))]
+
+
+# Where the carving writes (the world itself, or a streamed world's own cells).
+func _set_t(c: Vector2i, t: int) -> void:
+	if streamed:
+		sink_t[c] = t
+		return
+	w.terrain[c] = t
+	if t == 2: w.water[c] = true
+	else: w.water.erase(c)
+
+
+func _put(c: Vector2i, kind: String) -> void:
+	if streamed:
+		if not sink_p.has(c): sink_p[c] = kind
+		return
+	w._spawn_prop(c, kind)
+
+
+func _has_prop(c: Vector2i) -> bool:
+	return sink_p.has(c) if streamed else w.props.has(c)
+
+
+func _t(c: Vector2i) -> int:
+	return int(sink_t.get(c, -1)) if streamed else int(w.terrain.get(c, -1))
 
 
 ## Open ground for a mouth in its land: its drawing's cells and the step in
@@ -190,8 +263,7 @@ func _carve(cave: Dictionary, r: RandomNumberGenerator) -> void:
 	for y in range(-1, 2):
 		for x in range(0, 3): floor[entry + Vector2i(x, y)] = true
 	for c in floor:
-		w.terrain[c] = 1
-		w.water.erase(c)
+		_set_t(c, 1)
 	# A pool or two in the bigger caves (water drips from the rock).
 	if cave.kind in ["grotto", "lair", "warren"]:
 		var pool_at: Vector2 = rooms[rooms.size() - 1][0]
@@ -199,8 +271,7 @@ func _carve(cave: Dictionary, r: RandomNumberGenerator) -> void:
 			for x in range(-3, 4):
 				var c := Vector2i(pool_at.round()) + Vector2i(x, y)
 				if floor.has(c) and Vector2(x, y * 1.4).length() < 2.6 and Vector2(c - entry).length() > 8.0:
-					w.terrain[c] = 2
-					w.water[c] = true
+					_set_t(c, 2)
 	# The rim, two deep: the inner rock (and crystal) can be mined; the outer
 	# can't (on_edge), so a keeper never breaks through into the dark.
 	var rim := {}
@@ -214,16 +285,16 @@ func _carve(cave: Dictionary, r: RandomNumberGenerator) -> void:
 			var n: Vector2i = c + d
 			if not floor.has(n) and not rim.has(n): outer[n] = true
 	for c in rim:
-		w.terrain[c] = 1
-		w._spawn_prop(c, "ore" if r.randf() < float(info.crystal) else "wall")
+		_set_t(c, 1)
+		_put(c, "ore" if r.randf() < float(info.crystal) else "wall")
 	for c in outer:
-		w.terrain[c] = 1
+		_set_t(c, 1)
 		deep_rock[c] = true
-		w._spawn_prop(c, "wall")
+		_put(c, "wall")
 	cave["entry"] = entry + Vector2i(2, 0)
 	cave["exit"] = entry
 	cave["floor"] = floor.size()
-	w._spawn_prop(entry, "cave_exit")
+	_put(entry, "cave_exit")
 
 
 func _tunnel(floor: Dictionary, a: Vector2, b: Vector2, shape: FastNoiseLite, box: Rect2i) -> void:
@@ -252,12 +323,14 @@ func _furnish(cave: Dictionary, r: RandomNumberGenerator) -> void:
 		for attempt in count * 30:
 			if laid >= count: break
 			var c: Vector2i = spots[r.randi_range(0, spots.size() - 1)]
-			if w.props.has(c) or Vector2(c - cave.entry).length() < reach: continue
+			if _has_prop(c) or Vector2(c - cave.entry).length() < reach: continue
 			var room := true
+			# (A step clear of everything, the walls too: the strip isn't the
+			# caves' yet while they're carved, so no rock counts as the rim's.)
 			for d in STEPS8:
-				if w.props.has(c + d) and not w.deep_rock_or_rim(c + d): room = false
+				if _has_prop(c + d) and (streamed or not w.deep_rock_or_rim(c + d)): room = false
 			if not room: continue
-			w._spawn_prop(c, kind)
+			_put(c, kind)
 			laid += 1
 	match str(cave.kind):
 		"hollow":
@@ -270,7 +343,7 @@ func _furnish(cave: Dictionary, r: RandomNumberGenerator) -> void:
 			put.call("pale_crystal", 6, 5.0)
 			put.call("skyfang_spire", 1, 10.0)
 		"explorer":
-			if not w.props.has(far): w._spawn_prop(far, "explorer")
+			if not _has_prop(far): _put(far, "explorer")
 			put.call("mushroom", 3, 4.0)
 		"lair":
 			put.call("bone_pile", 6, 8.0)
@@ -304,6 +377,6 @@ func inner_floor(cave: Dictionary, away := 8.0) -> Array:
 	for y in range(box.position.y, box.end.y):
 		for x in range(box.position.x, box.end.x):
 			var c := Vector2i(x, y)
-			if int(w.terrain.get(c, -1)) == 1 and not w.props.has(c) and not w.water.has(c) and Vector2(c - cave.entry).length() > away:
+			if _t(c) == 1 and not _has_prop(c) and Vector2(c - cave.entry).length() > away:
 				out.append(c)
 	return out

@@ -296,3 +296,19 @@ even though creatures are 3/4.
 
 Everything from these tools still goes through the quantize gate:
 `python tools/quantize_to_palette.py <png> --out-dir <dest>`.
+
+## Pass 17 notes
+- **pixflux won't draw under 32x32** ("16x24 is too small (384px, minimum is 32x32 = 1024px)").
+  Draw small props at twice the size and shrink them: each 2x2 block takes the colour nearest the
+  block's mean (`tools/world/make_ruin_art.py` `shrink`). Taking the block's mode, darker on a tie,
+  let the outline win and darkened everything. Keep the raw drawings (`art/pass17/raw/`) so the
+  finish can be redone for free (`--finish`).
+- Asked for "no ground", pixflux still sets small props on a patch: grass under a chair, a pale
+  slab under a laid table. Clean it by colour and position before shrinking (`clean()`).
+- **`create_character_pro_flash` with a style image copies the whole look** by default (Rusk came
+  out as a second Orrin). For a new person in the same style, pass
+  `style_options: {color_palette: false}` and a usage note like "copy only the rendering: outline,
+  shading, detail, size; not the clothes, hair or colours".
+- Folk costs at 32x32: creation about 6 generations; walking-8-frames and breathing-idle in four
+  directions, 1 generation a direction each. A tier-2 account runs 10 jobs at once, so queue
+  a character's second animation once its first has finished.

@@ -50,6 +50,17 @@ const NOT_CARVED := ["keeper_journal"]
 ## Carvings only a new journey's world has (pass 15: the far lands' ruins,
 ## world/RingsGen.gd): an old journey's world never shows them.
 const RINGS_ONLY := ["drowned_hall", "sunken_watch", "sand_temple", "buried_arches", "ash_moot", "bone_shrine"]
+## Pass 17 (Hank: the statues, "when you find them and interact with them, they
+## give you a little bit of experience towards a certain skill tree"): the
+## first read of each teaches a little of the skill its story is about
+## (ForestPlaytest.show_lore): [skill, XP]. A level's worth early on.
+const SKILL := {
+	"temple": ["gathering", 60], "statue": ["combat", 60], "tower": ["archery", 60], "hall": ["gathering", 60],
+	"moot": ["taming", 60], "grove": ["farming", 60], "deer": ["farming", 60], "wolf": ["taming", 60],
+	"glass_isle": ["fishing", 70], "buried_king": ["combat", 100], "keeper_journal": ["taming", 100], "pale_road": ["gathering", 70],
+	"drowned_hall": ["fishing", 90], "sunken_watch": ["archery", 90], "sand_temple": ["breeding", 90], "buried_arches": ["gathering", 90],
+	"ash_moot": ["combat", 90], "bone_shrine": ["breeding", 90],
+}
 
 
 static func title(id: String) -> String:

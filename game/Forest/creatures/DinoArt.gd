@@ -117,7 +117,8 @@ static func frames(key: String) -> SpriteFrames:
 				continue
 			var anim := "%s_%s" % [name, facing]
 			result.add_animation(anim)
-			result.set_animation_speed(anim, float(c.fps))
+			# (A facing may keep a pace of its own: pass 17, the dimetrodon's side walk.)
+			result.set_animation_speed(anim, float(c.get("fps_view", {}).get(facing, c.fps)))
 			result.set_animation_loop(anim, bool(c.loop))
 			for i in int(c.frames):
 				var atlas := AtlasTexture.new()
@@ -128,9 +129,31 @@ static func frames(key: String) -> SpriteFrames:
 	return result
 
 
+## Pass 16: a species' strips asked for on the loader's threads ahead of its
+## first beast (a streamed world asks for each chunk's kinds as the chunk comes
+## in: Spawners), so building its frames only waits on what's still loading
+## rather than reading forty strips off the disk in one frame.
+static var _warming := {}
+static func warm(key: String) -> void:
+	# (Headless there's nothing to draw, and the dummy renderer can't take a
+	# texture from a loader thread.)
+	if DisplayServer.get_name() == "headless": return
+	if _frames.has(key) or _warming.has(key) or not has_key(key): return
+	_warming[key] = true
+	for name in meta(key).get("clips", {}):
+		for facing in FACINGS:
+			var path := "%s%s/%s_%s.png" % [ROOT, key, name, facing]
+			if ResourceLoader.exists(path) and ResourceLoader.load_threaded_get_status(path) == ResourceLoader.THREAD_LOAD_INVALID_RESOURCE:
+				ResourceLoader.load_threaded_request(path, "Texture2D")
+
+
 static func strip_texture(key: String, name: String, facing: String) -> Texture2D:
 	var path := "%s%s/%s_%s.png" % [ROOT, key, name, facing]
 	if ResourceLoader.exists(path):
+		# Asked for ahead (warm): taken as it arrives, waited for if it hasn't.
+		if _warming.has(key) and ResourceLoader.load_threaded_get_status(path) != ResourceLoader.THREAD_LOAD_INVALID_RESOURCE:
+			var got = ResourceLoader.load_threaded_get(path)
+			if got is Texture2D: return got
 		return load(path)
 	# Freshly exported art that Godot has not imported yet.
 	if FileAccess.file_exists(path):

@@ -6,15 +6,21 @@ extends RefCounted
 ## arrives   "start": beside the keeper on a new journey (never found).
 ##           "cache": after the first ancient cache is opened.
 ##           "tames:N": after N dinosaurs trust you.
+##           "cave": underground, the first time the keeper goes down (pass 17).
+##           "eggs:N": after N eggs taken from nests; "kills:N": after N beasts
+##           brought down (pass 17).
 ## found     where they may turn up once they arrive, one picked per world:
 ##           "hut" their own little house, "stranded" a cold camp beside
 ##           whatever they lost, "caged" an old tribe's beast-trap (free them).
 ## services  the dialogue's extra pages: "recipes" (what can I make with...),
-##           "trade" (buy and sell for ancient coins), "advice", "tend".
+##           "trade" (buy and sell for ancient coins), "advice", "tend";
+##           pass 17: "next" (What next?: quests/Advice.gd), "lore_tips" (their
+##           own know-how, `tips`).
+## pronoun   "him" or "her" (their banners).
 
 const CAST := {
 	"guide": {
-		"name": "Orrin", "title": "The Wayfinder", "arrives": "start", "found": [],
+		"name": "Orrin", "title": "The Wayfinder", "pronoun": "him", "arrives": "start", "found": [],
 		"services": ["help", "recipes", "lore"],
 		# The first meeting, when the keeper walks out of the tent on a new
 		# journey (after the opening): he saw them fall.
@@ -48,7 +54,7 @@ const CAST := {
 		],
 	},
 	"merchant": {
-		"name": "Tamsin", "title": "The Trader", "arrives": "cache", "found": ["stranded", "hut"],
+		"name": "Tamsin", "title": "The Trader", "pronoun": "her", "arrives": "cache", "found": ["stranded", "hut"],
 		"services": ["trade"],
 		"lost": "cart",
 		"greet": [
@@ -69,8 +75,8 @@ const CAST := {
 		],
 	},
 	"warden": {
-		"name": "Kaya", "title": "The Beast-Warden", "arrives": "tames:2", "found": ["caged", "hut", "stranded"],
-		"services": ["advice", "tend", "trade"],
+		"name": "Kaya", "title": "The Beast-Warden", "pronoun": "her", "arrives": "tames:2", "found": ["caged", "hut", "stranded"],
+		"services": ["next", "advice", "tend", "trade"],
 		"lost": "trap",
 		"greet": [
 			"You're the one the beasts trust? Show me your companions. I want to see everything.",
@@ -88,6 +94,94 @@ const CAST := {
 			"Longnecks hum at dusk. I think they're counting each other.",
 			"Raptors test you. Hold your ground, net the leader, and the pack thinks twice.",
 			"A stego's tail cuts deep. Bandage fast, or you'll bleed out on the trail.",
+		],
+	},
+	# Pass 17 (Hank: "in the caves you could find a guy that's really good
+	# for... he's a miner, so he can help with mining and learning new skills.
+	# Maybe you can learn how to create bombs... one that's more of, like, a
+	# breeding expert... a combat expert as well").
+	"miner": {
+		"name": "Harrow", "title": "The Delver", "pronoun": "him", "arrives": "cave", "found": ["stranded"],
+		"services": ["next", "lore_tips", "trade"],
+		"lost": "lamp",
+		"greet": [
+			"Mind your head. Rock doesn't care who you are.",
+			"Harrow's the name, rock's the game. Got anything that needs breaking?",
+			"Back again? Good. A miner's no use without someone to show off to.",
+		],
+		"found_line": {
+			"stranded": "Light! Ha, I thought I'd seen the last of it. My lamp's out and my rope's cut. Name's Harrow. Get me somewhere with a roof and I'll teach you a thing or two about rock.",
+		},
+		"ready_line": "I've had enough of the dark for a while. A house by your camp, walls and a roof and a light and a bed, and I'm yours. I'll bring my picks.",
+		"chat": [
+			"Crystal hums before a quake. Hear it and get into the open.",
+			"The deeper you go, the thicker the crystal grows. And the bigger the things that eat it.",
+			"Never throw a bomb uphill. Trust me.",
+			"I once dug for a week straight and came up in a rex's nest. Never again.",
+		],
+		"tips": [
+			"Violet seams are prism crystal. A power-two pick breaks them; a stone one just bounces.",
+			"Every far land has its own ore: rustiron in the Bonelands, sunstone in the dunes, bog iron by the meres, ashglass in the ash.",
+			"A bomb breaks rock, ore, trees and boulders, drops and all. It breaks you too, if you're standing next to it.",
+			"The quakes drop boulders. Good stone in every one of them, if you've a pick or a bomb.",
+			"An ankylosaur at your side cracks stone with its club: more from every rock you mine.",
+		],
+	},
+	"breeder": {
+		"name": "Nell", "title": "The Brood-Keeper", "pronoun": "her", "arrives": "eggs:1", "found": ["hut", "stranded", "caged"],
+		"services": ["next", "lore_tips", "trade"],
+		"lost": "basket",
+		"greet": [
+			"Eggs, eggs, eggs! Have you brought me any?",
+			"Shh, they're sleeping. Oh, not the beasts. The eggs.",
+			"You've the smell of a nest about you. Good.",
+		],
+		"found_line": {
+			"hut": "Careful where you step! There's a clutch under that fern. Oh, you're the Keeper who steals eggs. We should talk.",
+			"stranded": "A raptor pack took my basket and every egg in it. I'm Nell. I raise beasts from the egg. Help me start again?",
+			"caged": "I climbed in after an egg and the trap shut behind me. Don't laugh. Get me out and I'll show you how to raise the little ones.",
+		},
+		"ready_line": "Find me a house near your beasts: walls, a door, a roof, a light and a bed. Hatchlings need company.",
+		"chat": [
+			"A hatchling that sees you first thinks you're its mother. Don't let it down.",
+			"Babies grow faster well fed and close to you.",
+			"Two of a kind, kept at home together a while, will lay. Pick your pairs: the young take after both.",
+			"I've a soft spot for dodos. Don't tell the others.",
+		],
+		"tips": [
+			"An incubator wants warmth: a fire or a torch within three tiles. Out in the cold, an egg barely grows.",
+			"A nest lays again in time. Leave one egg and come back later.",
+			"Every beast of your own has its own nature: bold, calm, fierce. The young take after their parents.",
+			"Now and then a clutch comes out special: bigger, stronger, a different coat. That's the blood talking.",
+			"Your Breeding stars (L) make incubation faster and twins likelier.",
+		],
+	},
+	"fighter": {
+		"name": "Rusk", "title": "The Old Blade", "pronoun": "him", "arrives": "kills:8", "found": ["stranded", "hut"],
+		"services": ["next", "lore_tips", "trade"],
+		"lost": "spear",
+		"greet": [
+			"Still alive? Good. Keep it that way.",
+			"Stand up straight. Shield side forward. You haven't got a shield? Then roll.",
+			"Every scar's a lesson. I'm a library.",
+		],
+		"found_line": {
+			"stranded": "Heard you fighting from a mile off. You've spirit and no sense. I'm Rusk. I've been hunting these beasts since before you were born. Want to learn how to stay alive?",
+			"hut": "Don't creep up on an old soldier. I'm Rusk. I watched you take down that last one. Sloppy. I can fix that.",
+		},
+		"ready_line": "A roof, a bed, four walls and a light, somewhere near your camp. Build it and I'll train you proper.",
+		"chat": [
+			"The raptor that leaps is the one you're watching. It's the one you're not that kills you.",
+			"A bow starts the fight where it can't bite you. That's the whole trick.",
+			"Rest when you're hurt. Eat when you're hungry. Heroes die of stupidity.",
+			"I lost this eye to a Scarhorn. Kept the horn, though.",
+		],
+		"tips": [
+			"Roll (Space) through a lunge, not away from it. You're safe while you roll.",
+			"Each weapon strikes its own way: a sweep cuts every foe in its arc, a spear runs through, a club knocks them back.",
+			"A full set of armour gives more than its pieces: Rustback hits harder, Plateback makes them bleed, Hornguard won't be moved.",
+			"Hunters come in from the side and from cover. Keep your back to a wall and your beasts close.",
+			"Big hunters tire. Keep your distance, let it run itself out, then strike.",
 		],
 	},
 }
@@ -123,6 +217,10 @@ const STOCK := {
 	"merchant": {"berry_seed": [2, 3], "mushroom_spore": [2, 2], "redgrain": [2, 3], "net": [3, 1], "bone_arrow": [4, 10], "torch": [2, 3], "lantern": [12, 1], "crystal_flask": [6, 1], "garden_hoe": [5, 1], "fishing_rod": [6, 1], "cooked_meat": [3, 2]},
 	# Pass 15: the warden keeps what beasts love (a favourite wins twice the trust).
 	"warden": {"net": [3, 2], "stego_saddle": [18, 1], "trike_saddle": [22, 1], "berry": [1, 4], "trex_meat": [2, 1], "beast_treat": [5, 1], "bloody_bait": [6, 1]},
+	# Pass 17: the new folk's wares.
+	"miner": {"torch": [2, 3], "lantern": [12, 1], "basic_pickaxe": [4, 1], "bomb": [7, 2], "crystal_flask": [6, 1], "stone": [1, 6]},
+	"breeder": {"incubator": [20, 1], "beast_treat": [5, 1], "berry": [1, 4], "dodo_egg": [4, 1], "lystro_egg": [5, 1], "trex_meat": [2, 1]},
+	"fighter": {"bone_arrow": [4, 12], "net": [3, 1], "reed_bow": [10, 1], "hunter_charm": [20, 1], "cooked_meat": [3, 2], "mushroom_potion": [8, 1]},
 }
 ## Rarer wares that turn up one or two at a time, a new pick each day.
 const RARE := {"merchant": {"hunter_charm": 20, "crystal_pendant": 25, "river_totem": 25, "mushroom_potion": 8, "prism_crystal": 6}}

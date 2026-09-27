@@ -114,7 +114,8 @@ func _start(continue_save: bool):
 	else:
 		var r := RandomNumberGenerator.new()
 		r.randomize()
-		get_tree().set_meta("forest_new_world", {"layout": "rings", "seed": r.randi_range(1, 2000000000)})
+		# Pass 16: version 2, the world six times as big, streamed round the keeper.
+		get_tree().set_meta("forest_new_world", {"layout": "rings", "version": 2, "seed": r.randi_range(1, 2000000000)})
 	# Raising a world takes a few seconds: say so before the screen goes still
 	# (drawn first, then the scene changes).
 	_waking_card(continue_save)

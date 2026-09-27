@@ -223,12 +223,23 @@ func _valid(target: Variant) -> bool:
 
 
 ## Who to fight: whatever is already being fought (while it stays near), the
-## keeper for a raider who sees them, the keeper's beasts beside them, or
-## small game for a band out hunting.
+## keeper for a raider who sees them, the keeper's beasts beside them, the
+## hunters that come near a settlement's lodge (pass 16), or small game for a
+## band out hunting.
 func _choose_foe() -> void:
 	if _valid(foe) and foe.global_position.distance_to(_fight_from) < LEASH and global_position.distance_to(foe.global_position) < LEASH:
 		if not (foe == _keeper and not is_hostile_to_keeper()): return
 	foe = null
+	# A settlement's folk see off any hunter that comes near their lodge, or
+	# near the keeper sheltering with them.
+	var guard = band.get("guard")
+	if guard is Vector2 and not is_hostile_to_keeper():
+		var threat := _threat_near(guard, GUARD_REACH)
+		if threat == null and _valid(_keeper) and _keeper.global_position.distance_to(guard) < GUARD_REACH:
+			threat = _threat_near(_keeper.global_position, 120.0)
+		if threat:
+			_engage(threat)
+			return
 	if is_hostile_to_keeper() and _valid(_keeper) and not _keeper.get("boating"):
 		var reach := CRIED if bool(band.get("cried", false)) else NOTICE
 		var d := global_position.distance_to(_keeper.global_position)
@@ -257,6 +268,33 @@ func _choose_foe() -> void:
 					prey = c
 			band["prey"] = prey
 		if prey: _engage(prey)
+
+
+## Pass 16: how far round a settlement's lodge its folk stand guard (px).
+const GUARD_REACH := 150.0
+
+## The nearest wild hunter (or a beast that's gone for someone) near a point.
+func _threat_near(at: Vector2, reach: float) -> Node2D:
+	var best: Node2D = null
+	var nearest := reach
+	for c in FC.near(get_tree(), at, reach):
+		if c.is_dead or c.tamed or is_instance_valid(c.get("master")) or c.get("dormant") == true: continue
+		var hunter: bool = FC.PREY.has(str(c.species)) or c.provoked_time > 0.0 or str(c.state) in ["hunt", "attack"]
+		if not hunter: continue
+		var d: float = c.global_position.distance_to(at)
+		if d < nearest:
+			nearest = d
+			best = c
+	return best
+
+
+## Pass 16: a builder at work (a settlement's lodge going up): a blow of the
+## hammer at the piece, no one struck.
+func hammer(at: Vector2) -> void:
+	if is_dead or _action_time > 0.0: return
+	foe = null
+	_face(at - global_position)
+	_start("sword")
 
 
 func _engage(target: Node2D) -> void:
@@ -541,6 +579,8 @@ func _animate(wanted: Vector2) -> void:
 
 ## A few words over the head for a moment. While another of the tribe close
 ## by is speaking, it holds its tongue, unless it's `urgent` (a war cry).
+## A bubble wider than this (px) wraps.
+const BARK_WIDTH := 118.0
 func bark(text: String, seconds := 1.8, urgent := false) -> void:
 	if text == "" or not is_instance_valid(bark_label): return
 	var now := Time.get_ticks_msec()
@@ -550,8 +590,17 @@ func bark(text: String, seconds := 1.8, urgent := false) -> void:
 	_air[tribe] = [now + int(seconds * 1000.0), global_position]
 	bark_label.text = text
 	bark_label.add_theme_color_override("font_color", Color("ff8a6a") if is_hostile_to_keeper() else UI.GOLD)
+	# Pass 17 (Hank: villagers' words "go out of the bubble... out the side"):
+	# a line longer than BARK_WIDTH wraps inside its bubble instead of running
+	# on across the screen (and off it).
+	bark_label.autowrap_mode = TextServer.AUTOWRAP_OFF
+	bark_label.custom_minimum_size = Vector2.ZERO
 	bark_label.reset_size()
-	# Just above the health bar (y -38).
+	if bark_label.size.x > BARK_WIDTH:
+		bark_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		bark_label.custom_minimum_size.x = BARK_WIDTH
+		bark_label.reset_size()
+	# Just above the health bar (y -38), lines stacking upward.
 	bark_label.position = Vector2(-roundf(bark_label.size.x / 2.0), -40.0 - bark_label.size.y)
 	bark_label.visible = true
 	_bark_time = seconds

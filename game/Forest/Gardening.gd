@@ -58,7 +58,13 @@ func use_at(target: Vector2, id: String) -> bool:
 			notice.emit("Choose clear earth for your garden."); return false
 		# Test the entire soil tile, not whichever corner the cursor touched.
 		var tile:=Rect2(Vector2(c)*16,Vector2(16,16))
-		for prop in world.props.values():
+		# (The props anchored near it: a trunk's footing reaches a cell or two.)
+		var near: Array=[]
+		for y in range(c.y-4,c.y+5):
+			for x in range(c.x-4,c.x+5):
+				var p=world.props.get(Vector2i(x,y))
+				if is_instance_valid(p): near.append(p)
+		for prop in near:
 			for footprint in prop.get_collision_rects():
 				if tile.intersects(Rect2(prop.position+footprint.position,footprint.size)):
 					notice.emit("Leave room around trees and camp furniture."); return false

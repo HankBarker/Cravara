@@ -88,8 +88,8 @@ func prepare() -> void:
 
 ## E at the Ossuary (item_id ""), or the horn used there.
 func use_ossuary(_cell: Vector2i, item_id: String) -> bool:
-	if beaten():
-		session._toast("The ribs are still. The Buried King sleeps for good.")
+	if session.boss_down("ossuar"):
+		session._toast("The ribs are still. The Buried King will stir again, in time.")
 		return true
 	if stage != "":
 		return true
@@ -118,7 +118,7 @@ func blow_horn() -> bool:
 
 
 func summon() -> bool:
-	if beaten() or stage != "" or not has_ossuary(): return false
+	if session.boss_down("ossuar") or stage != "" or not has_ossuary(): return false
 	if not InventoryManager.remove_item("grave_horn", 1): return false
 	_asked = 0.0
 	stage = "rising"
@@ -163,7 +163,7 @@ func _wake() -> void:
 	king._face(king.global_position.direction_to(session.player.global_position), true)
 	king.play_action("roar", 0.8)
 	king._shake_near(0.6, 999.0)
-	AudioManager.play_music(MUSIC)
+	session.fight_music("ossuar", true)
 	session.hud.show_boss(str(king.stats.name), 1.0)
 	session._toast("Ossuar, the Buried King, wakes!")
 
@@ -334,9 +334,10 @@ func _victory() -> void:
 	_end_fight()
 	stage = ""
 	session._milestones["ossuar"] = true
+	session.boss_fell("ossuar")
 	session.hud.show_boss("The Buried King has fallen", 0.0)
 	get_tree().create_timer(2.5).timeout.connect(func(): if is_instance_valid(session) and is_instance_valid(session.hud): session.hud.hide_boss())
-	session.hud.show_banner("The Buried King has fallen", "Ossuar sleeps for good. Its crown lies in the sand, among bones and crystal.", load("res://Forest/art/items/bone_crown.png"))
+	session.hud.show_banner("The Buried King has fallen", "Ossuar sleeps, for now. Its crown lies in the sand, among bones and crystal.", load("res://Forest/art/items/bone_crown.png"))
 
 
 ## Stop the fight's music, bar, mound and adds (the king itself is left).
@@ -353,7 +354,7 @@ func _end_fight() -> void:
 			raptor.queue_free()
 	_adds.clear()
 	if is_instance_valid(session) and is_instance_valid(session.hud): session.hud.hide_boss()
-	if was_awake: AudioManager.play_music(session.FOREST_MUSIC)
+	if was_awake: session.fight_music("ossuar", false)
 
 
 ## Rise out of the sand: the sprite comes up from below and fades in.

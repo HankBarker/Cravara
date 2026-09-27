@@ -40,6 +40,11 @@ static func fish_index(id: String) -> int:
 
 func _generate_spots():
 	spots.clear()
+	# Pass 16: a streamed world's holes come and go with its chunks (_stream_spots).
+	if world.get("chunks") != null:
+		_spot_chunks.clear()
+		_stream_spots()
+		return
 	var candidates: Array=world.water.keys()
 	candidates.sort_custom(func(a,b):
 		var da: int=a.length_squared()
@@ -70,6 +75,63 @@ func _generate_spots():
 		holes[land_name]=int(holes.get(land_name, 0))+1
 		if spots.size()>=wanted: break
 	queue_redraw()
+
+## Pass 16: a streamed world's holes, a chunk's at a time as its water comes
+## in (the same holes each time: a hole's rest and its catches are kept by its
+## cell), let go when the chunk goes. A chunk's shore water holds a hole, two
+## in a chunk with a lot of it, HOLE_GAP apart.
+var _spot_chunks := {}
+var _spot_state := {}
+var _stream_clock := 0.0
+
+func _stream_spots() -> void:
+	if is_active(): return
+	var chunks = world.chunks
+	var kept: Array[Dictionary] = []
+	for spot in spots:
+		if chunks.is_loaded(spot.cell): kept.append(spot)
+		else: _spot_state[spot.cell] = [float(spot.cooldown), int(spot.catches)]
+	for chunk in _spot_chunks.keys():
+		if not chunks.loaded.has(chunk): _spot_chunks.erase(chunk)
+	spots = kept
+	for chunk in chunks.loaded:
+		if _spot_chunks.has(chunk): continue
+		_spot_chunks[chunk] = true
+		_chunk_spots(chunk)
+
+
+func _chunk_spots(chunk: Vector2i) -> void:
+	var shore: Array = []
+	var r: Rect2i = world.chunks.rect_of(chunk)
+	for y in range(r.position.y, r.end.y):
+		for x in range(r.position.x, r.end.x):
+			var cell := Vector2i(x, y)
+			if not world.water.has(cell) or world.deep.has(cell): continue
+			for offset in [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]:
+				var n: Vector2i = cell + offset
+				if world.terrain.has(n) and not world.water.has(n) and not world.is_blocked_at(Vector2(n) * 16.0 + Vector2(8, 8)):
+					shore.append(cell)
+					break
+	if shore.size() < 4: return
+	var seed := int(world.world_seed)
+	shore.sort_custom(func(a, b): return hash(Vector3i(a.x, a.y, seed)) < hash(Vector3i(b.x, b.y, seed)))
+	var want := 2 if shore.size() >= 40 else 1
+	for cell in shore:
+		if want <= 0: break
+		var point: Vector2 = world.to_global(Vector2(cell) * 16 + Vector2(8, 8))
+		var separated := true
+		for spot in spots:
+			if Vector2(spot.position).distance_to(point) < HOLE_GAP: separated = false
+		if not separated: continue
+		var land_name: String = str(world.region_of(cell))
+		var waters: Array = FoodData.WATERS.get(land_name, FoodData.WATERS.get("forest", []))
+		if waters.is_empty(): continue
+		var pool: Array = waters[0]
+		var species: int = fish_index(str(pool[posmod(int(cell.x) * 17 + int(cell.y) * 31 + seed, pool.size())]))
+		var state: Array = _spot_state.get(cell, [0.0, 0])
+		spots.append({"cell": cell, "position": point, "cooldown": float(state[0]), "species": species, "catches": int(state[1]), "land": land_name})
+		want -= 1
+
 
 func is_active() -> bool: return active_spot>=0 and is_instance_valid(panel)
 
@@ -122,6 +184,11 @@ func _process(delta: float):
 	_time+=delta
 	_cast_time+=delta
 	for spot in spots: spot.cooldown=maxf(0,float(spot.cooldown)-delta)
+	if world.get("chunks") != null:
+		_stream_clock -= delta
+		if _stream_clock <= 0.0:
+			_stream_clock = 1.0
+			_stream_spots()
 	if is_active():
 		var rod: Item=InventoryManager.get_selected_item()
 		if not is_instance_valid(player) or player.get("respawning")==true or not world.water.has(spots[active_spot].cell) or not rod or rod.id!="fishing_rod": cancel()
@@ -176,10 +243,17 @@ func _end():
 func serialize() -> Dictionary:
 	var holes: Array=[]
 	for spot in spots: holes.append([spot.cell.x,spot.cell.y,float(spot.cooldown),int(spot.catches)])
+	# (A streamed world's holes away with their chunks, as they were left.)
+	for cell in _spot_state:
+		if not spots.any(func(s): return s.cell == cell): holes.append([cell.x, cell.y, float(_spot_state[cell][0]), int(_spot_state[cell][1])])
 	return {"holes":holes}
 
 func restore(data: Dictionary):
 	cancel()
+	_spot_state.clear()
+	if world.get("chunks") != null:
+		for saved in data.get("holes",[]):
+			if saved is Array and saved.size() >= 4: _spot_state[Vector2i(int(saved[0]), int(saved[1]))] = [clampf(float(saved[2]), 0, 90), maxi(0, int(saved[3]))]
 	_generate_spots()
 	for saved in data.get("holes",[]):
 		if not saved is Array or saved.size()<4: continue

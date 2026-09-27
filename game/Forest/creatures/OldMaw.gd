@@ -47,13 +47,16 @@ var _deep_cells: Array = []
 var _plate: Node2D
 
 
-func setup(owner_session) -> void:
+## `water`: the mere or lake it keeps to (pass 17: a streamed world's Maw rises
+## in whichever the keeper is by; the box round it), or all the deep water.
+func setup(owner_session, water := Rect2i()) -> void:
 	session = owner_session
 	world = session.world
 	_player = session.player
 	name = "OldMaw"
 	add_to_group("sea_beasts")
 	_deep_cells = world.deep.keys()
+	if water.has_area(): _deep_cells = _deep_cells.filter(func(c): return water.has_point(c))
 	_plate = NAMEPLATE.new()
 	add_child(_plate)
 	_plate.setup(self, str(stats.name))
@@ -246,6 +249,7 @@ func _die() -> void:
 	is_dead = true
 	state = "sunk"
 	session._milestones["maw"] = true
+	if session.has_method("boss_fell"): session.boss_fell("maw")
 	SignalBus.creature_defeated.emit(self)
 	_splash(global_position, true)
 	# Its teeth float up where it went down.

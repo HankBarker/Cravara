@@ -23,6 +23,11 @@ var rich_vein := false
 var sandstone := false
 ## Up in the Pale Hills, stone is chalk (pass 11).
 var chalk := false
+## Pass 17: a fallen building's floor, laid from the seed (Chunks; a broken
+## one is remembered: ForestWorld.floors_gone); a cache that's a wooden chest
+## (a fallen house's, an inn's larder, a lake's hoard, a lost camp's pack).
+var seeded := false
+var chest_look := false
 ## Pass 12: growing things in the Pale Lands stand dead and ash-covered
 ## (ashen.gdshader), and still: no wind moves them.
 var ashen := false
@@ -180,6 +185,13 @@ const WILD := {
 	# Drip Cave's lost explorer.
 	"cave_exit": {"solid": Rect2(), "height": 0.0, "landmark": true},
 	"explorer": {"solid": Rect2(-8, -4, 16, 8), "height": 16.0, "landmark": true},
+	# Pass 17: the fallen buildings' furniture (art/v8, tools/world/make_ruin_art.py).
+	# A laid table's meal and a barrel's stores are taken once (E; `harvested`).
+	"chair": {"solid": Rect2(-5, -2, 10, 6), "height": 18.0, "tool": "axe", "hp": 2, "drop": ["plank", 1]},
+	"table": {"solid": Rect2(-11, -4, 22, 8), "height": 16.0, "tool": "axe", "hp": 3, "drop": ["plank", 2]},
+	"table_food": {"solid": Rect2(-11, -4, 22, 8), "height": 16.0, "tool": "axe", "hp": 3, "drop": ["plank", 2]},
+	"barrel": {"solid": Rect2(-6, -3, 12, 7), "height": 16.0, "tool": "axe", "hp": 2, "drop": ["plank", 1]},
+	"rubble": {"solid": Rect2(-11, -3, 22, 7), "height": 10.0, "tool": "pickaxe", "hp": 3, "drop": ["stone", 3]},
 }
 const WILD_CROPS := preload("res://Forest/life/FoodData.gd").WILD_CROPS
 ## Pass 13: the great bones that can be searched through (like a bone pile).
@@ -217,9 +229,14 @@ static func wild_art(prop_kind: String) -> Texture2D:
 		tex = load(path)
 	elif ResourceLoader.exists("res://Forest/art/v7/%s.png" % prop_kind):
 		tex = load("res://Forest/art/v7/%s.png" % prop_kind)
-	elif FileAccess.file_exists(path):
-		var img := Image.load_from_file(ProjectSettings.globalize_path(path))
-		if img: tex = ImageTexture.create_from_image(img)
+	elif ResourceLoader.exists("res://Forest/art/v8/%s.png" % prop_kind):
+		tex = load("res://Forest/art/v8/%s.png" % prop_kind)
+	else:
+		for file in [path, "res://Forest/art/v8/%s.png" % prop_kind]:
+			if not FileAccess.file_exists(file): continue
+			var img := Image.load_from_file(ProjectSettings.globalize_path(file))
+			if img: tex = ImageTexture.create_from_image(img)
+			break
 	_wild_art[prop_kind] = tex
 	return tex
 
@@ -498,7 +515,8 @@ var ground := ""
 const GROUNDED := ["tent", "shrine", "folk_hut", "folk_camp", "bone_pile", "cache", "relic", "rock", "workbench",
 	"hide_bed", "sunward_tent", "ashen_tent", "sunward_stall", "ashen_totem", "chalk_rock", "pale_crystal",
 	"rustiron_vein", "sunstone_vein", "ashglass_vein", "bogiron_vein", "meteor_rock", "skyfang_spire", "dead_tree",
-	"dune_skull", "keeper_camp", "incubator", "sun_sail", "stilt_hut", "fish_rack", "well", "canopy", "reed_lantern", "cave_mouth"]
+	"dune_skull", "keeper_camp", "incubator", "sun_sail", "stilt_hut", "fish_rack", "well", "canopy", "reed_lantern", "cave_mouth",
+	"chair", "table", "table_food", "barrel", "rubble"]
 const TUFT_TONES := {
 	"grass": [Color("2f5a2e"), Color("4f8a3c"), Color("86b755")],
 	"dirt": [Color("3f5a2a"), Color("5f7f3a"), Color("8a9a58")],
@@ -580,6 +598,12 @@ func _draw_visual() -> void:
 		# Roof tiles keep their durability and fade; ForestRoofs draws each
 		# patch of them as one roof on the wall tops.
 		return
+	if kind == "cache" and chest_look:
+		var box: Texture2D = CHEST_FRAMES[2] if opened else CHEST_FRAMES[0]
+		_contact_back(float(box.get_width()) * 0.8)
+		draw_texture(box, Vector2(-box.get_width() / 2, 7 - box.get_height()))
+		_contact_front(float(box.get_width()) * 0.8)
+		return
 	if kind == "cache" and opened:
 		draw_texture(CACHE_OPEN, Vector2(-CACHE_OPEN.get_width()/2, 7-CACHE_OPEN.get_height()))
 		return
@@ -601,9 +625,10 @@ func _draw_visual() -> void:
 		_draw_shaft()
 		return
 	if WILD.has(kind):
-		var tex := cave_mouth_art(ground) if kind == "cave_mouth" else wild_art(kind)
+		# (A laid table whose meal was taken is a bare one.)
+		var tex := cave_mouth_art(ground) if kind == "cave_mouth" else wild_art("table" if kind == "table_food" and harvested else kind)
 		if tex:
-			var dim := Color(0.62, 0.62, 0.6) if kind == "clam_bed" and harvested else Color.WHITE
+			var dim := Color(0.62, 0.62, 0.6) if kind == "clam_bed" and harvested else (Color(0.82, 0.8, 0.76) if kind == "barrel" and harvested else Color.WHITE)
 			_contact_back(float(tex.get_width()) * 0.8)
 			# A seam is a block of the outcrop: it stands on the cell's edge like a wall.
 			var foot := 8 if kind.begins_with("seam_") else 7

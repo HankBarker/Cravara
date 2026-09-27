@@ -67,7 +67,12 @@ float bayer4(ivec2 p) {
 	return (m[i] + 0.5) / 16.0;
 }
 
+// Pass 16: a streamed world's map wraps (map_wrap cells a side, the cell
+// at c - map_wrap * floor(c / map_wrap)): only the chunks round the keeper are
+// in it, and they never reach round to meet themselves.
+uniform int map_wrap = 0;
 vec4 cell_data(ivec2 c) {
+	if (map_wrap > 0) return texelFetch(terrain_map, c - map_wrap * ivec2(floor(vec2(c) / float(map_wrap))), 0);
 	ivec2 t = clamp(c - map_origin, ivec2(0), map_size - ivec2(1));
 	return texelFetch(terrain_map, t, 0);
 }

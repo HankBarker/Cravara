@@ -10,7 +10,6 @@ extends Node2D
 
 const WAKE := 7.0
 const LEASH := 26.0
-const MUSIC := "res://Audio/Music/boss_alpha.ogg"
 
 var session
 var world
@@ -26,7 +25,8 @@ func setup(owner_session) -> void:
 	add_to_group("cave_life")
 
 
-## Beasts in every cave (once a journey).
+## Beasts in every cave (once a journey; a streamed world's fill as they're
+## entered, on_enter).
 func people() -> void:
 	if world.caves == null: return
 	var r := RandomNumberGenerator.new()
@@ -34,31 +34,84 @@ func people() -> void:
 	for cave in world.caves.caves:
 		# (A cave that found no mouth in its land stays empty: no way in.)
 		if cave.mouth == Vector2i(9999, 9999): continue
-		var floor: Array = world.caves.inner_floor(cave, 9.0)
-		if floor.is_empty(): continue
-		match str(cave.kind):
-			"warren":
-				for i in 9:
+		_people(cave, r)
+
+
+## Pass 16: a keeper walks into a cave. Its Sleeper is there if its time is
+## up; a warren or a grotto emptied of its beasts (hunted out, or in a
+## streamed world gone with the cave's ground) fills again, a minute at least
+## after it last did.
+func on_enter(cave: Dictionary) -> void:
+	var box: Rect2i = cave.box
+	var own := 0
+	var sleeper_here := false
+	for c in get_tree().get_nodes_in_group("forest_creatures"):
+		if c.is_dead or c.tamed: continue
+		if box.has_point(world.to_cell(c.global_position)):
+			own += 1
+			if str(c.variant) == "sleeper": sleeper_here = true
+	if str(cave.kind) == "lair":
+		if not sleeper_here and not session.boss_down("sleeper_" + str(cave.id)): _raise_sleeper(cave, world.caves.inner_floor(cave, 9.0))
+		return
+	var key := "cave_people_" + str(cave.id)
+	var now: float = float(session._session_seconds)
+	if own > 0 or now < float(session._milestones.get(key, -9999.0)) + 60.0: return
+	session._milestones[key] = now
+	var r := RandomNumberGenerator.new()
+	r.randomize()
+	_people(cave, r)
+
+
+func _people(cave: Dictionary, r: RandomNumberGenerator) -> void:
+	var floor: Array = world.caves.inner_floor(cave, 9.0)
+	if floor.is_empty(): return
+	match str(cave.kind):
+		"warren":
+			for i in 9:
+				var c: Vector2i = floor[r.randi_range(0, floor.size() - 1)]
+				var compy = session._spawn_creature("compy", Vector2(c) * 16.0 + Vector2(8, 8))
+				compy.home = compy.global_position
+		"grotto":
+			for entry in [["raptor", 3], ["allo", 1]]:
+				for i in int(entry[1]):
 					var c: Vector2i = floor[r.randi_range(0, floor.size() - 1)]
-					var compy = session._spawn_creature("compy", Vector2(c) * 16.0 + Vector2(8, 8))
-					compy.home = compy.global_position
-			"grotto":
-				for entry in [["raptor", 3], ["allo", 1]]:
-					for i in int(entry[1]):
-						var c: Vector2i = floor[r.randi_range(0, floor.size() - 1)]
-						var beast = session._spawn_creature(str(entry[0]), Vector2(c) * 16.0 + Vector2(8, 8))
-						beast.set_variant("grotto")
-						beast.home = beast.global_position
-			"lair":
-				# The Sleeper at the heart of its lair (the floor cell farthest in).
-				var far: Vector2i = floor[0]
-				for c in floor:
-					if Vector2(c - cave.entry).length() > Vector2(far - cave.entry).length(): far = c
-				var rex = session._spawn_creature("rex", world.get_open_position(Vector2(far) * 16.0 + Vector2(8, 8), 16.0))
-				rex.set_variant("sleeper")
-				rex.home = rex.global_position
-				rex.set_meta("cave", str(cave.id))
-				_lull(rex)
+					var beast = session._spawn_creature(str(entry[0]), Vector2(c) * 16.0 + Vector2(8, 8))
+					beast.set_variant("grotto")
+					beast.home = beast.global_position
+		"lair":
+			_raise_sleeper(cave, floor)
+
+
+## The Sleeper at the heart of its lair (the floor cell farthest in).
+func _raise_sleeper(cave: Dictionary, floor: Array) -> void:
+	if floor.is_empty(): return
+	var far: Vector2i = floor[0]
+	for c in floor:
+		if Vector2(c - cave.entry).length() > Vector2(far - cave.entry).length(): far = c
+	var rex = session._spawn_creature("rex", world.get_open_position(Vector2(far) * 16.0 + Vector2(8, 8), 16.0))
+	rex.set_variant("sleeper")
+	rex.home = rex.global_position
+	rex.set_meta("cave", str(cave.id))
+	_lull(rex)
+
+
+## Pass 16: a fallen Sleeper is back in its lair once its time is up
+## (session.boss_fell / boss_down), while the keeper isn't in that cave.
+var _back_clock := 0.0
+func _bring_back_sleepers(keeper: Node2D) -> void:
+	if world.caves == null or not session.has_method("boss_down"): return
+	# (A streamed world's lair wakes its Sleeper as the keeper walks in: on_enter.)
+	if world.get("chunks") != null: return
+	var here: Dictionary = world.caves.cave_at(world.to_cell(keeper.global_position))
+	for cave in world.caves.caves:
+		if str(cave.kind) != "lair" or cave.mouth == Vector2i(9999, 9999): continue
+		if session.boss_down("sleeper_" + str(cave.id)) or str(here.get("id", "")) == str(cave.id): continue
+		var there := false
+		for rex in sleepers:
+			if is_instance_valid(rex) and not rex.is_dead and str(rex.get_meta("cave", "")) == str(cave.id): there = true
+		for c in get_tree().get_nodes_in_group("forest_creatures"):
+			if not c.is_dead and str(c.variant) == "sleeper" and str(c.get_meta("cave", "")) == str(cave.id): there = true
+		if not there: _raise_sleeper(cave, world.caves.inner_floor(cave, 9.0))
 
 
 ## Make a Sleeper sleep (a new one, or one loaded from a save).
@@ -72,7 +125,12 @@ func _lull(rex) -> void:
 func find_sleepers() -> void:
 	sleepers.clear()
 	for c in get_tree().get_nodes_in_group("forest_creatures"):
-		if str(c.variant) == "sleeper" and not c.is_dead: _lull(c)
+		if str(c.variant) == "sleeper" and not c.is_dead:
+			# (Its lair from where it lies: the tag isn't saved, pass 16.)
+			if not c.has_meta("cave") and world.caves:
+				var cave: Dictionary = world.caves.cave_at(world.to_cell(c.global_position))
+				if not cave.is_empty(): c.set_meta("cave", str(cave.id))
+			_lull(c)
 
 
 func _process(delta: float) -> void:
@@ -80,10 +138,17 @@ func _process(delta: float) -> void:
 	queue_redraw()
 	if not is_instance_valid(session) or not is_instance_valid(session.player): return
 	var keeper: Node2D = session.player
+	_back_clock -= delta
+	if _back_clock <= 0.0:
+		_back_clock = 5.0
+		_bring_back_sleepers(keeper)
 	for rex in sleepers.duplicate():
 		if not is_instance_valid(rex) or rex.is_dead:
 			sleepers.erase(rex)
 			session.hud.hide_boss()
+			session.fight_music("sleeper", false)
+			# It comes back in time (pass 16).
+			if is_instance_valid(rex) and rex.has_meta("cave") and session.has_method("boss_fell"): session.boss_fell("sleeper_" + str(rex.get_meta("cave")))
 			continue
 		var cells := keeper.global_position.distance_to(rex.global_position) / 16.0
 		if rex.sleeping:
@@ -101,7 +166,7 @@ func _wake(rex) -> void:
 	rex._face(rex.global_position.direction_to(session.player.global_position), true)
 	rex.play_action("roar", 1.0)
 	rex._shake_near(0.7, 999.0)
-	if ResourceLoader.exists(MUSIC): AudioManager.play_music(MUSIC)
+	session.fight_music("sleeper", true)
 	session._toast("The Sleeper wakes!")
 
 
@@ -111,6 +176,7 @@ func _settle(rex) -> void:
 	rex.provoked_time = 0.0
 	rex.dormant = true
 	session.hud.hide_boss()
+	session.fight_music("sleeper", false)
 	# It sleeps again once it's back in its hollow.
 	rex.sleeping = rex.global_position.distance_to(rex.home) < 48.0
 

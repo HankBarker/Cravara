@@ -688,8 +688,12 @@ func _next_banner() -> void:
 	var title := _label(plate,str(entry[0]),Vector2(44,4),11,GOLD)
 	title.size.x = 228
 	var words := _label(plate,str(entry[1]),Vector2(45,21),8,PAPER)
-	words.size = Vector2(228,20)
 	words.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	words.custom_minimum_size.x = 228
+	words.size = Vector2(228,20)
+	# (Pass 17: a third line or more: the plate grows to hold it.)
+	words.reset_size()
+	plate.size.y = maxf(44.0, 21.0 + words.size.y + 4.0)
 	AudioManager.play_sfx("satchel_open")
 	var tween := plate.create_tween()
 	tween.tween_property(plate,"position:y",52.0,0.35).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)

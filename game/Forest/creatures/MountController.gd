@@ -4,6 +4,8 @@ extends Node2D
 ## strikes run through the creature's DinoMoves (the stego's tail sweep, the
 ## trike's gore) with the rider's aim, striking wild creatures only.
 const DinoMoves = preload("res://Forest/creatures/DinoMoves.gd")
+## Seconds ridden toward the next whole one (pass 17).
+var _ride_clock := 0.0
 var creature
 var rider: Node2D
 var _saved_layer := 0
@@ -119,6 +121,12 @@ func update_mounted(delta: float):
 	if sk:
 		speed *= 1.0 + sk.value("mount_speed")
 		if direction != Vector2.ZERO: sk.gain("taming", delta * float(sk.XP.ride_second))
+	# (Pass 17: Kaya's tasks count the seconds ridden.)
+	if direction != Vector2.ZERO:
+		_ride_clock += delta
+		if _ride_clock >= 1.0:
+			_ride_clock -= 1.0
+			SignalBus.place_visited.emit("ride")
 	if sprinting:
 		speed *= 1.55 + (sk.value("mount_sprint") if sk else 0.0)
 	creature.in_water = is_instance_valid(creature._world) and creature._world.is_water_at(creature.global_position)

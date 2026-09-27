@@ -1,6 +1,6 @@
 """Import the folk's PixelLab characters into the game.
 
-    python tools/folk/import_folk.py [guide merchant warden]
+    python tools/folk/import_folk.py [guide merchant warden miner breeder fighter]
 
 Downloads each character's zip (rotations + the "idle" and "walk" animations,
 south/north/east/west), keeps the raw frames in art/folk/source/<id>/, and
@@ -30,6 +30,11 @@ CAST = {
     "guide": "c66d9ff6-5bef-4f97-af5f-da8d8fc5855d",
     "merchant": "b420ff4c-88b6-4446-922e-26611b9996c2",
     "warden": "9b7ce210-0e4c-4670-96e4-3ddcc614fe84",
+    # Pass 17: Harrow the Delver, Nell the Brood-Keeper, Rusk the Old Blade
+    # (create_character_pro_flash, 32 x 32, Orrin's south view as the style).
+    "miner": "6bba5697-7481-44b9-ab41-22d86afa4140",
+    "breeder": "870c6be0-c96b-4ced-b6a1-32a6c288b611",
+    "fighter": "7ef87cad-e01a-459d-8fd1-c8639c24edda",  # (the first draw, b6214a5b..., came out as Orrin)
 }
 UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) FolkPipeline/1.0"}
 FACING = {"south": "down", "north": "up", "west": "left", "east": "right"}

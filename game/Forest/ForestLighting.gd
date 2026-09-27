@@ -64,7 +64,9 @@ func _ready():
 func _process(delta):
 	_refresh -= delta
 	# A prop chopped or built: look again at once (its shadow goes or comes).
-	if _refresh<=0 or (is_instance_valid(world) and world.props.size()!=_props_seen):
+	# Pass 16: a streamed world's props come and go every frame as its chunks
+	# do, so "at once" is a tenth of a second at the most.
+	if _refresh<=0 or (is_instance_valid(world) and world.props.size()!=_props_seen and _refresh<=0.1):
 		_refresh=0.2
 		_refresh_nearby()
 	_update_light_energy()
@@ -178,9 +180,13 @@ func _refresh_nearby():
 ## off): kept as a list, refreshed when the world's props change.
 var _lit: Array = []
 var _lit_seen := -1
+var _lit_clock := 0
 func _lit_props() -> Array:
-	if world.props.size() != _lit_seen or Engine.get_process_frames() % 600 == 0:
+	# (Looked for again when the props have changed, no more than twice a second.)
+	var now := Time.get_ticks_msec()
+	if (world.props.size() != _lit_seen and now - _lit_clock > 500) or Engine.get_process_frames() % 600 == 0:
 		_lit_seen = world.props.size()
+		_lit_clock = now
 		_lit = []
 		for prop in world.props.values():
 			if is_instance_valid(prop) and _emits(prop): _lit.append(prop)

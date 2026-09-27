@@ -169,7 +169,7 @@ func _camp() -> void:
 		pet.tamed = true
 		pet.trust = int(pet.stats.feeds)
 		pet.set_order("stay")
-	scene.quests.accept("guide_tools")
+	scene.quests.accept("guide_timber")
 	await wait(2.0)
 	_quiet_banners()
 	await wait(0.3)

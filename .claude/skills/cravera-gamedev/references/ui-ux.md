@@ -499,3 +499,58 @@ add empty-armor-slot ghost icons. Migrate hard-coded `480`/`270` positioning to 
   (`ForestHUD.drop_to_world`).
 - **Caches** open as containers (`world.cache_bags`, a BeastBag per cache, saved; the panel closes
   when the keeper walks away).
+
+## Pass 16: the map starts dark (Terraria's way), its marks can be hidden, it zooms
+
+- **`world/MapMemory.gd`** (the world's `map_memory`, saved as `world.map`) holds `seen`: a byte
+  per 4x4-cell square, 0 or 255. `reveal(cell)` marks the squares within 18 cells when the keeper
+  changes square (the world's `_process`).
+  - The fog texture is `seen` itself, FORMAT_R8 via `Image.set_data` (no per-pixel loop). It's
+    drawn by `UI/map_fog.gdshader` (alpha = 1 - seen) on a child Control with LINEAR filtering, so
+    the edges are soft.
+  - A save with no `map` (pre-pass-16) restores as all seen. Sizes are checked as ints (JSON
+    floats).
+  - A streamed world's picture is kept here too: 4 cells a pixel, painted per chunk from
+    `ChunkGen._map_block`. A load queues the seen chunks' blocks on the chunk worker
+    (`MapMemory.backlog` -> `Chunks.map_backlog`). Small worlds paint theirs from the world dicts
+    when the map opens (cached 30 s).
+- **`ForestMap.gd`**:
+  - Zoom is a static px/cell, fit to 4. The first look shows ~260 cells round the keeper in a big
+    world, the whole of a small one.
+  - The wheel and +/- zoom about the pointer or centre; drag or WASD/arrows pan; C recentres.
+    It handles these in `_gui_input` / `_unhandled_input` before the session's keys.
+  - Layers: the picture on the map, the fog child, the marks child.
+  - **KINDS** (bosses, caves, ruins, villages, home, tamed, beasts, nests, wild, folk) can be
+    hidden. `build_key(container)` makes the clickable key (numbers 1-0).
+    `hidden_kinds` (not `hidden`: that's Control's signal) is kept in
+    `_milestones.map_hidden`.
+  - A mark shows only on a seen square, except bosses (and a sleeping Sleeper's lair), world
+    events and what a parasaur heard.
+  - `picture_rect()` (the whole world at the fit zoom) and `_picture_of()` stay for tests and tools.
+
+## Pass 17: map icons and pins, words in their bubbles, task lines
+
+- **Map icons** (`ForestMap.ICONS`): 9x9 pixel patterns (a letter a colour, `PALETTE`) built into
+  one strip texture on first use (`_icons()`), drawn with `draw_texture_rect_region`
+  (`_icon(at, name, tint)`); `icon_texture(name)` is an AtlasTexture for the key. Below
+  `DOTS_BELOW` zoom the small things (nests, wild beasts, old places) are 3x3 dots. KINDS has a
+  4th field, the icon. The key is a 2-column GridContainer.
+- **Pins**: the session's `_milestones.map_pins` (`[{x, y, name, icon, colour}]`, saved with the
+  journey) handed to the map as `pins`. Right-click adds one and focuses the key's LineEdit; a
+  left click without a drag (`_press_at`) picks one (`pin_at`); the key's editor names it, steps
+  its icon and colour, or removes it. A focused LineEdit eats keys, so typing a name never moves
+  the map or closes it.
+- **Speech bubbles**: `Tribesman.bark` measures the line unwrapped and, past `BARK_WIDTH` (118),
+  wraps it at that width, lifting the bubble by its height. A world-space Label must be sized
+  before it's positioned.
+- **Folk nameplates** are sized to the name and centred (a fixed 64 px plate grew off to the
+  right).
+- **The talk panel**: header labels clip with an ellipsis (a long name or title can't widen the
+  panel). The words use `VC_CHARS_AFTER_SHAPING`, so the typewriter never reflows a word onto the
+  next line.
+- **Banners** grow with their body (`words.reset_size()` then the plate's height).
+- **Overlays sized to content**: `ForestPlaytest._fit_overlay()` shrinks the panel to its
+  content, centres it on 480x270 and moves its CrystalFrame. It runs twice, a frame apart,
+  because a wrapped label only knows its height after one layout. `show_lore` calls it deferred.
+- **Tasks page**: `show_tasks(pick)` lists every open task (one per line: "!" offered, "-" under
+  way, "?" ready), then the picked one's goals and reward.

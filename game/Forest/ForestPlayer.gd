@@ -347,7 +347,7 @@ func switch_state(state_name: String):
 	if respawning and state_name != "dead": return
 	if state_name == "attack":
 		var selected: Item=InventoryManager.get_selected_item()
-		if selected and selected.tool_type in ["bow","fishing_rod","hoe"]: return
+		if selected and selected.tool_type in ["bow","fishing_rod","hoe","bomb"]: return
 		if action_time>0: return
 		if controls_locked or respawning or get_viewport().gui_get_hovered_control() != null:
 			return
@@ -366,6 +366,22 @@ func switch_state(state_name: String):
 		_swing_item = InventoryManager.get_selected_item()
 	_feel_state_entered(state_name)
 
+## Pass 17 (Hank: "my swing of my axe, let's make sure that it's within my
+## swinging range. Right now... I could be pretty far away from a tree and
+## still able to break it down"): a tool reaches what's within TOOL_REACH px of
+## the keeper's feet, measured to its footing (a trunk's foot, a rock's base)
+## or, for what has none (a bush), to its middle. It used to be 56 px from the
+## keeper's middle to the thing's cell: near three tiles of open ground.
+const TOOL_REACH := 20.0
+func tool_reaches(prop) -> bool:
+	var feet := global_position + Vector2(0, 6)
+	var rect: Rect2 = prop.get_collision_rect() if prop.has_method("get_collision_rect") else Rect2()
+	if rect.has_area():
+		var area := Rect2(prop.global_position + rect.position, rect.size)
+		var nearest := Vector2(clampf(feet.x, area.position.x, area.end.x), clampf(feet.y, area.position.y, area.end.y))
+		return nearest.distance_to(feet) <= TOOL_REACH
+	return prop.global_position.distance_to(feet) <= TOOL_REACH + 8.0
+
 func _forest_hit():
 	if state != "attack" or not is_instance_valid(forest_world):
 		return
@@ -375,7 +391,10 @@ func _forest_hit():
 	var tool: String = _swing_item.tool_type if _swing_item else "none"
 	var harvest_reachable := true
 	if is_instance_valid(prop):
-		harvest_reachable = prop.global_position.distance_to(global_position) <= 56
+		harvest_reachable = tool_reaches(prop)
+		# Swung at from a step too far: say so (not for a swing at empty air).
+		if not harvest_reachable and prop.global_position.distance_to(global_position) <= 64.0 and _swing_item and _swing_item.tool_type in ["axe", "pickaxe"]:
+			forest_world.last_feedback = "Too far: step up to it."
 		var ray := PhysicsRayQueryParameters2D.create(global_position, prop.global_position, 16)
 		var hit := get_world_2d().direct_space_state.intersect_ray(ray)
 		if not hit.is_empty() and hit.collider != prop and hit.collider.get_parent() != prop:
@@ -848,6 +867,7 @@ func _sync_held_item():
 
 func _process(_delta: float):
 	_skin.pump(3.0)
+	_skin.pump_base(1.0)
 	_sync_held_item()
 	# Legs cycle in step with the ground actually covered (wading slows them).
 	if state in ["walk", "run"] and not is_instance_valid(mounted_creature):

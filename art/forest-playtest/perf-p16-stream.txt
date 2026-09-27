@@ -1,0 +1,11 @@
+PERF boot 2693ms
+PERF camp               frame= 18.12ms median= 11.00 p99= 82.14 worst= 86.78 (physics+input= 1.87 process=10.22 render= 6.04) creatures=42 props=4141 chunks=25
+PERF camp later         frame=  9.60ms median=  9.85 p99= 12.62 worst= 17.63 (physics+input= 1.13 process= 1.55 render= 6.93) creatures=42 props=4141 chunks=25
+PERF sprint (15 s)      frame= 10.76ms median=  9.82 p99= 28.91 worst= 67.37 (physics+input= 1.57 process= 2.66 render= 6.53) creatures=52 props=5675 chunks=35
+PERF glassmere          frame=  9.70ms median=  9.88 p99= 12.43 worst= 36.63 (physics+input= 0.67 process= 1.46 render= 7.57) creatures=18 props=1990 chunks=25
+PERF dunes              frame=  9.59ms median=  9.78 p99= 12.39 worst= 25.27 (physics+input= 0.44 process= 1.38 render= 7.77) creatures=5 props=2055 chunks=25
+PERF pale_hills         frame=  9.64ms median=  9.83 p99= 14.27 worst= 14.51 (physics+input= 0.57 process= 1.66 render= 7.40) creatures=7 props=3575 chunks=25
+PERF bonelands          frame=  9.87ms median=  9.61 p99= 21.08 worst= 27.77 (physics+input= 0.59 process= 1.84 render= 7.44) creatures=10 props=4404 chunks=25
+PERF stillwater         frame=  9.65ms median=  9.81 p99= 18.55 worst= 19.34 (physics+input= 0.84 process= 1.60 render= 7.20) creatures=16 props=2040 chunks=25
+PERF sunward oasis      frame=  9.97ms median=  9.75 p99= 23.88 worst= 36.14 (physics+input= 1.22 process= 1.73 render= 7.02) creatures=9 props=1993 chunks=25
+PERF ashen camp         frame=  9.97ms median=  9.58 p99= 20.45 worst= 24.42 (physics+input= 1.47 process= 1.97 render= 6.53) creatures=14 props=4363 chunks=30

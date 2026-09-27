@@ -565,6 +565,8 @@ func _trinkets() -> void:
 func _saves() -> void:
 	var path := "user://wilds_suite_%d.json" % OS.get_process_id()
 	stage._milestones.erase("maw")
+	# (Pass 16: a slain boss is gone a while; the test wants it back now.)
+	stage._milestones.erase("back_maw")
 	stage._prepare_bosses()
 	await frames(2)
 	check(is_instance_valid(stage.maw), "a fresh Maw for the save test")

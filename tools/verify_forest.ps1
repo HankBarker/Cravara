@@ -107,7 +107,21 @@ $suites = @(
     @{Name='pass15'; Args=@('res://Tests/Pass15Suite.tscn')},
     # Pass 15: a new journey's ring world: every land, the small places, the
     # villages, ruins and caves, all where they should be.
-    @{Name='rings'; Args=@('res://Tests/RingsSuite.tscn')}
+    @{Name='rings'; Args=@('res://Tests/RingsSuite.tscn')},
+    # Pass 16: a new journey's world six times as big, streamed round the
+    # keeper: the bog two minutes out, beasts from their sites, the map's
+    # night, the caves filling as they're entered, a band's lodge, saves.
+    @{Name='stream'; Args=@('res://Tests/StreamSuite.tscn')},
+    # Pass 16 in the old world: cave hunters jump the keeper, bold and calm
+    # beasts, sleepers sleep on, bosses and great beasts come back, the
+    # sites refill, the map starts dark, every land's music.
+    @{Name='pass16'; Args=@('res://Tests/Pass16Suite.tscn')},
+    # Pass 17: a livelier world (more beasts and nests, fewer plains trees, the
+    # bog's lakes and their hoards and Sailbacks, fallen houses and inns, lost
+    # camps), the earthquake's shake, cracks and falling rock, the dimetrodon's
+    # bite, the axe's reach, trees shouldered down, bombs, the map's icons and
+    # pins, quest lines and advice, three new folk, words in their bubbles.
+    @{Name='pass17'; Args=@('res://Tests/Pass17Suite.tscn')}
 )
 if ($FromSuite -ne '' -and $FromSuite -notin $suites.Name) { throw ('Unknown suite: ' + $FromSuite) }
 $started = $FromSuite -eq ''

@@ -75,8 +75,11 @@ func _ready() -> void:
 	nameplate.add_theme_constant_override("shadow_offset_x", 1)
 	nameplate.add_theme_constant_override("shadow_offset_y", 1)
 	nameplate.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	nameplate.size = Vector2(64, 9)
-	nameplate.position = Vector2(-32, -44)
+	# (Pass 17: as wide as the name, centred over them: a long name grew off to
+	# the right of a fixed 64 px plate.)
+	nameplate.reset_size()
+	nameplate.size.x = maxf(64.0, nameplate.size.x)
+	nameplate.position = Vector2(-roundf(nameplate.size.x / 2.0), -44)
 	nameplate.z_index = 5
 	nameplate.visible = false
 	add_child(nameplate)

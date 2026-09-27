@@ -149,6 +149,12 @@ def main():
             entry = {"fps": c["fps"], "loop": bool(c.get("loop"))}
             if views != VIEWS:
                 entry["views"] = list(views)
+            # A facing's own pace (pass 17: the dimetrodon's side walk is its
+            # run's stride, slower): overrides "KEY/CLIP_VIEW": {"fps": ...}.
+            for v in views:
+                own = SPEC.get("overrides", {}).get("%s/%s_%s" % (key, clip, v), {}).get("fps")
+                if own:
+                    entry.setdefault("fps_view", {})[v] = own
             counts = []
             stand_in = []
             per_view = {}

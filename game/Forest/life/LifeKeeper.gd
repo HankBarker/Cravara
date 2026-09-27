@@ -54,6 +54,8 @@ func setup(owner_session) -> void:
 func populate_nests() -> void:
 	var nesting = session.world.nesting
 	if nesting == null: return
+	# (A streamed world's nests are guarded by their sites: Spawners.)
+	if session.world.get("chunks") != null: return
 	for cell in nesting.nests:
 		if populated.has(cell): continue
 		populated[cell] = true
@@ -141,6 +143,8 @@ func wild_hatch():
 		if int(nest.eggs) <= 0 or not FC.SPECIES.has(sp): continue
 		var centre := Vector2(cell * 16) + Vector2(8, 8)
 		if is_instance_valid(keeper) and keeper.global_position.distance_to(centre) < UNSEEN: continue
+		# (A streamed world's nest hatches only while its ground is in.)
+		if session.world.get("chunks") != null and not session.world.chunks.is_loaded(cell): continue
 		var kin := 0
 		for c in wild:
 			if c.species == sp and c.global_position.distance_to(centre) < THIN_RANGE: kin += 1
@@ -209,5 +213,7 @@ func _process(delta: float) -> void:
 				session._toast(("Your %ss have laid an egg! Set it in a warm incubator." if clutch == 1 else "Your %ss have laid twin eggs! Set them in a warm incubator.") % str(Life.SHORT.get(a.species, a.species)).to_lower())
 				var sk = get_tree().get_first_node_in_group("skills")
 				if sk: sk.gain("breeding", float(sk.XP.bred))
+				# (Pass 17: Nell's tasks count the clutches.)
+				SignalBus.place_visited.emit("bred")
 	for key in _together.keys():
 		if not seen.has(key): _together.erase(key)

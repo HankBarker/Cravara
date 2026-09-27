@@ -676,3 +676,150 @@ See `vision.md` for why.
   ~15k of the ~23k props; each prop node costs ~100 us), ground 0.5 s, flora 1.1 s. `Forest/Boot.gd`
   pumps window events between steps so Windows doesn't flag "Not Responding"; input is held off
   with `get_tree().root.gui_disable_input` until the boot frame ends.
+
+
+## Pass 16: the streamed world (rings version 2; Hank: "much, much bigger... a two- or three-minute walk to the Mirefen")
+
+- **Versions** (`Layout.rings(seed, version)`; `world.layout_version`, saved as `layout_v`):
+  - version 1 is pass 15's ring world, untouched.
+  - version 2 (`Layout.V2`) puts the plains at 460 cells, the middle ring at 860, and makes the
+    world 2400 cells across (5.8M cells). Every new journey gets version 2 (MainMenu; tests use
+    `--rings2 SEED`).
+  - A v2 layout keeps no grids. `land_index` works each chunk's lands out on first ask and keeps
+    600 chunks. `Layout.cells()` refuses (it would list millions of cells); use
+    `point_in(land, rng, depth_band, across_band)` or `area_point`.
+  - Walking is 54 px/s (3.4 cells/s), so the bog's inner edge is about 135 s from camp.
+- **`world/ChunkGen.gd` makes any 32x32 chunk from the seed alone**, in any order, the same every
+  time:
+  - Each land's recipe (`_base`: the old recipes with per-cell hash dice) is laid first.
+  - The **plan's features** are stamped over it (`_stamp`: clear, square, prop, scrub, pave,
+    micro, water; the meres are read by the bog recipe).
+  - Then come the water depths (8-way BFS in a +8 margin), then styles, props, and the chunk's
+    8x8 block of the map picture (`_map_block`).
+  - **`plan()`** runs once per world (~0.35 s). It places the meres, camp, the old sites, the den
+    (and its bones), the dunes (ossuary, town, oases), the Pale Lands' camps, the haven, the red
+    meadow, the ruins, the **cave mouths** (`_plan_caves`), nests, veins and crops.
+  - The plan uses `probe(c)` (the recipe only) and `open_at`, and `_spaced` via a per-chunk grid
+    (`_at_grid`).
+  - **Keep chunk output deterministic.** `Tests/ChunkSum.tscn` prints checksums of the plan and of
+    235 chunks for two seeds. Refactors must keep them identical: speed-ups took a chunk from
+    53 ms to ~12 ms and the plan from 2.1 s to 0.35 s.
+- **`world/Chunks.gd` keeps the window** (LOAD_R 2: 5x5 chunks; DROP_R 3):
+  - **Making**: a chunk is made on a WorkerThreadPool task, one at a time, nearest first. A
+    journey's first window uses `_make_many` on a group task, where each index gets
+    `gen.worker_copy()`: the plan shared read-only, scratch (`_o`, `_inner_out`, `_room_*`) of its
+    own.
+  - **Thread rule**: nothing on the main thread may call into ChunkGen while a task runs.
+    `data_of`, `load_around` and `clear` call `_finish_task()` first, and anything else that
+    probes at runtime (TribeKeeper camps) must too.
+  - **Per frame**: at most one heavy step. Either lay down a chunk (cells into the world dicts,
+    ground paint, map block, queued props), or grow a chunk's grass, or drop a far chunk. Props
+    stand up at 48 a frame.
+  - **`load_around`** lays the whole window down at once, but stands up only the centre 3x3's
+    props and grass. The rest follows over the next frames.
+  - **Persistence**: world dicts (terrain, water, props, ground_style, micro, deep, piranha, floors,
+    roofs) hold only the window. The keeper's records are kept whole: mined, placed, edits,
+    event_props, clams, searched, cache_bags. **A prop set by code in a streamed world must be
+    recorded** (placed / event_props / mined) or it vanishes when its chunk unloads.
+    `ForestWorld.build_piece` sets a building piece the keeper's way. The state of things in an
+    unloaded chunk lives in the stash (damage, doors, caches, chests, floors, roofs), is saved with
+    the journey, and is laid back on reload.
+  - **Deep water and the bog's banks** are one StaticBody pair per loaded chunk
+    (`_after_stream`). A neighbour's pair is rebuilt only when a new chunk's water touches the
+    shared edge (`water_sides`).
+- **The ground in wrap mode** (`ForestGround.wrap`, WRAP 512):
+  - The terrain and land maps are 512x512 textures addressed modulo 512 (the shaders' `map_wrap` /
+    `land_wrap`).
+  - `paint_chunk` writes a chunk's cells in, and the maps upload once a frame.
+  - `_update_chunks` visits only the ground chunks round the view whose world chunk is loaded.
+- **Grass**: `ForestFlora.add_chunk` / `remove_chunk` build one MultiMesh patch per chunk.
+- **Whole-world scans only see the window.** That affects fishing holes, camps, villages, Old Maw
+  and nests. Each got a streamed path:
+  - `FishingController._stream_spots`: holes per chunk, their state kept by cell.
+  - `TribeKeeper`: camps sited from the plan's probes with their props as event_props;
+    `_stream_villages` peoples a village while it's loaded.
+  - `ForestPlaytest._tend_maw`: Maw is in the first mere while it's loaded.
+  - Nests are Spawners sites.
+- **Saving and loading**:
+  - `ForestWorld.restore` runs `_restore_streamed`: records and stash only, nothing stood up. The
+    session then calls `world.stream_to(saved cell)`.
+  - On Continue, the session reads the save's world head first (`_saved_world_head`), so the right
+    world is raised once. `restore` skips re-raising a fresh identical world (`_fresh`).
+- **Tools**:
+  - `Tests/StreamProbe.tscn`: world only; timings, a walk, edits, a round trip.
+  - `Tests/StreamSuite.tscn`: the session (regression).
+  - `Tests/ChunkSum.tscn`: plan and chunk checksums; keep them identical across refactors.
+  - `Tests/PerfStream.tscn`: rendered frame times incl. p99 and worst.
+  - `Tests/SpikeProbe.tscn`: first spawns per species, a village's peopling, each chunk step,
+    rendered.
+- **Costs** (this laptop):
+  - Chunk make incl. its grass: ~25 ms on the worker. On the main thread: lay ~2-3 ms, grass
+    patch ~2 ms (`ForestFlora.scatter_chunk` runs in `ChunkGen.chunk`, so `add_chunk` only
+    builds the MultiMesh), drop ~2 ms, props 48 a frame.
+  - Rendered frames in every land: ~9.8 ms median, p99 12-24 ms, sprint p99 29 ms.
+  - Boot ~2.7 s. The world is 1.7 s of it: plan 0.43, 25 chunks in parallel 0.39, the centre's
+    props 0.12. The first second after boot is busy (the outer window's props, first-use
+    shaders).
+- **First-appearance spikes**: a species' first beast used to load its 30-40 strips on the main
+  thread (~50 ms). `DinoArt.warm(key)` puts them on the loader's threads with
+  `load_threaded_request`, and `strip_texture` collects them. `Spawners._warm` asks for each new
+  chunk's site species (and their coat/crystal art), and `warm_start` for the plains' and caves'.
+- **Keeper boot**: `KeeperSkin.base_frames()` in a window paints only the idle clips. The rest
+  is `pump_base(1 ms)` from the live keeper; to the live build the base is only a clip list.
+  Headless stays synchronous for the rig tests. This took 1.1 s off every boot.
+
+## Pass 17: the world filled in (Hank: "more vibrant and lifelike... encourage exploration")
+
+- **New plan steps** in `ChunkGen.plan()` (order matters: later steps avoid earlier ones through
+  `_spaced` and the probes):
+  - `_plan_lakes` (after the meadow): 12-16 **lakes** in the bog, each a `"mere"` feature with
+    `lake: true`, a `heart` island (6.5-9 cells) and 1-3 islets. Half get a **causeway**
+    (`fords`: [from, to, half-width], read by `_bog` as dry ground). Their rim must lie in the bog,
+    clear of the meres, the haven and the villages. 65% of hearts get a **hoard** (a `cache`
+    with `cache_kinds[cell] = "treasure"`). Spawners give each heart a "lake" site (a spinosaur,
+    variant `"lake"`: no nameplate), and Old Maw rises in the nearest loaded mere or lake
+    (`ForestPlaytest._tend_maw`, `OldMaw.setup(session, box)`).
+  - `_plan_buildings` (after the ruins): about 80 **fallen buildings** from ASCII templates
+    (`BUILDINGS`: house, inn, hut, cottage) in the land's own stuff (`BUILD_STUFF`). Each is one
+    `"building"` feature carrying its cells: `[prop, floor]` per cell. Walls fall to gaps
+    (`broken`), floors to bare earth (`bare`), rubble lies by the gaps, and 35% are `SEALED`
+    (whole, a boulder at the door). The chest's `cache_kinds` is `"house"` or `"larder"` (inn).
+    Mark big features with several `_mark` cells so later spacing sees their whole footprint.
+  - `_plan_wild_nests` (after the nests): a nest in about one chunk in 10-20, the odds by land
+    (`WILD_NESTS`, the plains highest), species from `NEST_LIFE`.
+  - `_plan_finds`: scattered ancient caches (some by bones or a relic) and **lost camps** (tent,
+    pack: `cache_kinds` `"camp"`, a barrel).
+  - Buildings and lost camps are map POIs (kinds `building` and `lost_camp`).
+- **Floors under props**: a chunk's `props` list has one prop per cell, so a building's floor
+  tiles travel in the chunk's own `floors` list (`_ffloors`, filled by `_stamp`). `Chunks._load`
+  queues them with a 5th element `true` (seeded). `ForestWorld._spawn_floor(c, kind, seeded)`
+  marks them `seeded`, not the keeper's (`is_placed` false), and hides their grass a cell at a
+  time. A seeded floor broken up is recorded in `world.floors_gone` (saved), so it doesn't come
+  back with its chunk. An intact seeded floor isn't stashed or saved (the seed has it).
+- **Chests by kind**: `world.cache_kinds` (from the plan) picks the loot table
+  (`Loot.chest(kind)`: TREASURE, HOUSE, LARDER, CAMP), the bag's name, and a wooden-chest look
+  (`ForestProp.chest_look`). Opening one emits `place_visited("chest:" + kind)` for the tasks.
+  Laid tables and barrels give their stores once (`world.searched`).
+- **Plains trees**: a meadow where `n_thicket < MEADOW (-0.18)` (a bush or stone at most), the
+  rest 56% trees (was 66%), thickets above 0.42 (was 0.38). Measured about 30 trees per 1000 plains
+  cells (`Tests/Pass17Suite`).
+- **Event props of other kinds**: `ForestWorld.EVENT_KINDS` (a quake's `rock`, and the folk's
+  huts, camps and traps in a streamed world) survive a load like the WILD ones.
+- **Tools**: `Tests/PlanProbe.tscn` prints a world's lakes, buildings, chests and nests and the
+  plan's step timings (`--gen-timing`). The plan now takes about 0.6 s (buildings 90 ms, nests
+  and finds about 40 ms each).
+- **The quake** (`WorldEvents`, QUAKE_TIME 12 s):
+  - The shake is held rather than pulsed. The camera's trauma decays at 1.8/s, so a quake tops it
+    up every frame to QUAKE_SHAKE x strength, with random kicks. The old 0.16-0.26 every 0.3 s
+    never reached a whole pixel: offset = trauma^2 x 4 px.
+  - A first jolt at 1 s (trauma 1, a 5 px kick, dust bursts).
+  - A brown haze and falling grit on the events' CanvasLayer.
+  - `fx/QuakeCrack.gd`: ground-level (z -16) jagged splits with a lit lip and clods, fading after
+    30 s.
+  - `fx/FallingRock.gd`: a shadow and a red rim for FALL s, then the strike. A rock landing clear
+    becomes a `rock` event prop (QUAKE_BOULDERS at most); on something it breaks into stone.
+  - Screenshots rarely catch a rock mid-air: it's above the top of the screen for most of its fall.
+- **Bombs** (`BombController`, `fx/Bomb.gd`): `ForestWorld.blast_at(cell)` breaks what a strong
+  tool would, dropping its drops plus the land's own material (`Materials.native`), and records
+  it as mined. It never touches the keeper's placed things, landmarks with parts, caches, nests
+  or the edge.

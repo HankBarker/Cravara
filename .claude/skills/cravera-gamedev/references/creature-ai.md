@@ -482,3 +482,85 @@ density climbs.
   `c.set_genes({})` (`Genes.clean({})` stays `{}`: no temperament, no shader).
 - Tests: `Tests/Pass13Suite.tscn` (incl. a live siege), `Tests/HuntSuite.tscn` (updated),
   `Tests/DinoBehaviourCapture.tscn` (the pack is hungry now).
+
+## Pass 16: sites, temperament, caves, sleep
+
+- **Spawners** (`creatures/Spawners.gd`, session-owned) are the wild's supply ("a spawn radius... if
+  it doesn't detect a dinosaur of that type in that radius, then it will spawn it... every minute").
+  - A **site** is `{sp, variant, cell, group: Vector2i, kind: herd/nest/mere/great, radius px,
+    next}`.
+  - Each site near the keeper checks every `CHECK` 60 s (+ up to 15 s jitter). If no wild living
+    creature of its species is within the radius, and the site is `UNSEEN` (330 px) or more from
+    the keeper, a group comes (`_bring`). Nest guards get `life.nest`. A herd gets
+    `life.add_young`. Far out, a herd member has a 6% chance to come crystal-grown.
+  - **Great** sites (MINIBOSS species, the dune/old roamers) keep one beast alive anywhere at a
+    time. They wait `session.BOSS_BACK` (600-900 s) after a kill, keyed
+    `great_<sp>_<variant>_<x>_<y>` in `_milestones` via `boss_fell` / `boss_down` (so it's saved).
+  - **Small worlds** (legacy, rings v1): sites from the old tables (BONELANDS_LIFE, WILDS_LIFE,
+    WILDS12, WILDS13, WILDLIFE arcs, ROAMERS, `_mere_spots`, nests), within `ACTIVE` 1500 px of the
+    keeper. The journey's first wildlife is still `_spawn_wildlife`.
+  - **Streamed worlds**: sites per chunk from the seed (`SITE_ODDS` 0.5, `SECOND_ODDS` 0.12), the
+    species from `LAND_LIFE[land]` weighted and filtered by depth band. Only loaded chunks' sites
+    are active; `first_fill()` fills the start window.
+  - **`_rest_far`** (streamed, every 2 s): a wild creature in an unloaded chunk is freed. Tamed,
+    tribe, master-bound and boss-species creatures are disabled and hidden instead, and woken when
+    their chunk returns.
+  - `ForestCreature.far_scale` (6 in a streamed world) scales `CRYSTAL_FROM`, `CRYSTAL_RIM` and
+    `FAR_EDGE`. Without it, everything past the old world's 170 cells would be a third crystal-sick.
+- **Temperament decides the tactics** ("both variations... some just straight up attack"):
+  - `reckless()` is true in a cave, or with genes temper bold/fierce.
+  - A reckless beast skips the pack gathering (`Tactics.pack` returns INF) and the ambush
+    (`_will_ambush`). Calm/skittish (and plain `{}` genes, "calm") keep pack and ambush tactics.
+- **Underground** (`in_cave()`, cached 2 s; guard the world's methods: test fixtures lack
+  `to_cell`): reach x1.4, always hungry, the keeper in reach at the full reach, half the alert
+  display.
+- **Sleep** ("stay in the sleeping animation unless provoked... if you interact, that's fine"):
+  - `asleep()` = CreatureLife's night rest, from when the herd lies down (daylight < -0.2), not
+    the clock's "night" (0.9), which starts ~100 s later. The gap was the stand-up-and-lie-down
+    flicker.
+  - While asleep and unprovoked: `play_action` is refused (so feeding doesn't play "eat"),
+    `_resting_behaviour` does nothing, `_face` holds, and `_tick_patience` builds no unease (so a
+    keeper crowding a sleeping stego isn't struck).
+- **Bosses come back** (`ForestPlaytest.boss_fell/boss_down`, BOSS_BACK 600-900 s of play):
+  - Skarn (`AlphaBoss._process` raises it once the keeper is 640 px from the den).
+  - The Buried King (`OssuarBoss` summons refuse while down).
+  - Old Maw (`_prepare_bosses`; streamed: `_tend_maw`).
+  - Each lair's Sleeper (`CaveLife`; streamed: `on_enter`).
+- Tests: `Tests/Pass16Suite.tscn` (old world) and `Tests/StreamSuite.tscn` (streamed).
+- **Cave bug, fixed at the root**: the caves' strip lies outside `world.bounds()`, and
+  `_outside_world()` steered every cave beast back toward its home each tick. So they stood and
+  stared until the keeper came into biting range, the pass-15 complaint. `_outside_world` and
+  `_out_of_territory` now return false `in_cave()`.
+- **Tick costs** (old world, ~336 beasts, ~50 at full rate; rendered profile). Creatures take
+  ~7 ms a physics tick, over half of it `_wild_behaviour`, and within that the target scans.
+  Cheap wins taken:
+  - `near()` re-sorts its buckets every third tick (arrivals and departures still force it).
+  - `_wild_target` checks distance before the `get()`-based `_valid_target` on folk and beasts.
+  - The sprite's modulate is set only when it changes.
+  - The old worlds' Spawners cap each species at the tables' own total (`_caps`). Without it,
+    sites a little off the first herds' spots doubled the beasts near the keeper.
+  - Tamed or not, a new streamed journey has 5-50 beasts ticking, so frames run ~10 ms.
+
+## Pass 17: reach from the snout, trees in the way, a quake's rocks
+
+- **Bites and claws are measured from the snout** (`DinoMoves.snout(dir)`): side-on, a beast's
+  jaws are half its drawn `width` out in front, less its body circle and 6 px. The offset eases
+  in between 60 and 30 degrees off the horizontal, and is nothing facing up or down. `gap()`
+  (what a hunter closes to and holds at) uses it for biters. `body_gap()` is kept for tails and
+  stomps (`choose()` picks per move shape), and `_in_shape("jaws"/"claws")` measures from it.
+  Before this the dimetrodon side-on (snout at +28 px, reach circle 10 px) had to stand on the
+  keeper to bite (Hank's report).
+- **Trees in the way**: `TREE_BREAKERS` is every big beast except the raptors, deinos, compies and
+  small grazers. `_watch_stuck` counts slow walkers: the gate is `max(5, speed * 0.25)`, where the
+  old 20 px/s excluded every grazer. It judges "stuck" as under 35% of the expected travel. On a
+  second stuck in a row it looks for a tree against the body (`_tree_ahead`: a probe one radius
+  ahead against each trunk's footing, grown by 0.7 of the radius). A **free siege**
+  (`_siege_free`, no quarry) then runs at the top of `_physics_process` in any mode, wild or
+  companion. `_find_blocker` falls back to `_tree_ahead` when the thin ray misses. Bash clips come
+  from `BASH_CLIPS` first (the trike's first move is a ram that plays its run clip). `_give_up`
+  clears a hunt's siege.
+- **A lake's spinosaur** is `VARIANTS.lake` (`plain`: its nameplate is removed). The "lake" site
+  kind is one per lake by radius, not unique in the world like the "great" sites.
+- **Falling rock** (`fx/FallingRock.gd`) and **bombs** (`fx/Bomb.gd`) hurt beasts with a Vector2
+  source (`take_damage(amount, point, knock)`), so no one blames the keeper. A bomb's blast makes
+  nearby wild beasts bolt (`_flee_time`).

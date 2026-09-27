@@ -991,6 +991,10 @@
   "spino"
  ],
  "overrides": {
+  "dimetrodon/walk_side": {
+   "fps": 4.3,
+   "made": "tools/dino/dimetro_side.py (pass 17): its run's stride, played slower so its feet keep pace with its walk"
+  },
   "rex/walk_down": {
    "model": "pmm",
    "motion": "Walks in place toward the viewer, hunched with its head held low: its legs step one after the other and its shoulders sway from side to side."
