@@ -1,0 +1,11 @@
+34b54926-b998-49ab-a95b-978cce13f234
+status: completed
+id: 34b54926-b998-49ab-a95b-978cce13f234
+job_id: 34b54926-b998-49ab-a95b-978cce13f234
+frames: 1
+transparent: yes
+asset_id: 2af9fa9e-a38b-592b-8787-597014413cf6
+asset_type: image
+asset_status: saved
+gallery: saved to your PixelLab gallery (pixellab.ai/create)
+download: https://api.pixellab.ai/mcp/images/34b54926-b998-49ab-a95b-978cce13f234/download

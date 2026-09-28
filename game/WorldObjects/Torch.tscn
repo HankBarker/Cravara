@@ -1,0 +1,39 @@
+[gd_scene load_steps=6 format=3 uid="uid://b6tor8tch2sc1"]
+
+[ext_resource type="Texture2D" uid="uid://bv1fhii6his" path="res://Items/Icons/torch_icon.png" id="1_torch_tex"]
+[ext_resource type="Script" path="res://WorldObjects/Torch.gd" id="2_torch_script"]
+
+[sub_resource type="Gradient" id="Gradient_torch_light"]
+offsets = PackedFloat32Array(0, 0.45, 1)
+colors = PackedColorArray(1, 0.92, 0.62, 1, 1, 0.65, 0.3, 0.55, 1, 0.45, 0.1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_torch_light"]
+gradient = SubResource("Gradient_torch_light")
+width = 192
+height = 192
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_torch_body"]
+size = Vector2(6, 6)
+
+[node name="Torch" type="StaticBody2D"]
+collision_layer = 16
+collision_mask = 0
+script = ExtResource("2_torch_script")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("1_torch_tex")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 2)
+shape = SubResource("RectangleShape2D_torch_body")
+
+[node name="PointLight2D" type="PointLight2D" parent="."]
+position = Vector2(0, -4)
+energy = 1.1
+texture = SubResource("GradientTexture2D_torch_light")
+texture_scale = 1.2
+color = Color(1, 0.78, 0.45, 1)

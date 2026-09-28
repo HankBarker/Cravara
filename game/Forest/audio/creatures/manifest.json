@@ -1,0 +1,230 @@
+[
+  {
+    "file": "dodo-ambient.ogg",
+    "source": "chicken.mp3",
+    "pitch": 1.08,
+    "duration": 0.833333
+  },
+  {
+    "file": "dodo-attack.ogg",
+    "source": "chicken.mp3",
+    "pitch": 1.08,
+    "duration": 0.833333
+  },
+  {
+    "file": "dodo-hurt.ogg",
+    "source": "chicken.mp3",
+    "pitch": 1.08,
+    "duration": 0.833333
+  },
+  {
+    "file": "raptor-ambient.ogg",
+    "source": "chicken.mp3",
+    "pitch": 0.72,
+    "duration": 1.250023
+  },
+  {
+    "file": "raptor-attack.ogg",
+    "source": "chicken.mp3",
+    "pitch": 0.72,
+    "duration": 1.250023
+  },
+  {
+    "file": "raptor-hurt.ogg",
+    "source": "chicken.mp3",
+    "pitch": 0.72,
+    "duration": 1.250023
+  },
+  {
+    "file": "rex-ambient.ogg",
+    "source": "monster-1.wav",
+    "pitch": 0.48,
+    "duration": 2.196327
+  },
+  {
+    "file": "rex-attack.ogg",
+    "source": "monster-4.wav",
+    "pitch": 0.48,
+    "duration": 1.328254
+  },
+  {
+    "file": "rex-hurt.ogg",
+    "source": "monster-9.wav",
+    "pitch": 0.48,
+    "duration": 1.192653
+  },
+  {
+    "file": "stego-ambient.ogg",
+    "source": "monster-2.wav",
+    "pitch": 0.76,
+    "duration": 0.548254
+  },
+  {
+    "file": "stego-attack.ogg",
+    "source": "monster-5.wav",
+    "pitch": 0.76,
+    "duration": 0.548254
+  },
+  {
+    "file": "stego-hurt.ogg",
+    "source": "monster-8.wav",
+    "pitch": 0.76,
+    "duration": 0.419456
+  },
+  {
+    "file": "trike-ambient.ogg",
+    "source": "monster-11.wav",
+    "pitch": 0.94,
+    "duration": 0.544082
+  },
+  {
+    "file": "trike-attack.ogg",
+    "source": "monster-12.wav",
+    "pitch": 0.94,
+    "duration": 0.526939
+  },
+  {
+    "file": "trike-hurt.ogg",
+    "source": "monster-14.wav",
+    "pitch": 0.94,
+    "duration": 0.626667
+  },
+  {
+    "file": "longneck-ambient.ogg",
+    "source": "monster-13.wav",
+    "pitch": 0.57,
+    "duration": 1.038005
+  },
+  {
+    "file": "longneck-attack.ogg",
+    "source": "monster-15.wav",
+    "pitch": 0.57,
+    "duration": 0.9722
+  },
+  {
+    "file": "longneck-hurt.ogg",
+    "source": "monster-16.wav",
+    "pitch": 0.57,
+    "duration": 1.045351
+  },
+  {
+    "file": "allo-ambient.ogg",
+    "source": "monster-3.wav",
+    "pitch": 0.62,
+    "duration": 0.902449
+  },
+  {
+    "file": "allo-attack.ogg",
+    "source": "monster-6.wav",
+    "pitch": 0.62,
+    "duration": 0.700816
+  },
+  {
+    "file": "allo-hurt.ogg",
+    "source": "monster-10.wav",
+    "pitch": 0.62,
+    "duration": 0.683991
+  },
+  {
+    "file": "lystro-ambient.ogg",
+    "source": "monster-7.wav",
+    "pitch": 1.3,
+    "duration": 0.346984
+  },
+  {
+    "file": "lystro-attack.ogg",
+    "source": "monster-17.wav",
+    "pitch": 1.3,
+    "duration": 0.272018
+  },
+  {
+    "file": "lystro-hurt.ogg",
+    "source": "monster-6.wav",
+    "pitch": 1.3,
+    "duration": 0.288481
+  },
+  {
+    "file": "alpha-ambient.ogg",
+    "source": "chicken.mp3",
+    "pitch": 0.52,
+    "duration": 1.826757
+  },
+  {
+    "file": "alpha-attack.ogg",
+    "source": "chicken.mp3",
+    "pitch": 0.52,
+    "duration": 1.826757
+  },
+  {
+    "file": "alpha-hurt.ogg",
+    "source": "chicken.mp3",
+    "pitch": 0.52,
+    "duration": 1.826757
+  },
+  {
+    "file": "rex-roar.ogg",
+    "source": "monster-1.wav+monster-9.wav+monster-4.wav",
+    "pitch": 0.46,
+    "duration": 2.433923
+  },
+  {
+    "file": "allo-roar.ogg",
+    "source": "monster-3.wav+monster-10.wav",
+    "pitch": 0.55,
+    "duration": 1.039093
+  },
+  {
+    "file": "alpha-roar.ogg",
+    "source": "chicken.mp3+monster-17.wav+monster-7.wav",
+    "pitch": 0.5,
+    "duration": 2.04
+  },
+  {
+    "file": "parasaur-ambient.ogg",
+    "source": "monster-13.wav",
+    "pitch": 0.82,
+    "duration": 0.740499
+  },
+  {
+    "file": "parasaur-attack.ogg",
+    "source": "monster-15.wav",
+    "pitch": 0.82,
+    "duration": 0.694739
+  },
+  {
+    "file": "parasaur-hurt.ogg",
+    "source": "monster-16.wav",
+    "pitch": 0.82,
+    "duration": 0.745578
+  },
+  {
+    "file": "ossuar-ambient.ogg",
+    "source": "monster-9.wav",
+    "pitch": 0.42,
+    "duration": 1.533923
+  },
+  {
+    "file": "ossuar-attack.ogg",
+    "source": "monster-1.wav",
+    "pitch": 0.42,
+    "duration": 2.680952
+  },
+  {
+    "file": "ossuar-hurt.ogg",
+    "source": "monster-4.wav",
+    "pitch": 0.42,
+    "duration": 1.688889
+  },
+  {
+    "file": "parasaur-roar.ogg",
+    "source": "monster-13.wav+monster-15.wav",
+    "pitch": 0.72,
+    "duration": 1.001043
+  },
+  {
+    "file": "ossuar-roar.ogg",
+    "source": "monster-9.wav+monster-1.wav+monster-17.wav",
+    "pitch": 0.36,
+    "duration": 3.258685
+  }
+]

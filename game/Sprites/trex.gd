@@ -4,9 +4,10 @@ extends CharacterBody2D
 @onready var attack_area = $AttackArea
 @onready var player = null
 
-# Balanced stats: T-Rex is a real threat
-var max_health := 8
-var health := 8
+# Apex predator: the T-Rex is a Tier-4 boss, not a trash mob. ~30 HP means it
+# takes a real loadout (and a few hits) to bring down rather than dying in two.
+var max_health := 30
+var health := 30
 var attack_damage := 20
 var move_speed := 20
 var chase_speed := 40
@@ -17,8 +18,19 @@ var is_chasing := false
 var wander_timer := 0.0
 var wander_duration := 2.0
 
+# Smooth steering-wander state (replaces snap-to-cardinal random walk)
+var _wander_heading := 0.0          # current heading, radians
+var _wander_target_heading := 0.0   # heading we ease toward
+var _is_idling := false
+
+# Pathfinding: used only when the world actually has a baked navmesh;
+# otherwise we fall back to straight-line pursuit (see _use_navigation).
+var nav_agent: NavigationAgent2D = null
+
 const ATTACK_RANGE := 50
 const AGGRO_RANGE := 100
+const NIGHT_SPEED_BOOST := 1.4
+const NIGHT_AGGRO_BOOST := 1.5
 
 @export var start_position := Vector2(200, 200)
 @export var use_manual_position := true
@@ -31,26 +43,48 @@ func _ready():
 	if use_manual_position:
 		global_position = start_position
 
-	player = get_node_or_null("/root/Playground/Player")
+	# Prefer the group lookup (robust to scene path changes); fall back to the
+	# old hardcoded path so nothing breaks if the group isn't set yet.
+	player = get_tree().get_first_node_in_group("player")
+	if not player:
+		player = get_node_or_null("/root/Playground/Player")
 
-	if has_node("AggroRange"):
-		var aggro = $AggroRange
-		aggro.body_entered.connect(_on_AggroRange_body_entered)
-		aggro.body_exited.connect(_on_AggroRange_body_exited)
+	_setup_nav_agent()
+
+	# AggroRange signals are already wired in Trex.tscn — no extra connect()
+	# calls needed (used to fire "already connected" errors).
 
 	set_new_wander_direction()
 	_create_health_bar()
 
+func _setup_nav_agent() -> void:
+	nav_agent = NavigationAgent2D.new()
+	nav_agent.path_desired_distance = 8.0
+	nav_agent.target_desired_distance = float(ATTACK_RANGE) * 0.8
+	nav_agent.avoidance_enabled = false
+	add_child(nav_agent)
+
+func _use_navigation() -> bool:
+	# Only path-find if a navmesh exists in the world. Until a NavigationRegion2D
+	# is baked, map_get_iteration_id stays 0 and we use straight-line pursuit —
+	# so adding navigation later is a drop-in upgrade with no code change here.
+	if not nav_agent:
+		return false
+	var map: RID = nav_agent.get_navigation_map()
+	return map.is_valid() and NavigationServer2D.map_get_iteration_id(map) > 0
+
 func _physics_process(delta):
+	var night_aggro: float = AGGRO_RANGE * (NIGHT_AGGRO_BOOST if _is_night() else 1.0)
+
 	if player and not is_chasing:
 		var distance = global_position.distance_to(player.global_position)
-		if distance <= AGGRO_RANGE:
+		if distance <= night_aggro:
 			is_chasing = true
 
 	if player and is_chasing:
 		var distance = global_position.distance_to(player.global_position)
 
-		if distance > AGGRO_RANGE * 1.5:
+		if distance > night_aggro * 1.5:
 			is_chasing = false
 			set_new_wander_direction()
 			return
@@ -68,16 +102,28 @@ func _physics_process(delta):
 	move_and_slide()
 	animate()
 
+func _is_night() -> bool:
+	return TimeCycle and TimeCycle.is_night()
+
 func get_attack_damage() -> int:
 	return attack_damage
 
 func chase_player():
 	if not player:
 		return
-	var to_player = player.global_position - global_position
-	direction = to_player.normalized()
+	var speed: float = chase_speed * (NIGHT_SPEED_BOOST if _is_night() else 1.0)
+
+	# Steer toward the next path point when a navmesh exists, otherwise straight
+	# at the player. Either way the rest of the FSM is unchanged.
+	var steer_target: Vector2 = player.global_position
+	if _use_navigation():
+		nav_agent.target_position = player.global_position
+		if not nav_agent.is_navigation_finished():
+			steer_target = nav_agent.get_next_path_position()
+
+	direction = (steer_target - global_position).normalized()
 	update_facing_from_direction(direction)
-	velocity = direction * chase_speed
+	velocity = direction * speed
 
 func get_facing_from_direction(dir: Vector2) -> String:
 	if abs(dir.x) > abs(dir.y):
@@ -98,23 +144,46 @@ func wander(delta):
 	wander_timer += delta
 	if wander_timer >= wander_duration:
 		set_new_wander_direction()
+
+	if _is_idling:
+		velocity = Vector2.ZERO
+		return
+
+	# Ease the heading toward the target and add a little continuous jitter so
+	# the path curves organically instead of snapping between compass directions.
+	_wander_heading = lerp_angle(_wander_heading, _wander_target_heading, clampf(2.5 * delta, 0.0, 1.0))
+	var jitter: float = randf_range(-0.6, 0.6) * delta
+	direction = Vector2.RIGHT.rotated(_wander_heading + jitter)
+	update_facing_from_direction(direction)
 	velocity = direction * move_speed
 
 func set_new_wander_direction():
 	wander_timer = 0.0
 	wander_duration = randf_range(1.0, 3.0)
-	if randf() < 0.7:
-		var dirs = [Vector2.UP, Vector2.DOWN, Vector2.LEFT, Vector2.RIGHT]
-		direction = dirs[randi() % dirs.size()]
-		update_facing_from_direction(direction)
+	# Occasionally stop and graze; otherwise pick a fresh heading to ease toward.
+	if randf() < 0.25:
+		_is_idling = true
 	else:
-		direction = Vector2.ZERO
+		_is_idling = false
+		_wander_target_heading = randf() * TAU
 
 func animate():
 	if velocity.length() > 0:
-		sprite.play("walk_" + last_facing)
+		var walk_anim = "walk_" + last_facing
+		if sprite.animation != walk_anim or not sprite.is_playing():
+			sprite.play(walk_anim)
 	elif not bite_cooldown:
-		sprite.play("idle_" + last_facing)
+		# SpriteFrames has no idle_* animations — fall back to the walk
+		# anim's first frame, paused, so the T-Rex stands still facing
+		# the right direction.
+		var idle_anim = "idle_" + last_facing
+		if sprite.sprite_frames and sprite.sprite_frames.has_animation(idle_anim):
+			sprite.play(idle_anim)
+		else:
+			var stand_anim = "walk_" + last_facing
+			if sprite.animation != stand_anim:
+				sprite.play(stand_anim)
+			sprite.pause()
 
 func bite_player():
 	bite_cooldown = true
@@ -173,8 +242,8 @@ func die():
 
 func drop_loot():
 	var loot_items = [
-		{"item": TRexScale.new(), "quantity": randi_range(1, 3), "chance": 100},
-		{"item": TRexMeat.new(), "quantity": randi_range(1, 2), "chance": 60}
+		{"item": ItemDB.make("trex_scale"), "quantity": randi_range(1, 3), "chance": 100},
+		{"item": ItemDB.make("trex_meat"), "quantity": randi_range(1, 2), "chance": 60}
 	]
 	for loot in loot_items:
 		var roll = randi_range(1, 100)

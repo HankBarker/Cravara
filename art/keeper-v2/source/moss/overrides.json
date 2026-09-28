@@ -1,0 +1,48 @@
+{
+ "notes": [
+  "Mossweave Warden. Leafy shoulder mantles (down/up rows 14-17) are cut out of the hood into the pauldrons.",
+  "Moss uses a straw-beige (ebc881) that reads as skin to the colour tests; ramps are hinted to the moss green / bark brown.",
+  "eyes: the left eye sits 1px right of the base eye box (down view)."
+ ],
+ "labels": {
+  "down": [
+   {
+    "rect": [6, 14, 10, 17],
+    "label": "pauldron_o"
+   },
+   {
+    "rect": [20, 14, 25, 17],
+    "label": "pauldron_m"
+   }
+  ],
+  "up": [
+   {
+    "rect": [6, 14, 11, 17],
+    "label": "pauldron_o"
+   },
+   {
+    "px": [[12, 15]],
+    "label": "pauldron_o"
+   },
+   {
+    "rect": [19, 14, 25, 17],
+    "label": "pauldron_m"
+   }
+  ],
+  "side": [
+   {
+    "rect": [10, 15, 15, 18],
+    "label": "pauldron_m"
+   }
+  ]
+ },
+ "ramp_hint": {
+  "arm_upper": "5e8737",
+  "arm_lower": "96794a",
+  "leg_upper": "2a4e20",
+  "leg_lower": "2a4e20"
+ },
+ "eyes": {
+  "down": [[12, 11, 14, 13], [17, 11, 19, 13]]
+ }
+}

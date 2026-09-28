@@ -1,0 +1,11 @@
+b396eb62-fa8e-4b29-9fa1-9c4765327b20
+status: completed
+id: b396eb62-fa8e-4b29-9fa1-9c4765327b20
+job_id: b396eb62-fa8e-4b29-9fa1-9c4765327b20
+frames: 1
+transparent: yes
+asset_id: 7255cc69-a32d-50a0-9c55-e98debef84b2
+asset_type: image
+asset_status: saved
+gallery: saved to your PixelLab gallery (pixellab.ai/create)
+download: https://api.pixellab.ai/mcp/images/b396eb62-fa8e-4b29-9fa1-9c4765327b20/download

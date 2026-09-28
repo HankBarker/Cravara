@@ -1,5 +1,4 @@
-# AudioManager.gd - Placeholder sound effect system
-# Plays procedurally generated beeps/tones as placeholder SFX
+# Sample-based harvesting; compact synthesized cues for other interactions.
 extends Node
 
 var master_volume := 1.0
@@ -9,6 +8,95 @@ var music_volume := 0.5
 # Audio bus indices
 var _sfx_bus_idx := -1
 var _music_bus_idx := -1
+var _music_player: AudioStreamPlayer
+var _music_path := ""
+var _tone_cache: Dictionary = {}
+var _last_foley: Dictionary = {}
+const LEATHER_CUES := {"equip_gear":"equip-gear","unequip_gear":"unequip-gear","satchel_open":"satchel-open","satchel_close":"satchel-close"}
+## Pass 14: the field pack's zipper (tools/audio/make_zip_audio.py).
+const ZIP_CUES := {"pack_unzip":"res://Forest/audio/leather/pack-unzip.wav","pack_zip":"res://Forest/audio/leather/pack-zip.wav"}
+# Procedural movement/combat foley (res://Forest/audio/generated, made by
+# make_feel_sfx.py). Each family is an AudioStreamRandomizer: random variant,
+# never the same one twice in a row, small pitch/level spread.
+const GENERATED_FOLEY := "res://Forest/audio/generated/%s_%d.wav"
+# Legacy cue names that now use a generated family: [family, dB, pitch].
+const GENERATED_CUES := {"player_hurt":["hurt", -10.0, 1.0], "player_death":["hurt", -8.0, 0.8], "hit":["hit", -11.0, 0.95]}
+var _foley_banks: Dictionary = {}
+
+func get_leather_cue_path(sfx_name: String) -> String:
+	return "res://Forest/audio/leather/%s.ogg" % LEATHER_CUES[sfx_name] if LEATHER_CUES.has(sfx_name) else ""
+
+func get_foley_path(sfx_name: String, variant: int) -> String:
+	var family := ""
+	match sfx_name:
+		"chop_wood": family = "impactWood_heavy"
+		"mine_rock": family = "impactMining"
+		"place_object", "break_wood": family = "impactPlank_medium"
+	if family == "": return ""
+	return "res://Forest/audio/foley/%s_%03d.ogg" % [family, clampi(variant, 0, 4)]
+
+func _exit_tree():
+	stop_music()
+	_tone_cache.clear()
+	_foley_banks.clear()
+
+func stop_music():
+	if is_instance_valid(_music_player):
+		_music_player.stop()
+		_music_player.stream = null
+	for old in _fading:
+		if is_instance_valid(old): old.queue_free()
+	_fading.clear()
+	_music_path = ""
+
+## Pass 16: one tune gives way to the next over MUSIC_FADE seconds (a land's
+## own as the keeper walks into it), and a tune comes back where it left off.
+const MUSIC_FADE := 1.8
+var _fading: Array = []
+var _music_at := {}
+## Pass 17: a tune that doesn't loop says when it's over (a land's playlist
+## moves on to its next: ForestPlaytest.biome_music).
+signal music_finished(path: String)
+
+func play_music(path: String, volume_db := -8.0, loop := true):
+	if DisplayServer.get_name() == "headless":
+		return
+	if path == _music_path and is_instance_valid(_music_player) and _music_player.playing:
+		return
+	if not ResourceLoader.exists(path):
+		return
+	# The tune playing fades out (and is remembered where it was).
+	if is_instance_valid(_music_player):
+		if _music_player.playing and _music_path != "": _music_at[_music_path] = _music_player.get_playback_position()
+		var old := _music_player
+		_fading = _fading.filter(func(f): return is_instance_valid(f))
+		_fading.append(old)
+		# (The fade is the player's own: freed early by stop_music, it goes with it.)
+		var out := old.create_tween()
+		out.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+		out.tween_property(old, "volume_db", -60.0, MUSIC_FADE)
+		out.tween_callback(old.queue_free)
+	_music_player = AudioStreamPlayer.new()
+	_music_player.bus = "Music"
+	_music_player.process_mode = Node.PROCESS_MODE_ALWAYS
+	add_child(_music_player)
+	_music_path = path
+	var stream = load(path)
+	if stream is AudioStreamMP3:
+		stream.loop = loop
+	_music_player.stream = stream
+	_music_player.volume_db = -60.0
+	if not loop:
+		var ended := path
+		_music_player.finished.connect(func():
+			_music_at.erase(ended)
+			music_finished.emit(ended))
+	var from := float(_music_at.get(path, 0.0))
+	if stream and from >= stream.get_length() - 1.0: from = 0.0
+	_music_player.play(from)
+	var fade_in := _music_player.create_tween()
+	fade_in.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	fade_in.tween_property(_music_player, "volume_db", volume_db, MUSIC_FADE)
 
 func _ready():
 	# Create audio buses if they don't exist
@@ -46,14 +134,40 @@ func _apply_volumes():
 		AudioServer.set_bus_volume_db(_music_bus_idx, linear_to_db(music_volume))
 
 func play_sfx(sfx_name: String):
-	if sfx_volume <= 0.01:
+	if sfx_volume <= 0.01 or DisplayServer.get_name()=="headless":
+		return
+	if GENERATED_CUES.has(sfx_name) and _foley_bank(GENERATED_CUES[sfx_name][0]) != null:
+		var cue: Array = GENERATED_CUES[sfx_name]
+		play_foley(cue[0], cue[1], cue[2])
+		return
+	if ZIP_CUES.has(sfx_name):
+		_play_sample(ZIP_CUES[sfx_name],-6)
+		return
+	var leather_path := get_leather_cue_path(sfx_name)
+	if leather_path != "":
+		_play_sample(leather_path,-7)
+		return
+	var natural := {"harvest_plant":"foley/impactSoft_medium_000.ogg","eat":"foley/impactSoft_medium_000.ogg"}
+	if natural.has(sfx_name):
+		_play_sample("res://Forest/audio/"+natural[sfx_name],-9)
 		return
 
 	var player = AudioStreamPlayer.new()
 	player.bus = "SFX"
 
-	# Generate a simple procedural tone based on the sfx name
-	var stream = _generate_placeholder_tone(sfx_name)
+	var variant := randi_range(0, 4)
+	if variant == _last_foley.get(sfx_name, -1): variant = (variant + 1) % 5
+	_last_foley[sfx_name] = variant
+	var path := get_foley_path(sfx_name, variant)
+	var stream: AudioStream
+	if path != "" and ResourceLoader.exists(path):
+		stream = load(path)
+		player.pitch_scale = randf_range(0.94, 1.06)
+		player.volume_db = -7
+	else:
+		if not _tone_cache.has(sfx_name):
+			_tone_cache[sfx_name] = _generate_placeholder_tone(sfx_name)
+		stream = _tone_cache[sfx_name]
 	if stream:
 		player.stream = stream
 		add_child(player)
@@ -100,6 +214,9 @@ func _generate_placeholder_tone(sfx_name: String) -> AudioStream:
 		"ui_click":
 			frequency = 700.0
 			duration = 0.05
+		"companion_ping":
+			frequency = 740.0
+			duration = 0.20
 		_:
 			frequency = 440.0
 			duration = 0.1
@@ -125,3 +242,70 @@ func _generate_placeholder_tone(sfx_name: String) -> AudioStream:
 
 	audio.data = data
 	return audio
+
+func _play_sample(path: String, volume: float):
+	if not ResourceLoader.exists(path): return
+	var voice := AudioStreamPlayer.new()
+	voice.bus="SFX"
+	voice.stream=load(path)
+	voice.volume_db=volume
+	voice.pitch_scale=randf_range(0.92,1.04)
+	add_child(voice)
+	voice.finished.connect(voice.queue_free)
+	voice.play()
+
+## Pass 17: a one-shot sound from a file: at a place in the world (fading
+## with distance: `reach` px) or, with `at` INF, heard everywhere. The player
+## (null when silent: headless, the sound turned off, no such file).
+func play_at(path: String, at := Vector2.INF, volume_db := 0.0, pitch := 1.0, reach := 700.0) -> Node:
+	if sfx_volume <= 0.01 or DisplayServer.get_name() == "headless" or not ResourceLoader.exists(path):
+		return null
+	var voice: Node
+	if at == Vector2.INF:
+		voice = AudioStreamPlayer.new()
+	else:
+		var placed := AudioStreamPlayer2D.new()
+		placed.position = at
+		placed.max_distance = reach
+		placed.attenuation = 1.4
+		voice = placed
+	voice.bus = "SFX"
+	voice.stream = load(path)
+	voice.volume_db = volume_db
+	voice.pitch_scale = pitch
+	add_child(voice)
+	voice.finished.connect(voice.queue_free)
+	voice.play()
+	return voice
+
+## Quiet generated foley (footsteps, splashes, whooshes, hits). volume_db is
+## the playback level (footsteps sit around -16..-20 dB); pitch multiplies the
+## bank's own +-6% jitter. Headless runs stay silent.
+func play_foley(family: String, volume_db := -18.0, pitch := 1.0) -> void:
+	if sfx_volume <= 0.01 or DisplayServer.get_name() == "headless":
+		return
+	var bank := _foley_bank(family)
+	if bank == null:
+		return
+	var voice := AudioStreamPlayer.new()
+	voice.bus = "SFX"
+	voice.stream = bank
+	voice.volume_db = volume_db
+	voice.pitch_scale = pitch
+	add_child(voice)
+	voice.finished.connect(voice.queue_free)
+	voice.play()
+
+func _foley_bank(family: String) -> AudioStreamRandomizer:
+	if _foley_banks.has(family):
+		return _foley_banks[family]
+	var bank := AudioStreamRandomizer.new()
+	bank.playback_mode = AudioStreamRandomizer.PLAYBACK_RANDOM_NO_REPEATS
+	bank.random_pitch = 1.06
+	bank.random_volume_offset_db = 1.5
+	var count := 0
+	while ResourceLoader.exists(GENERATED_FOLEY % [family, count]):
+		bank.add_stream(-1, load(GENERATED_FOLEY % [family, count]))
+		count += 1
+	_foley_banks[family] = bank if count > 0 else null
+	return _foley_banks[family]

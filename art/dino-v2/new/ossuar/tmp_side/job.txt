@@ -1,0 +1,11 @@
+900be0c8-6a39-435e-9edc-1eca21c2ae72
+status: completed
+id: 900be0c8-6a39-435e-9edc-1eca21c2ae72
+job_id: 900be0c8-6a39-435e-9edc-1eca21c2ae72
+frames: 1
+transparent: yes
+asset_id: 5ab286e3-17f8-58c4-accc-b553dc0f0878
+asset_type: image
+asset_status: saved
+gallery: saved to your PixelLab gallery (pixellab.ai/create)
+download: https://api.pixellab.ai/mcp/images/900be0c8-6a39-435e-9edc-1eca21c2ae72/download

@@ -1,0 +1,92 @@
+[
+ {
+  "file": "dodo-ambient.ogg",
+  "mean_volume": -19.5,
+  "max_volume": -9.1
+ },
+ {
+  "file": "dodo-attack.ogg",
+  "mean_volume": -20.2,
+  "max_volume": -9.3
+ },
+ {
+  "file": "dodo-hurt.ogg",
+  "mean_volume": -20.8,
+  "max_volume": -9.2
+ },
+ {
+  "file": "longneck-ambient.ogg",
+  "mean_volume": -19.7,
+  "max_volume": -3.3
+ },
+ {
+  "file": "longneck-attack.ogg",
+  "mean_volume": -21.3,
+  "max_volume": -3.3
+ },
+ {
+  "file": "longneck-hurt.ogg",
+  "mean_volume": -19.3,
+  "max_volume": -2.9
+ },
+ {
+  "file": "raptor-ambient.ogg",
+  "mean_volume": -19.9,
+  "max_volume": -10.1
+ },
+ {
+  "file": "raptor-attack.ogg",
+  "mean_volume": -19.7,
+  "max_volume": -9.7
+ },
+ {
+  "file": "raptor-hurt.ogg",
+  "mean_volume": -19.7,
+  "max_volume": -8.6
+ },
+ {
+  "file": "rex-ambient.ogg",
+  "mean_volume": -21.4,
+  "max_volume": -2.9
+ },
+ {
+  "file": "rex-attack.ogg",
+  "mean_volume": -17.8,
+  "max_volume": -3.1
+ },
+ {
+  "file": "rex-hurt.ogg",
+  "mean_volume": -19.2,
+  "max_volume": -3.0
+ },
+ {
+  "file": "stego-ambient.ogg",
+  "mean_volume": -18.7,
+  "max_volume": -2.8
+ },
+ {
+  "file": "stego-attack.ogg",
+  "mean_volume": -17.2,
+  "max_volume": -3.0
+ },
+ {
+  "file": "stego-hurt.ogg",
+  "mean_volume": -17.9,
+  "max_volume": -2.9
+ },
+ {
+  "file": "trike-ambient.ogg",
+  "mean_volume": -20.7,
+  "max_volume": -3.0
+ },
+ {
+  "file": "trike-attack.ogg",
+  "mean_volume": -20.5,
+  "max_volume": -2.9
+ },
+ {
+  "file": "trike-hurt.ogg",
+  "mean_volume": -20.1,
+  "max_volume": -3.4
+ }
+]

@@ -1,0 +1,11 @@
+9934f4c6-d870-4272-88e1-b36c45a16b0a
+status: completed
+id: 9934f4c6-d870-4272-88e1-b36c45a16b0a
+job_id: 9934f4c6-d870-4272-88e1-b36c45a16b0a
+frames: 1
+transparent: yes
+asset_id: 850e4964-fda0-59ed-a07c-a26b787f6947
+asset_type: image
+asset_status: saved
+gallery: saved to your PixelLab gallery (pixellab.ai/create)
+download: https://api.pixellab.ai/mcp/images/9934f4c6-d870-4272-88e1-b36c45a16b0a/download

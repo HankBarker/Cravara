@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/art/items/canopy_fruit.png" id="2"]
+[resource]
+script = ExtResource("1")
+id = "canopy_fruit"
+name = "Canopy Fruit"
+description = "Sweet orange fruit that only grows up in the treetops."
+icon = ExtResource("2")
+max_stack = 30
+consumable = true
+hunger_value = 28
+food_satiation_seconds = 50.0
+healing_total = 8.0
+healing_duration = 12.0

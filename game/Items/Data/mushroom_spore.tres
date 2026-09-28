@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="Item" load_steps=2 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "mushroom_spore"
+name = "Mushroom Spores"
+description = "Sow on tilled soil. Water once to grow a patch of edible mushrooms."
+icon_generator = "forest"
+max_stack = 99

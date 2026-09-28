@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/equipment/art/wardrobe/icons/rex_chestplate.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = "rex_chestplate"
+name = "Tyrant Chestplate"
+description = "Emerald crystal scales edged in bronze, heavy scaled pauldrons and a tyrant's tooth hung as a trophy."
+icon = ExtResource("2")
+max_stack = 1
+rarity = "legendary"
+armor_slot = "chest"
+defense = 14

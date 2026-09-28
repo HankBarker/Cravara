@@ -1,0 +1,150 @@
+Godot Engine v4.6.1.stable.official.14d19694e - https://godotengine.org
+OpenGL API 3.3.0 Core Profile Context 24.10.36.04.250109 - Compatibility - Using Device: ATI Technologies Inc. - AMD Radeon RX 7700S
+
+📦 ItemDB loaded 62 items: basic_axe, basic_pickaxe, berry, berry_compote, berry_seed, bone_arrow, bone_chestplate, bone_dagger, bone_helmet, bone_leggings, bucket, campfire, chest, cooked_fish, cooked_meat, crystal_axe, crystal_chestplate, crystal_flask, crystal_helmet, crystal_leggings, crystal_pendant, crystal_pickaxe, crystal_shard, dodo_egg, fishing_rod, forest_omelet, garden_hoe, hide_bed, hunter_charm, lantern, leather_chestplate, leather_helmet, leather_leggings, log, moonscale, mushroom, mushroom_potion, mushroom_spore, net, plank, plant_fiber, prism_crystal, raptor_fang, reed_bow, reed_perch, river_totem, shardfin, shard_sword, stego_saddle, stone, tent, thatch_roof, torch, trex_meat, trex_scale, trike_saddle, water_bucket, water_flask, wood_door, wood_floor, wood_wall, workbench
+PASS Creator initializes normalized choices
+PASS Tool canvas is clipped inside the native portrait
+PASS Appearance page hides wardrobe selectors
+PASS Button fits native editor: Appearance
+PASS Button fits native editor: Wardrobe
+PASS Button fits native editor: <
+PASS Button fits native editor: >
+PASS Button fits native editor: <
+PASS Button fits native editor: >
+PASS Button fits native editor: <
+PASS Button fits native editor: >
+PASS Button fits native editor: <
+PASS Button fits native editor: >
+PASS Button fits native editor: <
+PASS Button fits native editor: >
+PASS Button fits native editor: Current
+PASS Button fits native editor: <
+PASS Button fits native editor: >
+PASS Button fits native editor: <
+PASS Button fits native editor: >
+PASS Button fits native editor: <
+PASS Button fits native editor: >
+PASS Button fits native editor: Leather
+PASS Button fits native editor: Bone
+PASS Button fits native editor: Crystal
+PASS Button fits native editor: Turn preview
+PASS Button fits native editor: Idle >
+PASS Button fits native editor: Preview: clothing
+PASS Button fits native editor: Reset
+PASS Button fits native editor: Cancel
+PASS Button fits native editor: Begin journey
+PASS Wardrobe tab switches editable controls
+PASS Complete leather outfit resolves real independent items
+PASS Removing helmet preserves body and legs
+PASS Outfit preview cannot modify appearance or inventory
+PASS Clothing-only hides all preview armor
+PASS Held props only appear for tool motions: idle
+PASS Motion exists: idle_down
+PASS Motion exists: idle_left
+PASS Motion exists: idle_up
+PASS Motion exists: idle_right
+PASS Only active motion is composited: idle
+PASS Held props only appear for tool motions: walk
+PASS Motion exists: walk_down
+PASS Motion exists: walk_left
+PASS Motion exists: walk_up
+PASS Motion exists: walk_right
+PASS Only active motion is composited: walk
+PASS Held props only appear for tool motions: run
+PASS Motion exists: run_down
+PASS Motion exists: run_left
+PASS Motion exists: run_up
+PASS Motion exists: run_right
+PASS Only active motion is composited: run
+PASS Held props only appear for tool motions: axe
+PASS Preview resolves actual item: axe
+PASS Grip follows pose: axe 0
+PASS Grip follows pose: axe 1
+PASS Grip follows pose: axe 2
+PASS Grip follows pose: axe 3
+PASS Grip follows pose: axe 4
+PASS Grip follows pose: axe 5
+PASS Grip follows pose: axe 6
+PASS Grip follows pose: axe 7
+PASS Grip moves with animated hand: axe
+PASS Motion exists: axe_down
+PASS Motion exists: axe_left
+PASS Motion exists: axe_up
+PASS Motion exists: axe_right
+PASS Only active motion is composited: axe
+PASS Held props only appear for tool motions: pickaxe
+PASS Preview resolves actual item: pickaxe
+PASS Grip follows pose: pickaxe 0
+PASS Grip follows pose: pickaxe 1
+PASS Grip follows pose: pickaxe 2
+PASS Grip follows pose: pickaxe 3
+PASS Grip follows pose: pickaxe 4
+PASS Grip follows pose: pickaxe 5
+PASS Grip follows pose: pickaxe 6
+PASS Grip follows pose: pickaxe 7
+PASS Grip moves with animated hand: pickaxe
+PASS Motion exists: pickaxe_down
+PASS Motion exists: pickaxe_left
+PASS Motion exists: pickaxe_up
+PASS Motion exists: pickaxe_right
+PASS Only active motion is composited: pickaxe
+PASS Held props only appear for tool motions: sword
+PASS Preview resolves actual item: sword
+PASS Grip follows pose: sword 0
+PASS Grip follows pose: sword 1
+PASS Grip follows pose: sword 2
+PASS Grip follows pose: sword 3
+PASS Grip follows pose: sword 4
+PASS Grip follows pose: sword 5
+PASS Grip follows pose: sword 6
+PASS Grip follows pose: sword 7
+PASS Grip moves with animated hand: sword
+PASS Motion exists: sword_down
+PASS Motion exists: sword_left
+PASS Motion exists: sword_up
+PASS Motion exists: sword_right
+PASS Only active motion is composited: sword
+PASS Held props only appear for tool motions: bow_draw
+PASS Preview resolves actual item: bow_draw
+PASS Grip follows pose: bow_draw 0
+PASS Grip follows pose: bow_draw 1
+PASS Grip follows pose: bow_draw 2
+PASS Grip follows pose: bow_draw 3
+PASS Grip follows pose: bow_draw 4
+PASS Grip follows pose: bow_draw 5
+PASS Grip follows pose: bow_draw 6
+PASS Grip follows pose: bow_draw 7
+PASS Grip moves with animated hand: bow_draw
+PASS Motion exists: bow_draw_down
+PASS Motion exists: bow_draw_left
+PASS Motion exists: bow_draw_up
+PASS Motion exists: bow_draw_right
+PASS Only active motion is composited: bow_draw
+PASS Held props only appear for tool motions: fishing_cast
+PASS Preview resolves actual item: fishing_cast
+PASS Grip follows pose: fishing_cast 0
+PASS Grip follows pose: fishing_cast 1
+PASS Grip follows pose: fishing_cast 2
+PASS Grip follows pose: fishing_cast 3
+PASS Grip follows pose: fishing_cast 4
+PASS Grip follows pose: fishing_cast 5
+PASS Grip follows pose: fishing_cast 6
+PASS Grip follows pose: fishing_cast 7
+PASS Grip moves with animated hand: fishing_cast
+PASS Motion exists: fishing_cast_down
+PASS Motion exists: fishing_cast_left
+PASS Motion exists: fishing_cast_up
+PASS Motion exists: fishing_cast_right
+PASS Only active motion is composited: fishing_cast
+PASS Held props only appear for tool motions: pet
+PASS Motion exists: pet_down
+PASS Motion exists: pet_left
+PASS Motion exists: pet_up
+PASS Motion exists: pet_right
+PASS Only active motion is composited: pet
+PASS Preview source identities are cached
+PASS Full crystal outfit resolves
+PASS Three materials mix independently
+PASS Save emits appearance only, never wardrobe state
+PASS All preview actions preserve inventory
+WARDROBE_EDITOR_PASS7: 145 checks, 0 failures

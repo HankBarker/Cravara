@@ -1,0 +1,92 @@
+{
+ "key": "spino",
+ "species": "spino",
+ "canvas": [
+  184,
+  144
+ ],
+ "ground": 137,
+ "origin": {
+  "side": [
+   38,
+   48
+  ],
+  "down": [
+   38,
+   48
+  ],
+  "up": [
+   38,
+   48
+  ]
+ },
+ "clips": {
+  "idle": {
+   "fps": 6,
+   "loop": true,
+   "frames": 8
+  },
+  "walk": {
+   "fps": 9,
+   "loop": true,
+   "frames": 8
+  },
+  "run": {
+   "fps": 13,
+   "loop": true,
+   "frames": 8
+  },
+  "bite": {
+   "fps": 14,
+   "loop": false,
+   "frames": 9,
+   "hit": 6,
+   "hit_view": {
+    "side": 6,
+    "down": 5,
+    "up": 4
+   }
+  },
+  "slash": {
+   "fps": 14,
+   "loop": false,
+   "frames": 9,
+   "hit": 6,
+   "hit_view": {
+    "side": 6,
+    "down": 6,
+    "up": 5
+   }
+  },
+  "roar": {
+   "fps": 10,
+   "loop": false,
+   "frames": 13
+  },
+  "eat": {
+   "fps": 8,
+   "loop": false,
+   "frames": 13
+  },
+  "hurt": {
+   "fps": 12,
+   "loop": false,
+   "frames": 5
+  },
+  "death": {
+   "fps": 10,
+   "loop": false,
+   "frames": 13
+  },
+  "look": {
+   "fps": 7,
+   "loop": false,
+   "frames": 13
+  },
+  "stalk": {
+   "fps": 6,
+   "loop": true,
+   "frames": 8
+  }
+ }
+}

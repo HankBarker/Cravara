@@ -1,0 +1,1323 @@
+{
+ "idle_down": {
+  "job": "7ac676a7-e54f-45ba-b7cd-b3f707e7f9f5",
+  "tool": "animate_image_pixminimax",
+  "seed": 14323414,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stands still in a relaxed pose; its body rises and falls very slightly and its tail sways a little. It stays in place, facing the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790480221.3892624,
+  "finished": 1790480433.2855747,
+  "score": {
+   "bright": 27,
+   "area": 1.0,
+   "wide": 1.0,
+   "base": 38
+  }
+ },
+ "idle_up": {
+  "job": "5c77a62f-e245-4133-9e6e-676b513264d4",
+  "tool": "animate_image_pixminimax",
+  "seed": 3417463,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stands still in a relaxed pose; its body rises and falls very slightly and its tail sways a little. It stays in place with its back to the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790480375.3865893,
+  "finished": 1790480529.7414167,
+  "score": {
+   "bright": 29,
+   "area": 1.01,
+   "wide": 1.0,
+   "base": 12
+  }
+ },
+ "walk_down": {
+  "job": "6bfcdf13-9d5c-4add-a8ba-78071f0322d5",
+  "tool": "animate_image",
+  "seed": 3570838,
+  "status": "done",
+  "cost": 5.0,
+  "prompt": "Walks in place on all fours with its wings folded, lifting each long limb in turn, its long neck swaying. It stays in place, facing the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790480379.5743866,
+  "finished": 1790480539.4131298,
+  "score": {
+   "bright": 12,
+   "area": 1.09,
+   "wide": 1.09,
+   "base": 38
+  }
+ },
+ "_history": {
+  "idle_side": [
+   {
+    "job": "126808b9-86fc-42c0-89da-8c45caba4fd7",
+    "tool": "animate_image_pixminimax",
+    "seed": 8344041,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Stands still in a relaxed pose; its body rises and falls very slightly and its tail sways a little. It stays in place, facing right.",
+    "frames": 9,
+    "submitted": 1790480220.4831789,
+    "finished": 1790480471.3786187,
+    "score": {
+     "bright": 71,
+     "area": 1.0,
+     "wide": 1.01,
+     "base": 27
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\idle_side@0"
+   },
+   {
+    "job": "ed6e643e-69fd-44db-bfc9-39a9c5e9a5b6",
+    "tool": "animate_image_pixminimax",
+    "seed": 8345041,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Stands still in a relaxed pose; its body rises and falls very slightly and its tail sways a little. It stays in place, facing right.",
+    "frames": 9,
+    "submitted": 1790480549.9985235,
+    "finished": 1790480722.5826273,
+    "score": {
+     "bright": 46,
+     "area": 1.0,
+     "wide": 1.01,
+     "base": 27
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\idle_side@1"
+   }
+  ],
+  "walk_side": [
+   {
+    "job": "c8242f24-e2da-430b-9f14-c46d36b8d0fb",
+    "tool": "animate_image",
+    "seed": 15314321,
+    "status": "done",
+    "cost": 5.0,
+    "prompt": "Walks in place on all fours with its wings folded, lifting each long limb in turn, its long neck swaying. It stays in place, facing right.",
+    "frames": 9,
+    "submitted": 1790480376.499669,
+    "finished": 1790480481.0978942,
+    "score": {
+     "bright": 494,
+     "area": 1.2,
+     "wide": 1.01,
+     "base": 27
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\walk_side@0"
+   },
+   {
+    "job": "c9415c35-e3ad-48c6-91e0-8576b086a351",
+    "tool": "animate_image",
+    "seed": 15315321,
+    "status": "done",
+    "cost": 5.0,
+    "prompt": "Walks in place on all fours with its wings folded, lifting each long limb in turn, its long neck swaying. It stays in place, facing right.",
+    "frames": 9,
+    "submitted": 1790480550.941986,
+    "finished": 1790480662.410673,
+    "score": {
+     "bright": 769,
+     "area": 1.2,
+     "wide": 1.02,
+     "base": 27
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\walk_side@1"
+   },
+   {
+    "job": "3baf36ab-4669-48a1-99c7-21c16ae54aa3",
+    "tool": "animate_image",
+    "seed": 15316321,
+    "status": "done",
+    "cost": 5.0,
+    "prompt": "Walks in place on all fours with its wings folded, lifting each long limb in turn, its long neck swaying. It stays in place, facing right.",
+    "frames": 9,
+    "submitted": 1790480764.1590068,
+    "finished": 1790480908.6827598,
+    "score": {
+     "bright": 169,
+     "area": 1.03,
+     "wide": 1.02,
+     "base": 27
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\walk_side@2"
+   }
+  ],
+  "walk_up": [
+   {
+    "job": "0b8fc51e-8b2e-45de-bdc1-78fce84f7250",
+    "tool": "animate_image",
+    "seed": 1521006,
+    "status": "done",
+    "cost": 5.0,
+    "prompt": "Walks in place on all fours with its wings folded, lifting each long limb in turn, its long neck swaying. It stays in place with its back to the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790480439.1580458,
+    "finished": 1790480548.3587198,
+    "score": {
+     "bright": 169,
+     "area": 1.17,
+     "wide": 1.07,
+     "base": 12
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\walk_up@0"
+   },
+   {
+    "job": "d3faca8b-a91f-4a60-8081-078b539f32c5",
+    "tool": "animate_image",
+    "seed": 1522006,
+    "status": "done",
+    "cost": 5.0,
+    "prompt": "Walks in place on all fours with its wings folded, lifting each long limb in turn, its long neck swaying. It stays in place with its back to the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790480627.6335523,
+    "finished": 1790480733.273649,
+    "score": {
+     "bright": 46,
+     "area": 1.18,
+     "wide": 1.18,
+     "base": 12
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\walk_up@1"
+   }
+  ],
+  "bite_side": [
+   {
+    "job": "9bcb96ca-fb74-4f2d-96c7-f0c6de488a0d",
+    "tool": "animate_image_pixminimax",
+    "seed": 9924980,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Draws its long neck back, then stabs forward with its huge pointed beak and snaps it shut. It stays in place, facing right.",
+    "frames": 9,
+    "submitted": 1790480484.3869042,
+    "finished": 1790480623.5361872,
+    "score": {
+     "bright": 109,
+     "area": 1.1,
+     "wide": 1.27,
+     "base": 27
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\bite_side@0"
+   }
+  ],
+  "bite_up": [
+   {
+    "job": "6a3bdb17-a408-426a-bfc4-e8d5c6b4884c",
+    "tool": "animate_image_pixminimax",
+    "seed": 14707182,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Draws its long neck back, then stabs forward with its huge pointed beak and snaps it shut. It stays in place with its back to the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790480552.5375857,
+    "finished": 1790480682.4846616,
+    "score": {
+     "bright": 111,
+     "area": 1.45,
+     "wide": 1.31,
+     "base": 12
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\bite_up@0"
+   },
+   {
+    "job": "6eee9513-4a9f-48e5-82cf-fc110f807f9c",
+    "tool": "animate_image_pixminimax",
+    "seed": 14708182,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Draws its long neck back, then stabs forward with its huge pointed beak and snaps it shut. It stays in place with its back to the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790480765.670807,
+    "finished": 1790480863.7785332,
+    "score": {
+     "bright": 179,
+     "area": 1.49,
+     "wide": 1.3,
+     "base": 12
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\bite_up@1"
+   }
+  ],
+  "bite_down": [
+   {
+    "job": "3dd76939-b4d0-4038-8f34-a253a1cc76ba",
+    "tool": "animate_image_pixminimax",
+    "seed": 14254999,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Draws its long neck back, then stabs forward with its huge pointed beak and snaps it shut. It stays in place, facing the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790480551.787317,
+    "finished": 1790480740.9106631,
+    "score": {
+     "bright": 397,
+     "area": 2.23,
+     "wide": 1.07,
+     "base": 38
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\bite_down@0"
+   },
+   {
+    "job": "e79dab6f-f669-4d21-8604-c4f781098b37",
+    "tool": "animate_image_pixminimax",
+    "seed": 14255999,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Draws its long neck back, then stabs forward with its huge pointed beak and snaps it shut. It stays in place, facing the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790480829.8996022,
+    "finished": 1790480994.2267416,
+    "score": {
+     "bright": 86,
+     "area": 1.29,
+     "wide": 1.07,
+     "base": 38
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\bite_down@1"
+   },
+   {
+    "job": "f3a3330e-0d92-4f00-91d6-3a2d17b576a1",
+    "tool": "animate_image_pixminimax",
+    "seed": 14256999,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Draws its long neck back, then stabs forward with its huge pointed beak and snaps it shut. It stays in place, facing the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790481079.3151832,
+    "finished": 1790481174.2253044,
+    "score": {
+     "bright": 213,
+     "area": 1.97,
+     "wide": 1.19,
+     "base": 38
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\bite_down@2"
+   }
+  ],
+  "buffet_side": [
+   {
+    "job": "64d6d233-eb0d-4d17-9137-bc82fb336da4",
+    "tool": "animate_image_pixminimax",
+    "seed": 4655379,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Rears up and spreads its huge wings, then beats them forward hard in one great gust, then folds them back. It stays in place, facing right.",
+    "frames": 9,
+    "submitted": 1790480629.2289991,
+    "finished": 1790480751.7337554,
+    "score": {
+     "bright": 899,
+     "area": 2.06,
+     "wide": 1.31,
+     "base": 27
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\buffet_side@0"
+   },
+   {
+    "job": "4a58ba62-2f97-4467-a528-7d3700094648",
+    "tool": "animate_image_pixminimax",
+    "seed": 4656379,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Rears up and spreads its huge wings, then beats them forward hard in one great gust, then folds them back. It stays in place, facing right.",
+    "frames": 9,
+    "submitted": 1790480876.7835953,
+    "finished": 1790481051.9061203,
+    "score": {
+     "bright": 678,
+     "area": 2.59,
+     "wide": 1.42,
+     "base": 27
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\buffet_side@1"
+   },
+   {
+    "job": "a4a65784-58ed-4049-ba7d-e93faf808e3f",
+    "tool": "animate_image_pixminimax",
+    "seed": 4657379,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Rears up and spreads its huge wings, then beats them forward hard in one great gust, then folds them back. It stays in place, facing right.",
+    "frames": 9,
+    "submitted": 1790481128.609197,
+    "finished": 1790481271.5059738,
+    "score": {
+     "bright": 176,
+     "area": 2.73,
+     "wide": 1.33,
+     "base": 27
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\buffet_side@2"
+   }
+  ],
+  "buffet_down": [
+   {
+    "job": "caa5795e-1266-4704-bc77-b47dc93a7321",
+    "tool": "animate_image_pixminimax",
+    "seed": 298028,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Rears up and spreads its huge wings, then beats them forward hard in one great gust, then folds them back. It stays in place, facing the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790480630.024427,
+    "finished": 1790480762.1478682,
+    "score": {
+     "bright": 360,
+     "area": 3.22,
+     "wide": 1.71,
+     "base": 38
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\buffet_down@0"
+   },
+   {
+    "job": "8a1608c2-e082-4697-9b21-99aba222d24e",
+    "tool": "animate_image_pixminimax",
+    "seed": 299028,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Rears up and spreads its huge wings, then beats them forward hard in one great gust, then folds them back. It stays in place, facing the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790480934.1437268,
+    "finished": 1790481064.356755,
+    "score": {
+     "bright": 256,
+     "area": 2.89,
+     "wide": 1.64,
+     "base": 38
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\buffet_down@1"
+   },
+   {
+    "job": "2425ef37-1ec5-4127-96d8-0aec0345a56e",
+    "tool": "animate_image_pixminimax",
+    "seed": 300028,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Rears up and spreads its huge wings, then beats them forward hard in one great gust, then folds them back. It stays in place, facing the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790481129.4863439,
+    "finished": 1790481281.6427617,
+    "score": {
+     "bright": 4281,
+     "area": 3.33,
+     "wide": 1.61,
+     "base": 38
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\buffet_down@2"
+   }
+  ],
+  "buffet_up": [
+   {
+    "job": "8cc86902-46cd-472e-8ad4-b05947d7270c",
+    "tool": "animate_image_pixminimax",
+    "seed": 15736265,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Rears up and spreads its huge wings, then beats them forward hard in one great gust, then folds them back. It stays in place with its back to the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790480766.5012305,
+    "finished": 1790480874.9156525,
+    "score": {
+     "bright": 1522,
+     "area": 3.29,
+     "wide": 1.74,
+     "base": 12
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\buffet_up@0"
+   },
+   {
+    "job": "2d76ebe5-e638-4eac-ba4f-fb00b9d4f610",
+    "tool": "animate_image_pixminimax",
+    "seed": 15737265,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Rears up and spreads its huge wings, then beats them forward hard in one great gust, then folds them back. It stays in place with its back to the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790480934.9386456,
+    "finished": 1790481074.501466,
+    "score": {
+     "bright": 145,
+     "area": 3.15,
+     "wide": 1.75,
+     "base": 12
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\buffet_up@1"
+   },
+   {
+    "job": "eb56ee98-8157-4629-acba-7db7f697d39c",
+    "tool": "animate_image_pixminimax",
+    "seed": 15738265,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Rears up and spreads its huge wings, then beats them forward hard in one great gust, then folds them back. It stays in place with its back to the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790481234.6165051,
+    "finished": 1790481332.5805225,
+    "score": {
+     "bright": 1630,
+     "area": 3.48,
+     "wide": 1.72,
+     "base": 12
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\buffet_up@2"
+   }
+  ],
+  "roar_side": [
+   {
+    "job": "ec8dbdff-5def-4fd1-bd23-e9a7dad17b32",
+    "tool": "animate_image_pixminimax",
+    "seed": 10296727,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Throws its head back and opens its long beak wide in a screech, flaring its folded wings. It stays in place, facing right.",
+    "frames": 13,
+    "submitted": 1790480999.5090706,
+    "finished": 1790481193.0238693,
+    "score": {
+     "bright": 108,
+     "area": 1.33,
+     "wide": 1.06,
+     "base": 27
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\roar_side@0"
+   },
+   {
+    "job": "cfe9d9f4-c467-47f8-8afa-78c84457a96f",
+    "tool": "animate_image_pixminimax",
+    "seed": 10297727,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Throws its head back and opens its long beak wide in a screech, flaring its folded wings. It stays in place, facing right.",
+    "frames": 13,
+    "submitted": 1790481301.202843,
+    "finished": 1790481474.8911128,
+    "score": {
+     "bright": 101,
+     "area": 1.24,
+     "wide": 1.14,
+     "base": 27
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\roar_side@1"
+   },
+   {
+    "job": "89a98445-839f-4d3b-8ea6-4c35858122f6",
+    "tool": "animate_image_pixminimax",
+    "seed": 10298727,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Throws its head back and opens its long beak wide in a screech, flaring its folded wings. It stays in place, facing right.",
+    "frames": 13,
+    "submitted": 1790481549.8200183,
+    "finished": 1790481747.6520755,
+    "score": {
+     "bright": 103,
+     "area": 1.43,
+     "wide": 1.03,
+     "base": 27
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\roar_side@2"
+   }
+  ],
+  "roar_up": [
+   {
+    "job": "3346523e-3f17-4d0a-b796-04f8e471d612",
+    "tool": "animate_image_pixminimax",
+    "seed": 12535147,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Throws its head back and opens its long beak wide in a screech, flaring its folded wings. It stays in place with its back to the viewer the whole time.",
+    "frames": 13,
+    "submitted": 1790481080.173595,
+    "finished": 1790481222.301729,
+    "score": {
+     "bright": 383,
+     "area": 1.75,
+     "wide": 1.46,
+     "base": 12
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\roar_up@0"
+   },
+   {
+    "job": "bc6e3cdd-35a1-423f-b8a9-85062b95d0d7",
+    "tool": "animate_image_pixminimax",
+    "seed": 12536147,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Throws its head back and opens its long beak wide in a screech, flaring its folded wings. It stays in place with its back to the viewer the whole time.",
+    "frames": 13,
+    "submitted": 1790481302.0148015,
+    "finished": 1790481488.7630296,
+    "score": {
+     "bright": 552,
+     "area": 2.01,
+     "wide": 1.54,
+     "base": 12
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\roar_up@1"
+   },
+   {
+    "job": "61e81ca0-fd59-4baa-b2c9-ae4171cd1eea",
+    "tool": "animate_image_pixminimax",
+    "seed": 12537147,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Throws its head back and opens its long beak wide in a screech, flaring its folded wings. It stays in place with its back to the viewer the whole time.",
+    "frames": 13,
+    "submitted": 1790481629.6157212,
+    "finished": 1790481765.8064718,
+    "score": {
+     "bright": 1003,
+     "area": 2.16,
+     "wide": 1.67,
+     "base": 12
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\roar_up@2"
+   }
+  ],
+  "takeoff_side": [
+   {
+    "job": "2fbdb757-3851-45f8-8516-2e19137316f4",
+    "tool": "animate_image_pixminimax",
+    "seed": 3421699,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Crouches low, then spreads its wings wide and springs up into the air with a strong flap. It stays in place, facing right.",
+    "frames": 9,
+    "submitted": 1790481081.235775,
+    "finished": 1790481231.2184048,
+    "score": {
+     "bright": 219,
+     "area": 2.0,
+     "wide": 1.55,
+     "base": 27
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\takeoff_side@0"
+   },
+   {
+    "job": "2f88f7a3-09fe-4f60-bebd-a6903478c849",
+    "tool": "animate_image_pixminimax",
+    "seed": 3422699,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Crouches low, then spreads its wings wide and springs up into the air with a strong flap. It stays in place, facing right.",
+    "frames": 9,
+    "submitted": 1790481302.7656069,
+    "finished": 1790481385.5625613,
+    "score": {
+     "bright": 205,
+     "area": 1.78,
+     "wide": 1.24,
+     "base": 27
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\takeoff_side@1"
+   },
+   {
+    "job": "64e994bc-d8b2-48a8-a0fc-0c764baaf29c",
+    "tool": "animate_image_pixminimax",
+    "seed": 3423699,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Crouches low, then spreads its wings wide and springs up into the air with a strong flap. It stays in place, facing right.",
+    "frames": 9,
+    "submitted": 1790481503.9586682,
+    "finished": 1790481612.6757064,
+    "score": {
+     "bright": 160,
+     "area": 1.69,
+     "wide": 1.36,
+     "base": 27
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\takeoff_side@2"
+   }
+  ],
+  "hurt_up": [
+   {
+    "job": "7003c319-a1f4-4fbd-945b-02a23b385c47",
+    "tool": "animate_image_pixminimax",
+    "seed": 2200121,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Flinches: jerks its head and body back, then returns to its stance. It stays in place with its back to the viewer the whole time.",
+    "frames": 5,
+    "submitted": 1790481241.74901,
+    "finished": 1790481298.54815,
+    "score": {
+     "bright": 52,
+     "area": 1.0,
+     "wide": 1.0,
+     "base": 12
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\hurt_up@0"
+   },
+   {
+    "job": "05e8e54d-a681-476a-ba07-4546ef324565",
+    "tool": "animate_image_pixminimax",
+    "seed": 2201121,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Flinches: jerks its head and body back, then returns to its stance. It stays in place with its back to the viewer the whole time.",
+    "frames": 5,
+    "submitted": 1790481353.4191647,
+    "finished": 1790481404.2741332,
+    "score": {
+     "bright": 38,
+     "area": 1.05,
+     "wide": 1.09,
+     "base": 12
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\hurt_up@1"
+   },
+   {
+    "job": "3e0551b0-9351-4216-b3ee-5899d89a6dd7",
+    "tool": "animate_image_pixminimax",
+    "seed": 2202121,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Flinches: jerks its head and body back, then returns to its stance. It stays in place with its back to the viewer the whole time.",
+    "frames": 5,
+    "submitted": 1790481509.5243263,
+    "finished": 1790481621.0335374,
+    "score": {
+     "bright": 37,
+     "area": 1.07,
+     "wide": 1.13,
+     "base": 12
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\hurt_up@2"
+   }
+  ],
+  "takeoff_up": [
+   {
+    "job": "2162a0b9-cb8b-46a0-bcbe-7c49962c491a",
+    "tool": "animate_image_pixminimax",
+    "seed": 3996541,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Crouches low, then spreads its wings wide and springs up into the air with a strong flap. It stays in place with its back to the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790481237.7356434,
+    "finished": 1790481345.1379683,
+    "score": {
+     "bright": 608,
+     "area": 2.74,
+     "wide": 1.68,
+     "base": 12
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\takeoff_up@0"
+   },
+   {
+    "job": "729d0278-c771-415a-b147-af06aa0f05ff",
+    "tool": "animate_image_pixminimax",
+    "seed": 3997541,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Crouches low, then spreads its wings wide and springs up into the air with a strong flap. It stays in place with its back to the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790481406.7287648,
+    "finished": 1790481497.125807,
+    "score": {
+     "bright": 77,
+     "area": 2.35,
+     "wide": 1.74,
+     "base": 12
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\takeoff_up@1"
+   },
+   {
+    "job": "7677a921-1888-4472-8f1e-d49729880d09",
+    "tool": "animate_image_pixminimax",
+    "seed": 3998541,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Crouches low, then spreads its wings wide and springs up into the air with a strong flap. It stays in place with its back to the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790481630.441638,
+    "finished": 1790481775.8606138,
+    "score": {
+     "bright": 519,
+     "area": 2.29,
+     "wide": 1.72,
+     "base": 12
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\takeoff_up@2"
+   }
+  ],
+  "hurt_side": [
+   {
+    "job": "1e65101a-66d3-4393-9942-a0066465e072",
+    "tool": "animate_image_pixminimax",
+    "seed": 3459308,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Flinches: jerks its head and body back, then returns to its stance. It stays in place, facing right.",
+    "frames": 5,
+    "submitted": 1790481239.6297932,
+    "finished": 1790481350.777609,
+    "score": {
+     "bright": 38,
+     "area": 1.02,
+     "wide": 1.0,
+     "base": 27
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\hurt_side@0"
+   },
+   {
+    "job": "298597d3-d449-4eaf-968d-a112bf0680e8",
+    "tool": "animate_image_pixminimax",
+    "seed": 3460308,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Flinches: jerks its head and body back, then returns to its stance. It stays in place, facing right.",
+    "frames": 5,
+    "submitted": 1790481407.5092704,
+    "finished": 1790481502.6983972,
+    "score": {
+     "bright": 53,
+     "area": 1.0,
+     "wide": 1.0,
+     "base": 27
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\hurt_side@1"
+   },
+   {
+    "job": "09c09405-4542-48ff-99c7-eaa0800a2cb0",
+    "tool": "animate_image_pixminimax",
+    "seed": 3461308,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Flinches: jerks its head and body back, then returns to its stance. It stays in place, facing right.",
+    "frames": 5,
+    "submitted": 1790481712.0375495,
+    "finished": 1790481781.5037673,
+    "score": {
+     "bright": 51,
+     "area": 1.01,
+     "wide": 1.01,
+     "base": 27
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\hurt_side@2"
+   }
+  ],
+  "takeoff_down": [
+   {
+    "job": "90ee2bd2-14e3-4e37-8dac-4a7ed3e79f44",
+    "tool": "animate_image_pixminimax",
+    "seed": 8270027,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Crouches low, then spreads its wings wide and springs up into the air with a strong flap. It stays in place, facing the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790481235.6053126,
+    "finished": 1790481398.1847668,
+    "score": {
+     "bright": 106,
+     "area": 1.96,
+     "wide": 1.64,
+     "base": 38
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\takeoff_down@0"
+   },
+   {
+    "job": "73723484-35d1-4e51-b0f0-2e4fbe59dd59",
+    "tool": "animate_image_pixminimax",
+    "seed": 8271027,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Crouches low, then spreads its wings wide and springs up into the air with a strong flap. It stays in place, facing the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790481508.7779846,
+    "finished": 1790481661.606982,
+    "score": {
+     "bright": 92,
+     "area": 1.77,
+     "wide": 1.57,
+     "base": 38
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\takeoff_down@1"
+   }
+  ],
+  "death_up": [
+   {
+    "job": "0a676d41-40ab-4d55-9848-0b1d3504187c",
+    "tool": "animate_image_pixminimax",
+    "seed": 5081425,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Stumbles, its legs give way and it falls over onto its side, then lies still. It stays in place with its back to the viewer the whole time.",
+    "frames": 13,
+    "submitted": 1790481512.5469568,
+    "finished": 1790481696.2209363,
+    "score": {
+     "bright": 53,
+     "area": 1.0,
+     "wide": 1.18,
+     "base": 12
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\death_up@0"
+   },
+   {
+    "job": "d704d3e4-4405-4719-b62a-1076d70c8374",
+    "tool": "animate_image_pixminimax",
+    "seed": 5082425,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Stumbles, its legs give way and it falls over onto its side, then lies still. It stays in place with its back to the viewer the whole time.",
+    "frames": 13,
+    "submitted": 1790481801.1872494,
+    "finished": 1790481918.9633434,
+    "score": {
+     "bright": 147,
+     "area": 1.08,
+     "wide": 1.29,
+     "base": 12
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\death_up@1"
+   },
+   {
+    "job": "1cb41fe1-fef4-4189-b3ee-3537f4aa534b",
+    "tool": "animate_image_pixminimax",
+    "seed": 5083425,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Stumbles, its legs give way and it falls over onto its side, then lies still. It stays in place with its back to the viewer the whole time.",
+    "frames": 13,
+    "submitted": 1790482004.1570048,
+    "finished": 1790482107.9849505,
+    "score": {
+     "bright": 113,
+     "area": 1.01,
+     "wide": 1.39,
+     "base": 12
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\death_up@2"
+   }
+  ],
+  "death_side": [
+   {
+    "job": "74c2610f-5252-4c07-ade4-153884dfeaf0",
+    "tool": "animate_image_pixminimax",
+    "seed": 7866389,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Stumbles, its legs give way and it falls over onto its side, then lies still. It stays in place, facing right.",
+    "frames": 13,
+    "submitted": 1790481510.767561,
+    "finished": 1790481798.761717,
+    "score": {
+     "bright": 86,
+     "area": 1.0,
+     "wide": 1.34,
+     "base": 27
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\death_side@0"
+   },
+   {
+    "job": "e986d6e2-20e2-48e3-a690-418d36ee2a63",
+    "tool": "animate_image_pixminimax",
+    "seed": 7867389,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Stumbles, its legs give way and it falls over onto its side, then lies still. It stays in place, facing right.",
+    "frames": 13,
+    "submitted": 1790481961.3154743,
+    "finished": 1790482095.7077284,
+    "score": {
+     "bright": 117,
+     "area": 1.14,
+     "wide": 1.38,
+     "base": 27
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\death_side@1"
+   },
+   {
+    "job": "30dbe61e-5883-4c2b-b636-b411035f360d",
+    "tool": "animate_image_pixminimax",
+    "seed": 7868389,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Stumbles, its legs give way and it falls over onto its side, then lies still. It stays in place, facing right.",
+    "frames": 13,
+    "submitted": 1790482303.055642,
+    "finished": 1790482497.4294364,
+    "score": {
+     "bright": 127,
+     "area": 1.22,
+     "wide": 1.38,
+     "base": 27
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\death_side@2"
+   }
+  ]
+ },
+ "bite_side": {
+  "job": "3f9809cd-9cd7-4314-891a-db07e08cec06",
+  "tool": "animate_image_pixminimax",
+  "seed": 9925980,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Draws its long neck back, then stabs forward with its huge pointed beak and snaps it shut. It stays in place, facing right.",
+  "frames": 9,
+  "submitted": 1790480764.916068,
+  "finished": 1790480930.4794998,
+  "score": {
+   "bright": 8,
+   "area": 1.06,
+   "wide": 1.23,
+   "base": 27
+  }
+ },
+ "idle_side": {
+  "job": "c4d5262e-e910-44d8-8df6-7636d49dd6e4",
+  "tool": "animate_image_pixminimax",
+  "seed": 8346041,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stands still in a relaxed pose; its body rises and falls very slightly and its tail sways a little. It stays in place, facing right.",
+  "frames": 9,
+  "submitted": 1790480828.1770036,
+  "finished": 1790480984.563855,
+  "score": {
+   "bright": 31,
+   "area": 1.0,
+   "wide": 1.01,
+   "base": 27
+  }
+ },
+ "walk_up": {
+  "job": "05240830-551a-42f9-9711-23c22c911d2e",
+  "tool": "animate_image",
+  "seed": 1523006,
+  "status": "done",
+  "cost": 5.0,
+  "prompt": "Walks in place on all fours with its wings folded, lifting each long limb in turn, its long neck swaying. It stays in place with its back to the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790480829.16639,
+  "finished": 1790480921.243961,
+  "score": {
+   "bright": 22,
+   "area": 1.08,
+   "wide": 1.16,
+   "base": 12
+  }
+ },
+ "bite_up": {
+  "job": "a65deeed-a862-451e-9602-0f7bd68a5244",
+  "tool": "animate_image_pixminimax",
+  "seed": 14709182,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Draws its long neck back, then stabs forward with its huge pointed beak and snaps it shut. It stays in place with its back to the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790480933.1440332,
+  "finished": 1790481123.4215846,
+  "score": {
+   "bright": 26,
+   "area": 1.33,
+   "wide": 1.11,
+   "base": 12
+  }
+ },
+ "walk_side": {
+  "job": "7da9bfc4-0695-4b9d-b9ca-4d2fd445d947",
+  "tool": "animate_image",
+  "seed": 15317321,
+  "status": "done",
+  "cost": 5.0,
+  "prompt": "Walks in place on all fours with its wings folded, lifting each long limb in turn, its long neck swaying. It stays in place, facing right.",
+  "frames": 9,
+  "submitted": 1790480998.6750805,
+  "finished": 1790481112.3923812,
+  "score": {
+   "bright": 355,
+   "area": 1.18,
+   "wide": 1.01,
+   "base": 27
+  },
+  "kept_attempt": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\walk_side@2"
+ },
+ "roar_down": {
+  "job": "cbdb7f4d-0096-4361-b135-dc51437e8a4b",
+  "tool": "animate_image_pixminimax",
+  "seed": 14469882,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Throws its head back and opens its long beak wide in a screech, flaring its folded wings. It stays in place, facing the viewer the whole time.",
+  "frames": 13,
+  "submitted": 1790481000.314943,
+  "finished": 1790481208.219698,
+  "score": {
+   "bright": 10,
+   "area": 1.4,
+   "wide": 1.26,
+   "base": 38
+  }
+ },
+ "hurt_down": {
+  "job": "f5703cf6-b481-4b63-b207-e9d1275c9a43",
+  "tool": "animate_image_pixminimax",
+  "seed": 4382568,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Flinches: jerks its head and body back, then returns to its stance. It stays in place, facing the viewer the whole time.",
+  "frames": 5,
+  "submitted": 1790481240.8339047,
+  "finished": 1790481292.988993,
+  "score": {
+   "bright": 0,
+   "area": 1.04,
+   "wide": 1.03,
+   "base": 38
+  }
+ },
+ "bite_down": {
+  "job": "b7f309d1-43e4-48ec-b38f-88ed34843860",
+  "tool": "animate_image_pixminimax",
+  "seed": 14257999,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Draws its long neck back, then stabs forward with its huge pointed beak and snaps it shut. It stays in place, facing the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790481300.058614,
+  "finished": 1790481439.602768,
+  "score": {
+   "bright": 263,
+   "area": 1.52,
+   "wide": 1.03,
+   "base": 38
+  },
+  "kept_attempt": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\bite_down@1"
+ },
+ "buffet_side": {
+  "job": "51356351-a223-40f5-aa9f-c4e931363d50",
+  "tool": "animate_image_pixminimax",
+  "seed": 4658379,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Rears up and spreads its huge wings, then beats them forward hard in one great gust, then folds them back. It stays in place, facing right.",
+  "frames": 9,
+  "submitted": 1790481351.8703582,
+  "finished": 1790481448.9256995,
+  "score": {
+   "bright": 300,
+   "area": 2.57,
+   "wide": 1.36,
+   "base": 27
+  },
+  "kept_attempt": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\buffet_side@2"
+ },
+ "buffet_down": {
+  "job": "8b994412-3d81-42c1-9bdd-53df34eed6db",
+  "tool": "animate_image_pixminimax",
+  "seed": 301028,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Rears up and spreads its huge wings, then beats them forward hard in one great gust, then folds them back. It stays in place, facing the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790481352.6290298,
+  "finished": 1790481459.693484,
+  "score": {
+   "bright": 183,
+   "area": 3.52,
+   "wide": 1.71,
+   "base": 38
+  },
+  "kept_attempt": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\buffet_down@1"
+ },
+ "buffet_up": {
+  "job": "bbe82634-4d4c-4523-8879-74c9eed7892a",
+  "tool": "animate_image_pixminimax",
+  "seed": 15739265,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Rears up and spreads its huge wings, then beats them forward hard in one great gust, then folds them back. It stays in place with its back to the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790481405.9204142,
+  "finished": 1790481543.1600206,
+  "score": {
+   "bright": 525,
+   "area": 3.22,
+   "wide": 1.75,
+   "base": 12
+  },
+  "kept_attempt": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\buffet_up@1"
+ },
+ "death_down": {
+  "job": "e66057a6-369a-478c-bf9d-977e0a93fd7e",
+  "tool": "animate_image_pixminimax",
+  "seed": 9547013,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stumbles, its legs give way and it falls over onto its side, then lies still. It stays in place, facing the viewer the whole time.",
+  "frames": 13,
+  "submitted": 1790481511.7876506,
+  "finished": 1790481681.6872973,
+  "score": {
+   "bright": 35,
+   "area": 1.0,
+   "wide": 1.43,
+   "base": 38
+  }
+ },
+ "takeoff_side": {
+  "job": "61663679-bb64-43cb-8adb-a974504c5fcf",
+  "tool": "animate_image_pixminimax",
+  "seed": 3424699,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Crouches low, then spreads its wings wide and springs up into the air with a strong flap. It stays in place, facing right.",
+  "frames": 9,
+  "submitted": 1790481710.7670221,
+  "finished": 1790481851.3567696,
+  "score": {
+   "bright": 128,
+   "area": 1.68,
+   "wide": 1.41,
+   "base": 27
+  }
+ },
+ "hurt_up": {
+  "job": "caf5f67f-a813-4b71-85f1-4dd22f7a7230",
+  "tool": "animate_image_pixminimax",
+  "seed": 2203121,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Flinches: jerks its head and body back, then returns to its stance. It stays in place with its back to the viewer the whole time.",
+  "frames": 5,
+  "submitted": 1790481713.2735403,
+  "finished": 1790481786.7319503,
+  "score": {
+   "bright": 25,
+   "area": 1.02,
+   "wide": 1.0,
+   "base": 12
+  }
+ },
+ "takeoff_down": {
+  "job": "4c53a4d3-e1e8-43b3-a3d4-7dc0ee72e069",
+  "tool": "animate_image_pixminimax",
+  "seed": 8272027,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Crouches low, then spreads its wings wide and springs up into the air with a strong flap. It stays in place, facing the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790481800.4369698,
+  "finished": 1790481998.7321844,
+  "score": {
+   "bright": 68,
+   "area": 1.89,
+   "wide": 1.69,
+   "base": 38
+  }
+ },
+ "roar_side": {
+  "job": "ad0e3d28-5ed7-4e69-9379-6560bf147a4e",
+  "tool": "animate_image_pixminimax",
+  "seed": 10299727,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Throws its head back and opens its long beak wide in a screech, flaring its folded wings. It stays in place, facing right.",
+  "frames": 13,
+  "submitted": 1790481868.1985388,
+  "finished": 1790482044.6556113,
+  "score": {
+   "bright": 119,
+   "area": 1.57,
+   "wide": 1.02,
+   "base": 27
+  },
+  "kept_attempt": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\roar_side@1"
+ },
+ "roar_up": {
+  "job": "93861ca1-e243-4001-ac78-ebd7bfeb8339",
+  "tool": "animate_image_pixminimax",
+  "seed": 12538147,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Throws its head back and opens its long beak wide in a screech, flaring its folded wings. It stays in place with its back to the viewer the whole time.",
+  "frames": 13,
+  "submitted": 1790481869.0809374,
+  "finished": 1790482060.2101219,
+  "score": {
+   "bright": 704,
+   "area": 1.86,
+   "wide": 1.63,
+   "base": 12
+  },
+  "kept_attempt": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\roar_up@0"
+ },
+ "takeoff_up": {
+  "job": "edf47114-dedc-4ed7-991e-a44a8ab26d4c",
+  "tool": "animate_image_pixminimax",
+  "seed": 3999541,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Crouches low, then spreads its wings wide and springs up into the air with a strong flap. It stays in place with its back to the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790481959.6591551,
+  "finished": 1790482072.03169,
+  "score": {
+   "bright": 107,
+   "area": 2.31,
+   "wide": 1.74,
+   "base": 12
+  },
+  "kept_attempt": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\takeoff_up@1"
+ },
+ "hurt_side": {
+  "job": "dd45907d-b1b6-419c-85d0-41f3fab29bb3",
+  "tool": "animate_image_pixminimax",
+  "seed": 3462308,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Flinches: jerks its head and body back, then returns to its stance. It stays in place, facing right.",
+  "frames": 5,
+  "submitted": 1790481960.5388467,
+  "finished": 1790482081.832066,
+  "score": {
+   "bright": 43,
+   "area": 1.01,
+   "wide": 1.01,
+   "base": 27
+  },
+  "kept_attempt": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\hurt_side@0"
+ },
+ "death_up": {
+  "job": "0701bdd8-b627-45ed-9557-e37073ca4b54",
+  "tool": "animate_image_pixminimax",
+  "seed": 5084425,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stumbles, its legs give way and it falls over onto its side, then lies still. It stays in place with its back to the viewer the whole time.",
+  "frames": 13,
+  "submitted": 1790482305.3088732,
+  "finished": 1790482514.0057015,
+  "score": {
+   "bright": 66,
+   "area": 1.0,
+   "wide": 1.14,
+   "base": 12
+  },
+  "kept_attempt": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\death_up@0"
+ },
+ "death_side": {
+  "job": "eaea5981-d453-45b7-bc7e-9e1d28bc5f78",
+  "tool": "animate_image_pixminimax",
+  "seed": 7869389,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stumbles, its legs give way and it falls over onto its side, then lies still. It stays in place, facing right.",
+  "frames": 13,
+  "submitted": 1790482672.3801045,
+  "finished": 1790482860.8489876,
+  "score": {
+   "bright": 101,
+   "area": 1.03,
+   "wide": 1.45,
+   "base": 27
+  },
+  "kept_attempt": "C:\\Cravera\\art\\dino-v2\\raw\\quetzal\\death_side@0"
+ }
+}

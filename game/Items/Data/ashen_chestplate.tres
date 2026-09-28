@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/equipment/art/wardrobe/icons/ashen_chestplate.png" id="2"]
+[resource]
+script = ExtResource("1")
+id = "ashen_chestplate"
+name = "Ashen Harness"
+description = "Dark hide under bone plates and fur, streaked with red ash. Ashen set: raiders take you for one of their own."
+icon = ExtResource("2")
+max_stack = 1
+rarity = "epic"
+armor_slot = "chest"
+defense = 12

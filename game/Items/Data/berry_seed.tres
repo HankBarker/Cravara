@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="Item" load_steps=2 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "berry_seed"
+name = "Berry Seeds"
+description = "Sow on tilled soil. Water once with a water bucket; harvest ripe berries and a replacement seed."
+icon_generator = "forest"
+max_stack = 99

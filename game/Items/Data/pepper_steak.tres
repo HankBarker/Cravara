@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/art/items/pepper_steak.png" id="2"]
+[resource]
+script = ExtResource("1")
+id = "pepper_steak"
+name = "Pepper Steak"
+description = "A prime cut under ember peppers. Every blow a hunter's."
+icon = ExtResource("2")
+max_stack = 20
+consumable = true
+hunger_value = 100
+food_satiation_seconds = 360.0
+healing_total = 50.0
+healing_duration = 30.0
+effects = {
+"melee": 0.15,
+"crit": 0.08
+}
+buff_seconds = 300.0

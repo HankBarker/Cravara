@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Items/Icons/trex_meat_icon.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = "trex_meat"
+name = "Raw Meat"
+description = "Raw meat for predators, or a rough meal. 25 hunger, 25 seconds of fullness; 8 vitality over 20 seconds."
+icon = ExtResource("2")
+max_stack = 5
+rarity = "common"
+consumable = true
+hunger_value = 25
+
+healing_total = 8.0
+healing_duration = 20.0
+
+
+food_satiation_seconds = 25.0

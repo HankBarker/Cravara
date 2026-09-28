@@ -1,0 +1,133 @@
+{
+ "parts": {
+  "head_down": {
+   "origin": [
+    23,
+    14
+   ]
+  },
+  "head_down_blink": {
+   "origin": [
+    23,
+    14
+   ]
+  },
+  "torso_down": {
+   "origin": [
+    26,
+    29
+   ]
+  },
+  "boot_m_down": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "boot_o_down": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "head_up": {
+   "origin": [
+    24,
+    14
+   ]
+  },
+  "torso_up": {
+   "origin": [
+    27,
+    28
+   ]
+  },
+  "boot_m_up": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "boot_o_up": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "head_side": {
+   "origin": [
+    23,
+    14
+   ]
+  },
+  "head_side_blink": {
+   "origin": [
+    23,
+    14
+   ]
+  },
+  "torso_side": {
+   "origin": [
+    23,
+    29
+   ]
+  },
+  "boot_m_side": {
+   "pivot": [
+    2.2,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  }
+ },
+ "materials": {
+  "arm_upper": [
+   "8e6539",
+   "9b8455",
+   "b79e68",
+   "d8c389",
+   "e6e0ba"
+  ],
+  "arm_lower": [
+   "2c1208",
+   "43240f",
+   "50381e",
+   "6f5632",
+   "8d7448"
+  ],
+  "leg_upper": [
+   "8e6539",
+   "9b8455",
+   "b79e68",
+   "d8c389",
+   "e6e0ba"
+  ],
+  "leg_lower": [
+   "8e6539",
+   "9b8455",
+   "b79e68",
+   "d8c389",
+   "e6e0ba"
+  ]
+ },
+ "name": "Sunward Wraps"
+}

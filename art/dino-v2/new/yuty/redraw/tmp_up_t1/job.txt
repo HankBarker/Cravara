@@ -1,0 +1,11 @@
+111a5b52-ff04-48de-8017-59eccf770e42
+status: completed
+id: 111a5b52-ff04-48de-8017-59eccf770e42
+job_id: 111a5b52-ff04-48de-8017-59eccf770e42
+frames: 1
+transparent: yes
+asset_id: 8994d9ec-f5e4-5c26-8959-d037407f76c2
+asset_type: image
+asset_status: saved
+gallery: saved to your PixelLab gallery (pixellab.ai/create)
+download: https://api.pixellab.ai/mcp/images/111a5b52-ff04-48de-8017-59eccf770e42/download

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Item" load_steps=2 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "cooked_fish"
+name = "Grilled Fish"
+description = "A flame-roasted river meal. 55 hunger, 2 minutes of fullness, and 18 vitality over 20 seconds."
+icon_generator = "forest"
+max_stack = 20
+consumable = true
+hunger_value = 55
+healing_total = 18.0
+healing_duration = 20.0
+food_satiation_seconds = 120.0

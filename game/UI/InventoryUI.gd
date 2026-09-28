@@ -12,15 +12,24 @@ var tooltip: PanelContainer
 
 var inventory_slots: Array[Control] = []
 var hotbar_slots: Array[Control] = []
+var chest_slots: Array[Control] = []
 var selected_hotbar_index: int = 0
 var selected_category: String = "All"
 var category_buttons: Array[Button] = []
+
+# Active chest UI state
+var chest_panel: Panel
+var _active_chest: Node = null
 
 # Health bar references
 var health_bar_border: Panel
 var health_bar_bg: ColorRect
 var health_bar_fill: ColorRect
 var health_label: Label
+
+# Hunger / stamina
+var hunger_bar_fill: ColorRect
+var stamina_bar_fill: ColorRect
 
 # Settings panel
 var settings_panel: Panel
@@ -34,11 +43,11 @@ var defense_label: Label
 # --- Colors (Terraria-inspired) ---
 const PANEL_BG = Color(0.08, 0.07, 0.1, 0.92)
 const PANEL_BORDER = Color(0.35, 0.3, 0.4, 0.8)
-const SLOT_BG = Color(0.12, 0.11, 0.15, 0.95)
-const SLOT_BORDER = Color(0.3, 0.3, 0.35, 1.0)
-const SLOT_HOVER = Color(0.45, 0.4, 0.5, 1.0)
-const SELECTED_BORDER = Color(1.0, 1.0, 1.0, 1.0)
-const HOTBAR_BG = Color(0.06, 0.05, 0.08, 0.85)
+const SLOT_BG = Color(0.14, 0.13, 0.18, 0.95)
+const SLOT_BORDER = Color(0.4, 0.38, 0.45, 1.0)
+const SLOT_HOVER = Color(0.55, 0.5, 0.6, 1.0)
+const SELECTED_BORDER = Color(1.0, 0.85, 0.35, 1.0)
+const HOTBAR_BG = Color(0.05, 0.04, 0.07, 0.55)
 
 const RARITY_COLORS = {
 	"common": Color(0.5, 0.5, 0.5),
@@ -53,6 +62,7 @@ const SLOT_GAP = 2
 const INV_COLUMNS = 9
 
 func _ready():
+	add_to_group("inventory_ui")
 	_build_ui()
 
 	if InventoryManager:
@@ -61,9 +71,11 @@ func _ready():
 
 	create_inventory_slots()
 	create_hotbar_slots()
+	_build_chest_panel()
 
 	inventory_panel.visible = false
 	crafting_panel.visible = false
+	chest_panel.visible = false
 
 	# Sync initial hotbar selection with InventoryManager
 	InventoryManager.selected_slot_index = selected_hotbar_index
@@ -74,6 +86,9 @@ func _ready():
 
 func _build_ui():
 	var ui_container = $UIContainer
+	# UIContainer covers the full viewport; without this, any mouse
+	# event anywhere on screen is "over the UI" and would block placement.
+	ui_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 	# --- Tooltip (add first so it's always accessible) ---
 	var tooltip_script = load("res://UI/TooltipUI.gd")
@@ -82,27 +97,29 @@ func _build_ui():
 	tooltip.name = "Tooltip"
 	ui_container.add_child(tooltip)
 
-	# --- Hotbar background strip ---
-	hotbar_bg = Panel.new()
-	hotbar_bg.name = "HotbarBG"
-	var hb_style = StyleBoxFlat.new()
-	hb_style.bg_color = HOTBAR_BG
-	hb_style.set_border_width_all(1)
-	hb_style.border_color = PANEL_BORDER
-	hb_style.set_corner_radius_all(3)
-	hb_style.content_margin_left = 4
-	hb_style.content_margin_right = 4
-	hb_style.content_margin_top = 10
-	hb_style.content_margin_bottom = 3
-	hotbar_bg.add_theme_stylebox_override("panel", hb_style)
-	ui_container.add_child(hotbar_bg)
-
-	# --- Hotbar container ---
+	# --- Hotbar container (grab reference before bg so we can layer correctly) ---
 	hotbar_panel = $UIContainer/HotbarPanel
-	# Clear the pre-existing placeholder slots from the scene
 	for child in hotbar_panel.get_children():
 		child.queue_free()
 	hotbar_panel.add_theme_constant_override("separation", SLOT_GAP)
+	hotbar_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	# --- Hotbar background strip (placed BEHIND the slots) ---
+	hotbar_bg = Panel.new()
+	hotbar_bg.name = "HotbarBG"
+	hotbar_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var hb_style = StyleBoxFlat.new()
+	hb_style.bg_color = HOTBAR_BG
+	hb_style.set_border_width_all(1)
+	hb_style.border_color = Color(0.3, 0.26, 0.36, 0.7)
+	hb_style.set_corner_radius_all(4)
+	hb_style.shadow_color = Color(0, 0, 0, 0.4)
+	hb_style.shadow_size = 2
+	hb_style.shadow_offset = Vector2(0, 1)
+	hotbar_bg.add_theme_stylebox_override("panel", hb_style)
+	ui_container.add_child(hotbar_bg)
+	# Render order: bg must sit BEHIND the hotbar slots
+	ui_container.move_child(hotbar_bg, hotbar_panel.get_index())
 
 	# --- Inventory Panel ---
 	inventory_panel = $UIContainer/InventoryPanel
@@ -118,10 +135,27 @@ func _build_ui():
 	var inv_title = Label.new()
 	inv_title.name = "InvTitle"
 	inv_title.text = "Inventory"
-	inv_title.add_theme_font_size_override("font_size", 7)
-	inv_title.add_theme_color_override("font_color", Color(0.75, 0.7, 0.85))
-	inv_title.position = Vector2(6, 3)
+	inv_title.add_theme_font_size_override("font_size", 8)
+	inv_title.add_theme_color_override("font_color", Color(0.95, 0.88, 0.7))
+	inv_title.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.9))
+	inv_title.add_theme_constant_override("shadow_offset_x", 1)
+	inv_title.add_theme_constant_override("shadow_offset_y", 1)
+	inv_title.position = Vector2(6, 2)
 	inventory_panel.add_child(inv_title)
+
+	# Subtle divider under the title
+	var inv_divider = ColorRect.new()
+	inv_divider.name = "InvDivider"
+	inv_divider.color = Color(0.35, 0.3, 0.45, 0.6)
+	inv_divider.size = Vector2(0, 1)
+	inv_divider.position = Vector2(5, 12)
+	inv_divider.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	inventory_panel.add_child(inv_divider)
+	inv_divider.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE, Control.PRESET_MODE_KEEP_HEIGHT)
+	inv_divider.offset_left = 5
+	inv_divider.offset_right = -5
+	inv_divider.offset_top = 12
+	inv_divider.offset_bottom = 13
 
 	# New grid
 	inventory_grid = GridContainer.new()
@@ -223,8 +257,12 @@ func _build_ui():
 	# Position hotbar centered at bottom
 	_position_hotbar()
 
-	# Build health bar
+	# Build health / hunger / stamina bars (stacked top-left)
 	_build_health_bar()
+	hunger_bar_fill = _build_stat_bar("Hunger", Color(0.85, 0.55, 0.2, 0.9), 13, 4)
+	stamina_bar_fill = _build_stat_bar("Stamina", Color(0.35, 0.75, 0.4, 0.9), 20, 4)
+	SignalBus.player_hunger_changed.connect(_on_player_hunger_changed)
+	SignalBus.player_stamina_changed.connect(_on_player_stamina_changed)
 
 	# Build armor equipment panel
 	_build_armor_panel()
@@ -274,6 +312,64 @@ func _build_health_bar():
 
 	SignalBus.player_health_changed.connect(_on_player_health_changed)
 
+func _build_stat_bar(label_text: String, fill_color: Color, y: int, height: int) -> ColorRect:
+	var ui = $UIContainer
+	var border = Panel.new()
+	var border_style = StyleBoxFlat.new()
+	border_style.bg_color = Color(0.12, 0.10, 0.06, 0.9)
+	border_style.set_border_width_all(1)
+	border_style.border_color = Color(0.3, 0.25, 0.15, 1.0)
+	border_style.set_corner_radius_all(1)
+	border.add_theme_stylebox_override("panel", border_style)
+	border.position = Vector2(3, y)
+	border.size = Vector2(56, height + 2)
+	ui.add_child(border)
+
+	var bg = ColorRect.new()
+	bg.color = Color(0.08, 0.06, 0.04, 0.85)
+	bg.position = Vector2(4, y + 1)
+	bg.size = Vector2(54, height)
+	ui.add_child(bg)
+
+	var fill = ColorRect.new()
+	fill.color = fill_color
+	fill.position = Vector2(4, y + 1)
+	fill.size = Vector2(54, height)
+	ui.add_child(fill)
+
+	var lbl = Label.new()
+	lbl.text = label_text[0]  # First char ("H"/"S") as a tiny tag
+	lbl.add_theme_font_size_override("font_size", 5)
+	lbl.add_theme_color_override("font_color", Color(0.7, 0.65, 0.55))
+	lbl.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.9))
+	lbl.add_theme_constant_override("shadow_offset_x", 1)
+	lbl.add_theme_constant_override("shadow_offset_y", 1)
+	lbl.position = Vector2(61, y - 1)
+	ui.add_child(lbl)
+
+	return fill
+
+func _on_player_hunger_changed(current: int, max_hunger: int):
+	if not hunger_bar_fill:
+		return
+	var ratio = clampf(float(current) / float(max_hunger), 0.0, 1.0)
+	var tween = create_tween()
+	tween.tween_property(hunger_bar_fill, "size:x", 54.0 * ratio, 0.25).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+	if ratio < 0.2:
+		tween.parallel().tween_property(hunger_bar_fill, "color", Color(0.85, 0.25, 0.15, 0.9), 0.25)
+	else:
+		tween.parallel().tween_property(hunger_bar_fill, "color", Color(0.85, 0.55, 0.2, 0.9), 0.25)
+
+func _on_player_stamina_changed(current: float, max_stamina: float):
+	if not stamina_bar_fill:
+		return
+	var ratio = clampf(current / max_stamina, 0.0, 1.0)
+	stamina_bar_fill.size.x = 54.0 * ratio
+	if ratio < 0.2:
+		stamina_bar_fill.color = Color(0.85, 0.5, 0.2, 0.9)
+	else:
+		stamina_bar_fill.color = Color(0.35, 0.75, 0.4, 0.9)
+
 func _on_player_health_changed(current: int, max_hp: int):
 	if not health_bar_fill:
 		return
@@ -302,19 +398,37 @@ func _make_panel_style() -> StyleBoxFlat:
 	style.set_border_width_all(1)
 	style.border_color = PANEL_BORDER
 	style.set_corner_radius_all(4)
+	style.shadow_color = Color(0, 0, 0, 0.5)
+	style.shadow_size = 3
+	style.shadow_offset = Vector2(0, 2)
 	return style
 
 func _position_hotbar():
 	var total_hotbar_w = 8 * HOTBAR_SLOT_SIZE + 7 * SLOT_GAP + 8
 	var viewport_w = 480
+	var viewport_h = 270
 	var x = (viewport_w - total_hotbar_w) / 2.0
-	var y = 270 - HOTBAR_SLOT_SIZE - 12
+	var y = viewport_h - HOTBAR_SLOT_SIZE - 14
 
-	hotbar_panel.position = Vector2(x + 4, y + 8)
+	hotbar_panel.position = Vector2(x + 4, y + 10)
 	hotbar_panel.size = Vector2(total_hotbar_w - 8, HOTBAR_SLOT_SIZE)
 
 	hotbar_bg.position = Vector2(x, y)
 	hotbar_bg.size = Vector2(total_hotbar_w, HOTBAR_SLOT_SIZE + 14)
+
+	# Inventory key hint to the right of the hotbar (created lazily once)
+	if not hotbar_bg.has_node("InvHint"):
+		var hint = Label.new()
+		hint.name = "InvHint"
+		hint.text = "[I] Inventory"
+		hint.add_theme_font_size_override("font_size", 5)
+		hint.add_theme_color_override("font_color", Color(0.7, 0.65, 0.8))
+		hint.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.9))
+		hint.add_theme_constant_override("shadow_offset_x", 1)
+		hint.add_theme_constant_override("shadow_offset_y", 1)
+		hint.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		hotbar_bg.add_child(hint)
+		hint.position = Vector2(total_hotbar_w - 38, HOTBAR_SLOT_SIZE + 6)
 
 # =========================================
 # INPUT
@@ -331,21 +445,50 @@ func _input(event):
 			_toggle_settings_menu()
 		return
 
+	# Open / close inventory (I or Tab)
+	if Input.is_action_just_pressed("toggle_inventory"):
+		if not settings_panel_visible:
+			toggle_inventory()
+		return
+
+	# Interact (E) — open/close chest if standing next to one
+	if Input.is_action_just_pressed("interact"):
+		if not settings_panel_visible:
+			_toggle_nearest_chest()
+		return
+
 	if Input.is_action_just_pressed("use_hotbar_item"):
 		if inventory_panel.visible or settings_panel_visible:
 			return
-		if get_viewport().gui_get_hovered_control():
+		# Don't start a new placement if a ghost is already active
+		# (right-click is also used to cancel — let the ghost handle it)
+		if not get_tree().get_nodes_in_group("placement_ghost").is_empty():
+			return
+		var hovered = get_viewport().gui_get_hovered_control()
+		if hovered:
+			print("[place] blocked: mouse over UI control '%s'" % hovered.name)
 			return
 
 		var selected_item: Item = null
 		if selected_hotbar_index < InventoryManager.inventory.size():
 			selected_item = InventoryManager.inventory[selected_hotbar_index].item
-		if selected_item != null and selected_item.placeable and selected_item.place_scene != "":
-			var placement_controller = preload("res://Systems/Placement/PlacementController.tscn").instantiate()
-			placement_controller.object_to_place = load(selected_item.place_scene)
-			placement_controller.item_id = selected_item.id
-			get_tree().get_root().add_child(placement_controller)
-			AudioManager.play_sfx("place_object")
+		if selected_item == null:
+			print("[place] no item in selected hotbar slot %d" % selected_hotbar_index)
+			return
+		if not selected_item.placeable or selected_item.place_scene == "":
+			print("[place] item '%s' is not placeable" % selected_item.id)
+			return
+
+		var place_packed = load(selected_item.place_scene)
+		if place_packed == null:
+			push_error("[place] failed to load placement scene: %s" % selected_item.place_scene)
+			return
+		var placement_controller = preload("res://Systems/Placement/PlacementController.tscn").instantiate()
+		placement_controller.object_to_place = place_packed
+		placement_controller.item_id = selected_item.id
+		get_tree().get_root().add_child(placement_controller)
+		AudioManager.play_sfx("place_object")
+		print("[place] started placement of '%s'" % selected_item.id)
 
 	for i in range(8):
 		if Input.is_action_just_pressed("hotbar_" + str(i + 1)):
@@ -361,6 +504,7 @@ func toggle_inventory():
 		populate_crafting_panel()
 	else:
 		tooltip.hide_tooltip()
+		close_chest_if_open()
 
 # =========================================
 # SLOT CREATION
@@ -385,13 +529,17 @@ func create_hotbar_slots():
 		var container = VBoxContainer.new()
 		container.add_theme_constant_override("separation", 0)
 
-		# Slot number label
+		# Slot number label (above slot, bright + readable)
 		var num_label = Label.new()
+		num_label.name = "SlotNumber"
 		num_label.text = str(i + 1)
-		num_label.add_theme_font_size_override("font_size", 5)
-		num_label.add_theme_color_override("font_color", Color(0.5, 0.5, 0.55))
+		num_label.add_theme_font_size_override("font_size", 6)
+		num_label.add_theme_color_override("font_color", Color(0.95, 0.9, 0.7))
+		num_label.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.9))
+		num_label.add_theme_constant_override("shadow_offset_x", 1)
+		num_label.add_theme_constant_override("shadow_offset_y", 1)
 		num_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		num_label.custom_minimum_size = Vector2(HOTBAR_SLOT_SIZE, 6)
+		num_label.custom_minimum_size = Vector2(HOTBAR_SLOT_SIZE, 7)
 		container.add_child(num_label)
 
 		# Slot
@@ -412,12 +560,15 @@ func _create_slot(index: int, slot_size: int) -> Panel:
 	slot.set("slot_index", index)
 	slot.set("parent_ui", self)
 
-	# Style
+	# Style — slightly inset look with subtle inner shadow
 	var style_box = StyleBoxFlat.new()
 	style_box.bg_color = SLOT_BG
 	style_box.set_border_width_all(1)
 	style_box.border_color = SLOT_BORDER
-	style_box.set_corner_radius_all(2)
+	style_box.set_corner_radius_all(3)
+	style_box.shadow_color = Color(0, 0, 0, 0.35)
+	style_box.shadow_size = 1
+	style_box.shadow_offset = Vector2(0, 1)
 	slot.add_theme_stylebox_override("panel", style_box)
 
 	# Icon
@@ -494,6 +645,9 @@ func update_inventory_display():
 		var inv_item = InventoryManager.inventory[i]
 		_update_slot_display(slot, inv_item)
 
+	# Reassert selected-slot highlight (the per-slot display reset it)
+	_update_hotbar_selection()
+
 func _update_slot_display(slot: Panel, inv_item):
 	var icon = slot.get_node("Icon")
 	var qty_label = slot.get_node("Quantity")
@@ -524,9 +678,16 @@ func _update_hotbar_selection():
 	for i in range(hotbar_slots.size()):
 		var slot = hotbar_slots[i]
 		var style = slot.get_theme_stylebox("panel").duplicate() as StyleBoxFlat
+		# Find slot number label in parent VBox (set in create_hotbar_slots)
+		var num_label = slot.get_parent().get_node_or_null("SlotNumber") as Label
 		if i == selected_hotbar_index:
 			style.border_color = SELECTED_BORDER
 			style.set_border_width_all(2)
+			style.bg_color = Color(0.22, 0.18, 0.1, 0.95)
+			style.shadow_color = Color(1.0, 0.85, 0.35, 0.5)
+			style.shadow_size = 3
+			if num_label:
+				num_label.add_theme_color_override("font_color", Color(1.0, 0.9, 0.45))
 		else:
 			# Restore rarity border or default
 			var inv_item = InventoryManager.inventory[i] if i < InventoryManager.inventory.size() else null
@@ -536,6 +697,10 @@ func _update_hotbar_selection():
 			else:
 				style.border_color = SLOT_BORDER
 			style.set_border_width_all(1)
+			style.bg_color = SLOT_BG
+			style.shadow_size = 0
+			if num_label:
+				num_label.add_theme_color_override("font_color", Color(0.95, 0.9, 0.7))
 		slot.add_theme_stylebox_override("panel", style)
 
 # =========================================
@@ -821,7 +986,7 @@ func _build_armor_panel():
 	var style = _make_panel_style()
 	armor_panel.add_theme_stylebox_override("panel", style)
 	armor_panel.size = Vector2(38, 108)
-	armor_panel.position = Vector2(3, 14)
+	armor_panel.position = Vector2(3, 30)  # shifted down to clear hunger/stamina bars
 	ui.add_child(armor_panel)
 
 	var title = Label.new()
@@ -895,28 +1060,17 @@ func _on_armor_slot_input(event: InputEvent, slot_name: String):
 		_on_armor_slot_clicked(slot_name)
 
 func _on_armor_slot_clicked(slot_name: String):
+	# Equipping is handled via left-click in the main inventory slots
+	# (see SlotUI._try_quick_equip). Clicking the armor panel slot
+	# unequips whatever is currently in it.
 	var player = get_node_or_null("/root/Playground/Player")
 	if not player:
 		return
-
-	# If armor is equipped, unequip it back to inventory
 	if player.equipped_armor.get(slot_name):
 		var old_item = player.unequip_armor(slot_name)
 		if old_item:
 			InventoryManager.add_item(old_item)
 			AudioManager.play_sfx("ui_click")
-		update_armor_display()
-		return
-
-	# Try to equip the currently selected hotbar item
-	var selected_item: Item = null
-	if selected_hotbar_index < InventoryManager.inventory.size():
-		selected_item = InventoryManager.inventory[selected_hotbar_index].item
-
-	if selected_item and selected_item.armor_slot == slot_name:
-		InventoryManager.remove_item(selected_item.id, 1)
-		player.equip_armor(slot_name, selected_item)
-		AudioManager.play_sfx("ui_click")
 		update_armor_display()
 
 func update_armor_display():
@@ -939,3 +1093,137 @@ func update_armor_display():
 
 func _on_armor_changed(_slot: String, _item):
 	update_armor_display()
+
+# =========================================
+# CHEST PANEL
+# =========================================
+
+const CHEST_COLUMNS := 9
+const CHEST_ROWS := 2
+
+func _build_chest_panel():
+	chest_panel = Panel.new()
+	chest_panel.name = "ChestPanel"
+	chest_panel.add_theme_stylebox_override("panel", _make_panel_style())
+	var grid_w = CHEST_COLUMNS * SLOT_SIZE + (CHEST_COLUMNS - 1) * SLOT_GAP + 12
+	var grid_h = CHEST_ROWS * SLOT_SIZE + (CHEST_ROWS - 1) * SLOT_GAP + 22
+	chest_panel.size = Vector2(grid_w, grid_h)
+	$UIContainer.add_child(chest_panel)
+
+	var title = Label.new()
+	title.name = "ChestTitle"
+	title.text = "Chest"
+	title.add_theme_font_size_override("font_size", 8)
+	title.add_theme_color_override("font_color", Color(0.95, 0.88, 0.7))
+	title.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.9))
+	title.add_theme_constant_override("shadow_offset_x", 1)
+	title.add_theme_constant_override("shadow_offset_y", 1)
+	title.position = Vector2(6, 2)
+	chest_panel.add_child(title)
+
+	var grid = GridContainer.new()
+	grid.name = "ChestGrid"
+	grid.columns = CHEST_COLUMNS
+	grid.add_theme_constant_override("h_separation", SLOT_GAP)
+	grid.add_theme_constant_override("v_separation", SLOT_GAP)
+	grid.position = Vector2(6, 14)
+	chest_panel.add_child(grid)
+
+func is_chest_open_for(chest: Node) -> bool:
+	return _active_chest == chest
+
+func _toggle_nearest_chest():
+	if _active_chest:
+		close_chest()
+		return
+	# Find a chest the player is standing in range of
+	for c in get_tree().get_nodes_in_group("chests"):
+		if c.has_method("is_player_nearby") and c.is_player_nearby():
+			open_chest(c)
+			return
+
+func open_chest(chest: Node):
+	_active_chest = chest
+	# Make sure the inventory + crafting are open too so the player can
+	# drag between them.
+	inventory_panel.visible = true
+	crafting_panel.visible = false
+	chest_panel.visible = true
+
+	# Position the chest panel above the inventory panel
+	chest_panel.position = Vector2(inventory_panel.position.x, inventory_panel.position.y - chest_panel.size.y - 4)
+
+	# Rebuild chest slots
+	var grid = chest_panel.get_node("ChestGrid") as GridContainer
+	for child in grid.get_children():
+		child.queue_free()
+	chest_slots.clear()
+	for i in chest.inventory.size():
+		var slot = _create_slot(i, SLOT_SIZE)
+		slot.source = chest
+		grid.add_child(slot)
+		chest_slots.append(slot)
+	if chest.has_signal("inventory_changed") and not chest.inventory_changed.is_connected(_refresh_chest_slots):
+		chest.inventory_changed.connect(_refresh_chest_slots)
+	_refresh_chest_slots()
+
+func close_chest():
+	if _active_chest and _active_chest.has_signal("inventory_changed") and _active_chest.inventory_changed.is_connected(_refresh_chest_slots):
+		_active_chest.inventory_changed.disconnect(_refresh_chest_slots)
+	_active_chest = null
+	chest_panel.visible = false
+
+func close_chest_if_open():
+	if _active_chest:
+		close_chest()
+
+func _refresh_chest_slots():
+	if not _active_chest:
+		return
+	for i in range(chest_slots.size()):
+		var slot = chest_slots[i]
+		var inv_item = null
+		if i < _active_chest.inventory.size():
+			inv_item = _active_chest.inventory[i]
+		_update_slot_display(slot, inv_item)
+
+# Called by SlotUI on shift-click: shove the stack to the other container
+func transfer_slot(slot: SlotUI):
+	var src = slot._get_source()
+	var slot_data = src.inventory[slot.slot_index]
+	if slot_data == null or slot_data.item == null:
+		return
+	var item: Item = slot_data.item
+	var qty: int = slot_data.quantity
+	if src == InventoryManager:
+		if not _active_chest:
+			return
+		# Player → chest
+		if _active_chest.add_item(item, qty):
+			src.inventory[slot.slot_index] = {"item": null, "quantity": 0}
+			src.inventory_changed.emit()
+	else:
+		# Chest → player
+		if InventoryManager.add_item(item, qty):
+			src.inventory[slot.slot_index] = {"item": null, "quantity": 0}
+			src.inventory_changed.emit()
+
+# Called by SlotUI on cross-container drag-and-drop
+func cross_swap(from_slot: SlotUI, to_slot: SlotUI):
+	var from_src = from_slot._get_source()
+	var to_src = to_slot._get_source()
+	var tmp = to_src.inventory[to_slot.slot_index]
+	to_src.inventory[to_slot.slot_index] = from_src.inventory[from_slot.slot_index]
+	from_src.inventory[from_slot.slot_index] = tmp
+	to_src.inventory_changed.emit()
+	if from_src != to_src:
+		from_src.inventory_changed.emit()
+
+# Called by SlotUI on hover — works for any container
+func show_slot_tooltip_for(slot: SlotUI):
+	var src = slot._get_source()
+	if slot.slot_index < 0 or slot.slot_index >= src.inventory.size():
+		return
+	var inv_item = src.inventory[slot.slot_index]
+	if inv_item and inv_item.item:
+		tooltip.show_item_tooltip(inv_item.item, inv_item.quantity, slot.global_position + Vector2(slot.size.x + 2, 0))

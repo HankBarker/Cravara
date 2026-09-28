@@ -1,0 +1,19 @@
+world: passed
+inventory: passed
+creatures: passed
+integration: passed
+gui-input: passed
+menu-flow: passed
+ai-pass2: passed
+equipment-pass2: passed
+ui-pass2: passed
+world-pass3: passed
+mount-pass3: passed
+ui-pass3: passed
+Godot_v4.6.1-stable_win64_console.exe : ERROR: run down helmet follows per-frame head anchor
+At C:\Cravera\tools\verify_forest.ps1:55 char:5
++     & $godotBinary @arguments 2>&1 | Out-File -LiteralPath $logFile - ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (ERROR: run down...ame head anchor:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 

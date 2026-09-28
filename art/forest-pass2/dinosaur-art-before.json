@@ -1,0 +1,242 @@
+[
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\dodo_down.aseprite",
+    "Hash": "D7EAFD4A12890AD96863D61FB2755EAC8D4DF3C38ED25BE7D3CDAD0B73BA505B"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\dodo_down.png",
+    "Hash": "0FEB513E3CCEC9995CDE7480E24E6BB5B093066041196E56C38F1E4BC9248560"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\dodo_down.png.import",
+    "Hash": "D473E364F3CB0089D4239F217FFE8CADF95A38844AD79BE5C9C17AE60F1865FD"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\dodo_frames.tres",
+    "Hash": "85D3AD880101C5805BA9CBD5B9FE2A5D164D741EDB63752411D5350517295B06"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\dodo_up.aseprite",
+    "Hash": "7F96031BC9F9CC101C902956BAA3D1B3789BB0A7C4D1747C5AC7F035147DF66A"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\dodo_up.png",
+    "Hash": "8B2CBD69B2D1888B18AA09C3F25B806334ACA6C5C08D3DDB4084C55420E875EC"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\dodo_up.png.import",
+    "Hash": "4F32EDCB3A1BD5091D1EC3C01419A3437A58E301F765C4F05AB0E6391FD83F27"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\dodo.aseprite",
+    "Hash": "79B5395A0CD548A4B982FE8BC3AC6B899BCC2632418CF10ECD4657E7EB7F3E7F"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\dodo.png",
+    "Hash": "75A1BD91239EFC8FDDB5974FE34BA16B75026232AD5DBC17EC2F25A6BDB28D91"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\dodo.png.import",
+    "Hash": "0CDFA9E57B9DD294F73535E0C634AE476DF9923A4E713997425EBB6F23523656"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\longneck_down.aseprite",
+    "Hash": "886BA0DDD38128EB694F4E8E1568433CCE6A8132C8FF1D8837CF196D1DB9BAD4"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\longneck_down.png",
+    "Hash": "D3BF91948108EB724A55507B1CC91E1D70C70CE3A756459B15C8C7C9BBAD3584"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\longneck_down.png.import",
+    "Hash": "53F9AD01250EC209DCEC63F98AA63C3839E4EEEB731AC86D16E0CA1635F32B55"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\longneck_frames.tres",
+    "Hash": "F8C64D322926483FAFE75ABB751DE0A47B6E984560D891F0EA2C04038A8EBFB8"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\longneck_up.aseprite",
+    "Hash": "EE644E36EF8E5BF8B59734936FCD6778E3DCDED991A3AAA0D75A73D776590B0D"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\longneck_up.png",
+    "Hash": "4EAAABD422B43D461A5D61C862E9501B48DD03D9178DC99407A754DEE09D4EA7"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\longneck_up.png.import",
+    "Hash": "5D84DB2B9EC8BF50B0C037C99E6951256AC12234013694D79C3E6CCF1AA9CE31"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\longneck.aseprite",
+    "Hash": "25CC76815A68692F672FDF296FE0E4AC68908389D7A7AE1207CF1AE236E00284"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\longneck.png",
+    "Hash": "6A8F94E37F1A0D69DD3511EB3717894F3A750C27DE881A7A5899D83CF016FF2C"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\longneck.png.import",
+    "Hash": "12C73A2639AA14E9EAE744B8D776B2BC35485A2053303612794D44A7FC44A30A"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\raptor_down.aseprite",
+    "Hash": "23FFF0DDA4A34043C972F3B8AA3E35540000A435A6448C6096EBD723B829D6D5"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\raptor_down.png",
+    "Hash": "264E5C03F39EFAB1B3B2DB042C8E77318C937D205BA6EE175344920818299895"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\raptor_down.png.import",
+    "Hash": "7F45C594A3DC3783CBB8983A14E04A871D3CDBE42800099004D23E5CF087E891"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\raptor_frames.tres",
+    "Hash": "D2833572B82D5B9CF6176209F4C96BFDAB35EF0E425E23D42E7A9F950A138611"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\raptor_up.aseprite",
+    "Hash": "0271B860947A0B4997BE678FC8FD9FCDE8E58F8273D99E33B4231EE187F076B4"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\raptor_up.png",
+    "Hash": "748EA97484723760DAC392565B904DCEE1DA81A513B6742719D1E8C433C09BE9"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\raptor_up.png.import",
+    "Hash": "CA45B52DA96B5A483FF0544DDF817839F2EF0BE5076D816180C9FC9606B0AD48"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\raptor.aseprite",
+    "Hash": "A18ABE16C07E722C21C28FC3573C17C05877B9764E8F76F9B16BF345774E2807"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\raptor.png",
+    "Hash": "DE3FE069DB750584283B80A057E7CD908846AAB57DB32D322AE37CC3D907E2B6"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\raptor.png.import",
+    "Hash": "8A4BA83ECDE883B7E7B10DBF9CAA333F22CEB8676D432EAB459A4458DDAB0CF8"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\rex_down.aseprite",
+    "Hash": "EF0727A2C672DE48B93BE0CA2CD295DEC352C7E9153CA0A9A1E9358E73F4D061"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\rex_down.png",
+    "Hash": "5E974202139B45100DF863C8EA359E40DD9845220E785C851A434620D416AAC9"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\rex_down.png.import",
+    "Hash": "D774CEF64FB729A793AECEB9FC40922D3652BF58221924757A7FFAB629A8EED1"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\rex_frames.tres",
+    "Hash": "67D93ADD0FD8489A5AC8254E26973631B449F3CD4A10DD5EE785FF79A46C0921"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\rex_up.aseprite",
+    "Hash": "F7D997947178CF40E5EEC06EB32E6B9721C4A1D56FDF4F48E67349D52A1911B2"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\rex_up.png",
+    "Hash": "E16159C754D434EB4386D67A95C70E483D70DDEDB83B09D8050D52768EAD748B"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\rex_up.png.import",
+    "Hash": "9EC0C16A1446EB4EDDDB87AAE55E0E5AC7611E3EC456CC553D85D46444357620"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\rex.aseprite",
+    "Hash": "A04408D458267C55CB9DE97C2C2BEE67BBD8558C70158309DC1EBCA0CEA7B82C"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\rex.png",
+    "Hash": "8412CA9AA2861411523DD47826377383D45CBEA30319A81AE0062AB8D36DD31D"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\rex.png.import",
+    "Hash": "A9D7F11D3584CB108206F05F7A6DD115728F780741179EE06638209C2BC1DC0B"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\stego_down.aseprite",
+    "Hash": "D2EEADC431C47F496506540F96AC9F4C6B196D99AC4B553E19D7CC3EFC73AFC5"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\stego_down.png",
+    "Hash": "6FE0EB80E750FC612344F840F4DB1949682088E221B2850A63CB52760AF55D98"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\stego_down.png.import",
+    "Hash": "0BF0B8B701071045AB5FCE4C7882BBD66A323F7C36D7B48CF0294989A19A1009"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\stego_frames.tres",
+    "Hash": "355861CEFF0B7881BD4125880D9C52CA25CA5A52654BC99344F2C020E7C0D21A"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\stego_up.aseprite",
+    "Hash": "6AF3677B4B64ED0C31C28C7F6EA95F31A7C384453FB07727D8B8CBFFCE9C4BDF"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\stego_up.png",
+    "Hash": "D6DF2AB56019E87AE0F38F9617CFD8FDAB4BA4711F9F928C6094E71832A1DBA8"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\stego_up.png.import",
+    "Hash": "0963A026F56B67AEA6CCEBE4383F61FC6CE930092EFD86A739CD88A459A95911"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\stego.aseprite",
+    "Hash": "E954EA3709BA5837C792CC2B4E4A4CE0C64A712C4DB413F049E03BC6B4A54B50"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\stego.png",
+    "Hash": "32084D6D503036C434D25E7011A3162A7C8ADCF1003DFD742F171C28A84EE5F3"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\stego.png.import",
+    "Hash": "908CCDE7E3FE65B387B0A1205AC5BAB1AC4B76C7F88448AA567F3DBE6C392DEC"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\trike_down.aseprite",
+    "Hash": "26D27A57FA8F9E059A8C54BCC1324D74018F217D430ABE191B2B6CCB1E6E0792"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\trike_down.png",
+    "Hash": "105969FC03A772F44D0226B7C2B64C604735D5E538035FF696A0ADF686F62C21"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\trike_down.png.import",
+    "Hash": "8B30462B0EB0CC47BB9197AB57A17FF70A1CC6003BFBFA82E2891F372E6A91A1"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\trike_frames.tres",
+    "Hash": "BEF52CD53BCB167F5E57683C999C64EE157915C758A696E07F5F455BFD4F94C3"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\trike_up.aseprite",
+    "Hash": "B2A683E05451D26A89FDA60009E14759C1DD8FDD6C0F577E6754A1ECD8E63C3B"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\trike_up.png",
+    "Hash": "DCDB032C517B376FDC4F969699372A0838F46026B89AC738A43CEC13B4542DED"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\trike_up.png.import",
+    "Hash": "79E10A4EDC91523A0D7071AA78477C2FF54C9306195969270D8AA0AD86426201"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\trike.aseprite",
+    "Hash": "3DD060F58D67FAD842FF8BA8425281B6524100F0E4EC5F0D6A80FB859B0202F5"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\trike.png",
+    "Hash": "082B4D78D2794D637D727361A4B6E8FE036CBC6EEB0E6642ED0EFB77B9D37739"
+  },
+  {
+    "Path": "C:\\Cravera\\game\\Forest\\creatures\\art\\trike.png.import",
+    "Hash": "7530899FF862580D96413CA57A0EAAA630E5173264951107DBC259922DF63E56"
+  }
+]

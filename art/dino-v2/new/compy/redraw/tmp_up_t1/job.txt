@@ -1,0 +1,11 @@
+34f2be3b-a53a-4e83-b844-214e83f86414
+status: completed
+id: 34f2be3b-a53a-4e83-b844-214e83f86414
+job_id: 34f2be3b-a53a-4e83-b844-214e83f86414
+frames: 1
+transparent: yes
+asset_id: 053f6965-e00a-53da-8ddf-7f303b9a6207
+asset_type: image
+asset_status: saved
+gallery: saved to your PixelLab gallery (pixellab.ai/create)
+download: https://api.pixellab.ai/mcp/images/34f2be3b-a53a-4e83-b844-214e83f86414/download

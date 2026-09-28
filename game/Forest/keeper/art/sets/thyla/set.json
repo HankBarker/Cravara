@@ -1,0 +1,133 @@
+{
+ "parts": {
+  "head_down": {
+   "origin": [
+    23,
+    14
+   ]
+  },
+  "head_down_blink": {
+   "origin": [
+    23,
+    14
+   ]
+  },
+  "torso_down": {
+   "origin": [
+    26,
+    29
+   ]
+  },
+  "boot_m_down": {
+   "pivot": [
+    1.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "boot_o_down": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "head_up": {
+   "origin": [
+    24,
+    14
+   ]
+  },
+  "torso_up": {
+   "origin": [
+    27,
+    28
+   ]
+  },
+  "boot_m_up": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "boot_o_up": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "head_side": {
+   "origin": [
+    23,
+    14
+   ]
+  },
+  "head_side_blink": {
+   "origin": [
+    23,
+    14
+   ]
+  },
+  "torso_side": {
+   "origin": [
+    26,
+    29
+   ]
+  },
+  "boot_m_side": {
+   "pivot": [
+    2.2,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  }
+ },
+ "materials": {
+  "arm_upper": [
+   "905e24",
+   "aa7527",
+   "d69c3e",
+   "d1b27e",
+   "ded0a9"
+  ],
+  "arm_lower": [
+   "2f1208",
+   "48250f",
+   "754920",
+   "905e24",
+   "aa7527"
+  ],
+  "leg_upper": [
+   "754920",
+   "905e24",
+   "aa7527",
+   "d69c3e",
+   "d1b27e"
+  ],
+  "leg_lower": [
+   "754920",
+   "905e24",
+   "aa7527",
+   "d69c3e",
+   "d1b27e"
+  ]
+ },
+ "name": "Treeshadow"
+}

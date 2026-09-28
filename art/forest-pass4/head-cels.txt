@@ -1,0 +1,47 @@
+front layer shadow
+front layer body
+front layer head
+front f1 pos25,22 size13,13
+front f2 pos25,22 size13,13
+front f3 pos25,22 size13,13
+front f4 pos25,22 size13,13
+front f5 pos25,22 size13,13
+front f6 pos26,22 size12,13
+front f7 pos26,22 size12,13
+front f8 pos26,22 size12,13
+front f9 pos26,22 size12,13
+front f10 pos26,22 size12,13
+front f11 pos26,22 size12,13
+front f12 pos26,22 size12,13
+back layer shadow
+back layer body
+back layer head
+back f1 pos25,22 size13,13
+back f2 pos27,22 size12,13
+back f3 pos27,22 size12,13
+back f4 pos27,22 size12,13
+side_left layer shadow
+side_left layer body
+side_left layer head
+side_left f1 pos26,22 size12,13
+side_left f2 pos26,22 size12,13
+side_left f3 pos26,22 size12,13
+side_left f4 pos26,22 size12,13
+side_left f5 pos26,22 size12,13
+side_left f6 pos26,22 size12,13
+side_left f7 pos26,22 size12,13
+side_left f8 pos26,22 size12,13
+side_left f9 pos26,22 size12,13
+side_left f10 pos26,22 size12,13
+side_left f11 pos26,22 size12,13
+side_left f12 pos26,22 size12,13
+side_right layer shadow
+side_right layer body
+side_right layer head
+side_right f1 pos26,22 size12,13
+side_right f2 pos26,22 size12,13
+side_right f3 pos27,23 size12,13
+side_right f4 pos28,23 size12,13
+side_right f5 pos29,24 size12,13
+side_right f6 pos28,23 size12,13
+side_right f7 pos26,22 size12,13

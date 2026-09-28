@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Item" load_steps=2 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "storm_glaive"
+name = "Stormwing Glaive"
+description = "Storm feathers bound down a glimmer blade. It hums before a blow. 58 damage."
+icon_generator = "forest"
+max_stack = 1
+rarity = "legendary"
+tool_type = "sword"
+damage = 58
+weapon_class = "sweep"

@@ -1,0 +1,11 @@
+f9376dab-5317-4fec-81e7-41bfe0708906
+status: completed
+id: f9376dab-5317-4fec-81e7-41bfe0708906
+job_id: f9376dab-5317-4fec-81e7-41bfe0708906
+frames: 1
+transparent: yes
+asset_id: 15503045-b3ac-57b1-b8a3-c55597ba957a
+asset_type: image
+asset_status: saved
+gallery: saved to your PixelLab gallery (pixellab.ai/create)
+download: https://api.pixellab.ai/mcp/images/f9376dab-5317-4fec-81e7-41bfe0708906/download

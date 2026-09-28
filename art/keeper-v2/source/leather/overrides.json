@@ -1,0 +1,43 @@
+{
+ "notes": [
+  "Trail Leather. Shoulder pads: the tan pads at the top of each arm (down/up) and the pad capping the near arm (side).",
+  "The hood's cape corners (down row 15) belong to the pads, so a leather hood worn with another chest has no floating corners.",
+  "Ramps: tan sleeve, brown bracer; hands stay bare skin (default).",
+  "flag pauldron_skinlike_ok: the tan pad leather is skin-coloured, keep it in the pads."
+ ],
+ "labels": {
+  "down": [
+   {
+    "rect": [8, 15, 11, 16],
+    "label": "pauldron_o"
+   },
+   {
+    "rect": [19, 15, 22, 16],
+    "label": "pauldron_m"
+   }
+  ],
+  "up": [
+   {
+    "rect": [8, 15, 11, 16],
+    "label": "pauldron_o"
+   },
+   {
+    "rect": [21, 15, 24, 16],
+    "label": "pauldron_m"
+   }
+  ],
+  "side": [
+   {
+    "rect": [11, 16, 15, 17],
+    "label": "pauldron_m"
+   }
+  ]
+ },
+ "ramp_hint": {
+  "arm_upper": "b07f43",
+  "arm_lower": "7d532a"
+ },
+ "flags": [
+  "pauldron_skinlike_ok"
+ ]
+}

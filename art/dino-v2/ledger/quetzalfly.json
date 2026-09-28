@@ -1,0 +1,158 @@
+{
+ "fly_side": {
+  "job": "512585d6-5ddc-411b-937f-d2155962f1c0",
+  "tool": "animate_image",
+  "seed": 15166792,
+  "status": "done",
+  "cost": 5.0,
+  "prompt": "Flies in place, beating its wings up and down in strong steady strokes, its body rising a little on each downstroke. It stays in place, facing right.",
+  "frames": 9,
+  "submitted": 1790481513.6380255,
+  "finished": 1790481708.544017,
+  "score": {
+   "bright": 0,
+   "area": 1.12,
+   "wide": 1.34,
+   "base": 263
+  }
+ },
+ "fly_down": {
+  "job": "927c97f8-c4e2-427f-9f10-9554bc9464df",
+  "tool": "animate_image",
+  "seed": 12637759,
+  "status": "done",
+  "cost": 5.0,
+  "prompt": "Flies in place, beating its wings up and down in strong steady strokes, its body rising a little on each downstroke. It stays in place, facing the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790481714.329521,
+  "finished": 1790481863.4257479,
+  "score": {
+   "bright": 25,
+   "area": 1.14,
+   "wide": 1.33,
+   "base": 622
+  }
+ },
+ "fly_up": {
+  "job": "17f92e45-22dc-4e91-9f8d-98d10bafa42b",
+  "tool": "animate_image",
+  "seed": 2867068,
+  "status": "done",
+  "cost": 5.0,
+  "prompt": "Flies in place, beating its wings up and down in strong steady strokes, its body rising a little on each downstroke. It stays in place with its back to the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790481802.6936986,
+  "finished": 1790481932.1380775,
+  "score": {
+   "bright": 0,
+   "area": 1.01,
+   "wide": 1.0,
+   "base": 360
+  }
+ },
+ "glide_side": {
+  "job": "68f06f47-0f49-44ee-8cd7-b28b0f5fd155",
+  "tool": "animate_image",
+  "seed": 15534775,
+  "status": "done",
+  "cost": 5.0,
+  "prompt": "Glides in place with its wings held out wide and still, rocking gently from side to side on the wind. It stays in place, facing right.",
+  "frames": 9,
+  "submitted": 1790481803.665206,
+  "finished": 1790483013.5312467,
+  "score": {
+   "bright": 0,
+   "area": 1.01,
+   "wide": 1.05,
+   "base": 263
+  },
+  "method": "wings held spread: fly frames [2, 3, 6] (pass 18: the generated glide folded its wings shut)"
+ },
+ "glide_down": {
+  "job": "3726980b-0c78-4591-b65c-57ca00268c17",
+  "tool": "animate_image",
+  "seed": 9511682,
+  "status": "done",
+  "cost": 5.0,
+  "prompt": "Glides in place with its wings held out wide and still, rocking gently from side to side on the wind. It stays in place, facing the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790481804.8586223,
+  "finished": 1790483013.5550027,
+  "score": {
+   "bright": 0,
+   "area": 1.05,
+   "wide": 1.0,
+   "base": 622
+  },
+  "method": "wings held spread: fly frames [2, 3, 6] (pass 18: the generated glide folded its wings shut)"
+ },
+ "glide_up": {
+  "job": "12e45416-24c7-45f8-afb7-219fe4c5b16b",
+  "tool": "animate_image",
+  "seed": 14314971,
+  "status": "done",
+  "cost": 5.0,
+  "prompt": "Glides in place with its wings held out wide and still, rocking gently from side to side on the wind. It stays in place with its back to the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790481962.278725,
+  "finished": 1790483013.5789397,
+  "score": {
+   "bright": 0,
+   "area": 1.01,
+   "wide": 1.01,
+   "base": 360
+  },
+  "method": "wings held spread: fly frames [0, 1, 2] (pass 18: the generated glide folded its wings shut)"
+ },
+ "swoop_side": {
+  "job": "acc65eda-fb90-45d6-a56a-2c7955df1e3d",
+  "tool": "animate_image_pixminimax",
+  "seed": 1872564,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Sweeps its wings back and dives forward, snapping its long beak shut, then flaps back up. It stays in place, facing right.",
+  "frames": 9,
+  "submitted": 1790481963.392961,
+  "finished": 1790482135.9286902,
+  "score": {
+   "bright": 33,
+   "area": 1.1,
+   "wide": 1.52,
+   "base": 263
+  }
+ },
+ "swoop_down": {
+  "job": "a23a53cf-ef99-4127-93e1-93c9a9f66e1c",
+  "tool": "animate_image_pixminimax",
+  "seed": 14849102,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Sweeps its wings back and dives forward, snapping its long beak shut, then flaps back up. It stays in place, facing the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790482139.0794015,
+  "finished": 1790482340.611493,
+  "score": {
+   "bright": 49,
+   "area": 1.04,
+   "wide": 1.53,
+   "base": 622
+  }
+ },
+ "swoop_up": {
+  "job": "ba8b03d7-8559-40a4-81f9-2086cabcb3f4",
+  "tool": "animate_image_pixminimax",
+  "seed": 2810180,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Sweeps its wings back and dives forward, snapping its long beak shut, then flaps back up. It stays in place with its back to the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790482141.551369,
+  "finished": 1790482235.63022,
+  "score": {
+   "bright": 71,
+   "area": 1.04,
+   "wide": 1.48,
+   "base": 360
+  }
+ }
+}

@@ -5,12 +5,16 @@ extends Node2D
 var ghost_instance: Node2D
 var is_placing := true
 var can_place := true
+# The right-click that spawned us is still "just pressed" this frame, so
+# our first _process would immediately treat it as a cancel. Skip one tick.
+var _spawn_frame_skip: bool = true
 
 const GRID_SIZE := 16
 
 @onready var ghost_container = $GhostObject
 
 func _ready():
+	add_to_group("placement_ghost")
 	if object_to_place:
 		ghost_instance = object_to_place.instantiate()
 		ghost_container.add_child(ghost_instance)
@@ -36,6 +40,12 @@ func _process(_delta):
 		_set_ghost_modulate(Color(0.3, 1.0, 0.3, 0.5))
 	else:
 		_set_ghost_modulate(Color(1.0, 0.3, 0.3, 0.5))
+
+	# Eat one frame so the right-click that spawned us doesn't immediately
+	# get re-interpreted as "cancel".
+	if _spawn_frame_skip:
+		_spawn_frame_skip = false
+		return
 
 	# Don't place if mouse is over UI
 	if get_viewport().gui_get_hovered_control():
@@ -83,7 +93,13 @@ func _disable_collisions(node: Node):
 func place_final_object():
 	var final_object = object_to_place.instantiate()
 	final_object.global_position = global_position
-	get_tree().get_root().add_child(final_object)
+	# Tag it so SaveManager can serialize the placement
+	if item_id != "":
+		final_object.set_meta("item_id", item_id)
+		final_object.add_to_group("placed_objects")
+	# Parent into the current scene rather than root so it persists with
+	# the playground (and gets modulated by DayNightLight).
+	get_tree().current_scene.add_child(final_object)
 
 	# Remove item from inventory
 	if item_id != "":

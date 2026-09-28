@@ -5,8 +5,123 @@ pixel-perfect presentation at 480x270 → 1080p. All APIs are **Godot 4.6**; 3.x
 flagged with `[3.x ONLY]`.
 
 Cravera context: render res 480x270, `canvas_items` stretch, pixel-perfect. UI built **in code**
-(no .tscn-driven layout) inside `InventoryUI.gd` (a `CanvasLayer`), with `SlotUI.gd` slot widgets,
-a custom `DragController` autoload, `TooltipUI.gd`, and a `CraftingManager`-driven recipe list.
+(no .tscn-driven layout). The forest game's interface is `UI/ForestHUD.gd` (a `CanvasLayer`: status
+plate, hotbar, satchel + crafting, camp storage, gear, companions and their orders) with `SlotUI.gd`
+slot widgets, a custom `DragController` autoload and a `CraftingManager`-driven recipe list; the
+session's overlays (journal, pause, lore, map, settings) are built in `Forest/ForestPlaytest.gd`.
+`UI/InventoryUI.gd` + `TooltipUI.gd` are the old playground's UI (only `playground.tscn` uses them).
+
+---
+
+## 0. The Sky-Fang UI kit (what every forest screen uses, 2026-09)
+
+Hank asked for the inventory, health etc. to be "more unique and stylistically closer to what we
+have elsewhere". The answer is one kit, `UI/SkyfangUI.gd` (preload it as `UI`):
+
+- **Type.** `UI.PIXEL` = Tiny5 (OFL, `Forest/fonts/`) for everything read at a glance, `UI.TITLE`
+  = IM Fell English for titles (as on the title screen and the journal). Tiny5 is drawn on an 8px
+  grid, so it is crisp **only at 8 (or 16, 24)**: never give it 6/7/9/10. Its `.import` has
+  `antialiasing=0`, `hinting=0`, `subpixel_positioning=0` (re-import with
+  `godot --headless --path game --import` after touching it). Line height is 9 (+1 theme spacing);
+  it runs ~5px per glyph, wider than the old Alegreya Sans, so check tight buttons.
+- **Theme.** `UI.theme()` (cached) styles Label (paper text, 1px dark shadow), Button/OptionButton/
+  CheckButton (carved-slate plaques: normal, hover with a crystal glint, pressed, `button_on` for
+  held toggles and chosen orders, disabled), LineEdit (recessed field), PopupMenu/TooltipPanel
+  (bronze-banded `tip`), VScrollBar (bronze grip) and HSlider (crystal fill, pip grabber). Set it on
+  a root: `root.theme = UI.theme()` (ForestHUD root, the overlay `_panel`, Fishing/Settings/
+  CharacterCreator roots).
+- **Pieces.** `UI.box(name, content_margins)` gives a StyleBoxTexture nine-patch: `slot`,
+  `slot_hover`, `slot_selected` (crystal ring), `card`/`card_dim` (recipe and companion rows),
+  `field`, `chip` (key cap), `tip`, `shade` (soft dark backing for words over bright ground).
+  `UI.icon("heart"|"meat"|"drop"|"shield"|"crystal")` are 16px Raven icons (same sheet as the
+  items). The art is drawn by `tools/ui/make_ui_art.py` into `UI/art/` (+ `nine.json` margins); edit
+  the script, never the PNGs. Panels stay `UI/CrystalFrame.gd`; meters are `UI/CrystalMeter.gd`
+  (notched crystal in bronze, a tinted "just lost" band that drains, shimmer below 25%).
+- **HUD conventions** (`ForestHUD.gd`): `_label(parent, text, pos, size, tint)` makes titles for
+  size >= 10 (IM Fell) and Tiny5 otherwise; `_backing()` wraps words in `shade`; slots ask
+  `hud.slot_style(slot, hovered)` for their socket (SlotUI's hover calls it). The status plate is
+  icon + meter + number per stat (`bars`, `status_icons`, `status_values`; low meters pulse). The
+  context line is parsed by `ForestHUD.hint_parts()` into key caps: `"E  Ride   Hold E  Commands"`
+  (2 spaces inside a pair, 3 between) or `"AXE · Skywood tree"` (a key in capitals); plain
+  sentences stay whole. `context_label.text` still holds the raw line. Tooltips: `SlotUI`
+  `_make_custom_tooltip` puts the item name (first line) in gold.
+- **Fit.** Everything must fit 480x270: journal, pause, lore list and title guide have
+  `<= 270` checks (integration + ui-pass2 + world-poi suites). Two buttons side by side (an
+  `HBoxContainer`) or a two-column `GridContainer` beat a tall column.
+- **Review.** `res://Tests/UILookCapture.tscn` (rendered) writes every screen to `art/ui-v2/ui-*.png`
+  (HUD, low-health HUD, satchel, tooltip, chest, gear, companions, orders, journal, pause,
+  settings, atelier, fishing, death) and `ui-sheet.png`.
+
+### 0b. Pass 14 (2026-09-25): the field pack, the order wheel, the star sky
+
+Hank asked for no green, a pack that unzips (with a zip sound), small and see-through like
+Terraria, armour down the right, Shift-click to chests, auto-sort, "send to nearby chests", an
+ARK-style Q wheel, other font options, and Skyrim-style constellation skills.
+
+- **Colours.** `SkyfangUI` constants went leather-and-brass:
+  - VOID `140c07`, INK `2b1e15`, DARK `22170f`, EDGE `7a5a3c`, GOLD `e8c27a`, PAPER `f2e6c9`,
+    DIM `a8977e`.
+  - **`MINT` is now pale blue** (`b9dff0`) and CRYSTAL is `9fd4f0`.
+  - `tools/ui/make_ui_art.py` draws leather, brass rivets and stitching; `CrystalFrame.gd` is a
+    translucent leather pack panel with a title flap; `ShortcutCharm.gd` is a leather tag with a
+    brass-set blue crystal.
+  - Scan for green before shipping: any `Color("...")` whose G beats R and B, in `game/UI` and
+    `ForestPlaytest.gd`.
+- **Headings.** `UI.title_font()` / `UI.title_size(n)` follow `GameSettings.heading_font`:
+  - `"field"`: `Forest/fonts/FieldHand.ttf`, a PixelLab `create_font` at 16px (8px was
+    illegible).
+  - `"old"`: IM Fell.
+  - `"pixel"`: Tiny5.
+  - `style_title` uses them; draw code calls `title_font()` directly.
+- **The pack** (`ForestHUD._build_inventory`):
+  - `PACK_AT (6,54)`, 184x140: an 8x5 grid of 20px pockets on a 21px step. `InventoryManager.
+    MAX_INVENTORY_SIZE = 40`; the top row is the pouch in hand.
+  - On its flap: Sort, Stack (`quick_stack_nearby`) and the X, `pack_close_button`.
+  - `recipes_panel` at (6,197), 320x70: a search field, a category `OptionButton`, a "Ready" toggle,
+    and a 14-column `GridContainer` of recipe icons (a click crafts).
+  - The gear column (`_build_equipment`): `GEAR_AT (406,54)`, 70x142. It has 9 `armor_buttons`
+    (head, chest, legs, light, trinket_0..4), a `_candidates` popup (`equipment_list`),
+    Appearance, and DEF.
+  - The chest panel at (194,54) has Take all / Put all / Stack / Sort (`_chest_move_all`,
+    `_chest_stack`, `_chest_sort`). Put all and Stack keep the pouch in hand.
+  - `open_panels()` unzips it (the `_unfold_satchel` tween plus `pack_unzip`); `close_panels()`
+    plays `pack_zip`. The sounds come from `tools/audio/make_zip_audio.py` (synthesised,
+    `AudioManager.ZIP_CUES`).
+  - `_set_pack_mode(open)` hides the hotbar frame, the pouch box and the Satchel charm (the
+    crafting scroll covers it) and fades the tasks. A rendered test that toggles the pack by the
+    charm must close it with the X.
+  - `_set_charms_aside(aside)` hides all charms under the see-through full panels (skills,
+    companions), or they show through.
+  - Right-click (`SlotUI._try_quick_equip`) wears armour in its place, a trinket in the first free
+    trinket place (never the same one twice) and a light. Shift-click is `hud.transfer_slot`.
+  - K toggles the pack like Tab, since the gear is part of it now.
+  - **Every container's `add_item` is all-or-nothing** (`InventoryManager`, `Chest`, `BeastBag`,
+    each with `capacity_for(item)`). The chest and saddlebag used to keep what fitted and still
+    return false, and the first Put all duplicated items: the pack kept its stack while the chest
+    gained the part that fitted. Bulk moves take `min(quantity, target.capacity_for(item))`, add
+    exactly that, and take exactly that from the source.
+- **The order wheel** (`show_companion_commands(creature, from_hold)`):
+  - Its middle is `WHEEL_AT (240,120)`. The rim orders sit on an oval (`WHEEL_RX 84`,
+    `WHEEL_RY 58`), placed by angle (`_place_on_wheel`) with no two overlapping, and the three
+    temperaments are stacked in the middle (58 wide).
+  - The creature's name sits between the top orders and the stack, the hint under it, and the rarer
+    things in rows beneath.
+  - `_tick_wheel` picks by the angle round the oval (or the nearest temperament), and only after the
+    pointer has moved 4px since the wheel came up. Releasing Q presses the pick; releasing without
+    one leaves the wheel up as a click menu. The tests hold Q and release it without moving.
+- **The star sky** (`SkillsPanel.gd`):
+  - A 452x250 panel. The seven skills are on the left (icon, level, bar, gold "+N" points or
+    lit/18); on the right is a see-through night `NightSky` (twinkling dust, soft clouds).
+  - The chosen skill's figure is drawn in faint lines, its tree's links in gold between lit stars
+    and pale toward ready ones, and the stars themselves (gold lit, pulsing pale blue ready, dim).
+  - Each star has a clear 12px Button over it (`star_buttons[id]`: the tooltip, the tests'
+    click). `_star_clicked` picks a star; a second click on a ready one lights it (`Light it`
+    does too).
+  - The strip beneath shows the star under the pointer (or the skill's boost so far).
+  - **Don't name an inner class `Sky`**: it's a native class (Parse Error "hides a native class").
+- **Review.** `res://Tests/Pass14Capture.tscn -- --no-save-playtest [--only skills,pack,wheel,crystal]`
+  writes `art/pass14/look-*.png`. `Pass14Suite.tscn` (headless) covers the pack, chest, wheel and
+  sky logic.
 
 ---
 
@@ -256,7 +371,8 @@ exact integer multiples**; non-integer window sizes (e.g. 1366x768) blur text. M
 - Use a **bitmap/pixel font** (e.g. a `.ttf` pixel font imported with **hinting off** and
   **antialiasing off**, or a true `BitmapFont`/`FontFile` with `subpixel_positioning = Disabled`).
   Set `multichannel_signed_distance_field = false`. This keeps glyphs on the pixel grid.
-- Keep font sizes to values that map to clean multiples (Cravera uses 5/6/7/8 — fine).
+- Keep font sizes to values that map to clean multiples. Cravera's pixel font (Tiny5) is used at
+  8 only (see section 0); vector fonts (IM Fell English titles) take any size.
 
 **NinePatchRect for window/button frames.** Today Cravera draws panels with `StyleBoxFlat` (solid
 fill + 1px border + rounded corners). For pixel-art window chrome, a `NinePatchRect` with a tiny
@@ -365,3 +481,76 @@ Secondary: factor health/hunger/stamina into one reusable `StatBar` (kills the
 `FOCUS_ALL` + `grab_focus()` on open for controller support; add colorblind-safe rarity shapes;
 add empty-armor-slot ghost icons. Migrate hard-coded `480`/`270` positioning to anchors +
 `MarginContainer` so a future res change doesn't break layout.
+
+## Pass 15: the map, the waking card, banners, dropping
+
+- **Map (M)**: `_make_overlay(title, kind, rect)` takes a panel rect; the map uses nearly the whole
+  screen, the picture fitted to the world's own aspect (`ForestMap.picture_rect()`), the key beside
+  it as colour chips (a cave's chip drawn like its mark). Markers off the picture (a cave's beasts in
+  the strip) are skipped. The picture is cached 30 s per world.
+- **Overlay headings** use `SkyfangUI.title_size()`: a pixel heading face drawn off its native size
+  (Field Hand at 16) renders spaces as underscores.
+- **Waking card**: `MainMenu._start` draws "The wilds are waking" and waits a frame + post-draw
+  before `change_scene_to_file` (tests must wait for `current_scene` to change).
+- **Banners**: `ForestHUD.show_banner(title, text, icon, key)`; a keyed banner replaces a waiting
+  one with the same key (several level-ups at once make one banner).
+- **Dropping**: Q over a pack pocket drops one (Shift/Ctrl: the stack); a drag let go over the world
+  (not over a panel, nor within `DragController.DROP_MARGIN` 10 px of one) drops the stack
+  (`ForestHUD.drop_to_world`).
+- **Caches** open as containers (`world.cache_bags`, a BeastBag per cache, saved; the panel closes
+  when the keeper walks away).
+
+## Pass 16: the map starts dark (Terraria's way), its marks can be hidden, it zooms
+
+- **`world/MapMemory.gd`** (the world's `map_memory`, saved as `world.map`) holds `seen`: a byte
+  per 4x4-cell square, 0 or 255. `reveal(cell)` marks the squares within 18 cells when the keeper
+  changes square (the world's `_process`).
+  - The fog texture is `seen` itself, FORMAT_R8 via `Image.set_data` (no per-pixel loop). It's
+    drawn by `UI/map_fog.gdshader` (alpha = 1 - seen) on a child Control with LINEAR filtering, so
+    the edges are soft.
+  - A save with no `map` (pre-pass-16) restores as all seen. Sizes are checked as ints (JSON
+    floats).
+  - A streamed world's picture is kept here too: 4 cells a pixel, painted per chunk from
+    `ChunkGen._map_block`. A load queues the seen chunks' blocks on the chunk worker
+    (`MapMemory.backlog` -> `Chunks.map_backlog`). Small worlds paint theirs from the world dicts
+    when the map opens (cached 30 s).
+- **`ForestMap.gd`**:
+  - Zoom is a static px/cell, fit to 4. The first look shows ~260 cells round the keeper in a big
+    world, the whole of a small one.
+  - The wheel and +/- zoom about the pointer or centre; drag or WASD/arrows pan; C recentres.
+    It handles these in `_gui_input` / `_unhandled_input` before the session's keys.
+  - Layers: the picture on the map, the fog child, the marks child.
+  - **KINDS** (bosses, caves, ruins, villages, home, tamed, beasts, nests, wild, folk) can be
+    hidden. `build_key(container)` makes the clickable key (numbers 1-0).
+    `hidden_kinds` (not `hidden`: that's Control's signal) is kept in
+    `_milestones.map_hidden`.
+  - A mark shows only on a seen square, except bosses (and a sleeping Sleeper's lair), world
+    events and what a parasaur heard.
+  - `picture_rect()` (the whole world at the fit zoom) and `_picture_of()` stay for tests and tools.
+
+## Pass 17: map icons and pins, words in their bubbles, task lines
+
+- **Map icons** (`ForestMap.ICONS`): 9x9 pixel patterns (a letter a colour, `PALETTE`) built into
+  one strip texture on first use (`_icons()`), drawn with `draw_texture_rect_region`
+  (`_icon(at, name, tint)`); `icon_texture(name)` is an AtlasTexture for the key. Below
+  `DOTS_BELOW` zoom the small things (nests, wild beasts, old places) are 3x3 dots. KINDS has a
+  4th field, the icon. The key is a 2-column GridContainer.
+- **Pins**: the session's `_milestones.map_pins` (`[{x, y, name, icon, colour}]`, saved with the
+  journey) handed to the map as `pins`. Right-click adds one and focuses the key's LineEdit; a
+  left click without a drag (`_press_at`) picks one (`pin_at`); the key's editor names it, steps
+  its icon and colour, or removes it. A focused LineEdit eats keys, so typing a name never moves
+  the map or closes it.
+- **Speech bubbles**: `Tribesman.bark` measures the line unwrapped and, past `BARK_WIDTH` (118),
+  wraps it at that width, lifting the bubble by its height. A world-space Label must be sized
+  before it's positioned.
+- **Folk nameplates** are sized to the name and centred (a fixed 64 px plate grew off to the
+  right).
+- **The talk panel**: header labels clip with an ellipsis (a long name or title can't widen the
+  panel). The words use `VC_CHARS_AFTER_SHAPING`, so the typewriter never reflows a word onto the
+  next line.
+- **Banners** grow with their body (`words.reset_size()` then the plate's height).
+- **Overlays sized to content**: `ForestPlaytest._fit_overlay()` shrinks the panel to its
+  content, centres it on 480x270 and moves its CrystalFrame. It runs twice, a frame apart,
+  because a wrapped label only knows its height after one layout. `show_lore` calls it deferred.
+- **Tasks page**: `show_tasks(pick)` lists every open task (one per line: "!" offered, "-" under
+  way, "?" ready), then the picked one's goals and reward.

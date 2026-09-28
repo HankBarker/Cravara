@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/art/items/saddle_sky.png" id="2"]
+[resource]
+script = ExtResource("1")
+id = "ptera_saddle"
+name = "Skyfisher Saddle"
+description = "A flying saddle for a pteranodon. Space to take off; over the jungle, E to rise into the treetops."
+icon = ExtResource("2")
+max_stack = 1
+rarity = "uncommon"
+equipment_slot = "saddle"

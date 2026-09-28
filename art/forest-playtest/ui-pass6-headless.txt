@@ -1,0 +1,34 @@
+Godot Engine v4.6.1.stable.official.14d19694e - https://godotengine.org
+
+📦 ItemDB loaded 56 items: basic_axe, basic_pickaxe, berry, berry_compote, berry_seed, bone_arrow, bone_dagger, bucket, campfire, chest, cooked_fish, cooked_meat, crystal_axe, crystal_flask, crystal_pendant, crystal_pickaxe, crystal_shard, dodo_egg, fishing_rod, forest_omelet, garden_hoe, hide_bed, hunter_charm, lantern, leather_chestplate, leather_helmet, leather_leggings, log, moonscale, mushroom, mushroom_potion, mushroom_spore, net, plank, plant_fiber, prism_crystal, raptor_fang, reed_bow, reed_perch, river_totem, shardfin, shard_sword, stego_saddle, stone, tent, thatch_roof, torch, trex_meat, trex_scale, trike_saddle, water_bucket, water_flask, wood_door, wood_floor, wood_wall, workbench
+PASS Sort button preserves exact current hotbar and selection
+PASS Sort merges stacks without loss
+PASS Every sorted stack respects its item capacity
+PASS Sorting is stable when already sorted
+PASS Three-slot final hotbar pouch remains protected
+PASS Quick-stack fills capacity and retains overflow
+PASS Quick-stack cannot cross walls or distance limit
+PASS Quick-stack preserves hotbar and unmatched item types
+PASS Quick-stack conserves exact total across all sources
+PASS Matching chest may receive overflow in empty slot
+PASS Second quick-stack does not duplicate items
+PASS Tool tooltip exposes actual damage and mining stats
+PASS Food tooltip includes fullness duration
+PASS Gear appearance button opens creator
+PASS Skin choice updates live preview
+PASS Creator preview turns with button
+PASS Clothing-only preview can hide equipment without unequipping
+PASS Cancel appearance leaves player and inventory unchanged
+PASS Saving look updates player while retaining helmet
+PASS Appearance save consumes no inventory
+PASS Customized keeper saves to isolated journey
+PASS Root restore preserves customized appearance
+PASS Command button records worker home
+PASS Command button assigns nearby work chest
+PASS Work command dispatches through actual button
+PASS Nearby pet button plays original keeper action
+PASS New expedition opens creator before entering forest
+PASS Creator buttons fit inside native-resolution carved frame
+PASS Beginning expedition passes chosen appearance through root metadata
+PASS New forest initializes original player with creator appearance
+FOREST_UI_PASS6: 30 checks, 0 failures

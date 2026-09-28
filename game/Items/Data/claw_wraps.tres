@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="Item" load_steps=2 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "claw_wraps"
+name = "Climber's Claws"
+description = "Thylacoleo claws strapped to the palms, as the jungle folk climb."
+icon_generator = "forest"
+max_stack = 1
+rarity = "rare"
+equipment_slot = "trinket"
+effects = {
+"crit": 0.04,
+"speed": 0.04
+}

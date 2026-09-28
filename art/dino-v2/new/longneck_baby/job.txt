@@ -1,0 +1,11 @@
+2188d500-cca3-455c-8090-0e627279c9a4
+status: completed
+id: 2188d500-cca3-455c-8090-0e627279c9a4
+job_id: 2188d500-cca3-455c-8090-0e627279c9a4
+frames: 1
+transparent: yes
+asset_id: 8a38b529-6e1d-5a4d-a396-44fc330b481d
+asset_type: image
+asset_status: saved
+gallery: saved to your PixelLab gallery (pixellab.ai/create)
+download: https://api.pixellab.ai/mcp/images/2188d500-cca3-455c-8090-0e627279c9a4/download

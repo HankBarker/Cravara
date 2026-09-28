@@ -1,0 +1,11 @@
+6a661365-db9c-4487-b313-2d12936e83b2
+status: completed
+id: 6a661365-db9c-4487-b313-2d12936e83b2
+job_id: 6a661365-db9c-4487-b313-2d12936e83b2
+frames: 1
+transparent: yes
+asset_id: d366a159-ef7d-5d1f-a8d4-2d8dce229587
+asset_type: image
+asset_status: saved
+gallery: saved to your PixelLab gallery (pixellab.ai/create)
+download: https://api.pixellab.ai/mcp/images/6a661365-db9c-4487-b313-2d12936e83b2/download

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/art/items/horn_spear.png" id="2"]
+[resource]
+script = ExtResource("1")
+id = "horn_spear"
+name = "Horn Spear"
+description = "Tipped with a triceratops horn. It punches through hide."
+icon = ExtResource("2")
+max_stack = 1
+rarity = "rare"
+tool_type = "sword"
+damage = 16
+weapon_class = "thrust"

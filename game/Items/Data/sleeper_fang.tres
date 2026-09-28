@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/art/items/sleeper_fang.png" id="2"]
+[resource]
+script = ExtResource("1")
+id = "sleeper_fang"
+name = "The Sleeper's Fang"
+description = "A tyrant's fang with Sky-Fang crystal grown through its root, from the beast that slept in the deep. Whoever wears it hits like one, and every kill feeds them."
+icon = ExtResource("2")
+max_stack = 1
+rarity = "legendary"
+equipment_slot = "trinket"
+effects = {
+"damage": 5,
+"crit": 0.08,
+"feast": 10
+}

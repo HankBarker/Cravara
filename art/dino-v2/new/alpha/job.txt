@@ -1,0 +1,11 @@
+0b395ff3-c205-4850-8cc4-b2ec8c205254
+status: completed
+id: 0b395ff3-c205-4850-8cc4-b2ec8c205254
+job_id: 0b395ff3-c205-4850-8cc4-b2ec8c205254
+frames: 1
+transparent: yes
+asset_id: a3c826e0-46b8-5304-bb51-755f9c7e2a68
+asset_type: image
+asset_status: saved
+gallery: saved to your PixelLab gallery (pixellab.ai/create)
+download: https://api.pixellab.ai/mcp/images/0b395ff3-c205-4850-8cc4-b2ec8c205254/download

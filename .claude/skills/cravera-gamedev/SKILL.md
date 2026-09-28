@@ -1,6 +1,6 @@
 ---
 name: cravera-gamedev
-description: Expert playbook for building Cravera, a Godot 4.6 top-down pixel-art dinosaur survival/crafting game. Use whenever working on Cravera's gameplay code, creatures/AI, world & biome generation, pixel-art/visual pipeline, inventory/crafting/HUD UI, or survival/progression design — and for the godot_mcp build/test workflow. Covers architecture, content scaffolding, and game-feel.
+description: Expert playbook for building Cravera, a Godot 4.6 top-down pixel-art dinosaur survival/crafting game. Use whenever working on Cravera's gameplay code, creatures/AI, world & biome generation, pixel-art/visual pipeline (including generating new sprites, characters, creature art and tilesets with PixelLab AI), inventory/crafting/HUD UI, or survival/progression design — and for the godot_mcp build/test workflow. Covers architecture, content scaffolding, and game-feel.
 ---
 
 # Cravera Game Development
@@ -18,6 +18,9 @@ substantive work in that area. **Keep it updated** — see "Continuous improveme
   (cozy readable gather→craft loop), **ARK in 2D** (creature taming, breeding, base-building, tech tiers).
 - **Art pipeline:** **HYBRID** — AI-generated + curated asset packs for bulk world-filling;
   hand-authored pixel art for hero assets (player, key dinos, UI). One master palette unifies all sources.
+  AI sprites come from **PixelLab** (`mcp__pixellab__*`) and land in the game via
+  `tools/pixellab_import.py` — read `references/pixellab-sprites.md` **before generating anything**,
+  the account has a hard 40-generation trial budget.
 
 ## Architecture you must stay compatible with
 - **Autoload singletons:** `SignalBus` (global decoupled signals — emit/listen, don't hard-ref across
@@ -31,8 +34,8 @@ substantive work in that area. **Keep it updated** — see "Continuous improveme
 - **Inventory:** `Array[Dictionary]` of `{item, quantity}`, 35 slots, hotbar = slots 0–7.
 - **Crafting:** recipe dicts `{name,item_id,ingredients{id:qty},category,description}` in
   `CraftingManager.personal_recipes`; categories All/Tools/Building/Materials/Armor.
-- **Player:** node-based FSM (Idle/walk/run/Attack/Hurt/Dead; each has `enter_state/update_state/exit_state`; `player.switch_state()`).
-- **Creatures:** `CharacterBody2D` + `AnimatedSprite2D` + `Hurtbox`/`AttackArea`/`AggroRange` (Area2D);
+- **Player:** node-based FSM (Idle/walk/run/Attack/Hurt/Dead/Roll; each has `enter_state/update_state/exit_state`; `player.switch_state()`). Rendered by the **Keeper v2 skeletal pixel rig** (`game/Forest/keeper/`): armour is part of every cel - never paint over finished frames. See `references/keeper-rig.md`.
+- **Creatures (forest):** `ForestCreature.gd` with DinoArt clips and DinoMoves attacks (see `references/dinosaurs.md`). Legacy creatures: `CharacterBody2D` + `AnimatedSprite2D` + `Hurtbox`/`AttackArea`/`AggroRange` (Area2D);
   FSM in `_physics_process`; loot via `DroppedItem.tscn`; emit `SignalBus.creature_defeated`. Stats in `Data/creatures.json`.
 - **World:** spawners (`ResourceSpawner` etc.) scatter PackedScenes; biomes described by `Data/Biomes/*.json`.
 - **Physics layers:** 1=Player, 5=Walls, 6=Ground, 7=Interaction.
@@ -44,6 +47,8 @@ substantive work in that area. **Keep it updated** — see "Continuous improveme
    `generate_biome_config` / `generate_game_system` > `create_scene` > hand-edit). They keep
    conventions/UIDs/layers correct.
 3. **Edit the generated `.gd`/data** to add real behavior (templates are starting points).
+3b. **Need art?** Generate it with PixelLab and import it through the quantize gate —
+    `references/pixellab-sprites.md`. Quote the generation cost to the user first.
 4. **Validate** with `scan_project_for_errors()` — fix every missing reference.
 5. **Run** (`run_godot_scene` / editor) and read `collect_runtime_logs()`.
 6. **Tune** data via `update_game_data` (no recompile for data-only changes).
@@ -57,7 +62,15 @@ substantive work in that area. **Keep it updated** — see "Continuous improveme
 | Sprites, palettes, tilesets, the **AI+pack hybrid art workflow**, import settings, shaders, lighting, game feel | `references/visual-pixel-art.md` |
 | Inventory/hotbar/chest UI, drag-drop, crafting menu, HUD bars, Theme/fonts at 480×270 | `references/ui-ux.md` |
 | Core loop, tech-tree pacing, survival stats, damage formula, loot, base-building, progression roadmap | `references/game-design-progression.md` |
+| **Generating new sprites/creature art/tilesets with PixelLab AI** | `references/pixellab-sprites.md` |
+| **The player character (Keeper v2 rig): armour sets, animations, held items, rider** | `references/keeper-rig.md` |
+| **Dinosaur animation, attacks, behaviour, mounts (v2): PixelLab clip pipeline, DinoArt/DinoMoves** | `references/dinosaurs.md` |
+| **Townsfolk (guide, trader, warden), Terraria-style housing, stone building, roofs, talking, the opening story** | `references/folk-and-housing.md` |
+| Frame time, creature update cost, the sun-shadow pass (`Tests/PerfProbe.tscn`) | `references/dinosaurs.md` → Performance |
 | The `godot_mcp` toolchain + build/test/debug loop | `references/mcp-workflow.md` |
+| **Hank's long-term vision: Sky-Fang lore, the 10-biome roadmap and today's map, dinos to add, system pillars** (read before planning content) | `references/vision.md` |
+| **Blender as the dinosaur animation factory** (model, rig, animate, render the Cravera camera, pixelize; the Scarhorn test) | `references/blender-pipeline.md` |
+| **The tribes (Sunward, Ashen): villages, bands, tribal beasts, barter** | `references/folk-and-housing.md` → Tribes |
 
 ## Cross-cutting principles (from the research)
 - **One palette, one PPU, integer scale.** Never mix sprite resolutions or non-integer scale/rotate
@@ -72,16 +85,63 @@ substantive work in that area. **Keep it updated** — see "Continuous improveme
   `damage * 100/(100+defense)` before adding armor tiers.
 - **Always `scan_project_for_errors()` after scaffolding**, before declaring something done.
 
-## Highest-priority opportunities (synthesized; confirm scope with the user before large refactors)
-1. **Combat/stat foundation:** fix the armor formula; re-cast the T-Rex (HP 8 → ~30, make it a boss) and
-   add a Raptor trash mob for sane early TTK. *(game-design-progression.md)*
-2. **Item system debt:** migrate `create_item_by_id()` → `.tres` ItemData + `ItemDB` autoload. *(architecture.md)*
-3. **Creature AI realism:** replace random-cardinal wander with steering; add `NavigationAgent2D` so dinos
-   don't walk into walls; add a `TamingComponent` + extend `creatures.json`. *(creature-ai.md)*
-4. **World determinism:** add `world_seed`, swap rejection-sampling for Poisson-disk, wire biome JSON into
-   real TileMapLayer generation. *(world-generation.md)*
-5. **Visual cohesion:** lock 3/4 view, one Lospec master palette + quantize gate, add `scale_mode="integer"`. *(visual-pixel-art.md)*
-6. **UI polish:** fix drag merge/drop semantics, centralize a Theme + pixel font, add "craftable-only"+station-gated crafting. *(ui-ux.md)*
+## Status of priority opportunities
+DONE (implemented & verified booting in Godot 4.6.1 headless, 2026-06-28):
+1. ✅ **Combat/stat foundation:** `CombatMath.mitigate(dmg, def)` = `dmg*100/(100+def)` (res://Scripts/CombatMath.gd),
+   applied in `player.gd`. T-Rex recast to 30 HP Tier-4 boss; **Raptor** trash mob added (res://Sprites/raptor.gd +
+   Raptor.tscn) — fast, fragile, neutral-by-day. World now has 2 T-Rex + 4 Raptors.
+2. ✅ **Item system:** migrated to `.tres` data in `res://Items/Data/*.tres` + **`ItemDB`** autoload registry
+   (res://Autoloads/ItemDB.gd). `CraftingManager.create_item_by_id` is now a 1-line `ItemDB.make()` delegation;
+   the `match` factory is gone. New items = 1 `.tres` (+recipe). `Item.icon_generator` resolves procedural icons.
+   New content proving it: `raptor_fang`, `bone_dagger` (+recipe).
+3. ✅ **Creature AI realism:** random-cardinal wander → smooth `lerp_angle` steering (trex.gd + raptor.gd);
+   `NavigationAgent2D` chase with graceful fallback (no navmesh yet → straight-line); **`TamingComponent`**
+   (res://Creatures/TamingComponent.gd) wired on the Raptor (feed `trex_meat` to tame → follower). `creatures.json`
+   extended with taming/breeding schema.
+4. ✅ **Visual cohesion:** `scale_mode="integer"` set; master palette at `art/palettes/cravera_master.{hex,gpl}` +
+   quantize gate `tools/quantize_to_palette.py`. *(visual-pixel-art.md → "Cravera canonical pipeline")*
+5. ✅ **Forest world v2 (2026-09):** the forest is seeded (`world_seed`), drawn by shaders (organic ground,
+   Core Keeper-style water, swaying flora) and dotted with ruins, idols, caches, relic mounds and wild
+   tubers that never disturb old saves. *(world-generation.md → section 8)*
+6. ✅ **One UI kit (2026-09):** `UI/SkyfangUI.gd`: a shared Theme with crisp Tiny5 pixel text, IM Fell
+   titles, carved-slate/bronze/crystal plaques and sockets, the heart/meat status plate, key-cap hints.
+   Craftable-only ("Ready only") and station-gated crafting are in. *(ui-ux.md → section 0)*
+7. ✅ **Folk, housing, stone building (2026-09):** Orrin the guide starts beside the keeper. Tamsin the
+   trader (after the first cache) and Kaya the beast-warden (after two tames) are found in the wilds: in a
+   hut, stranded, or in a trap. They move into Terraria-style houses: walls, a door, a roof over every
+   tile, a light and a bed. You can talk with each of them (help, recipes, lore, trade, advice, tending,
+   homes). Stone walls, floors, doors and slate roofs are built at the workbench.
+   *(folk-and-housing.md)*
+8. ✅ **Pass 10 (2026-09): the opening, the first boss, new beasts, the Bonelands.** An eight-plate opening
+   story, then the keeper walks out of the first tent to Orrin. Talking no longer pauses (a compact
+   side panel). Whole roofs drawn on the wall tops; clicks hit the frontmost thing (bed before floor, never
+   the roof overhead from inside). Skarn, the Shardback Alpha, in a den with a roar, boss music and a
+   top bar. The allosaurus (armour drops) and the lystrosaurus; one mini-boss rex; patient taming (feed,
+   back off, come back); nets knock predators down; hunters take prey (raptors in packs). Wildlife placed
+   per world. Ambient wind, insects and chirps; roars, stomps (the rex shakes the screen), a soft pickup
+   pop. The world doubled east into the Bonelands (sand, a dry wash, waterholes, sandstone), with old
+   saves untouched. 54 creatures run at about 14 ms a frame. *(dinosaurs.md, world-generation.md,
+   folk-and-housing.md)*
+
+9. ✅ **Pass 11 (2026-09): nests and babies, tasks, the wilds, two new great beasts.** Front walks
+   redrawn for every dino that slid. Wild lives (hunger, thirst, grazing, drinking, resting, moving
+   on as a herd, guarding young and nests). Nests with guardians, eggs, the incubator, baby versions
+   of every kind (quicker to tame, grow up), breeding at home, and companion gifts. Tasks from Orrin,
+   Tamsin and Kaya. The world grew to 336 x 276 cells: Glassmere (a lake with islands, deep water,
+   the boat, parasaurs, pearls, a piranha bay and Old Maw the Megalodon), the Sunscar Dunes (the
+   Ossuary, where Ossuar the Buried King is called with the Grave Horn) and the Pale Hills (the
+   dangerous north). Roaming mini-bosses wear their names. Chunked ground and flora, prop culling
+   and creature LOD keep ~180 beasts at ~11 ms. *(dinosaurs.md, world-generation.md,
+   folk-and-housing.md)*
+
+STILL OPEN:
+- **World scale:** five hand-authored regions now (forest, Bonelands, Glassmere, Pale Hills, Dunes).
+  Hank's plan: generate further out procedurally (Core Keeper style), more dangerous the further
+  out. Biome JSON is still not wired in, and there is no NavigationRegion2D bake yet.
+  *(world-generation.md)*
+- **UI polish:** drag merge/drop semantics. *(ui-ux.md)*
+- **Boss music:** Skarn's fight uses Hank's "Travel Music (Cave)" as a stand-in; a battle track of his own
+  would replace `Forest/audio/boss-echoes.mp3`.
 
 ## Continuous improvement (this skill is a living document)
 This skill is meant to get better every time you use it. When you learn something durable about Cravera

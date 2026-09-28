@@ -1,0 +1,15 @@
+PERF boot 2446ms
+PERF camp               frame= 14.83ms median= 10.60 p99= 59.35 worst= 66.96 (physics+input= 2.57 process= 6.68 render= 5.58) creatures=106 props=3687 chunks=25
+PERF camp later         frame=  9.54ms median=  9.99 p99= 12.44 worst= 15.87 (physics+input= 1.73 process= 1.32 render= 6.48) creatures=106 props=3687 chunks=25
+PERF sprint (15 s)      frame= 10.57ms median=  9.90 p99= 29.14 worst= 56.36 (physics+input= 2.04 process= 2.46 render= 6.07) creatures=108 props=4584 chunks=30
+PERF glassmere          frame=  9.54ms median=  9.96 p99= 12.75 worst= 12.87 (physics+input= 0.72 process= 1.23 render= 7.59) creatures=15 props=2002 chunks=25
+PERF dunes              frame=  9.55ms median=  9.87 p99= 12.74 worst= 12.80 (physics+input= 0.80 process= 1.26 render= 7.49) creatures=17 props=2181 chunks=25
+PERF pale_hills         frame=  9.67ms median= 10.02 p99= 17.80 worst= 20.27 (physics+input= 0.79 process= 1.57 render= 7.31) creatures=21 props=3693 chunks=25
+PERF bonelands          frame=  9.54ms median= 10.03 p99= 12.37 worst= 13.16 (physics+input= 0.47 process= 1.40 render= 7.68) creatures=4 props=4438 chunks=25
+PERF stillwater         frame=  9.59ms median=  9.84 p99= 13.83 worst= 22.55 (physics+input= 0.92 process= 1.45 render= 7.22) creatures=22 props=2047 chunks=25
+PERF sunward oasis      frame=  9.65ms median=  9.94 p99= 22.48 worst= 24.71 (physics+input= 1.11 process= 1.33 render= 7.20) creatures=20 props=2278 chunks=25
+PERF ashen camp         frame=  9.65ms median=  9.92 p99= 16.41 worst= 17.29 (physics+input= 1.31 process= 1.62 render= 6.72) creatures=21 props=3488 chunks=25
+PERF jungle             frame=  9.69ms median=  9.88 p99= 13.32 worst= 32.38 (physics+input= 0.79 process= 1.79 render= 7.11) creatures=28 props=2969 chunks=25
+PERF canopy             frame=  9.54ms median=  9.90 p99= 12.61 worst= 12.65 (physics+input= 0.53 process= 1.28 render= 7.73) creatures=10 props=423 chunks=25
+PERF volcano            frame=  9.54ms median=  9.94 p99= 12.38 worst= 16.59 (physics+input= 0.44 process= 1.26 render= 7.84) creatures=14 props=1310 chunks=25
+PERF crater (Cinderhulk) frame= 10.27ms median= 10.14 p99= 25.80 worst= 31.92 (physics+input= 0.79 process= 2.34 render= 7.14) creatures=16 props=4019 chunks=30

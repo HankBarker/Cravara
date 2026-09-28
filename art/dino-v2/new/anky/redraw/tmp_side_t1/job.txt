@@ -1,0 +1,11 @@
+235e855c-4fc1-4ce0-91b7-ec9cbf8786f8
+status: completed
+id: 235e855c-4fc1-4ce0-91b7-ec9cbf8786f8
+job_id: 235e855c-4fc1-4ce0-91b7-ec9cbf8786f8
+frames: 1
+transparent: yes
+asset_id: 32093191-12ac-5674-92b4-966cc358d55b
+asset_type: image
+asset_status: saved
+gallery: saved to your PixelLab gallery (pixellab.ai/create)
+download: https://api.pixellab.ai/mcp/images/235e855c-4fc1-4ce0-91b7-ec9cbf8786f8/download

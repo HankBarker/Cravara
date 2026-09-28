@@ -1,0 +1,44 @@
+[gd_scene load_steps=4 format=3 uid="uid://b6shadow0wisp"]
+
+[ext_resource type="Script" path="res://Sprites/ShadowWisp.gd" id="1_wisp"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_wisp_body"]
+radius = 6.0
+height = 12.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wisp_attack"]
+size = Vector2(20, 16)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_wisp_hurt"]
+radius = 10.0
+
+[node name="ShadowWisp" type="CharacterBody2D"]
+collision_layer = 2
+collision_mask = 17
+script = ExtResource("1_wisp")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.9, 0.9)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CapsuleShape2D_wisp_body")
+
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 8
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
+shape = SubResource("CircleShape2D_wisp_hurt")
+
+[node name="AttackArea" type="Area2D" parent="."]
+collision_layer = 2
+monitoring = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea"]
+shape = SubResource("RectangleShape2D_wisp_attack")
+
+[node name="EyeGlow" type="PointLight2D" parent="."]
+position = Vector2(0, -3)
+color = Color(0.95, 0.4, 0.95, 1)
+energy = 0.6
+texture_scale = 0.5

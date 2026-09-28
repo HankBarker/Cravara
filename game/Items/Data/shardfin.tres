@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/art/fishing/shardfin.png" id="2"]
+[resource]
+script = ExtResource("1")
+id = "shardfin"
+name = "Jade Shardfin"
+description = "A restless fish with jade crystal fins. Caught only in silver ripple holes."
+icon = ExtResource("2")
+max_stack = 20
+consumable = true
+hunger_value = 18
+food_satiation_seconds = 35.0

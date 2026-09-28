@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/art/items/sail_veil.png" id="2"]
+[resource]
+script = ExtResource("1")
+id = "sail_veil"
+name = "Sail-skin Veil"
+description = "Thin dimetrodon sail-skin over the mouth and nose, on a cord: it keeps out much of the Pale Lands' ash; +2 defence."
+icon = ExtResource("2")
+max_stack = 1
+rarity = "epic"
+equipment_slot = "trinket"
+ash_guard = 0.6
+defense = 2

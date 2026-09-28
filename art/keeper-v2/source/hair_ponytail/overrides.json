@@ -1,0 +1,19 @@
+{
+ "notes": [
+  "The green hair tie keeps its colour when the hair is recoloured (trim = never dyed)."
+ ],
+ "materials": {
+  "down": [
+   {
+    "px": [[15, 1], [16, 1]],
+    "mat": "trim"
+   }
+  ],
+  "side": [
+   {
+    "px": [[11, 2], [10, 3]],
+    "mat": "trim"
+   }
+  ]
+ }
+}

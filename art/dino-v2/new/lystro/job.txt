@@ -1,0 +1,11 @@
+624b7faa-ef3b-472f-9cde-914a2c0d1a16
+status: completed
+id: 624b7faa-ef3b-472f-9cde-914a2c0d1a16
+job_id: 624b7faa-ef3b-472f-9cde-914a2c0d1a16
+frames: 1
+transparent: yes
+asset_id: c92d56fb-2376-556e-b622-4b459d8afbd6
+asset_type: image
+asset_status: saved
+gallery: saved to your PixelLab gallery (pixellab.ai/create)
+download: https://api.pixellab.ai/mcp/images/624b7faa-ef3b-472f-9cde-914a2c0d1a16/download

@@ -1,0 +1,36 @@
+Godot Engine v4.6.1.stable.official.14d19694e - https://godotengine.org
+
+📦 ItemDB loaded 25 items: basic_axe, basic_pickaxe, berry, bone_dagger, bucket, campfire, chest, cooked_meat, crystal_shard, leather_chestplate, leather_helmet, leather_leggings, log, net, plank, plant_fiber, raptor_fang, stone, torch, trex_meat, trex_scale, water_bucket, wood_floor, wood_wall, workbench
+PASS: Spawn is dry and clear
+PASS: Twelve creatures spawn across six species
+PASS: Bucket accessible in seventh hotbar slot
+PASS: Torches accessible in eighth hotbar slot
+PASS: Axe cannot bypass pickaxe mining requirement
+PASS: Mining removes solid tile collision
+PASS: Bucket scoops water
+PASS: Scoop changes terrain and exchanges bucket
+PASS: Filled bucket places water
+PASS: Water placement returns empty bucket
+PASS: Wading slows actual player movement
+PASS: Dry ground restores walk speed
+PASS: Timber wall placement consumes material
+PASS: Placed wall has blocking collision
+PASS: Cannot trap player inside placed wall
+PASS: Player physics cannot walk through a placed wall
+PASS: Wild predator refuses meat without restraint
+PASS: Net restrains predator and consumes once
+PASS: Repeated net cannot consume while already restrained
+PASS: Restrained predator accepts food
+PASS: Feed cooldown prevents item waste
+PASS: Three feeds tame raptor
+PASS: Tamed companion accepts order change
+PASS: Equipped weapon damages creature exactly once per swing
+PASS: Forest state writes to isolated test save
+PASS: Atomic save replaces existing file successfully
+PASS: Forest state loads
+PASS: Player and journal survive reload
+PASS: Water, building, and mining survive reload
+PASS: Reload replaces creatures without duplication
+PASS: Companion trust survives reload
+PASS: Journal fits native viewport ((326.0, 233.0))
+FOREST INTEGRATION: 32 checks, 0 failures

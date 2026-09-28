@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/art/items/bone_crown.png" id="2"]
+[resource]
+script = ExtResource("1")
+id = "bone_crown"
+name = "Crown of the Buried King"
+description = "The crystal-bound crown of Ossuar, the Buried King. Heavy with old power. Wear for +6 defence and +2 weapon damage."
+icon = ExtResource("2")
+max_stack = 1
+rarity = "legendary"
+equipment_slot = "trinket"
+defense = 6
+damage_bonus = 2

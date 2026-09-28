@@ -1,0 +1,11 @@
+48a0266c-f660-439c-974a-597030a02353
+status: completed
+id: 48a0266c-f660-439c-974a-597030a02353
+job_id: 48a0266c-f660-439c-974a-597030a02353
+frames: 1
+transparent: yes
+asset_id: 904a1a34-434e-51cb-a82d-4376e8eaad06
+asset_type: image
+asset_status: saved
+gallery: saved to your PixelLab gallery (pixellab.ai/create)
+download: https://api.pixellab.ai/mcp/images/48a0266c-f660-439c-974a-597030a02353/download

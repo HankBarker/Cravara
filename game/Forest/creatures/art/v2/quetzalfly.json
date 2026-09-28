@@ -1,0 +1,40 @@
+{
+ "key": "quetzalfly",
+ "species": "quetzalfly",
+ "canvas": [
+  200,
+  200
+ ],
+ "ground": 193,
+ "origin": {
+  "side": [
+   38,
+   42
+  ],
+  "down": [
+   38,
+   42
+  ],
+  "up": [
+   38,
+   42
+  ]
+ },
+ "clips": {
+  "fly": {
+   "fps": 10,
+   "loop": true,
+   "frames": 8
+  },
+  "glide": {
+   "fps": 6,
+   "loop": true,
+   "frames": 8
+  },
+  "swoop": {
+   "fps": 12,
+   "loop": false,
+   "frames": 9
+  }
+ }
+}

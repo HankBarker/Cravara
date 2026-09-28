@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/art/items/stego_egg.png" id="2"]
+[resource]
+script = ExtResource("1")
+id = "stego_egg"
+name = "Stego Egg"
+description = "A heavy cream egg flecked with amber. Keep it warm in an incubator and a baby stego will hatch."
+icon = ExtResource("2")
+max_stack = 10
+rarity = "rare"
+consumable = true
+hunger_value = 14
+food_satiation_seconds = 20.0

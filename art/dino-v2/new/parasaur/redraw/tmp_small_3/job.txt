@@ -1,0 +1,11 @@
+d91eee5e-44d3-4e54-b743-720b4ca250f8
+status: completed
+id: d91eee5e-44d3-4e54-b743-720b4ca250f8
+job_id: d91eee5e-44d3-4e54-b743-720b4ca250f8
+frames: 1
+transparent: yes
+asset_id: 1ca2fb81-600b-570f-8842-201f939b7000
+asset_type: image
+asset_status: saved
+gallery: saved to your PixelLab gallery (pixellab.ai/create)
+download: https://api.pixellab.ai/mcp/images/d91eee5e-44d3-4e54-b743-720b4ca250f8/download

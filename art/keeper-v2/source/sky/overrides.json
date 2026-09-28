@@ -1,0 +1,36 @@
+{
+  "notes": "Pass 18 Skywing: the mantle's hem corners in the front view (row 28) and its trailing end behind the legs in the side view (rows 26-28) were cut loose from the torso and floated by the feet (hung from the torso, the side one read as a hook): both go.",
+  "labels": {
+    "down": [
+      {
+        "px": [
+          [
+            7,
+            28
+          ],
+          [
+            23,
+            28
+          ],
+          [
+            24,
+            28
+          ]
+        ],
+        "label": "drop"
+      }
+    ],
+    "side": [
+      {
+        "rect": [
+          8,
+          22,
+          11,
+          28
+        ],
+        "label": "drop",
+        "only": "any"
+      }
+    ]
+  }
+}

@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/art/items/ashmane_fur.png" id="2"]
+[resource]
+script = ExtResource("1")
+id = "ashmane_fur"
+name = "Ashmane Fur"
+description = "Long ash-grey fur-feathers from the Pale Lands' great hunters. Ash doesn't cling to it, or get through it."
+icon = ExtResource("2")
+max_stack = 20
+rarity = "epic"

@@ -1,5 +1,13 @@
 # Cravara
 
+**Sixth forest pass:** persistent keeper customization, fitted cloth/leather equipment, 52 directional action clips, bows and mounted shooting, gardens and cooking, dinosaur gathering jobs, species voices, inventory sort/quick-stack, and tool power progression. Start with the [sixth-pass review route](docs/SKYFANG_PLAYTEST.md).
+
+**New forest playtest:** double-click [Play Cravera.cmd](Play%20Cravera.cmd), or open `game/project.godot` in Godot 4.6 and press F5. The default launch now opens **Cravera: The Skyfang Wilds**. See the [playtest guide](docs/SKYFANG_PLAYTEST.md) for controls, implemented systems, validation, and known limitations. The earlier playground remains available at `game/playground.tscn`.
+
+The fourth forest pass adds one-key interaction and mounting, illustrated saddled variants with seated rider animations, mount attacks and feeding, textured ground, grounded shadows, doors over floors, aligned roofing, bed-bound respawning, miniature floating loot, rustic foley, and optional corner shortcuts. See the guide's **Fourth-pass review route** and [validation evidence](art/forest-pass4/VALIDATION.md).
+
+The fifth pass restores the original hero identity while riding, adds cloth and darker leather gear, rider knock-offs, fishing holes and a Space-controlled fishing game, mushrooms and refillable tonics, compact overhead furniture, reclaimable tents, and a two-meter survival system with lasting meals. See the guide's **Fifth-pass review route**.
+
 A top-down 2D pixel-art survival and crafting game built in **Godot 4.4** using GDScript.
 
 Inspired by Core Keeper, Terraria, Stardew Valley, and Ark: Survival Evolved.

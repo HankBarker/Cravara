@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Item" load_steps=2 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "glimmer_spear"
+name = "Glimmer Spear"
+description = "A glimmer shard lashed to a vine-bound shaft. It glows in the jungle's dark. 44 damage."
+icon_generator = "forest"
+max_stack = 1
+rarity = "epic"
+tool_type = "sword"
+damage = 44
+weapon_class = "thrust"

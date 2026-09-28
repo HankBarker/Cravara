@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/creatures/equipment/trike_saddle.svg" id="2"]
+[resource]
+script = ExtResource("1")
+id = "trike_saddle"
+name = "Jadehorn Saddle"
+description = "Vine-bound leather and bone saddle for a tamed trike. Equip through its companion menu to ride."
+icon = ExtResource("2")
+max_stack = 1
+equipment_slot = "saddle"

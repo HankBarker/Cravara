@@ -1,0 +1,11 @@
+a48fcf5c-304d-4e26-88df-6fbe3f96dbf8
+status: completed
+id: a48fcf5c-304d-4e26-88df-6fbe3f96dbf8
+job_id: a48fcf5c-304d-4e26-88df-6fbe3f96dbf8
+frames: 1
+transparent: yes
+asset_id: 9864eb35-2314-5fe8-918a-73c7c907e909
+asset_type: image
+asset_status: saved
+gallery: saved to your PixelLab gallery (pixellab.ai/create)
+download: https://api.pixellab.ai/mcp/images/a48fcf5c-304d-4e26-88df-6fbe3f96dbf8/download

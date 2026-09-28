@@ -1,0 +1,244 @@
+﻿world: passed
+inventory: passed
+creatures: passed
+integration: passed
+ai-pass2: passed
+equipment-pass2: passed
+world-pass3: passed
+mount-pass3: passed
+root-pass3: passed
+world-pass4: passed
+mount-pass4: passed
+root-pass4: passed
+world-pass5: passed
+rider-pass5: passed
+root-pass5: passed
+Godot Engine v4.6.1.stable.official.14d19694e - https://godotengine.org
+
+📦 ItemDB loaded 237 items: allo_cleaver, allo_egg, allo_tooth, alpha_crest, ancient_coin, anky_plate, apex_signet, ashen_chestplate, ashen_helmet, ashen_leggings, ashglass, ashglass_eye, ashglass_knife, ashmane_fur, ashmane_mantle, ash_char, ash_tuft, baked_tuber, basic_axe, basic_pickaxe, beast_treat, berry, berry_compote, berry_seed, big_gate, bloodfang, bloody_bait, boat, bogiron_band, bogiron_harpoon, bog_iron, bonegill, bone_arrow, bone_chestplate, bone_crown, bone_dagger, bone_helmet, bone_leggings, bucket, bulwark_charm, cactus_fruit, cactus_jelly, campfire, carno_horn, chest, claw_bracelet, club_knuckle, club_maul, compy_trove, cooked_fish, cooked_meat, cooking_pot, crest_horn, crest_whistle, crystal_axe, crystal_chestplate, crystal_flask, crystal_heart, crystal_helmet, crystal_leggings, crystal_pendant, crystal_pickaxe, crystal_shard, deino_claw, dodo_egg, dodo_plume, ember_chili, ember_pepper, fang_necklace, fang_sabre, fen_pike, fishers_chowder, fishing_rod, foragers_salad, forest_omelet, fossil_bone, frill_buckle, frill_guard, frostjaw, fur_wrap, garden_hoe, glass_pearl, gourd_porridge, gourd_seed, grave_horn, haunch, haunch_roast, hide_bed, hitching_post, horn_chestplate, horn_guard, horn_helmet, horn_leggings, horn_spear, hunters_stew, hunter_charm, incubator, keepers_locket, lantern, lead_rope, leather_chestplate, leather_helmet, leather_leggings, log, longneck_bell, longneck_egg, longneck_hide, lotus_broth, lucky_coin, lystro_egg, marrow_gourd, maw_charm, maw_tooth, melon_cooler, melon_seed, miners_pie, mirefang_tooth, mirelotus, mire_eel, moonscale, moonstone_ring, morsel, moss_chestplate, moss_helmet, moss_leggings, mushroom, mushroom_potion, mushroom_spore, mushroom_stew, net, oasis_carp, old_bone, old_compass, pale_crystal, parasaur_crest, parasaur_egg, pepper_steak, plank, plant_fiber, plate_chestplate, plate_helmet, plate_leggings, plate_maul, plate_pendant, prime_meat, prime_steak, prism_crystal, proto_frill, quiver_strap, raider_club, raptor_egg, raptor_fang, raptor_hide, redgrain, redgrain_loaf, reed_bow, reed_claw, reed_perch, rex_chestplate, rex_helmet, rex_leggings, river_totem, rustiron, rustjaw_sabre, rust_buckler, rust_catfish, rust_chestplate, rust_helmet, rust_leggings, rust_signet, saddlebag, sailking_fin, sail_scale, sail_veil, sandblade_plume, scale_bracer, scarhorn_lance, scarhorn_tip, seared_morsel, shardfin, shard_sword, sickle_claw, sickle_toe, skyfang_shard, sky_idol, slate_roof, spinesail_glaive, spine_torc, spino_spine, stego_egg, stego_plate, stego_saddle, stone, stone_door, stone_floor, stone_wall, sucho_claw, sunfin, sunsail_brooch, sunstone, sunstone_amulet, sunstone_maul, sunward_chestplate, sunward_helmet, sunward_leggings, sun_melon, sun_sail, tail_spike, tent, thatch_roof, tide_chestplate, tide_helmet, tide_leggings, titan_pot_roast, titan_rib, titan_roast, tooth_ring, torch, trex_meat, trex_scale, trike_egg, trike_hide, trike_horn, trike_saddle, tuber_mash, tusk_charm, tyrant_eye, tyrant_fang, wanderers_step, water_bucket, water_flask, wayfarer_anklet, wild_tuber, wood_door, wood_floor, wood_wall, workbench
+PASS reed_bow has definition and original icon
+PASS bone_arrow has definition and original icon
+PASS garden_hoe has definition and original icon
+PASS berry_seed has definition and original icon
+PASS mushroom_spore has definition and original icon
+PASS dodo_egg has definition and original icon
+PASS forest_omelet has definition and original icon
+PASS berry_compote has definition and original icon
+PASS crystal_pickaxe has definition and original icon
+PASS crystal_axe has definition and original icon
+PASS prism_crystal has definition and original icon
+PASS shard_sword has definition and original icon
+PASS reed_bow is craftable
+PASS bone_arrow is craftable
+PASS garden_hoe is craftable
+PASS berry_seed is craftable
+PASS mushroom_spore is craftable
+PASS forest_omelet is craftable
+PASS berry_compote is craftable
+PASS crystal_pickaxe is craftable
+PASS crystal_axe is craftable
+PASS shard_sword is craftable
+PASS hoe creates reachable clear soil
+PASS tilling plays distinct body pose
+PASS repeated till does not duplicate plots
+PASS cannot till outside reach
+PASS sowing consumes exactly one seed
+PASS occupied plot cannot consume another seed
+PASS wide bench detects neighboring crop footprint
+PASS overhead roofing preserves garden soil
+PASS tilling cannot exploit far tile corner beneath wide bench
+PASS dry seed cannot grow
+PASS watering returns the bucket in its slot
+PASS watered plot refuses a second bucket
+FAIL watered crop advances only active time
+PASS unripe crop cannot be harvested
+PASS garden and custom appearance save atomically
+PASS new save restores
+PASS skin and hairstyle survive reload
+FAIL watering and partial growth survive reload
+PASS ripe berries harvest
+PASS harvest creates three berries and one replacement seed
+PASS repeat harvest cannot duplicate yield
+PASS mushroom spores use same plot
+PASS cultivated mushrooms ripen and harvest
+PASS weak pickaxe cannot damage dense crystal
+PASS hardness refusal explains required power
+PASS upgraded pickaxe uses power as mining damage
+PASS upgraded pickaxe breaks dense vein
+PASS dense vein yields prism crystal
+PASS upgraded axe takes two tree strikes
+PASS empty quiver cannot draw
+PASS bow cannot freeze unfinished melee attack
+PASS loaded bow begins drawing
+PASS bow draw has body animation
+PASS canceling draw never spends ammo
+PASS accepted damage interrupts drawn bow without freezing hurt
+PASS charged release creates projectile
+PASS accepted shot consumes one arrow exactly
+PASS duplicate release cannot spawn another arrow
+PASS swept projectile hits creature through real physics
+PASS wall stops arrow before enemy
+PASS supported saddle mounts for ranged combat
+PASS bow can draw downward across own mount
+PASS mounted release fires arrow
+PASS shooting does not detach rider
+PASS projectile excludes own mount collision
+PASS omelet needs campfire
+PASS garden and dodo ingredients cook transactionally
+PASS cooked meals have distinct fullness durations
+FOREST_ROOT_PASS6 assertions=70 failures=2
+
+root-pass6: FAILED; see C:\Cravera\art\forest-playtest\suite-root-pass6.log
+workers-pass6: passed
+character-pass6: passed
+save-compat-pass6: passed
+wardrobe-pass7: passed
+wardrobe-save-pass7: passed
+keeper-rig-pass8: passed
+armor-capture-pass8: passed
+dino-v2: passed
+Godot Engine v4.6.1.stable.official.14d19694e - https://godotengine.org
+
+📦 ItemDB loaded 237 items: allo_cleaver, allo_egg, allo_tooth, alpha_crest, ancient_coin, anky_plate, apex_signet, ashen_chestplate, ashen_helmet, ashen_leggings, ashglass, ashglass_eye, ashglass_knife, ashmane_fur, ashmane_mantle, ash_char, ash_tuft, baked_tuber, basic_axe, basic_pickaxe, beast_treat, berry, berry_compote, berry_seed, big_gate, bloodfang, bloody_bait, boat, bogiron_band, bogiron_harpoon, bog_iron, bonegill, bone_arrow, bone_chestplate, bone_crown, bone_dagger, bone_helmet, bone_leggings, bucket, bulwark_charm, cactus_fruit, cactus_jelly, campfire, carno_horn, chest, claw_bracelet, club_knuckle, club_maul, compy_trove, cooked_fish, cooked_meat, cooking_pot, crest_horn, crest_whistle, crystal_axe, crystal_chestplate, crystal_flask, crystal_heart, crystal_helmet, crystal_leggings, crystal_pendant, crystal_pickaxe, crystal_shard, deino_claw, dodo_egg, dodo_plume, ember_chili, ember_pepper, fang_necklace, fang_sabre, fen_pike, fishers_chowder, fishing_rod, foragers_salad, forest_omelet, fossil_bone, frill_buckle, frill_guard, frostjaw, fur_wrap, garden_hoe, glass_pearl, gourd_porridge, gourd_seed, grave_horn, haunch, haunch_roast, hide_bed, hitching_post, horn_chestplate, horn_guard, horn_helmet, horn_leggings, horn_spear, hunters_stew, hunter_charm, incubator, keepers_locket, lantern, lead_rope, leather_chestplate, leather_helmet, leather_leggings, log, longneck_bell, longneck_egg, longneck_hide, lotus_broth, lucky_coin, lystro_egg, marrow_gourd, maw_charm, maw_tooth, melon_cooler, melon_seed, miners_pie, mirefang_tooth, mirelotus, mire_eel, moonscale, moonstone_ring, morsel, moss_chestplate, moss_helmet, moss_leggings, mushroom, mushroom_potion, mushroom_spore, mushroom_stew, net, oasis_carp, old_bone, old_compass, pale_crystal, parasaur_crest, parasaur_egg, pepper_steak, plank, plant_fiber, plate_chestplate, plate_helmet, plate_leggings, plate_maul, plate_pendant, prime_meat, prime_steak, prism_crystal, proto_frill, quiver_strap, raider_club, raptor_egg, raptor_fang, raptor_hide, redgrain, redgrain_loaf, reed_bow, reed_claw, reed_perch, rex_chestplate, rex_helmet, rex_leggings, river_totem, rustiron, rustjaw_sabre, rust_buckler, rust_catfish, rust_chestplate, rust_helmet, rust_leggings, rust_signet, saddlebag, sailking_fin, sail_scale, sail_veil, sandblade_plume, scale_bracer, scarhorn_lance, scarhorn_tip, seared_morsel, shardfin, shard_sword, sickle_claw, sickle_toe, skyfang_shard, sky_idol, slate_roof, spinesail_glaive, spine_torc, spino_spine, stego_egg, stego_plate, stego_saddle, stone, stone_door, stone_floor, stone_wall, sucho_claw, sunfin, sunsail_brooch, sunstone, sunstone_amulet, sunstone_maul, sunward_chestplate, sunward_helmet, sunward_leggings, sun_melon, sun_sail, tail_spike, tent, thatch_roof, tide_chestplate, tide_helmet, tide_leggings, titan_pot_roast, titan_rib, titan_roast, tooth_ring, torch, trex_meat, trex_scale, trike_egg, trike_hide, trike_horn, trike_saddle, tuber_mash, tusk_charm, tyrant_eye, tyrant_fang, wanderers_step, water_bucket, water_flask, wayfarer_anklet, wild_tuber, wood_door, wood_floor, wood_wall, workbench
+  sites 14, caches 5, relic mounds 51, wild roots 14
+  seeded wild_grain at (36, 3) is now gone
+  seeded wild_grain at (38, 6) is now gone
+  seeded wild_grain at (39, 3) is now gone
+  seeded wild_grain at (36, 4) is now gone
+  seeded wild_grain at (33, 37) is now gone
+  seeded wild_grain at (34, 37) is now gone
+  seeded wild_grain at (36, 37) is now gone
+  seeded wild_grain at (34, 39) is now gone
+  seeded wild_grain at (34, 36) is now gone
+  seeded wild_grain at (20, -19) is now gone
+  seeded wild_grain at (21, -18) is now gone
+  seeded wild_grain at (22, -16) is now gone
+  seeded wild_grain at (20, -17) is now gone
+  seeded wild_grain at (22, -17) is now gone
+  seeded wild_grain at (43, 47) is now gone
+  seeded wild_grain at (41, 48) is now gone
+  seeded wild_grain at (42, 48) is now gone
+  seeded wild_grain at (45, 45) is now gone
+  seeded wild_grain at (44, 47) is now gone
+  seeded wild_grain at (44, 46) is now gone
+  seeded wild_grain at (-52, -29) is now gone
+  seeded wild_grain at (-56, -33) is now gone
+  seeded wild_grain at (-56, -31) is now gone
+  seeded wild_grain at (-53, -33) is now gone
+  seeded wild_grain at (45, 18) is now gone
+  seeded wild_grain at (46, 18) is now gone
+  seeded wild_grain at (42, 17) is now gone
+  seeded wild_grain at (42, 18) is now gone
+  seeded wild_grain at (54, -54) is now gone
+  seeded wild_grain at (55, -52) is now gone
+  seeded wild_grain at (52, -54) is now gone
+  seeded wild_lotus at (-80, -16) is now gone
+  seeded wild_lotus at (-83, -16) is now gone
+  seeded wild_lotus at (-151, 7) is now gone
+  seeded wild_lotus at (-150, 9) is now gone
+  seeded wild_lotus at (-123, -40) is now gone
+  seeded wild_lotus at (-120, -39) is now gone
+  seeded wild_lotus at (-124, -41) is now gone
+  seeded wild_lotus at (-73, -6) is now gone
+  seeded wild_lotus at (-76, -6) is now gone
+  seeded wild_lotus at (-118, 46) is now gone
+  seeded wild_lotus at (-120, 48) is now gone
+  seeded wild_lotus at (-119, 47) is now gone
+  seeded wild_lotus at (-117, 44) is now gone
+  seeded wild_lotus at (-148, -25) is now gone
+  seeded wild_lotus at (-146, -24) is now gone
+  seeded wild_lotus at (-146, -26) is now gone
+  seeded wild_lotus at (-166, 8) is now gone
+  seeded wild_lotus at (-165, 7) is now gone
+  seeded wild_lotus at (-166, 6) is now gone
+  seeded wild_lotus at (-77, -8) is now gone
+  seeded wild_lotus at (-77, -9) is now gone
+  seeded wild_lotus at (-76, -7) is now gone
+  seeded wild_lotus at (-135, 47) is now wild_lotus
+  seeded wild_lotus at (-132, 47) is now wild_lotus
+  seeded wild_lotus at (-134, 46) is now wild_lotus
+  seeded wild_melon at (-44, 90) is now gone
+  seeded wild_melon at (-44, 89) is now gone
+  seeded wild_melon at (-158, 109) is now gone
+  seeded wild_melon at (-160, 110) is now gone
+  seeded wild_melon at (-158, 108) is now gone
+  seeded wild_melon at (-128, 108) is now gone
+  seeded wild_melon at (-125, 107) is now gone
+  seeded wild_melon at (-163, 126) is now gone
+  seeded wild_melon at (-160, 123) is now gone
+  seeded wild_melon at (47, 82) is now gone
+  seeded wild_melon at (46, 83) is now gone
+  seeded wild_melon at (-104, 112) is now gone
+  seeded wild_melon at (-102, 113) is now gone
+  seeded wild_melon at (-5, 106) is now gone
+  seeded wild_melon at (-5, 108) is now gone
+  seeded wild_melon at (-2, 105) is now gone
+  seeded wild_melon at (20, 74) is now gone
+  seeded wild_melon at (21, 70) is now gone
+  seeded wild_melon at (23, 73) is now gone
+  seeded wild_pepper at (-131, -77) is now gone
+  seeded wild_pepper at (-128, -77) is now gone
+  seeded wild_pepper at (-129, -76) is now gone
+  seeded wild_pepper at (-31, -89) is now gone
+  seeded wild_pepper at (-31, -91) is now gone
+  seeded wild_pepper at (-29, -90) is now gone
+  seeded wild_pepper at (-27, -91) is now gone
+  seeded wild_pepper at (83, -71) is now gone
+  seeded wild_pepper at (83, -73) is now gone
+  seeded wild_pepper at (-4, -57) is now gone
+  seeded wild_pepper at (-5, -57) is now gone
+  seeded wild_pepper at (-4, -59) is now gone
+  seeded wild_pepper at (-156, -122) is now gone
+  seeded wild_pepper at (-156, -123) is now gone
+  seeded wild_pepper at (-156, -124) is now gone
+  seeded wild_pepper at (-159, -122) is now gone
+  seeded wild_pepper at (-36, -110) is now gone
+  seeded wild_pepper at (-35, -108) is now gone
+  seeded wild_pepper at (-36, -109) is now gone
+  seeded wild_pepper at (-37, -111) is now gone
+  seeded wild_pepper at (60, -114) is now gone
+  seeded wild_pepper at (61, -112) is now gone
+  seeded wild_pepper at (61, -110) is now gone
+  seeded wild_pepper at (-81, -96) is now gone
+  seeded wild_pepper at (-80, -95) is now gone
+  seeded wild_pepper at (-80, -92) is now gone
+  seeded wild_pepper at (-78, -93) is now gone
+  seeded wild_gourd at (102, -26) is now gone
+  seeded wild_gourd at (103, -26) is now gone
+  seeded wild_gourd at (128, -1) is now gone
+  seeded wild_gourd at (127, -1) is now gone
+  seeded wild_gourd at (109, -9) is now gone
+  seeded wild_gourd at (109, -11) is now gone
+  seeded wild_gourd at (99, 2) is now gone
+  seeded wild_gourd at (101, 3) is now gone
+  seeded wild_gourd at (126, 9) is now gone
+  seeded wild_gourd at (128, 10) is now gone
+  seeded wild_gourd at (126, 11) is now gone
+  seeded wild_gourd at (133, 11) is now gone
+  seeded wild_gourd at (133, 13) is now gone
+  seeded wild_gourd at (132, 13) is now gone
+  seeded wild_gourd at (119, 21) is now gone
+  seeded wild_gourd at (123, 20) is now gone
+  seeded wild_gourd at (120, 18) is now gone
+  seeded wild_gourd at (136, -12) is now gone
+  seeded wild_gourd at (132, -8) is now gone
+  seeded wild_gourd at (135, -8) is now gone
+FAIL every seeded prop keeps its cell, kind and art (brush cleared round ruins aside)
+  brush cleared round ruins: 76
+FAIL nothing overlaps idol_deer at (-47, -10) ["wild_grain@(-48, -15)", "wild_grain@(-50, -14)"]
+WORLD_POI_SUITE checks=698 failures=2
+
+world-poi: FAILED; see C:\Cravera\art\forest-playtest\suite-world-poi.log
+folk: passed
+intro: passed
+beasts: passed
+bonelands: passed
+life: passed
+wilds: passed
+hunt: passed
+gear: passed
+tribes: passed
+wilds12: passed
+pass13: passed
+pass14: passed
+exit 0

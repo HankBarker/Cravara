@@ -448,3 +448,156 @@ density climbs.
 - Reynolds steering behaviors (seek/flee/arrive/wander/pursue): https://www.red3d.com/cwr/steer/
 - ARK breeding, stat inheritance (55%) & mutation (7.31%): https://ark.fandom.com/wiki/Breeding and https://ark.fandom.com/wiki/Mutations
 - LimboAI (HSM + Behavior Trees for Godot 4): https://github.com/limbonaut/limboai
+
+## Pass 13: not everything chases you (Hank: "every dinosaur is trying to chase me down")
+- **Noticing is not hunting.** `_wild_target`: a hungry hunter (`sated <= 0`, or the rex) takes the
+  keeper inside `NOTICE`; a fed one only inside `DANGER`. A hungry hunter prefers wild prey up to a
+  third further off than the keeper. Past `TERRITORY` (+90 while chasing) it lets the quarry go and
+  walks home.
+- **The telegraph** before every attack on the keeper, a companion or a tribesman: `ALERT_TIME` per
+  species with the display clip and the "!" (see dinosaurs.md). Tribesmen: `ALERT` with the raised
+  fists (cheer), each a beat apart.
+- **Herbivores ward off:** a `COMFORT` ring warning display (and a trike's stand-your-ground taming
+  way hangs off it); provoked, they give up after `WARD_LEASH`/`WARD_GAP`. A keeper running by makes
+  a grazer stop and look up (`_look_time`).
+- **Babies and nests** react to interaction (`CreatureLife.disturbed`) and theft (`rob`), not to
+  proximity.
+- **Siege:** a hunter stuck against the keeper's building (`_watch_stuck`) looks for what's in the
+  way (`_find_blocker`) and bashes through (`_tick_siege`, `SIEGE_SECONDS`).
+- **Water hunters:** `AQUATIC` pace in water, `DEEP_WADERS` (the spinosaur) walk into the deep mere,
+  `LURK` (the Suchomimus) keeps to the shallows by home.
+- **Grazing rhythm:** in `_wander_velocity` a grazer (`BODY.idle == "eat"`, not a predator) stops on
+  half its legs (others 38%) and a stop pulls `_idle_timer` down to 0.3-1 s, so a herd left alone
+  bites every stop instead of mostly walking (`_resting_behaviour` only counts down while still).
+- **Taming ways must survive the AI.** Any way that needs the keeper close to a *predator* has to
+  switch off its keeper targeting (`keeper_reach = 0` in `_wild_target`): earned respect/dodge, kin
+  armour, and a dimetrodon while `_bask_time > 0` (by day). A hungry dimetrodon noticed the keeper at
+  54-77 px, a fed one at 42-60, and feeding needs < 49 px: the basking way was unreachable until the
+  code review caught it.
+- **Offerings:** `Offering.claimed_by` is one beast's claim. Whoever lets the food go (the kin
+  armour came off) must clear its own claim, or the food sits claimed until it times out (60 s)
+  and blocks setting another down.
+- **Individuals in tests:** genes shift notice (temper 0.85-1.2), pace and harm (thick hide 0.92).
+  Tests that measure exact damage, notice rings or pace give the beast plain genes first:
+  `c.set_genes({})` (`Genes.clean({})` stays `{}`: no temperament, no shader).
+- Tests: `Tests/Pass13Suite.tscn` (incl. a live siege), `Tests/HuntSuite.tscn` (updated),
+  `Tests/DinoBehaviourCapture.tscn` (the pack is hungry now).
+
+## Pass 16: sites, temperament, caves, sleep
+
+- **Spawners** (`creatures/Spawners.gd`, session-owned) are the wild's supply ("a spawn radius... if
+  it doesn't detect a dinosaur of that type in that radius, then it will spawn it... every minute").
+  - A **site** is `{sp, variant, cell, group: Vector2i, kind: herd/nest/mere/great, radius px,
+    next}`.
+  - Each site near the keeper checks every `CHECK` 60 s (+ up to 15 s jitter). If no wild living
+    creature of its species is within the radius, and the site is `UNSEEN` (330 px) or more from
+    the keeper, a group comes (`_bring`). Nest guards get `life.nest`. A herd gets
+    `life.add_young`. Far out, a herd member has a 6% chance to come crystal-grown.
+  - **Great** sites (MINIBOSS species, the dune/old roamers) keep one beast alive anywhere at a
+    time. They wait `session.BOSS_BACK` (600-900 s) after a kill, keyed
+    `great_<sp>_<variant>_<x>_<y>` in `_milestones` via `boss_fell` / `boss_down` (so it's saved).
+  - **Small worlds** (legacy, rings v1): sites from the old tables (BONELANDS_LIFE, WILDS_LIFE,
+    WILDS12, WILDS13, WILDLIFE arcs, ROAMERS, `_mere_spots`, nests), within `ACTIVE` 1500 px of the
+    keeper. The journey's first wildlife is still `_spawn_wildlife`.
+  - **Streamed worlds**: sites per chunk from the seed (`SITE_ODDS` 0.5, `SECOND_ODDS` 0.12), the
+    species from `LAND_LIFE[land]` weighted and filtered by depth band. Only loaded chunks' sites
+    are active; `first_fill()` fills the start window.
+  - **`_rest_far`** (streamed, every 2 s): a wild creature in an unloaded chunk is freed. Tamed,
+    tribe, master-bound and boss-species creatures are disabled and hidden instead, and woken when
+    their chunk returns.
+  - `ForestCreature.far_scale` (6 in a streamed world) scales `CRYSTAL_FROM`, `CRYSTAL_RIM` and
+    `FAR_EDGE`. Without it, everything past the old world's 170 cells would be a third crystal-sick.
+- **Temperament decides the tactics** ("both variations... some just straight up attack"):
+  - `reckless()` is true in a cave, or with genes temper bold/fierce.
+  - A reckless beast skips the pack gathering (`Tactics.pack` returns INF) and the ambush
+    (`_will_ambush`). Calm/skittish (and plain `{}` genes, "calm") keep pack and ambush tactics.
+- **Underground** (`in_cave()`, cached 2 s; guard the world's methods: test fixtures lack
+  `to_cell`): reach x1.4, always hungry, the keeper in reach at the full reach, half the alert
+  display.
+- **Sleep** ("stay in the sleeping animation unless provoked... if you interact, that's fine"):
+  - `asleep()` = CreatureLife's night rest, from when the herd lies down (daylight < -0.2), not
+    the clock's "night" (0.9), which starts ~100 s later. The gap was the stand-up-and-lie-down
+    flicker.
+  - While asleep and unprovoked: `play_action` is refused (so feeding doesn't play "eat"),
+    `_resting_behaviour` does nothing, `_face` holds, and `_tick_patience` builds no unease (so a
+    keeper crowding a sleeping stego isn't struck).
+- **Bosses come back** (`ForestPlaytest.boss_fell/boss_down`, BOSS_BACK 600-900 s of play):
+  - Skarn (`AlphaBoss._process` raises it once the keeper is 640 px from the den).
+  - The Buried King (`OssuarBoss` summons refuse while down).
+  - Old Maw (`_prepare_bosses`; streamed: `_tend_maw`).
+  - Each lair's Sleeper (`CaveLife`; streamed: `on_enter`).
+- Tests: `Tests/Pass16Suite.tscn` (old world) and `Tests/StreamSuite.tscn` (streamed).
+- **Cave bug, fixed at the root**: the caves' strip lies outside `world.bounds()`, and
+  `_outside_world()` steered every cave beast back toward its home each tick. So they stood and
+  stared until the keeper came into biting range, the pass-15 complaint. `_outside_world` and
+  `_out_of_territory` now return false `in_cave()`.
+- **Tick costs** (old world, ~336 beasts, ~50 at full rate; rendered profile). Creatures take
+  ~7 ms a physics tick, over half of it `_wild_behaviour`, and within that the target scans.
+  Cheap wins taken:
+  - `near()` re-sorts its buckets every third tick (arrivals and departures still force it).
+  - `_wild_target` checks distance before the `get()`-based `_valid_target` on folk and beasts.
+  - The sprite's modulate is set only when it changes.
+  - The old worlds' Spawners cap each species at the tables' own total (`_caps`). Without it,
+    sites a little off the first herds' spots doubled the beasts near the keeper.
+  - Tamed or not, a new streamed journey has 5-50 beasts ticking, so frames run ~10 ms.
+
+## Pass 17: reach from the snout, trees in the way, a quake's rocks
+
+- **Bites and claws are measured from the snout** (`DinoMoves.snout(dir)`): side-on, a beast's
+  jaws are half its drawn `width` out in front, less its body circle and 6 px. The offset eases
+  in between 60 and 30 degrees off the horizontal, and is nothing facing up or down. `gap()`
+  (what a hunter closes to and holds at) uses it for biters. `body_gap()` is kept for tails and
+  stomps (`choose()` picks per move shape), and `_in_shape("jaws"/"claws")` measures from it.
+  Before this the dimetrodon side-on (snout at +28 px, reach circle 10 px) had to stand on the
+  keeper to bite (Hank's report).
+- **Trees in the way**: `TREE_BREAKERS` is every big beast except the raptors, deinos, compies and
+  small grazers. `_watch_stuck` counts slow walkers: the gate is `max(5, speed * 0.25)`, where the
+  old 20 px/s excluded every grazer. It judges "stuck" as under 35% of the expected travel. On a
+  second stuck in a row it looks for a tree against the body (`_tree_ahead`: a probe one radius
+  ahead against each trunk's footing, grown by 0.7 of the radius). A **free siege**
+  (`_siege_free`, no quarry) then runs at the top of `_physics_process` in any mode, wild or
+  companion. `_find_blocker` falls back to `_tree_ahead` when the thin ray misses. Bash clips come
+  from `BASH_CLIPS` first (the trike's first move is a ram that plays its run clip). `_give_up`
+  clears a hunt's siege.
+- **A lake's spinosaur** is `VARIANTS.lake` (`plain`: its nameplate is removed). The "lake" site
+  kind is one per lake by radius, not unique in the world like the "great" sites.
+- **Falling rock** (`fx/FallingRock.gd`) and **bombs** (`fx/Bomb.gd`) hurt beasts with a Vector2
+  source (`take_damage(amount, point, knock)`), so no one blames the keeper. A bomb's blast makes
+  nearby wild beasts bolt (`_flee_time`).
+
+## Pass 18: flyers, a tree ambusher, riding everything, and a boss for every land
+- **Flight** (`creatures/Flight.gd`, `FLYERS`):
+  - Airborne means collision is off and `hop` is the altitude (the shadow stays on the ground).
+  - It is untouchable above REACHABLE 20 px.
+  - It swoops at a quarry. Dimorphs hunt the keeper in flocks; pteranodons and quetzals go only for
+    what struck them.
+  - A boss holds its wings (`held`: no landing or take-off by itself; `land_at(spot)`).
+  - Big drawings must fly low enough to stay on screen (quetzal alt 42, Stormcrest 34). Stormcrest's
+    152 px drawing went off the top of the screen at 70 px.
+- **Tree ambush** (`creatures/Lurk.gd`, TREE_LURK): up a tree it's hidden (eyes only) and
+  untouchable. Quarry under it gets a shadow warning of DROP_WARN 0.85 s, then the drop (damage
+  x1.4, knock 220).
+- **Riding** (`creatures/Rides.gd`): 17 species, each with a pace, a strike (a DinoMoves id) and a
+  cooldown. The hunters' saddles need `grimjaw_hide`.
+  - Saddles are painted onto the clips (`tools/dino/saddle_paint.py`) with per-frame `seat` shifts,
+    `seat_at`, and `rider_behind` for the front view.
+  - A ridden ptera flies (`MountController._update_flying`; Space is `toggle_flight`, E is
+    `ForestPlaytest.canopy_flight`).
+- **Land bosses** (`creatures/LandBoss.gd` plus Grimjaw, Reaper, Stormcrest and Cinder):
+  - Raised within RAISE 900 px of the lair once its ground is loaded.
+  - Dormant until the keeper is within `wake_cells()` of the *beast*; leashed by `leash_cells()`
+    from the *lair*.
+  - Helpers: `call_help` adds (meta `boss_add`: no loot, never saved, freed when the fight ends),
+    `rain_rocks`, `spikes_at` (bone, crystal or ember looks), `mark_ground` and `blast`.
+  - A boss species can wear another's art (`ForestCreature.ART_OF`: stormcrest -> quetzal;
+    `art_species()`).
+  - **`prepare()` must clear `awake` before freeing the beast.** `_process` grants the victory to
+    any awake boss whose beast is gone, so a reset mid-fight (a load) read as a win.
+  - Harm scaling for fight phases: `ForestCreature.guard_mult` (the Cinderhulk's shell 0.1, cracked
+    1.8) and `plates_off` (PLATED ignored).
+- **Testing bosses**:
+  - Heat and ash take health directly and ignore `is_invulnerable`. A suite that walks the keeper
+    through the volcano must reset heat, ash and health before a fight (Pass18Suite `_revive`).
+  - Hold the boss (`set_process(false)`) while teleporting the keeper to its lair, or it wakes
+    before it's seen asleep.
+  - The keeper may magnet-pick a dropped trophy, so check the pack as well as the ground.

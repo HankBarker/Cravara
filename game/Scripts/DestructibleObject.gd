@@ -69,14 +69,17 @@ func hide_interaction_hint():
 	# Hide the visual indicator
 	pass
 
+const _Floater = preload("res://Scripts/FloaterLabel.gd")
+
 func take_damage(damage: int = 1, tool_used: String = "none"):
 	# Check if correct tool is being used
 	if harvest_tool_required != "none" and tool_used != harvest_tool_required:
+		_show_wrong_tool_hint()
 		return false
-	
+
 	if is_being_harvested:
 		return false
-		
+
 	is_being_harvested = true
 	current_health -= damage
 	
@@ -94,6 +97,10 @@ func take_damage(damage: int = 1, tool_used: String = "none"):
 		is_being_harvested = false
 	
 	return true
+
+func _show_wrong_tool_hint():
+	var hint := "Needs " + harvest_tool_required
+	_Floater.spawn(get_tree().current_scene, global_position + Vector2(0, -18), hint, Color(1.0, 0.6, 0.3, 1.0), 0.8)
 
 func shake_object():
 	# Simple shake effect

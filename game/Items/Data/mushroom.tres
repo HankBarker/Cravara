@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/art/v5/mushroom_item.png" id="2"]
+[resource]
+script = ExtResource("1")
+id = "mushroom"
+name = "Forest Cap"
+description = "A fleshy forest mushroom. Restores 12 hunger and keeps you fed for 20 seconds. Also useful for brewing."
+icon = ExtResource("2")
+max_stack = 99
+consumable = true
+hunger_value = 12
+food_satiation_seconds = 20.0

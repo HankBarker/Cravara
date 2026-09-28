@@ -1,0 +1,19 @@
+{
+ "notes": [
+  "Cropped hair uncovers the ears (outside the base face box): keep them skin so skin tones recolour them."
+ ],
+ "materials": {
+  "down": [
+   {
+    "px": [[9, 10], [9, 11], [22, 10], [22, 11]],
+    "mat": "skin"
+   }
+  ],
+  "up": [
+   {
+    "px": [[9, 9], [9, 10], [22, 9], [12, 12], [20, 12]],
+    "mat": "skin"
+   }
+  ]
+ }
+}

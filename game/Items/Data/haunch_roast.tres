@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/art/items/haunch_roast.png" id="2"]
+[resource]
+script = ExtResource("1")
+id = "haunch_roast"
+name = "Haunch Roast"
+description = "Slow-roasted haunch. It sits heavy and keeps you steady."
+icon = ExtResource("2")
+max_stack = 20
+consumable = true
+hunger_value = 100
+food_satiation_seconds = 240.0
+healing_total = 40.0
+healing_duration = 30.0
+effects = {
+"defense": 3
+}
+buff_seconds = 180.0

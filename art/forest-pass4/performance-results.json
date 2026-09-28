@@ -1,0 +1,56 @@
+{
+  "canvas": "480x270",
+  "fps_cap": 0,
+  "samples": [
+    {
+      "cpu_process_ms_p50": 26.22,
+      "cpu_process_ms_p95": 35.865,
+      "draw_calls_p50": 353.0,
+      "draw_calls_p95": 403.0,
+      "elapsed_s": 10.007329,
+      "frame_ms_p50": 8.849,
+      "frame_ms_p95": 18.813,
+      "frame_ms_p99": 25.026,
+      "frames": 1016,
+      "label": "day_shadows",
+      "mean_fps": 101.525591893701,
+      "objects": 5441.0,
+      "texture_bytes": 56128835.0,
+      "walked_px": 654.198749423027
+    },
+    {
+      "cpu_process_ms_p50": 14.889,
+      "cpu_process_ms_p95": 27.932,
+      "draw_calls_p50": 196.0,
+      "draw_calls_p95": 217.0,
+      "elapsed_s": 10.000452,
+      "frame_ms_p50": 2.201,
+      "frame_ms_p95": 4.092,
+      "frame_ms_p99": 12.994,
+      "frames": 3928,
+      "label": "night_shadows",
+      "mean_fps": 392.78224624247,
+      "objects": 5445.0,
+      "texture_bytes": 56128835.0,
+      "walked_px": 655.465404510498
+    },
+    {
+      "cpu_process_ms_p50": 17.31,
+      "cpu_process_ms_p95": 27.338,
+      "draw_calls_p50": 194.0,
+      "draw_calls_p95": 214.0,
+      "elapsed_s": 10.001097,
+      "frame_ms_p50": 2.315,
+      "frame_ms_p95": 4.73,
+      "frame_ms_p99": 13.286,
+      "frames": 3648,
+      "label": "night_without_shadows",
+      "mean_fps": 364.759985829555,
+      "objects": 5445.0,
+      "texture_bytes": 56128835.0,
+      "walked_px": 655.465404510498
+    }
+  ],
+  "vsync": "disabled",
+  "window": "1440x810"
+}

@@ -1,0 +1,49 @@
+Godot Engine v4.6.1.stable.official.14d19694e - https://godotengine.org
+OpenGL API 3.3.0 Core Profile Context 24.10.36.04.250109 - Compatibility - Using Device: ATI Technologies Inc. - AMD Radeon RX 7700S
+
+📦 ItemDB loaded 44 items: basic_axe, basic_pickaxe, berry, bone_dagger, bucket, campfire, chest, cooked_fish, cooked_meat, crystal_flask, crystal_pendant, crystal_shard, fishing_rod, hide_bed, hunter_charm, lantern, leather_chestplate, leather_helmet, leather_leggings, log, moonscale, mushroom, mushroom_potion, net, plank, plant_fiber, raptor_fang, reed_perch, river_totem, shardfin, stego_saddle, stone, tent, thatch_roof, torch, trex_meat, trex_scale, trike_saddle, water_bucket, water_flask, wood_door, wood_floor, wood_wall, workbench
+PASS captured hero-basic-cloth.png
+PASS four-direction source identity and dark helmet comparison exported
+PASS stego mounts actual rendered player
+PASS stego saddle overlay and rider are active
+PASS stego actual side pose retained at capture
+POSE stego side creature=walk_side rider=idle_right seat=(3.0, -30.0)
+PASS captured mounted-stego-side.png
+PASS stego true left-facing source cel
+PASS captured mounted-stego-left.png
+PASS stego true up facing
+PASS captured mounted-stego-up.png
+PASS stego true down facing
+PASS captured mounted-stego-down.png
+PASS stego rendered mounted attack begins
+PASS stego real strike animation visible
+PASS captured mounted-stego-attack.png
+PASS stego native animation contact sheet saved
+PASS stego root F route feeds and heals mounted animal
+PASS stego dismounts after actual movement
+PASS trike mounts actual rendered player
+PASS trike saddle overlay and rider are active
+PASS trike actual side pose retained at capture
+POSE trike side creature=walk_side rider=idle_right seat=(-3.0, -36.0)
+PASS captured mounted-trike-side.png
+PASS trike true left-facing source cel
+PASS captured mounted-trike-left.png
+PASS trike true up facing
+PASS captured mounted-trike-up.png
+PASS trike true down facing
+PASS captured mounted-trike-down.png
+PASS trike rendered mounted attack begins
+PASS trike real strike animation visible
+PASS captured mounted-trike-attack.png
+PASS trike native animation contact sheet saved
+PASS trike root F route feeds and heals mounted animal
+PASS trike dismounts after actual movement
+PASS root locate creates tracking marker for selected animal
+PASS locator canvas marker is visible
+PASS locator label reports live tile distance
+PASS offscreen locator stays within visible HUD bounds
+PASS captured companion-locator-offscreen.png
+PASS locator survives target and player movement and refreshes distance
+PASS moving target distance remains accurate
+PASS target removal cleans up tracking marker and its UI
+RIDER_PASS5_RENDER_QA assertions=42 failures=0

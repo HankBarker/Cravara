@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="Item" load_steps=2 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "cooked_meat"
+name = "Roasted Meat"
+description = "A hearty roast fills hunger completely and keeps you full for 3 minutes of walking. Restores 30 vitality over 30 seconds."
+icon_generator = "forest"
+max_stack = 30
+consumable = true
+hunger_value = 100
+
+healing_total = 30.0
+healing_duration = 30.0
+
+
+food_satiation_seconds = 180.0

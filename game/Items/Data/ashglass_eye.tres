@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/art/items/ashglass_eye.png" id="2"]
+[resource]
+script = ExtResource("1")
+id = "ashglass_eye"
+name = "Ashglass Eye"
+description = "A lens of ashglass. Through it, foes show their weak spots."
+icon = ExtResource("2")
+max_stack = 1
+rarity = "rare"
+equipment_slot = "trinket"
+effects = {
+"crit": 0.05,
+"light": 0.2
+}

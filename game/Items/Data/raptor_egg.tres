@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/art/items/raptor_egg.png" id="2"]
+[resource]
+script = ExtResource("1")
+id = "raptor_egg"
+name = "Raptor Egg"
+description = "A cool blue egg from a Shardback nest. A raptor raised from the egg knows no other pack but yours."
+icon = ExtResource("2")
+max_stack = 10
+rarity = "rare"
+consumable = true
+hunger_value = 10
+food_satiation_seconds = 20.0

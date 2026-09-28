@@ -1,0 +1,18 @@
+world-poi: FAILED (exit 1)
+FAIL carving 'drowned_hall' is in the forest exactly once
+FAIL carving 'sunken_watch' is in the forest exactly once
+FAIL carving 'sand_temple' is in the forest exactly once
+FAIL carving 'buried_arches' is in the forest exactly once
+FAIL carving 'ash_moot' is in the forest exactly once
+FAIL carving 'bone_shrine' is in the forest exactly once
+FAIL all eight carvings fit the lore list ((326.0, 255.0))
+WORLD_POI_SUITE checks=704 failures=7
+wilds: passed
+wilds12: passed
+bonelands: passed
+tribes: passed
+pass13: passed
+pass14: passed
+pass15: passed
+world: passed
+LEGACY_DONE

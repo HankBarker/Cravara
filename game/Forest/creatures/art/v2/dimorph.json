@@ -1,0 +1,45 @@
+{
+ "key": "dimorph",
+ "species": "dimorph",
+ "canvas": [
+  56,
+  52
+ ],
+ "ground": 45,
+ "origin": {
+  "side": [
+   13,
+   18
+  ],
+  "down": [
+   13,
+   18
+  ],
+  "up": [
+   13,
+   18
+  ]
+ },
+ "clips": {
+  "fly": {
+   "fps": 10,
+   "loop": true,
+   "frames": 8
+  },
+  "swoop": {
+   "fps": 12,
+   "loop": false,
+   "frames": 9
+  },
+  "hurt": {
+   "fps": 12,
+   "loop": false,
+   "frames": 5
+  },
+  "death": {
+   "fps": 10,
+   "loop": false,
+   "frames": 13
+  }
+ }
+}

@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/art/items/sickle_claw.png" id="2"]
+[resource]
+script = ExtResource("1")
+id = "sickle_claw"
+name = "Sickle Claw"
+description = "A Sandblade's great toe claw, curved like a harvest blade."
+icon = ExtResource("2")
+max_stack = 20
+rarity = "rare"

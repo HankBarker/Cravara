@@ -1,0 +1,183 @@
+{
+ "parts": {
+  "head_down": {
+   "origin": [
+    24,
+    14
+   ]
+  },
+  "head_down_blink": {
+   "origin": [
+    24,
+    14
+   ]
+  },
+  "torso_down": {
+   "origin": [
+    26,
+    29
+   ]
+  },
+  "pauldron_m_down": {
+   "origin": [
+    34,
+    27
+   ],
+   "shoulder": [
+    36.8,
+    30.6
+   ]
+  },
+  "pauldron_o_down": {
+   "origin": [
+    23,
+    27
+   ],
+   "shoulder": [
+    27.2,
+    30.6
+   ]
+  },
+  "boot_m_down": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "boot_o_down": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "head_up": {
+   "origin": [
+    25,
+    14
+   ]
+  },
+  "torso_up": {
+   "origin": [
+    27,
+    28
+   ]
+  },
+  "pauldron_m_up": {
+   "origin": [
+    36,
+    27
+   ],
+   "shoulder": [
+    37.0,
+    30.4
+   ]
+  },
+  "pauldron_o_up": {
+   "origin": [
+    24,
+    27
+   ],
+   "shoulder": [
+    27.0,
+    30.4
+   ]
+  },
+  "boot_m_up": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "boot_o_up": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "head_side": {
+   "origin": [
+    23,
+    14
+   ]
+  },
+  "head_side_blink": {
+   "origin": [
+    23,
+    14
+   ]
+  },
+  "torso_side": {
+   "origin": [
+    26,
+    29
+   ]
+  },
+  "pauldron_m_side": {
+   "origin": [
+    26,
+    28
+   ],
+   "shoulder": [
+    30.2,
+    30.8
+   ]
+  },
+  "boot_m_side": {
+   "pivot": [
+    2.2,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  }
+ },
+ "materials": {
+  "arm_upper": [
+   "694421",
+   "906434",
+   "b07f43",
+   "d29d58",
+   "dbbe86"
+  ],
+  "arm_lower": [
+   "3c2011",
+   "563219",
+   "7d532a",
+   "9f743d",
+   "c08e4e"
+  ],
+  "leg_upper": [
+   "3c2011",
+   "563219",
+   "7d532a",
+   "9f743d",
+   "c08e4e"
+  ],
+  "leg_lower": [
+   "3c2011",
+   "563219",
+   "7d532a",
+   "9f743d",
+   "c08e4e"
+  ]
+ },
+ "name": "Trail Leather"
+}

@@ -1,0 +1,15 @@
+Godot Engine v4.6.1.stable.official.14d19694e - https://godotengine.org
+
+📦 ItemDB loaded 44 items: basic_axe, basic_pickaxe, berry, bone_dagger, bucket, campfire, chest, cooked_fish, cooked_meat, crystal_flask, crystal_pendant, crystal_shard, fishing_rod, hide_bed, hunter_charm, lantern, leather_chestplate, leather_helmet, leather_leggings, log, moonscale, mushroom, mushroom_potion, net, plank, plant_fiber, raptor_fang, reed_perch, river_totem, shardfin, stego_saddle, stone, tent, thatch_roof, torch, trex_meat, trex_scale, trike_saddle, water_bucket, water_flask, wood_door, wood_floor, wood_wall, workbench
+SCRIPT ERROR: Parse Error: Cannot infer the type of "chest" variable because the value doesn't have a set type.
+   at: GDScript::reload (res://Forest/ForestWorld.gd:436)
+   GDScript backtrace (most recent call first):
+       [0] _ready (res://Forest/ForestPlaytest.gd:40)
+ERROR: Failed to load script "res://Forest/ForestWorld.gd" with error "Parse error".
+   at: load (modules/gdscript/gdscript.cpp:2907)
+   GDScript backtrace (most recent call first):
+       [0] _ready (res://Forest/ForestPlaytest.gd:40)
+SCRIPT ERROR: Invalid call. Nonexistent function 'new' in base 'GDScript'.
+   at: _ready (res://Forest/ForestPlaytest.gd:40)
+   GDScript backtrace (most recent call first):
+       [0] _ready (res://Forest/ForestPlaytest.gd:40)

@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/art/items/cactus_fruit.png" id="2"]
+[resource]
+script = ExtResource("1")
+id = "cactus_fruit"
+name = "Cactus Fruit"
+description = "Red as an ember, sweet as honey, and full of water. Picked from the cacti of the Sunscar Dunes."
+icon = ExtResource("2")
+max_stack = 20
+consumable = true
+hunger_value = 16
+food_satiation_seconds = 25.0
+healing_total = 6.0
+healing_duration = 8.0

@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/art/items/melon_cooler.png" id="2"]
+[resource]
+script = ExtResource("1")
+id = "melon_cooler"
+name = "Melon Cooler"
+description = "A hollowed melon full of berries. Light feet."
+icon = ExtResource("2")
+max_stack = 20
+consumable = true
+hunger_value = 50
+food_satiation_seconds = 150.0
+healing_total = 12.0
+healing_duration = 15.0
+effects = {
+"speed": 0.08
+}
+buff_seconds = 240.0

@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/equipment/art/wardrobe/icons/rex_leggings.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = "rex_leggings"
+name = "Tyrant Greaves"
+description = "Emerald scale greaves over clawed bronze boots, cut from the hide of the forest's apex."
+icon = ExtResource("2")
+max_stack = 1
+rarity = "legendary"
+armor_slot = "legs"
+defense = 10

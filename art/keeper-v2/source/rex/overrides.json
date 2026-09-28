@@ -1,0 +1,187 @@
+{
+ "notes": [
+  "Emerald Tyrant. Green scale pauldrons sit in head rows 13-15 beside the skull jaw; they are cut out of the helmet (the cream jaw stays).",
+  "Upper arm brown leather, forearm green scale bracer, green scale greaves.",
+  "materials: a lone temple skin pixel outside the base face box (side view).",
+  "eyes: the left eye sits 1px right of the base eye box (down view).",
+  "ramps.arm_upper: explicit brown-leather ramp (the palette has no shade between 81643f and the tan cb8d5b).",
+  "up: the nape under the helmet (cb8d5b/efc078, rows 11-12) is skin so skin tones recolour it from behind."
+ ],
+ "labels": {
+  "down": [
+   {
+    "rect": [
+     6,
+     13,
+     9,
+     16
+    ],
+    "label": "pauldron_o"
+   },
+   {
+    "px": [
+     [
+      10,
+      14
+     ],
+     [
+      10,
+      15
+     ],
+     [
+      10,
+      16
+     ]
+    ],
+    "label": "pauldron_o"
+   },
+   {
+    "rect": [
+     22,
+     13,
+     25,
+     16
+    ],
+    "label": "pauldron_m"
+   },
+   {
+    "px": [
+     [
+      21,
+      14
+     ],
+     [
+      21,
+      15
+     ],
+     [
+      21,
+      16
+     ]
+    ],
+    "label": "pauldron_m"
+   }
+  ],
+  "up": [
+   {
+    "rect": [
+     6,
+     13,
+     11,
+     16
+    ],
+    "label": "pauldron_o"
+   },
+   {
+    "rect": [
+     20,
+     13,
+     25,
+     16
+    ],
+    "label": "pauldron_m"
+   }
+  ],
+  "side": [
+   {
+    "rect": [
+     10,
+     15,
+     15,
+     17
+    ],
+    "label": "pauldron_m"
+   }
+  ]
+ },
+ "ramp_hint": {
+  "arm_lower": "15683b",
+  "leg_upper": "249251",
+  "leg_lower": "249251"
+ },
+ "materials": {
+  "side": [
+   {
+    "px": [
+     [
+      15,
+      10
+     ]
+    ],
+    "mat": "skin"
+   }
+  ],
+  "up": [
+   {
+    "px": [
+     [
+      12,
+      11
+     ],
+     [
+      14,
+      11
+     ],
+     [
+      15,
+      11
+     ],
+     [
+      16,
+      11
+     ],
+     [
+      17,
+      11
+     ],
+     [
+      19,
+      11
+     ],
+     [
+      12,
+      12
+     ],
+     [
+      15,
+      12
+     ],
+     [
+      17,
+      12
+     ],
+     [
+      19,
+      12
+     ]
+    ],
+    "mat": "skin"
+   }
+  ]
+ },
+ "eyes": {
+  "down": [
+   [
+    12,
+    11,
+    14,
+    13
+   ],
+   [
+    17,
+    11,
+    19,
+    13
+   ]
+  ]
+ },
+ "ramps": {
+  "arm_upper": [
+   "352817",
+   "5f4125",
+   "81643f",
+   "a27d4e",
+   "cb8d5b"
+  ]
+ }
+}

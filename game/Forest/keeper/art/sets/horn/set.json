@@ -1,0 +1,133 @@
+{
+ "parts": {
+  "head_down": {
+   "origin": [
+    22,
+    13
+   ]
+  },
+  "head_down_blink": {
+   "origin": [
+    22,
+    13
+   ]
+  },
+  "torso_down": {
+   "origin": [
+    26,
+    29
+   ]
+  },
+  "boot_m_down": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "boot_o_down": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "head_up": {
+   "origin": [
+    22,
+    13
+   ]
+  },
+  "torso_up": {
+   "origin": [
+    27,
+    28
+   ]
+  },
+  "boot_m_up": {
+   "pivot": [
+    3.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "boot_o_up": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "head_side": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "head_side_blink": {
+   "origin": [
+    23,
+    13
+   ]
+  },
+  "torso_side": {
+   "origin": [
+    26,
+    29
+   ]
+  },
+  "boot_m_side": {
+   "pivot": [
+    2.2,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  }
+ },
+ "materials": {
+  "arm_upper": [
+   "a93d2a",
+   "d05231",
+   "ea6d3a",
+   "ec9868",
+   "efbd93"
+  ],
+  "arm_lower": [
+   "1c0b07",
+   "2b160d",
+   "452b17",
+   "6c482f",
+   "c0482e"
+  ],
+  "leg_upper": [
+   "452b17",
+   "8a3122",
+   "c0482e",
+   "ea6d3a",
+   "eb9362"
+  ],
+  "leg_lower": [
+   "452b17",
+   "8a3122",
+   "c0482e",
+   "ea6d3a",
+   "eb9362"
+  ]
+ },
+ "name": "Hornguard"
+}

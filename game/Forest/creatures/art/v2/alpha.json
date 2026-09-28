@@ -1,0 +1,83 @@
+{
+ "key": "alpha",
+ "species": "alpha",
+ "canvas": [
+  128,
+  96
+ ],
+ "ground": 89,
+ "origin": {
+  "side": [
+   22,
+   30
+  ],
+  "down": [
+   22,
+   30
+  ],
+  "up": [
+   22,
+   32
+  ]
+ },
+ "clips": {
+  "idle": {
+   "fps": 6,
+   "loop": true,
+   "frames": 8
+  },
+  "walk": {
+   "fps": 9,
+   "loop": true,
+   "frames": 8
+  },
+  "run": {
+   "fps": 13,
+   "loop": true,
+   "frames": 8
+  },
+  "slash": {
+   "fps": 14,
+   "loop": false,
+   "frames": 9,
+   "hit": 5,
+   "hit_view": {
+    "side": 5,
+    "down": 6,
+    "up": 5
+   }
+  },
+  "pounce": {
+   "fps": 14,
+   "loop": false,
+   "frames": 13,
+   "hit": 8,
+   "hit_view": {
+    "side": 8,
+    "down": 7,
+    "up": 8
+   },
+   "takeoff": 4,
+   "takeoff_view": {
+    "side": 4,
+    "down": 3,
+    "up": 5
+   }
+  },
+  "roar": {
+   "fps": 10,
+   "loop": false,
+   "frames": 13
+  },
+  "hurt": {
+   "fps": 12,
+   "loop": false,
+   "frames": 5
+  },
+  "death": {
+   "fps": 10,
+   "loop": false,
+   "frames": 13
+  }
+ }
+}

@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/art/items/lotus_broth.png" id="2"]
+[resource]
+script = ExtResource("1")
+id = "lotus_broth"
+name = "Lotus Broth"
+description = "Clear broth with lotus and fish. Water parts before you, and fish bite."
+icon = ExtResource("2")
+max_stack = 20
+consumable = true
+hunger_value = 60
+food_satiation_seconds = 200.0
+healing_total = 20.0
+healing_duration = 20.0
+effects = {
+"wading": 0.4,
+"fishing": 0.25
+}
+buff_seconds = 300.0

@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/art/items/incubator.png" id="2"]
+[resource]
+script = ExtResource("1")
+id = "incubator"
+name = "Incubator"
+description = "Straw in a clay bowl over warm stones. Set an egg in it (hold the egg and click) and keep a fire or torch close: it will hatch a baby that knows you."
+icon = ExtResource("2")
+max_stack = 5
+placeable = true

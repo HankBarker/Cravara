@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/art/items/foragers_salad.png" id="2"]
+[resource]
+script = ExtResource("1")
+id = "foragers_salad"
+name = "Forager's Salad"
+description = "Berries, mushroom and lotus petals. You find more of everything."
+icon = ExtResource("2")
+max_stack = 20
+consumable = true
+hunger_value = 45
+food_satiation_seconds = 180.0
+healing_total = 15.0
+healing_duration = 20.0
+effects = {
+"harvest": 0.25,
+"gather": 1
+}
+buff_seconds = 300.0

@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/art/items/tyrant_eye.png" id="2"]
+[resource]
+script = ExtResource("1")
+id = "tyrant_eye"
+name = "Tyrant's Eye"
+description = "The rex's amber eye, turned to stone. It sees the weak spot."
+icon = ExtResource("2")
+max_stack = 1
+rarity = "legendary"
+equipment_slot = "trinket"
+effects = {
+"crit": 0.08,
+"knock": 0.25
+}

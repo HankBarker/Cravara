@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/art/items/fishers_chowder.png" id="2"]
+[resource]
+script = ExtResource("1")
+id = "fishers_chowder"
+name = "Fisher's Chowder"
+description = "Creamy fish and roots. Lucky water."
+icon = ExtResource("2")
+max_stack = 20
+consumable = true
+hunger_value = 75
+food_satiation_seconds = 240.0
+healing_total = 25.0
+healing_duration = 25.0
+effects = {
+"fishing": 0.4,
+"luck": 0.1
+}
+buff_seconds = 300.0

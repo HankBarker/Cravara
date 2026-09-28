@@ -1,0 +1,76 @@
+{
+ "key": "dodo",
+ "species": "dodo",
+ "canvas": [
+  48,
+  48
+ ],
+ "ground": 41,
+ "origin": {
+  "side": [
+   14,
+   20
+  ],
+  "down": [
+   14,
+   20
+  ],
+  "up": [
+   14,
+   20
+  ]
+ },
+ "clips": {
+  "idle": {
+   "fps": 6,
+   "loop": true,
+   "frames": 8
+  },
+  "walk": {
+   "fps": 9,
+   "loop": true,
+   "frames": 8
+  },
+  "run": {
+   "fps": 13,
+   "loop": true,
+   "frames": 8
+  },
+  "peck": {
+   "fps": 14,
+   "loop": false,
+   "frames": 9,
+   "hit": 5,
+   "hit_view": {
+    "side": 5,
+    "down": 5,
+    "up": 3
+   }
+  },
+  "eat": {
+   "fps": 8,
+   "loop": false,
+   "frames": 13
+  },
+  "hurt": {
+   "fps": 12,
+   "loop": false,
+   "frames": 5
+  },
+  "death": {
+   "fps": 10,
+   "loop": false,
+   "frames": 13
+  },
+  "look": {
+   "fps": 7,
+   "loop": false,
+   "frames": 13
+  },
+  "rest": {
+   "fps": 6,
+   "loop": false,
+   "frames": 13
+  }
+ }
+}

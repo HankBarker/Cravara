@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/art/items/tusk_charm.png" id="2"]
+[resource]
+script = ExtResource("1")
+id = "tusk_charm"
+name = "Tusk Charm"
+description = "A lystrosaur tusk on a cord. Crops grow thick for its wearer."
+icon = ExtResource("2")
+max_stack = 1
+rarity = "rare"
+equipment_slot = "trinket"
+effects = {
+"harvest": 0.2
+}

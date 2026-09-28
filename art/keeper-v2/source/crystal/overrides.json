@@ -1,0 +1,83 @@
+{
+ "notes": [
+  "Skyshard. The crystal pauldrons reach up into the head rows (14-15): cut them out of the helmet.",
+  "Side view: the far hand pokes out in front of the chest (20,20)-(20,21) -> repainted from the chest; the far foot's sole is dropped from the boot.",
+  "Arms are steel in the source (grey upper, light bracer).",
+  "eyes: the left eye sits 1px right of the base eye box (down view).",
+  "blink_line low: a mid-row lash line would merge with the visor nose guard into one long bar."
+ ],
+ "labels": {
+  "down": [
+   {
+    "rect": [6, 15, 10, 16],
+    "label": "pauldron_o"
+   },
+   {
+    "px": [[6, 14], [7, 14], [8, 14], [9, 14]],
+    "label": "pauldron_o"
+   },
+   {
+    "rect": [21, 15, 25, 16],
+    "label": "pauldron_m"
+   },
+   {
+    "px": [[22, 14], [23, 14], [24, 14]],
+    "label": "pauldron_m"
+   }
+  ],
+  "up": [
+   {
+    "rect": [7, 15, 11, 16],
+    "label": "pauldron_o"
+   },
+   {
+    "rect": [20, 15, 24, 16],
+    "label": "pauldron_m"
+   },
+   {
+    "px": [[8, 14]],
+    "label": "pauldron_o"
+   },
+   {
+    "px": [[23, 14]],
+    "label": "pauldron_m"
+   }
+  ],
+  "side": [
+   {
+    "rect": [9, 15, 14, 16],
+    "label": "pauldron_m"
+   },
+   {
+    "px": [[18, 28]],
+    "label": "drop"
+   }
+  ]
+ },
+ "patches": [
+  {
+   "part": "torso",
+   "view": "side",
+   "x": 20,
+   "y": 20,
+   "hex": "fill"
+  },
+  {
+   "part": "torso",
+   "view": "side",
+   "x": 20,
+   "y": 21,
+   "hex": "fill"
+  }
+ ],
+ "ramp_hint": {
+  "arm_upper": "93abb0",
+  "arm_lower": "c0c5cc"
+ },
+ "eyes": {
+  "down": [[12, 11, 14, 13], [17, 11, 19, 13]]
+ },
+ "blink_line": {
+  "down": "low"
+ }
+}

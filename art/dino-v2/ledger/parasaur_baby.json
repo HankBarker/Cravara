@@ -1,0 +1,66 @@
+{
+ "idle_side": {
+  "job": "d85f8b90-7981-415e-9000-3d72cf3898c3",
+  "tool": "animate_image_pixminimax",
+  "seed": 7709081,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stands still in a relaxed pose; its body rises and falls very slightly and its tail sways a little. It stays in place, facing right.",
+  "frames": 9,
+  "submitted": 1790311864.35547,
+  "finished": 1790312683.8960292,
+  "score": {
+   "bright": 0,
+   "area": 1.0,
+   "wide": 1.0
+  }
+ },
+ "walk_side": {
+  "job": "c221f2e2-2fa7-4b68-8b8b-81ee12763bab",
+  "tool": "animate_image",
+  "seed": 13354670,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Walks in place: its legs step one after the other, its body bobs gently with each step and its tail sways. It stays in place, facing right.",
+  "frames": 9,
+  "submitted": 1790311865.0910904,
+  "finished": 1790311958.2408817,
+  "score": {
+   "bright": 0,
+   "area": 1.0,
+   "wide": 1.0
+  }
+ },
+ "run_side": {
+  "job": "cd0080df-0db6-4401-9f45-64d95452ce14",
+  "tool": "animate_image_pixminimax",
+  "seed": 951329,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Runs in place with long fast strides, its body leaning forward and its tail held straight out behind. It stays in place, facing right.",
+  "frames": 9,
+  "submitted": 1790311959.7813127,
+  "finished": 1790312910.2203507,
+  "score": {
+   "bright": 0,
+   "area": 1.01,
+   "wide": 1.0
+  }
+ },
+ "eat_side": {
+  "job": "1dfaf1be-29a9-4dd6-9480-fa3c162e6117",
+  "tool": "animate_image_pixminimax",
+  "seed": 15656420,
+  "status": "done",
+  "cost": 2.0,
+  "prompt": "Lowers its head to the ground, eats the grass with a few bites, then lifts its head back up. It stays in place, facing right.",
+  "frames": 13,
+  "submitted": 1790312685.508693,
+  "finished": 1790313149.8574357,
+  "score": {
+   "bright": 13,
+   "area": 1.09,
+   "wide": 1.06
+  }
+ }
+}

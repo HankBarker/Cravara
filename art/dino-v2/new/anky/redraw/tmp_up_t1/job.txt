@@ -1,0 +1,11 @@
+adb059b4-33d7-4875-8857-c9321d570d78
+status: completed
+id: adb059b4-33d7-4875-8857-c9321d570d78
+job_id: adb059b4-33d7-4875-8857-c9321d570d78
+frames: 1
+transparent: yes
+asset_id: f0421f4e-55d8-55e9-a729-d1209ffa4e52
+asset_type: image
+asset_status: saved
+gallery: saved to your PixelLab gallery (pixellab.ai/create)
+download: https://api.pixellab.ai/mcp/images/adb059b4-33d7-4875-8857-c9321d570d78/download
