@@ -504,3 +504,33 @@ Result: 10-19 ms a frame across runs (camp ~11-14, the villages ~10-18, a sandst
   rim stays as outline. Don't recolour every interior black pixel: the drawing uses black for its
   belly shade, and doing so washed the whole lower body out.
 - The originals are kept in `art/dino-v2/fix/dimetrodon/`, and the tool always starts from them.
+
+## Pass 18: the far ring's beasts and bosses
+- **New keys**: ptera (landed) / pterafly, dimorph, thyla, quetzal / quetzalfly, grimjaw, reaper
+  and cinder. Drawings come from `tools/dino/fetch18.py` and `pick18.py`. The first ptera, dimorph
+  and thyla came out bigger than a rex and were redrawn smaller.
+- **Front/back fixes by tool** (each recorded in the ledger's `method`):
+  - `walk_front.py` RIG gained deino, thyla (legs 11, gap 3), grimjaw (16/6) and reaper (20/4).
+  - `lunge_front.py` built the thyla's roar_up, grimjaw's chomp_up, the reaper's slash and roar
+    (down/up), and the thyla's maul_up (its slash shape, renamed).
+  - `stalk_from_walk.py thyla/up`.
+  - Ossuar's front and back runs were rebuilt with `walk_front --run`.
+- **FX the models add**: "slash", "swipe", "maul" and some tail sweeps draw big crescents or claw
+  trails. Saying "no trails or effects" in the motion helped the front view only. What fixed them:
+  - `speck_fix.py CLIP F --copy N` (hold a neighbour frame);
+  - a colour-key clear of dust at the feet;
+  - a procedural clip.
+
+  Crystal glows also make sparks and wisps (the Ossuar's walks).
+- **QA flags**: pale wings and glowing crystal trip `bright`, though the quetzal clips were fine.
+  Real FX trip it too: the reaper's slashes scored 1000-4000. Look before regenerating.
+- **gen.py run and redo race**:
+  - A running `gen.py run --only KEY` picks up any `redo` submitted for that key and cleans it over
+    hand-fixed frames.
+  - After a flagged attempt it pops the entry and resubmits, a generation each, until MAX_ATTEMPTS.
+  - Stop runs (find them by command line) before hand-fixing that key, and restart them with a
+    narrower `--only`.
+- **Strides** (`stride.py` reads the exported strips, so export first):
+  - The Ossuar's and the Reaper's side walks moved their feet about 4-6 px/s, so they glided.
+  - The Ossuar's walk is now its run, a lope (walk 52, run 75). The Reaper runs from `run_at` 30.
+  - Thyla run 49, quetzal walk 37.

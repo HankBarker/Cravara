@@ -56,8 +56,10 @@ func go(cell: Vector2i) -> void:
 	await get_tree().create_timer(1.5).timeout
 func run() -> void:
 	var cli := OS.get_cmdline_user_args()
-	if not "--rings2" in cli:
-		get_tree().set_meta("forest_new_world", {"layout": "rings", "version": 2, "seed": 424242})
+	# (`--rings3`: a pass-18 world, its far ring sampled too.)
+	var v3 := "--rings3" in cli
+	if not "--rings2" in cli or v3:
+		get_tree().set_meta("forest_new_world", {"layout": "rings", "version": 3 if v3 else 2, "seed": 424242})
 		get_tree().set_meta("forest_continue", false)
 	var t := Time.get_ticks_msec()
 	scene = preload("res://Forest/ForestPlaytest.tscn").instantiate()
@@ -86,6 +88,20 @@ func run() -> void:
 		if world.villages.has(vid):
 			await go(world.villages[vid].cell + Vector2i(0, 9))
 			await sample(vid.replace("_", " "))
+	if v3:
+		var rr := RandomNumberGenerator.new()
+		rr.seed = 7
+		var jungle: Vector2i = L.point_in("jungle", rr, Vector2(0.3, 0.5), Vector2(-0.3, 0.3))
+		await go(jungle)
+		await sample("jungle")
+		await go(L.canopy_of(jungle))
+		await sample("canopy")
+		rr.seed = 7
+		await go(L.point_in("volcano", rr, Vector2(0.3, 0.5), Vector2(-0.3, 0.3)))
+		await sample("volcano")
+		var crater: Vector2i = world.gen.volcano_at
+		await go(crater + Vector2i((Vector2.from_angle(float(world.gen.get("_to_camp"))) * 18.0).round()))
+		await sample("crater (Cinderhulk)")
 	scene.queue_free()
 	await get_tree().process_frame
 	get_tree().quit(0)

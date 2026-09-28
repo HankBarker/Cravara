@@ -26,6 +26,15 @@ const MOVES := {
 		{"id": "bite", "kind": "strike", "clip": "bite", "range": [0, 14], "cooldown": 1.2, "dmg": 1.0, "knock": 170, "shape": "jaws", "reach": 20, "arc": 90, "lunge": 8},
 		{"id": "charge", "kind": "charge", "windup": "roar", "windup_speed": 1.35, "clip": "run", "range": [56, 150], "cooldown": 7.5, "dmg": 1.35, "knock": 360, "shape": "body", "dash_speed": 150.0, "distance": 180.0, "heavy": true},
 	],
+	# Pass 18: the thylacoleo's leap (from the trees, or at a run) and its
+	# maul; a landed pteranodon's beak.
+	"thyla": [
+		{"id": "pounce", "kind": "pounce", "clip": "pounce", "range": [30, 104], "cooldown": 4.0, "dmg": 1.5, "knock": 200, "shape": "claws", "reach": 13, "takeoff": 0.3},
+		{"id": "maul", "kind": "strike", "clip": "maul", "range": [0, 12], "cooldown": 1.4, "dmg": 1.0, "knock": 150, "shape": "claws", "reach": 16, "arc": 110, "lunge": 6},
+	],
+	"ptera": [
+		{"id": "bite", "kind": "strike", "clip": "bite", "range": [0, 12], "cooldown": 1.4, "dmg": 1.0, "knock": 90, "shape": "jaws", "reach": 14, "arc": 90, "lunge": 5},
+	],
 	"raptor": [
 		{"id": "pounce", "kind": "pounce", "clip": "pounce", "range": [34, 96], "cooldown": 3.4, "dmg": 1.4, "knock": 180, "shape": "claws", "reach": 12, "takeoff": 0.32},
 		{"id": "slash", "kind": "strike", "clip": "slash", "range": [0, 12], "cooldown": 1.5, "dmg": 1.0, "knock": 110, "shape": "jaws", "reach": 16, "arc": 100, "lunge": 6},
@@ -103,6 +112,31 @@ const MOVES := {
 		{"id": "slash", "kind": "strike", "clip": "slash", "range": [0, 16], "cooldown": 3.2, "dmg": 1.3, "knock": 320, "shape": "jaws", "reach": 22, "arc": 120, "lunge": 8, "heavy": true, "bleed": 0.2, "bleed_time": 4.0},
 		{"id": "bite", "kind": "strike", "clip": "bite", "range": [0, 18], "cooldown": 1.4, "dmg": 1.0, "knock": 220, "shape": "jaws", "reach": 26, "arc": 90, "lunge": 12},
 	],
+	# Pass 18's bosses (their specials are their boss scripts'): Grimjaw's
+	# jaws and its club of a tail; the Reaper's scythe claws and its charge;
+	# Stormcrest's beak and the gust of its wings (a buffet that throws); the
+	# Cinderhulk's tail and the stamp that shakes the ground.
+	"grimjaw": [
+		{"id": "chomp", "kind": "strike", "clip": "chomp", "range": [0, 20], "cooldown": 4.0, "dmg": 1.7, "knock": 320, "shape": "jaws", "reach": 30, "arc": 80, "lunge": 18, "chance": 0.55, "heavy": true},
+		{"id": "bite", "kind": "strike", "clip": "bite", "range": [0, 18], "cooldown": 1.4, "dmg": 1.0, "knock": 200, "shape": "jaws", "reach": 28, "arc": 90, "lunge": 12},
+		{"id": "tail", "kind": "strike", "clip": "tail_swing", "range": [0, 30], "cooldown": 3.2, "dmg": 1.1, "knock": 420, "shape": "tail", "reach": 44, "heavy": true},
+	],
+	"reaper": [
+		{"id": "charge", "kind": "charge", "windup": "roar", "windup_speed": 1.7, "clip": "run", "range": [60, 170], "cooldown": 6.5, "dmg": 1.3, "knock": 380, "shape": "body", "dash_speed": 180.0, "distance": 200.0, "heavy": true},
+		{"id": "slash", "kind": "strike", "clip": "slash", "range": [0, 22], "cooldown": 1.2, "dmg": 1.0, "knock": 220, "shape": "jaws", "reach": 30, "arc": 150, "lunge": 12, "bleed": 0.25, "bleed_time": 4.0},
+	],
+	"stormcrest": [
+		{"id": "buffet", "kind": "strike", "clip": "buffet", "range": [0, 34], "cooldown": 5.0, "dmg": 0.7, "knock": 520, "shape": "ring", "radius": 58.0, "heavy": true, "front": true},
+		{"id": "bite", "kind": "strike", "clip": "bite", "range": [0, 20], "cooldown": 1.3, "dmg": 1.0, "knock": 220, "shape": "jaws", "reach": 30, "arc": 80, "lunge": 14},
+	],
+	"quetzal": [
+		{"id": "buffet", "kind": "strike", "clip": "buffet", "range": [0, 34], "cooldown": 5.0, "dmg": 0.7, "knock": 520, "shape": "ring", "radius": 58.0, "heavy": true, "front": true},
+		{"id": "bite", "kind": "strike", "clip": "bite", "range": [0, 20], "cooldown": 1.3, "dmg": 1.0, "knock": 220, "shape": "jaws", "reach": 30, "arc": 80, "lunge": 14},
+	],
+	"cinder": [
+		{"id": "stomp", "kind": "strike", "clip": "stomp", "range": [0, 26], "cooldown": 4.5, "dmg": 1.1, "knock": 360, "shape": "ring", "radius": 56.0, "heavy": true, "front": true},
+		{"id": "tail", "kind": "strike", "clip": "tail_swing", "range": [0, 30], "cooldown": 2.4, "dmg": 1.25, "knock": 540, "shape": "tail", "reach": 44, "heavy": true},
+	],
 	"alpha": [
 		{"id": "pounce", "kind": "pounce", "clip": "pounce", "range": [40, 150], "cooldown": 3.6, "dmg": 1.5, "knock": 260, "shape": "claws", "reach": 18, "takeoff": 0.3, "heavy": true},
 		{"id": "slash", "kind": "strike", "clip": "slash", "range": [0, 16], "cooldown": 1.0, "dmg": 1.0, "knock": 160, "shape": "jaws", "reach": 22, "arc": 110, "lunge": 10},
@@ -116,9 +150,10 @@ const MOUNT_DAMAGE := {"stego": 18, "trike": 22}
 const CHARGE_TIME := 1.0
 const MOUNT_RAM_DAMAGE := {"trike": 40}
 ## How far a shove moves each species (heavy bodies barely budge).
-const MASS := {"dodo": 1.0, "lystro": 1.0, "raptor": 0.8, "trike": 0.35, "stego": 0.35, "allo": 0.4, "alpha": 0.3, "rex": 0.25, "longneck": 0.15, "parasaur": 0.4, "ossuar": 0.1,
+const MASS := {"thyla": 0.6, "ptera": 0.8, "dimorph": 1.0, "dodo": 1.0, "lystro": 1.0, "raptor": 0.8, "trike": 0.35, "stego": 0.35, "allo": 0.4, "alpha": 0.3, "rex": 0.25, "longneck": 0.15, "parasaur": 0.4, "ossuar": 0.1,
 	"dimetrodon": 0.5, "proto": 0.8, "anky": 0.12, "carno": 0.3, "yuty": 0.22, "compy": 1.2,
-	"utah": 0.5, "deino": 0.7, "sucho": 0.3, "spino": 0.14}
+	"utah": 0.5, "deino": 0.7, "sucho": 0.3, "spino": 0.14,
+	"grimjaw": 0.08, "reaper": 0.12, "quetzal": 0.2, "stormcrest": 0.15, "cinder": 0.04}
 
 var c  # ForestCreature
 var move := {}
@@ -720,7 +755,7 @@ func _hit(victim: Node2D, dir: Vector2, heavy: bool) -> void:
 	var amount := int(round(float(c.stats.damage) * float(move.dmg)))
 	var knock := float(move.knock)
 	if mounted:
-		amount = int(MOUNT_DAMAGE.get(c.species, amount))
+		amount = int(MOUNT_DAMAGE.get(c.species, preload("res://Forest/creatures/Rides.gd").of(c.species).get("damage", roundf(float(c.stats.damage) * 0.85))))
 		if move.kind == "charge":
 			amount = int(round(float(MOUNT_RAM_DAMAGE.get(c.species, amount)) * _power))
 			knock *= lerpf(0.75, 1.2, charge)

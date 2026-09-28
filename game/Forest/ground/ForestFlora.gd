@@ -170,6 +170,17 @@ static func scatter_chunk(kinds: Dictionary, d: Dictionary, noise: FastNoiseLite
 		r.seed = hash(Vector3i(c.x, c.y, world_seed ^ 0x5eed))
 		var s := str(styles[int(style[k])]) if int(style[k]) < styles.size() else ""
 		var sand: bool = s == "sand"
+		# Pass 18: the volcano grows nothing green (a dead grey scrub here and
+		# there); the treetops a moss tuft or two on the bark.
+		var land_k := int(lands[k])
+		if land_k == 7:
+			if r.randf() < 0.05 and kinds.has("scrub"):
+				plants.append(_plant_at(c, kinds.scrub, r, Color(0.55, 0.52, 0.5), r.randf_range(0.2, 0.4)))
+			continue
+		if land_k == 8:
+			if r.randf() < 0.2:
+				plants.append(_plant_at(c, kinds.tufts, r, Color(0.78, 0.92, 0.7), r.randf_range(0.6, 0.9)))
+			continue
 		if s == "stone" and r.randf() < 0.8: continue
 		if s == "hardpan":
 			if r.randf() < 0.1 and kinds.has("scrub"):
@@ -194,11 +205,18 @@ static func scatter_chunk(kinds: Dictionary, d: Dictionary, noise: FastNoiseLite
 				var f := r.randf()
 				flower = "blossoms" if f < 0.45 else ("sprigs" if f < 0.75 else "clumps")
 			var undergrowth := r.randf()
-			if t == 3 and undergrowth < 0.07 and kinds.has("ferns"):
+			# (The jungle floor: thick undergrowth, ferns everywhere.)
+			if land_k == 6:
+				tufts = 2
+				if undergrowth < 0.14 and kinds.has("ferns"): bush = "ferns"
+			if bush != "":
+				pass
+			elif t == 3 and undergrowth < 0.07 and kinds.has("ferns"):
 				bush = "ferns"
 			elif t == 0 and undergrowth < 0.025 + maxf(0.0, lush) * 0.06 and kinds.has("shrubs"):
 				bush = "shrubs"
 		var tint := Color(0.72, 0.86, 0.8) if t == 3 else Color(1, 1, 1)
+		if land_k == 6: tint *= Color(0.62, 0.8, 0.66)
 		if int(lands[k]) == 3: tint *= Color.WHITE.lerp(Color(0.8, 0.78, 0.72), clampf(float(inner[k]) / 10.0, 0.0, 1.0))
 		for i in tufts:
 			plants.append(_plant_at(c, kinds.tufts, r, tint, r.randf_range(0.75, 1.0)))

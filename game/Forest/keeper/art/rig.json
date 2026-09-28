@@ -1141,6 +1141,104 @@
     0
    ]
   },
+  "sets/obsidian/head_down": {
+   "origin": [
+    23,
+    14
+   ]
+  },
+  "sets/obsidian/head_down_blink": {
+   "origin": [
+    23,
+    14
+   ]
+  },
+  "sets/obsidian/torso_down": {
+   "origin": [
+    26,
+    29
+   ]
+  },
+  "sets/obsidian/boot_m_down": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/obsidian/boot_o_down": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/obsidian/head_up": {
+   "origin": [
+    24,
+    14
+   ]
+  },
+  "sets/obsidian/torso_up": {
+   "origin": [
+    27,
+    28
+   ]
+  },
+  "sets/obsidian/boot_m_up": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/obsidian/boot_o_up": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/obsidian/head_side": {
+   "origin": [
+    23,
+    14
+   ]
+  },
+  "sets/obsidian/head_side_blink": {
+   "origin": [
+    23,
+    14
+   ]
+  },
+  "sets/obsidian/torso_side": {
+   "origin": [
+    26,
+    29
+   ]
+  },
+  "sets/obsidian/boot_m_side": {
+   "pivot": [
+    2.2,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
   "sets/plate/head_down": {
    "origin": [
     23,
@@ -1485,6 +1583,104 @@
     0
    ]
   },
+  "sets/sky/head_down": {
+   "origin": [
+    25,
+    13
+   ]
+  },
+  "sets/sky/head_down_blink": {
+   "origin": [
+    25,
+    13
+   ]
+  },
+  "sets/sky/torso_down": {
+   "origin": [
+    26,
+    29
+   ]
+  },
+  "sets/sky/boot_m_down": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/sky/boot_o_down": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/sky/head_up": {
+   "origin": [
+    25,
+    13
+   ]
+  },
+  "sets/sky/torso_up": {
+   "origin": [
+    27,
+    28
+   ]
+  },
+  "sets/sky/boot_m_up": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/sky/boot_o_up": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/sky/head_side": {
+   "origin": [
+    20,
+    14
+   ]
+  },
+  "sets/sky/head_side_blink": {
+   "origin": [
+    20,
+    14
+   ]
+  },
+  "sets/sky/torso_side": {
+   "origin": [
+    27,
+    29
+   ]
+  },
+  "sets/sky/boot_m_side": {
+   "pivot": [
+    2.2,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
   "sets/sunward/head_down": {
    "origin": [
     23,
@@ -1574,6 +1770,104 @@
    ]
   },
   "sets/sunward/boot_m_side": {
+   "pivot": [
+    2.2,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/thyla/head_down": {
+   "origin": [
+    23,
+    14
+   ]
+  },
+  "sets/thyla/head_down_blink": {
+   "origin": [
+    23,
+    14
+   ]
+  },
+  "sets/thyla/torso_down": {
+   "origin": [
+    26,
+    29
+   ]
+  },
+  "sets/thyla/boot_m_down": {
+   "pivot": [
+    1.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/thyla/boot_o_down": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/thyla/head_up": {
+   "origin": [
+    24,
+    14
+   ]
+  },
+  "sets/thyla/torso_up": {
+   "origin": [
+    27,
+    28
+   ]
+  },
+  "sets/thyla/boot_m_up": {
+   "pivot": [
+    2.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/thyla/boot_o_up": {
+   "pivot": [
+    4.0,
+    0.0
+   ],
+   "origin": [
+    0,
+    0
+   ]
+  },
+  "sets/thyla/head_side": {
+   "origin": [
+    23,
+    14
+   ]
+  },
+  "sets/thyla/head_side_blink": {
+   "origin": [
+    23,
+    14
+   ]
+  },
+  "sets/thyla/torso_side": {
+   "origin": [
+    26,
+    29
+   ]
+  },
+  "sets/thyla/boot_m_side": {
    "pivot": [
     2.2,
     0.0
@@ -2056,6 +2350,36 @@
     "5e8737"
    ]
   },
+  "obsidian": {
+   "arm_upper": [
+    "110e13",
+    "1c1920",
+    "2f2d38",
+    "4a4954",
+    "64616d"
+   ],
+   "arm_lower": [
+    "17151c",
+    "272530",
+    "443938",
+    "5b5862",
+    "807e85"
+   ],
+   "leg_upper": [
+    "17151c",
+    "272530",
+    "45424d",
+    "64616d",
+    "807e85"
+   ],
+   "leg_lower": [
+    "17151c",
+    "272530",
+    "45424d",
+    "64616d",
+    "807e85"
+   ]
+  },
   "plate": {
    "arm_upper": [
     "262312",
@@ -2146,6 +2470,36 @@
     "c26542"
    ]
   },
+  "sky": {
+   "arm_upper": [
+    "4e6066",
+    "677f83",
+    "8aa2a2",
+    "a5bab3",
+    "b1c7c3"
+   ],
+   "arm_lower": [
+    "677f83",
+    "839899",
+    "9ab2ad",
+    "b1c7c3",
+    "d3dfdb"
+   ],
+   "leg_upper": [
+    "4e6066",
+    "677f83",
+    "839899",
+    "a5bab3",
+    "b1c7c3"
+   ],
+   "leg_lower": [
+    "4e6066",
+    "677f83",
+    "839899",
+    "a5bab3",
+    "b1c7c3"
+   ]
+  },
   "sunward": {
    "arm_upper": [
     "8e6539",
@@ -2174,6 +2528,36 @@
     "b79e68",
     "d8c389",
     "e6e0ba"
+   ]
+  },
+  "thyla": {
+   "arm_upper": [
+    "905e24",
+    "aa7527",
+    "d69c3e",
+    "d1b27e",
+    "ded0a9"
+   ],
+   "arm_lower": [
+    "2f1208",
+    "48250f",
+    "754920",
+    "905e24",
+    "aa7527"
+   ],
+   "leg_upper": [
+    "754920",
+    "905e24",
+    "aa7527",
+    "d69c3e",
+    "d1b27e"
+   ],
+   "leg_lower": [
+    "754920",
+    "905e24",
+    "aa7527",
+    "d69c3e",
+    "d1b27e"
    ]
   },
   "tide": {

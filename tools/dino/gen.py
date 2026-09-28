@@ -197,8 +197,16 @@ def effect_score(key, clip, view, raw_dir=None):
     return worst
 
 
+# Pass 18: a flyer's wings sweep far past its resting outline (and a
+# pterosaur's pale membranes catch the light as they beat): these clips are
+# judged on glare alone, and more leniently.
+WING_CLIPS = ("fly", "glide", "swoop", "screech", "takeoff", "buffet")
+
+
 def flagged(clip, view, sc):
     """True when a clip should be regenerated."""
+    if clip in WING_CLIPS:
+        return sc["bright"] > 60 + 0.8 * sc.get("base", 0)
     # A pale beast's own coat shows more or less white as it moves (the
     # Ashmane is white all over, 200-560 bright pixels a drawing, and every
     # clip of it was flagged): allow for the drawing's own bright pixels.

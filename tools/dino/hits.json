@@ -225,8 +225,8 @@
   },
   "slash": {
    "side": 5,
-   "down": 6,
-   "up": 3
+   "down": 5,
+   "up": 5
   }
  },
  "sucho": {
@@ -351,7 +351,7 @@
   },
   "slash": {
    "side": 5,
-   "down": 6,
+   "down": 5,
    "up": 5
   }
  },
@@ -376,6 +376,82 @@
   "slash": {
    "side": 6,
    "down": 6,
+   "up": 5
+  }
+ },
+ "grimjaw": {
+  "chomp": {
+   "up": 7,
+   "side": 6,
+   "down": 7
+  },
+  "bite": {
+   "side": 6,
+   "down": 6,
+   "up": 6
+  },
+  "tail_swing": {
+   "side": 6,
+   "down": 6,
+   "up": 6
+  }
+ },
+ "thyla": {
+  "pounce": {
+   "side": {
+    "hit": 8,
+    "takeoff": 3
+   },
+   "down": {
+    "hit": 9,
+    "takeoff": 4
+   },
+   "up": {
+    "hit": 9,
+    "takeoff": 4
+   }
+  },
+  "maul": {
+   "side": 7,
+   "down": 6,
+   "up": 5
+  }
+ },
+ "ptera": {
+  "bite": {
+   "side": 5,
+   "down": 5,
+   "up": 5
+  }
+ },
+ "quetzal": {
+  "bite": {
+   "side": 6,
+   "down": 7,
+   "up": 6
+  },
+  "buffet": {
+   "side": 4,
+   "down": 4,
+   "up": 4
+  }
+ },
+ "cinder": {
+  "stomp": {
+   "side": 7,
+   "down": 7,
+   "up": 7
+  },
+  "tail_swing": {
+   "side": 6,
+   "down": 5,
+   "up": 6
+  }
+ },
+ "reaper": {
+  "slash": {
+   "side": 6,
+   "down": 5,
    "up": 5
   }
  }

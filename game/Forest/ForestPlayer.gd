@@ -6,6 +6,12 @@ var forest_world: Node2D
 var in_water := false
 ## Afloat in a boat on Glassmere (Forest/world/Boating.gd).
 var boating := false
+## Pass 18: sitting in a chair (E on it; a move, a roll or E again stands).
+## Seated, a wound mends a little faster.
+var sitting_on: Node2D = null
+const SIT_LIFT := 10.0
+const SIT_MEND := 2.0
+var _sit_mend := 0.0
 var _swing_time := 0.0
 var _swing_item: Item
 var _attack_target := Vector2.ZERO
@@ -34,6 +40,18 @@ var bleed = preload("res://Forest/combat/Bleed.gd").new()
 ## keeper's face (apply_ash).
 const ASH_TIME := 70.0
 var ash := 0.0
+## Pass 18: Embercrack Ridge's heat (0..1; Hank: "the volcano area is very
+## dangerous"). It builds out on the volcano (HEAT_TIME), three times as fast
+## beside the lava, and cools off it, under a roof, and at once in a hot
+## spring. heat_guard (obsidian armour, a trinket, a tamed ember beast) slows
+## it. Full, it burns (HEAT_BURN every 1.25 s) and the keeper slows.
+const HEAT_TIME := 80.0
+const HEAT_BURN := 3
+var heat := 0.0
+var _burn := 0.0
+var _heat_check := 0.0
+var _by_lava := false
+var _in_spring := false
 var _ash_slow := 0.0
 var _choke := 0.0
 var _shelter_check := 0.0
@@ -171,6 +189,7 @@ func _tick_hunger(delta: float):
 
 func take_damage(amount: int, attacker = null, knockback := 200.0):
 	if state == "dead" or respawning or is_invulnerable or roll_invulnerable: return
+	if sitting_on != null: stand_up()
 	stop_action()
 	var session := get_tree().get_first_node_in_group("forest_session")
 	if session and is_instance_valid(session.get("fishing")) and session.fishing.is_active(): session.fishing.cancel()
@@ -269,7 +288,11 @@ func _ready():
 func _physics_process(delta):
 	_tick_recovery(delta)
 	_tick_ash(delta)
+	_tick_heat(delta)
 	_tick_roll(delta)
+	if sitting_on != null:
+		_tick_sitting(delta)
+		return
 	if action_time>0:
 		action_time=maxf(0,action_time-delta)
 		if action_time<=0: stop_action()
@@ -301,6 +324,8 @@ func _physics_process(delta):
 		set_speed *= SetBonus.sand_speed_mult(self)
 	# Choking on ash (or struck by an Ashmane's roar): slower.
 	set_speed *= ash_speed_mult()
+	# Pass 18: the volcano's heat, near full, slows too.
+	if heat > 0.6: set_speed *= lerpf(1.0, 0.75, (heat - 0.6) / 0.4)
 	# A Wayfarer's Anklet, a Sandblade Plume (pass 14).
 	set_speed *= 1.0 + Trinkets.value(self, "speed")
 	# The going (pass 13): the bog's mud drags at the feet, loose sand a little.
@@ -975,6 +1000,40 @@ func _tick_ash(delta: float) -> void:
 		_choke = 0.0
 
 
+func heat_guard() -> float:
+	var g := maxf(SetBonus.heat_guard(self), Trinkets.value(self, "heat_guard"))
+	var gifts = _gifts()
+	if gifts and gifts.has_method("heat_guard"): g = maxf(g, gifts.heat_guard())
+	return clampf(g, 0.0, 1.0)
+
+
+func _tick_heat(delta: float) -> void:
+	if state == "dead" or respawning: return
+	_heat_check -= delta
+	if _heat_check <= 0.0:
+		_heat_check = 0.4
+		var w = forest_world
+		_by_lava = w != null and w.has_method("lava_near") and w.lava_near(global_position, 3)
+		_in_spring = w != null and w.has_method("spring_at") and w.spring_at(global_position)
+	var hot: bool = forest_world != null and forest_world.has_method("is_volcanic_at") and forest_world.is_volcanic_at(global_position)
+	if _in_spring:
+		heat = maxf(0.0, heat - delta / 1.5)
+	elif hot and not _sheltered:
+		heat = minf(1.0, heat + delta / HEAT_TIME * (3.0 if _by_lava else 1.0) * (1.0 - heat_guard()))
+	else:
+		heat = maxf(0.0, heat - delta / (6.0 if _sheltered else 16.0))
+	if heat >= 1.0:
+		_burn += delta
+		if _burn >= 1.25:
+			_burn = 0.0
+			var scorch := int(round(float(HEAT_BURN) * (1.0 - maxf(SetBonus.fire_guard(self), Trinkets.value(self, "fire")))))
+			current_health = maxi(0, current_health - maxi(1, scorch))
+			SignalBus.player_health_changed.emit(current_health, max_health)
+			if current_health <= 0: die()
+	else:
+		_burn = 0.0
+
+
 ## An Ashmane's roar: a blast of ash, slowed for `seconds`.
 func apply_ash(seconds: float) -> void:
 	_ash_slow = maxf(_ash_slow, seconds)
@@ -1070,7 +1129,59 @@ func get_movement_input() -> Vector2:
 	return Vector2.ZERO
 
 func request_roll() -> void:
+	if sitting_on != null:
+		stand_up()
+		return
 	_roll_buffer = ROLL_BUFFER
+
+
+## Sit in a chair facing the way it faces (every chair faces the viewer). The
+## keeper stands a pixel in front of it, so they sort over it, and the body is
+## lifted onto the seat.
+func sit_on(chair: Node2D) -> bool:
+	if not is_instance_valid(chair) or sitting_on != null or state == "dead" or respawning or boating or is_instance_valid(mounted_creature) or action_time > 0.0:
+		return false
+	sitting_on = chair
+	_sit_mend = 0.0
+	velocity = Vector2.ZERO
+	global_position = chair.global_position + Vector2(0, 1)
+	last_facing = "down"
+	switch_state("idle")
+	animated_sprite.offset.y -= SIT_LIFT
+	if animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation("sit_down"):
+		animated_sprite.play("sit_down")
+	return true
+
+
+## Up out of the chair, onto the ground in front of it.
+func stand_up() -> void:
+	if sitting_on == null: return
+	var chair := sitting_on
+	sitting_on = null
+	animated_sprite.offset.y += SIT_LIFT
+	if is_instance_valid(chair):
+		global_position = chair.global_position + Vector2(0, 14)
+	switch_state("idle")
+
+
+func _tick_sitting(delta: float) -> void:
+	if not is_instance_valid(sitting_on) or state == "dead" or respawning:
+		stand_up()
+		return
+	_tick_hunger(delta)
+	velocity = Vector2.ZERO
+	if not controls_locked and (Input.is_action_pressed("Right") or Input.is_action_pressed("Left") or Input.is_action_pressed("Down") or Input.is_action_pressed("Up")):
+		stand_up()
+		return
+	if animated_sprite.animation != "sit_down" and animated_sprite.sprite_frames.has_animation("sit_down"):
+		animated_sprite.play("sit_down")
+	_sit_mend += delta
+	if _sit_mend >= SIT_MEND:
+		_sit_mend = 0.0
+		if current_health < max_health and not bleed.active():
+			current_health = mini(max_health, current_health + 1)
+			SignalBus.player_health_changed.emit(current_health, max_health)
+	queue_redraw()
 
 func can_roll() -> bool:
 	if respawning or controls_locked or action_time > 0.0 or is_instance_valid(mounted_creature): return false

@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="Item" load_steps=2 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "thyla_helmet"
+name = "Treeshadow Hood"
+description = "A hood of striped thylacoleo pelt, its ears still on. Treeshadow set: beasts notice you from half as far, and you move 6% faster."
+icon_generator = "forest"
+max_stack = 1
+rarity = "epic"
+armor_slot = "head"
+defense = 10

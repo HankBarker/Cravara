@@ -80,6 +80,16 @@ func _people(cave: Dictionary, r: RandomNumberGenerator) -> void:
 					beast.home = beast.global_position
 		"lair":
 			_raise_sleeper(cave, floor)
+		# Pass 18: the jungle's glowing grotto and the volcano's lava tubes.
+		"glimmer", "lavatube":
+			var coat := "glowspine" if str(cave.kind) == "glimmer" else "ember"
+			for entry in [["raptor", 3], ["thyla" if coat == "glowspine" else "allo", 1]]:
+				if not preload("res://Forest/creatures/DinoArt.gd").has_key(str(entry[0])): continue
+				for i in int(entry[1]):
+					var c: Vector2i = floor[r.randi_range(0, floor.size() - 1)]
+					var beast = session._spawn_creature(str(entry[0]), Vector2(c) * 16.0 + Vector2(8, 8))
+					if str(entry[0]) != "thyla": beast.set_variant(coat)
+					beast.home = beast.global_position
 
 
 ## The Sleeper at the heart of its lair (the floor cell farthest in).

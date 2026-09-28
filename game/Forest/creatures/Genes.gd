@@ -270,7 +270,7 @@ static func lens(tree: SceneTree) -> bool:
 	if session == null: return false
 	var m: Dictionary = session.get("_milestones") if session.get("_milestones") != null else {}
 	var fallen := 0
-	for boss in ["alpha", "ossuar", "maw"]:
+	for boss in ["alpha", "ossuar", "maw", "grimjaw", "reaper", "stormcrest", "cinderhulk"]:
 		if bool(m.get(boss, false)): fallen += 1
 	return fallen >= 2
 

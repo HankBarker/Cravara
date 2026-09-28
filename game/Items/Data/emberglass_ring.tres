@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="Item" load_steps=2 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "emberglass_ring"
+name = "Emberglass Ring"
+description = "Black glass round a coal that never goes out."
+icon_generator = "forest"
+max_stack = 1
+rarity = "epic"
+equipment_slot = "trinket"
+effects = {
+"fire": 0.4,
+"melee": 0.05,
+"heat_guard": 0.2
+}

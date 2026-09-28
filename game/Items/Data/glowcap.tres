@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/art/items/glowcap.png" id="2"]
+[resource]
+script = ExtResource("1")
+id = "glowcap"
+name = "Glowcap"
+description = "A mushroom that glows in the dark. It tastes of nothing, and keeps you going."
+icon = ExtResource("2")
+max_stack = 30
+consumable = true
+hunger_value = 8
+food_satiation_seconds = 20.0
+healing_total = 6.0
+healing_duration = 8.0

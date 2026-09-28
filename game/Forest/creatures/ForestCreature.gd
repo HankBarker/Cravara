@@ -10,6 +10,10 @@ extends CharacterBody2D
 signal notice(text: String)
 
 const DinoArt = preload("res://Forest/creatures/DinoArt.gd")
+## Pass 18: the flyers' wings (creatures/Flight.gd).
+const FLIGHT = preload("res://Forest/creatures/Flight.gd")
+## Pass 18: the thylacoleo's ambush from the trees (creatures/Lurk.gd).
+const TREE_LURK = preload("res://Forest/creatures/Lurk.gd")
 const SetBonus = preload("res://Forest/equipment/SetBonus.gd")
 const DinoMoves = preload("res://Forest/creatures/DinoMoves.gd")
 const Puff = preload("res://Forest/fx/Puff.gd")
@@ -50,6 +54,14 @@ func _roll_crystal() -> void:
 	if far <= 0.0: return
 	var r := RandomNumberGenerator.new()
 	r.seed = int(position.x * 311 + position.y * 173) + species.hash() + 0xC4157
+	# Pass 18: the jungle is overrun (Hank: "you could start to see this... the
+	# crystals taking over the dinosaurs"): most of what lives there is sick.
+	var land := ""
+	if is_instance_valid(_world) and _world.has_method("region_of"): land = str(_world.region_of(_world.to_cell(position)))
+	if land in ["jungle", "canopy"]:
+		if r.randf() >= 0.75: return
+		crystal = 2 if DinoArt.has_key(species + "_crystal") and r.randf() < 0.5 else 1
+		return
 	if r.randf() >= far * 0.35: return
 	var grown: bool = DinoArt.has_key(species + "_crystal") and r.randf() < 0.35 + far * 0.4
 	crystal = 2 if grown else 1
@@ -86,6 +98,12 @@ const SPECIES := {
 	"carno": {"name":"Scarhorn Carnotaurus", "hp":1150, "speed":50.0, "damage":34, "radius":12.0, "feeds":32, "predator":true, "food":"trex_meat", "width":68, "height":50},
 	"yuty": {"name":"Ashmane Yutyrannus", "hp":1900, "speed":44.0, "damage":40, "radius":14.0, "feeds":40, "predator":true, "food":"trex_meat", "width":68, "height":64},
 	"compy": {"name":"Compy", "hp":10, "speed":44.0, "damage":3, "radius":4.0, "feeds":3, "predator":true, "food":"trex_meat", "width":20, "height":16},
+	# Pass 18: the jungle's and the treetops' beasts. The pteranodon (a fisher,
+	# neutral; tamed, it carries a rider into the sky), the dimorphodon flocks
+	# that hunt from the air, and the thylacoleo that waits in the trees.
+	"ptera": {"name":"Skyfisher Pteranodon", "hp":150, "speed":36.0, "damage":14, "radius":8.0, "feeds":18, "predator":false, "food":"reed_perch", "width":36, "height":38},
+	"dimorph": {"name":"Dimorphodon", "hp":26, "speed":60.0, "damage":5, "radius":5.0, "feeds":6, "predator":true, "food":"reed_perch", "width":28, "height":26},
+	"thyla": {"name":"Treeshadow Thylacoleo", "hp":260, "speed":52.0, "damage":20, "radius":8.0, "feeds":22, "predator":true, "food":"trex_meat", "width":44, "height":44},
 	# Pass 13: the Mirefen's hunters (reed-running deinonychus packs, the
 	# Suchomimus that waits at the water's edge, and its king, the
 	# spinosaur, which wades the deep mere itself), and the Bonelands'
@@ -94,6 +112,16 @@ const SPECIES := {
 	"deino": {"name":"Reedstalker Deinonychus", "hp":140, "speed":50.0, "damage":15, "radius":8.0, "feeds":18, "predator":true, "food":"trex_meat", "width":42, "height":44},
 	"sucho": {"name":"Mirefang Suchomimus", "hp":880, "speed":38.0, "damage":30, "radius":12.0, "feeds":30, "predator":true, "food":"reed_perch", "width":72, "height":64},
 	"spino": {"name":"Sailking Spinosaurus", "hp":2600, "speed":42.0, "damage":48, "radius":16.0, "feeds":44, "predator":true, "food":"reed_perch", "width":108, "height":90},
+	# Pass 18: each land's great boss (LandBoss.gd and its four): Grimjaw, the
+	# Mirefen's old sarcosuchus; the Pale Reaper, a crystal-maned
+	# therizinosaurus; Stormcrest, the quetzalcoatlus of the treetops; and the
+	# Cinderhulk, the volcano's molten ankylosaur.
+	"grimjaw": {"name":"Grimjaw, the Mire King", "hp":2600, "speed":36.0, "damage":42, "radius":17.0, "feeds":0, "predator":true, "food":"reed_perch", "width":126, "height":64, "boss":true},
+	"reaper": {"name":"Harrow, the Pale Reaper", "hp":3400, "speed":44.0, "damage":38, "radius":13.0, "feeds":0, "predator":true, "food":"trex_meat", "width":110, "height":104, "boss":true},
+	"stormcrest": {"name":"Stormcrest, Queen of the Canopy", "hp":3800, "speed":42.0, "damage":40, "radius":14.0, "feeds":0, "predator":true, "food":"reed_perch", "width":124, "height":100, "boss":true},
+	# (The treetops' own quetzals: huge, few, and left alone they leave you alone.)
+	"quetzal": {"name":"Canopy Quetzalcoatlus", "hp":950, "speed":40.0, "damage":30, "radius":13.0, "feeds":0, "predator":false, "food":"reed_perch", "width":124, "height":100},
+	"cinder": {"name":"The Cinderhulk", "hp":5200, "speed":22.0, "damage":50, "radius":17.0, "feeds":0, "predator":true, "food":"berry", "width":118, "height":92, "boss":true},
 }
 ## The great beasts that roam the wilds: a nameplate floats over them when
 ## the keeper comes near (bosses have the top bar instead).
@@ -123,7 +151,22 @@ const VARIANTS := {
 	# Pass 17: a spinosaur of one of the bog's lakes (Spawners: at its heart), a
 	# lesser one than the Sailking: no mini-boss, no name over it (`plain`).
 	"lake": {"name": "Lake %s", "hp": 0.45, "damage": 0.8, "speed": 0.95, "tint": Color(0.9, 0.98, 1.0), "plain": true},
+	# Pass 18: the far ring's kinds. Embercrack Ridge's beasts (Hank: "volcanic-
+	# style looking rexes and all dinosaurs there... red glowing veins and
+	# glowing crystals... very strong dinosaurs"): dark as cooled rock, lava in
+	# their cracks (genes.gdshader `ember`). The jungle's: raptors with glowing
+	# crystal spines, a green-horned carnotaur, the dark mossy longnecks, and
+	# the Thornback, an old ankylosaur grown over with thorn and crystal (a
+	# roaming mini-boss).
+	"ember": {"name": "Ember %s", "hp": 1.75, "damage": 1.5, "speed": 1.08, "ember": true, "loot": {"emberstone": 1}},
+	"glowspine": {"name": "Glowspine %s", "hp": 1.45, "damage": 1.25, "speed": 1.08, "art": "crystal", "glow": true, "loot": {"glimmer_shard": 1}},
+	"junglehorn": {"name": "Junglehorn %s", "hp": 1.45, "damage": 1.3, "speed": 1.05, "tint": Color(0.8, 1.06, 0.82)},
+	"brontoshade": {"name": "Brontoshade %s", "hp": 1.3, "damage": 1.1, "speed": 1.0, "tint": Color(0.76, 0.9, 0.84)},
+	"thornback": {"title": "Thornback, the Old Anky", "hp": 3.6, "damage": 1.6, "speed": 1.05, "glow": true, "hostile": true, "tint": Color(0.86, 1.02, 0.9), "loot": {"glimmer_shard": 4, "anky_plate": 3}},
 }
+## Pass 18: some kinds have a name of their own for a species (the vision's
+## Cracked Tyranno, Blazehorn Ceratops and Infernospine).
+const VARIANT_NAMES := {"ember": {"rex": "Cracked Tyranno", "trike": "Blazehorn", "raptor": "Cinderclaw Raptor", "spino": "Infernospine", "carno": "Emberhorn Carnotaurus", "anky": "Magmaplate Ankylosaur"}}
 const BONE_LOOK := preload("res://Forest/creatures/bone.gdshader")
 ## Taming. The dodo and the lystrosaurus eat from any hand. Everything else
 ## needs patience: after each feed (once it has eaten, FEED_WAIT) it must SETTLE
@@ -134,16 +177,17 @@ const BONE_LOOK := preload("res://Forest/creatures/bone.gdshader")
 const EASY := ["dodo", "lystro"]
 ## The small herd beasts that bolt from danger and only peck when cornered.
 const SKITTISH := ["dodo", "lystro", "proto"]
-const FEED_WAIT := {"dodo": 1.6, "lystro": 1.6, "raptor": 2.2, "allo": 2.4, "rex": 2.6, "carno": 2.6, "yuty": 2.6, "dimetrodon": 2.2, "compy": 1.6,
+const FEED_WAIT := {"ptera": 2.2, "thyla": 2.4, "dimorph": 1.6, "dodo": 1.6, "lystro": 1.6, "raptor": 2.2, "allo": 2.4, "rex": 2.6, "carno": 2.6, "yuty": 2.6, "dimetrodon": 2.2, "compy": 1.6,
 	"deino": 2.2, "utah": 2.4, "sucho": 2.6, "spino": 2.8}
 const SETTLE := 6.0
 const SPACE := 46.0
 const UNEASE := 3.5
-const NET_TIME := {"raptor": 15.0, "allo": 12.0, "rex": 8.0, "carno": 8.0, "yuty": 7.0, "dimetrodon": 12.0, "compy": 20.0,
+const NET_TIME := {"thyla": 12.0, "ptera": 14.0, "dimorph": 20.0, "raptor": 15.0, "allo": 12.0, "rex": 8.0, "carno": 8.0, "yuty": 7.0, "dimetrodon": 12.0, "compy": 20.0,
 	"deino": 14.0, "utah": 10.0, "sucho": 8.0, "spino": 6.0}
 ## What each predator hunts when nothing else calls it (raptors take the big
 ## herbivores only as a pack of three or more; the rex takes anything).
-const PREY := {"raptor": ["dodo", "lystro", "proto", "compy"], "allo": ["dodo", "lystro", "stego", "trike", "raptor", "proto", "dimetrodon"],
+const PREY := {"thyla": ["dodo", "lystro", "proto", "compy", "raptor", "parasaur"], "dimorph": ["compy", "dodo", "lystro"],
+	"raptor": ["dodo", "lystro", "proto", "compy"], "allo": ["dodo", "lystro", "stego", "trike", "raptor", "proto", "dimetrodon"],
 	"rex": ["dodo", "lystro", "stego", "trike", "longneck", "raptor", "allo", "proto", "dimetrodon", "parasaur"],
 	"dimetrodon": ["dodo", "lystro", "proto", "compy"],
 	"carno": ["dodo", "lystro", "proto", "dimetrodon", "raptor", "stego", "trike", "parasaur"],
@@ -160,7 +204,7 @@ const RIVALS := {"rex": ["carno", "yuty", "spino"], "carno": ["rex", "yuty", "al
 	"spino": ["rex", "sucho"], "sucho": ["spino"]}
 const DISPUTE_RANGE := 170.0
 ## Bony plates shrug off this much of every blow (heavy weapons get through).
-const PLATED := {"anky": 9}
+const PLATED := {"anky": 9, "cinder": 12}
 const PACK_PREY := ["stego", "trike"]
 ## Pass 13: every beast moves at PACE of its species' speed ("everyone's too
 ## speedy"). BODY.chase is its run-down speed (the big hunters still just beat
@@ -188,6 +232,10 @@ const ART_STRIDE := {
 ## the run clip. armour: keeps attacking through hits instead of flinching.
 ## idle: the clip it plays now and then while resting.
 const BODY := {
+	# Pass 18 (a flyer's walk/run are its ground gait; on the wing Flight flies it).
+	"ptera": {"accel": 300.0, "walk": 12.0, "run": 30.0, "run_at": 999.0, "armour": false, "idle": "look", "idle_every": 6.0, "chase": 60.0, "tire": 10.0},
+	"dimorph": {"accel": 400.0, "walk": 20.0, "run": 40.0, "run_at": 999.0, "armour": false, "idle": "fly", "idle_every": 5.0, "chase": 90.0, "tire": 20.0},
+	"thyla": {"accel": 460.0, "walk": 16.0, "run": 49.0, "run_at": 36.0, "armour": false, "idle": "look", "idle_every": 7.0, "chase": 102.0, "tire": 12.0},
 	"raptor": {"accel": 420.0, "walk": 26.0, "run": 58.0, "run_at": 34.0, "armour": false, "idle": "sniff", "idle_every": 7.0, "chase": 98.0, "tire": 14.0},
 	"rex": {"accel": 150.0, "walk": 26.0, "run": 70.0, "run_at": 56.0, "armour": true, "idle": "roar", "idle_every": 26.0, "heavy_steps": true, "chase": 92.0, "tire": 9.0},
 	"stego": {"accel": 120.0, "walk": 15.0, "run": 15.0, "run_at": 999.0, "armour": true, "idle": "eat", "idle_every": 6.0, "chase": 40.0, "tire": 5.0},
@@ -198,7 +246,9 @@ const BODY := {
 	"allo": {"accel": 260.0, "walk": 24.0, "run": 62.0, "run_at": 40.0, "armour": true, "idle": "roar", "idle_every": 24.0, "heavy_steps": true, "chase": 94.0, "tire": 11.0},
 	"alpha": {"accel": 400.0, "walk": 30.0, "run": 66.0, "run_at": 38.0, "armour": true, "idle": "idle", "idle_every": 9.0, "heavy_steps": true, "chase": 100.0, "tire": 40.0},
 	"parasaur": {"accel": 200.0, "walk": 17.0, "run": 52.0, "run_at": 36.0, "armour": false, "idle": "eat", "idle_every": 6.0, "chase": 64.0, "tire": 6.0},
-	"ossuar": {"accel": 140.0, "walk": 24.0, "run": 60.0, "run_at": 50.0, "armour": true, "idle": "roar", "idle_every": 20.0, "heavy_steps": true, "chase": 72.0, "tire": 60.0},
+	# (Pass 18: its side walk is its run played slow, a lumbering lope; its walks
+	# slid or sparkled. walk/run: stride.py.)
+	"ossuar": {"accel": 140.0, "walk": 52.0, "run": 75.0, "run_at": 60.0, "armour": true, "idle": "roar", "idle_every": 20.0, "heavy_steps": true, "chase": 72.0, "tire": 60.0},
 	# Pass 12. The dimetrodon sprints in short bursts (a cold-blooded
 	# ambusher); the carnotaurus is the fastest big hunter there is.
 	"dimetrodon": {"accel": 190.0, "walk": 15.0, "run": 46.0, "run_at": 30.0, "armour": true, "idle": "idle", "idle_every": 9.0, "chase": 68.0, "tire": 4.0},
@@ -212,7 +262,13 @@ const BODY := {
 	"utah": {"accel": 360.0, "walk": 22.0, "run": 64.0, "run_at": 36.0, "armour": false, "idle": "idle", "idle_every": 8.0, "chase": 100.0, "tire": 12.0},
 	"deino": {"accel": 420.0, "walk": 16.0, "run": 44.0, "run_at": 34.0, "armour": false, "idle": "idle", "idle_every": 7.0, "chase": 96.0, "tire": 14.0},
 	"sucho": {"accel": 200.0, "walk": 28.0, "run": 56.0, "run_at": 40.0, "armour": true, "idle": "roar", "idle_every": 26.0, "heavy_steps": true, "chase": 80.0, "tire": 7.0},
-	"spino": {"accel": 150.0, "walk": 31.0, "run": 66.0, "run_at": 50.0, "armour": true, "idle": "roar", "idle_every": 30.0, "heavy_steps": true, "chase": 84.0, "tire": 9.0}
+	"spino": {"accel": 150.0, "walk": 31.0, "run": 66.0, "run_at": 50.0, "armour": true, "idle": "roar", "idle_every": 30.0, "heavy_steps": true, "chase": 84.0, "tire": 9.0},
+	# Pass 18's bosses (walk/run: stride.py on their clips).
+	"grimjaw": {"accel": 170.0, "walk": 20.0, "run": 20.0, "run_at": 999.0, "armour": true, "idle": "idle", "idle_every": 14.0, "heavy_steps": true, "chase": 74.0, "tire": 60.0},
+	"reaper": {"accel": 320.0, "walk": 26.0, "run": 64.0, "run_at": 30.0, "armour": true, "idle": "roar", "idle_every": 18.0, "heavy_steps": true, "chase": 92.0, "tire": 60.0},
+	"stormcrest": {"accel": 240.0, "walk": 37.0, "run": 37.0, "run_at": 999.0, "armour": true, "idle": "idle", "idle_every": 10.0, "chase": 60.0, "tire": 60.0},
+	"quetzal": {"accel": 240.0, "walk": 37.0, "run": 37.0, "run_at": 999.0, "armour": true, "idle": "idle", "idle_every": 10.0, "chase": 60.0, "tire": 14.0},
+	"cinder": {"accel": 80.0, "walk": 20.0, "run": 20.0, "run_at": 999.0, "armour": true, "idle": "idle", "idle_every": 12.0, "heavy_steps": true, "chase": 42.0, "tire": 60.0}
 }
 @export var species: String = "raptor"
 ## A baby (pass 11): half size, a third of the health, never fights (it runs
@@ -248,12 +304,13 @@ var tether_cell := NO_POST
 ## tools are far quicker. The big beasts shoulder through trees in the way.
 const SIEGE_SECONDS := {"rex": 35.0, "spino": 35.0, "anky": 40.0, "carno": 45.0, "yuty": 45.0, "trike": 45.0,
 	"longneck": 50.0, "stego": 55.0, "allo": 55.0, "sucho": 60.0, "alpha": 60.0, "ossuar": 45.0, "utah": 90.0,
+	"grimjaw": 30.0, "reaper": 30.0, "stormcrest": 60.0, "cinder": 20.0,
 	"dimetrodon": 90.0, "parasaur": 90.0, "raptor": 150.0, "deino": 140.0}
 ## (Pass 17, Hank: "most dinosaurs should be able to break down trees.
 ## Raptors maybe not, but, like, trikes, stegos, and long necks should be
 ## able to": every big beast now; never the raptors, the compies or the small
 ## grazers.)
-const TREE_BREAKERS := ["rex", "spino", "anky", "longneck", "stego", "trike", "carno", "yuty", "ossuar", "allo", "sucho", "dimetrodon", "parasaur", "alpha"]
+const TREE_BREAKERS := ["rex", "spino", "anky", "longneck", "stego", "trike", "carno", "yuty", "ossuar", "allo", "sucho", "dimetrodon", "parasaur", "alpha", "grimjaw", "reaper", "cinder"]
 ## The clips a beast bashes a tree or a wall with, the first it has.
 const BASH_CLIPS := ["gore", "stomp", "tail_swing", "chomp", "bite", "slash", "peck"]
 const TREES := ["tree", "palm", "pine", "birch", "dead_tree"]
@@ -261,8 +318,8 @@ const TREES := ["tree", "palm", "pine", "birch", "dead_tree"]
 ## (AQUATIC: the rest wade at WATER_SPEED_MULTIPLIER); the spinosaur walks
 ## into the deep mere, and the Suchomimus waits in the shallows at the edge
 ## (LURK: it keeps to water near home while it has nothing to hunt).
-const AQUATIC := {"sucho": 0.9, "spino": 0.85}
-const DEEP_WADERS := ["spino"]
+const AQUATIC := {"sucho": 0.9, "spino": 0.85, "grimjaw": 1.1}
+const DEEP_WADERS := ["spino", "grimjaw"]
 const LURK := ["sucho"]
 const STONE_BUILT := ["stone_wall", "stone_door", "stone_floor", "sandstone_wall", "sandstone_floor", "crystal_wall", "crystal_floor"]
 const STONE_SLOW := 2.2
@@ -307,6 +364,10 @@ var burst_time := 0.0
 var stalk_time := 0.0
 ## Enraged (bosses): moves come round faster and the body runs harder.
 var haste := 1.0
+## Pass 18: a flyer's wings (FLIGHT), or null.
+var flight = null
+## Pass 18: a tree-lurker's ways (TREE_LURK), or null.
+var lurk = null
 ## Pass 12: running down a target costs wind. Seconds spent chasing hard; once
 ## past the body's "tire" it is winded (cruising speed) for a while.
 var _chase_time := 0.0
@@ -413,6 +474,10 @@ var _offer_scan := 0.0
 var _startle_wait := 0.0
 ## Height of a leap off the ground (DinoMoves' pounce): the drawing rises, the
 ## shadow stays and shrinks.
+## Pass 18: a boss's shell or its cracked plates (LandBoss): its harm taken
+## is times this, and its plates can be off.
+var guard_mult := 1.0
+var plates_off := false
 var hop := 0.0 : set = _set_hop
 var _sprite_base := Vector2.ZERO
 
@@ -554,6 +619,15 @@ func _ready() -> void:
 	if not _worker_restore.is_empty(): worker.restore(_worker_restore)
 	voice=preload("res://Forest/creatures/CreatureAudio.gd").new()
 	add_child(voice)
+	# Pass 18: a flyer's wings (on the wing from the start, or landed resting).
+	if FLIGHT.FLYERS.has(species) and not bool(SPECIES[species].get("boss", false)):
+		flight = FLIGHT.new()
+		flight.setup(self)
+	# Pass 18: a thylacoleo goes up into a tree near where it was born.
+	if TREE_LURK.LURKERS.has(species) and not tamed and not baby:
+		lurk = TREE_LURK.new()
+		lurk.setup(self)
+		lurk.call_deferred("climb")
 	_work_audio=AudioStreamPlayer2D.new()
 	_work_audio.bus="SFX"
 	_work_audio.volume_db=-20
@@ -588,6 +662,7 @@ func _stage_stats() -> void:
 		stats.damage = int(round(float(stats.damage) * float(v.get("damage", 1.0))))
 		stats.speed = float(stats.speed) * float(v.get("speed", 1.0))
 		if v.has("title"): stats.name = str(v.title)
+		elif VARIANT_NAMES.get(variant, {}).has(species): stats.name = str(VARIANT_NAMES[variant][species])
 		elif v.has("name"): stats.name = str(v.name) % str(stats.name).split(" ")[-1]
 		if bool(v.get("hostile", false)): stats.predator_like = true
 		_tint = v.get("tint", Color.WHITE)
@@ -665,6 +740,9 @@ func stop() -> void:
 
 ## The art this body wears: the species, or its saddled variant.
 func wanted_art_key() -> String:
+	# Pass 18: a flyer wears its wings' drawing on the wing, its ground one landed.
+	if flight != null and not saddle: return flight.art_key()
+	if ART_OF.has(species): return str(ART_OF[species])
 	var key := species
 	if baby and DinoArt.has_key(species + "_baby"): return species + "_baby"
 	var coat := str(VARIANTS.get(variant, {}).get("art", ""))
@@ -672,6 +750,14 @@ func wanted_art_key() -> String:
 	if (crystal >= 2 or variant == "crystal") and not saddle and DinoArt.has_key(species + "_crystal"): return species + "_crystal"
 	if saddle and DinoArt.has_key(species + "_saddle"): key = species + "_saddle"
 	return key
+
+## Pass 18: species drawn with another's art (Stormcrest is a quetzal, a queen of them).
+const ART_OF := {"stormcrest": "quetzal"}
+
+
+static func art_species(kind: String) -> String:
+	return str(ART_OF.get(kind, kind))
+
 
 ## Switch to the bare or saddled clips, keeping the current clip and frame.
 func _apply_art() -> void:
@@ -697,7 +783,10 @@ func _apply_genes_look() -> void:
 	if not _sprite or not _sprite.sprite_frames: return
 	if bool(VARIANTS.get(variant, {}).get("bone", false)): return
 	var ours: bool = _sprite.material is ShaderMaterial and (_sprite.material as ShaderMaterial).shader == Genes.SHADER
-	if genes.is_empty() and crystal != 1:
+	var kind_look: Dictionary = VARIANTS.get(variant, {})
+	var ember := bool(kind_look.get("ember", false))
+	var glow := bool(kind_look.get("glow", false))
+	if genes.is_empty() and crystal != 1 and not ember and not glow:
 		if ours: _sprite.material = null
 		return
 	var anim := "idle_side" if _sprite.sprite_frames.has_animation("idle_side") else str(_sprite.animation)
@@ -705,7 +794,8 @@ func _apply_genes_look() -> void:
 	var size: Vector2 = tex.get_size() if tex else Vector2(64, 64)
 	if ours: Genes.apply(_sprite.material, genes, size)
 	else: _sprite.material = Genes.material(genes, size)
-	(_sprite.material as ShaderMaterial).set_shader_parameter("sick", 1.0 if crystal == 1 else 0.0)
+	(_sprite.material as ShaderMaterial).set_shader_parameter("sick", 1.0 if crystal == 1 or glow else 0.0)
+	(_sprite.material as ShaderMaterial).set_shader_parameter("ember", 1.0 if ember else 0.0)
 	# A mutation's accents go on the parts away from the drawing's own body hue.
 	if str(genes.get("mutation", "")) != "":
 		var look: Vector2 = Genes.body_look(art_key)
@@ -856,6 +946,26 @@ func _physics_process(delta: float) -> void:
 		_mount_controller.update_mounted(delta)
 		queue_redraw()
 		return
+	# Pass 18: on the wing, the wings fly it; landed, they choose when to go up.
+	if flight != null:
+		if flight.airborne:
+			flight.tick(delta)
+			queue_redraw()
+			return
+		if flight.ground_tick(delta):
+			velocity = Vector2.ZERO
+			if visible: _update_animation()
+			queue_redraw()
+			return
+	# Pass 18: up a tree or dropping out of it; on the ground, when to go back up.
+	if lurk != null:
+		if lurk.active():
+			lurk.tick(delta)
+			if lurk.active():
+				if visible: queue_redraw()
+				return
+		else:
+			lurk.down_tick(delta)
 	# Passive companions never keep a blow going, even one already wound up.
 	if tamed and stance == "passive" and moves.busy() and not moves.mounted:
 		moves.cancel()
@@ -1550,7 +1660,8 @@ func _face(direction: Vector2, force := false) -> void:
 	if absf(direction.y) > absf(direction.x) * (1.0 if force else 1.2): next = "up" if direction.y < 0 else "down"
 	elif absf(direction.x) > absf(direction.y) * (1.0 if force else 1.2): next = "side"
 	# Side-on art (the babies): always side, turned by the horizontal part.
-	var side_only := not DinoArt.has_view(art_key, "walk", "down")
+	# (A flyer's drawing has no walk: ask its wings.)
+	var side_only := not DinoArt.has_view(art_key, "walk" if DinoArt.has_clip(art_key, "walk") else "fly", "down")
 	if side_only:
 		next = "side"
 		if absf(direction.x) < 0.05:
@@ -1849,6 +1960,8 @@ func _wild_target() -> Node2D:
 	# Basking, a dimetrodon is slow and sleepy in the sun: it lets a keeper walk
 	# up to it (that's when it takes food from the hand: TamingWays "basking").
 	if species == "dimetrodon" and _bask_time > 0.0 and not TimeCycle.is_night(): keeper_reach = 0.0
+	# Pass 18: in Treeshadow pelt the keeper is hard to make out.
+	keeper_reach *= SetBonus.notice_mult(_player)
 	if not shadowed and _valid_target(_player) and global_position.distance_to(_player.global_position) < keeper_reach:
 		closest = _player
 		distance = global_position.distance_to(_player.global_position)
@@ -1883,7 +1996,7 @@ func _wild_target() -> Node2D:
 
 ## How far a hunter strays from its own ground (home) after quarry; past it,
 ## it lets the chase go and heads back.
-const TERRITORY := {"raptor": 420.0, "allo": 480.0, "rex": 560.0, "carno": 560.0, "yuty": 480.0,
+const TERRITORY := {"thyla": 360.0, "dimorph": 300.0, "ptera": 420.0, "raptor": 420.0, "allo": 480.0, "rex": 560.0, "carno": 560.0, "yuty": 480.0,
 	"utah": 460.0, "deino": 380.0, "sucho": 260.0, "spino": 520.0,
 	"dimetrodon": 240.0, "compy": 320.0}
 
@@ -1898,14 +2011,16 @@ func _out_of_territory(extra: float) -> bool:
 
 ## How far off a hungry hunter takes the keeper for prey (pass 13: nearer than
 ## pass 12's, which had every hunter in sight coming).
-const NOTICE := {"raptor": 150.0, "allo": 150.0, "rex": 170.0, "alpha": 200.0, "ossuar": 220.0,
+const NOTICE := {"thyla": 130.0, "dimorph": 150.0, "raptor": 150.0, "allo": 150.0, "rex": 170.0, "alpha": 200.0, "ossuar": 220.0,
+	"grimjaw": 200.0, "reaper": 220.0, "stormcrest": 240.0, "cinder": 200.0,
 	"utah": 160.0, "deino": 140.0, "sucho": 90.0, "spino": 180.0,
 	"carno": 160.0, "yuty": 170.0, "dimetrodon": 64.0, "compy": 110.0}
 ## How near a fed hunter lets the keeper come before it warns them off and
 ## attacks (the rex has little patience).
-const DANGER := {"raptor": 70.0, "allo": 80.0, "rex": 120.0, "carno": 90.0, "yuty": 95.0,
+const DANGER := {"thyla": 72.0, "dimorph": 110.0, "raptor": 70.0, "allo": 80.0, "rex": 120.0, "carno": 90.0, "yuty": 95.0,
 	"utah": 80.0, "deino": 65.0, "sucho": 70.0, "spino": 120.0,
-	"dimetrodon": 50.0, "compy": 48.0, "alpha": 200.0, "ossuar": 220.0}
+	"dimetrodon": 50.0, "compy": 48.0, "alpha": 200.0, "ossuar": 220.0,
+	"grimjaw": 200.0, "reaper": 220.0, "stormcrest": 240.0, "cinder": 200.0}
 
 
 ## The target this one is after, looked for afresh a few times a second
@@ -2022,6 +2137,8 @@ func _outside_world() -> bool:
 	# their beasts were steered "back" home every tick: they stood and stared
 	# at a keeper until one came into biting range. A cave is in the world.
 	if in_cave(): return false
+	# Pass 18: nor are the treetops (their block lies south of the bounds).
+	if _world.has_method("in_canopy") and _world.in_canopy(_world.to_cell(global_position)): return false
 	var b: Rect2i = _world.bounds()
 	return not Rect2(Vector2(b.position * 16) + Vector2(31, 31), Vector2(b.size * 16) - Vector2(62, 62)).has_point(global_position)
 
@@ -2217,7 +2334,7 @@ func set_stance(value: String) -> bool:
 	return true
 
 func can_mount() -> bool:
-	return tamed and not baby and not is_dead and species in ["stego", "trike"] and saddle != null and saddle.id == species + "_saddle" and net_time <= 0 and not is_mounted()
+	return tamed and not baby and not is_dead and preload("res://Forest/creatures/Rides.gd").can_ride(species) and saddle != null and saddle.id == species + "_saddle" and net_time <= 0 and not is_mounted()
 
 func is_mounted() -> bool:
 	return is_instance_valid(_mount_controller) and _mount_controller.is_mounted()
@@ -2242,7 +2359,7 @@ func feed_mount() -> bool:
 	return _mount_controller.feed_mount() if is_instance_valid(_mount_controller) else false
 
 func equip_saddle_from_inventory(index: int) -> bool:
-	if not tamed or baby or is_dead or species not in ["stego", "trike"] or is_mounted(): return false
+	if not tamed or baby or is_dead or not preload("res://Forest/creatures/Rides.gd").can_ride(species) or is_mounted(): return false
 	if index < 0 or index >= InventoryManager.inventory.size(): return false
 	var entry: Dictionary = InventoryManager.inventory[index]
 	var item: Item = entry.item
@@ -2593,7 +2710,8 @@ func take_damage(amount: int, source: Variant = null, knockback := -1.0) -> void
 	# A struck baby cries for its kin.
 	if baby and not tamed and life and source is Node2D and is_instance_valid(source): life.disturbed(source)
 	# Bony plates (the ankylosaur): light blows barely scratch it.
-	if PLATED.has(species) and not baby: amount = maxi(1, amount - int(PLATED[species]))
+	if PLATED.has(species) and not baby and not plates_off: amount = maxi(1, amount - int(PLATED[species]))
+	if guard_mult != 1.0: amount = maxi(1, int(round(float(amount) * guard_mult)))
 	# A thick hide (pass 13, Genes).
 	if not genes.is_empty(): amount = maxi(1, int(round(float(amount) * Genes.temper(genes, "harm"))))
 	# A keeper's companions are hardier for a Beastfriend, a mount for a Beastmaster (pass 13).
@@ -2721,6 +2839,8 @@ func _die() -> void:
 	# Its death cry (pass 15: the species' own voices, when made).
 	if is_instance_valid(voice) and not is_dead: voice.play_cue("death")
 	is_dead = true
+	# Pass 18: struck down on the wing, it tumbles out of the sky.
+	if flight != null: flight.fall()
 	bleed.clear()
 	moves.cancel()
 	_attack_time = 0.0
@@ -2732,7 +2852,9 @@ func _die() -> void:
 	# stego's haunch, a dodo's morsel, a hunter's prime cut).
 	var loot := Foods.meat(species, baby)
 	# Nothing to eat on a skeleton.
-	if species == "ossuar" or bool(VARIANTS.get(variant, {}).get("bone", false)): loot.clear()
+	if species in ["ossuar", "cinder"] or bool(VARIANTS.get(variant, {}).get("bone", false)): loot.clear()
+	# (A great beast's allies, called into its fight, leave nothing: LandBoss.)
+	if has_meta("boss_add"): loot.clear()
 	for id in worker.cargo: loot[id]=int(loot.get(id,0))+int(worker.cargo[id])
 	worker.cargo.clear()
 	if bag:
@@ -2791,6 +2913,40 @@ func _die() -> void:
 	if species == "alpha":
 		loot["raptor_fang"] = 6
 		loot["alpha_crest"] = 1
+	# Pass 18: the thylacoleo's pelt and claws, the pteranodon's wing leather
+	# and crest, the dimorphodons' teeth (their armour and trinkets).
+	if species == "thyla":
+		loot["thyla_pelt"] = 2
+		loot["thyla_claw"] = 1
+	if species == "ptera":
+		loot["wing_leather"] = 2
+		if _rng.randf() < 0.5: loot["ptera_crest"] = 1
+	if species == "dimorph" and _rng.randf() < 0.5: loot["dimorph_tooth"] = 1
+	# Pass 18's bosses: each gives what its victory opens up (LandBoss), and a
+	# hoard of its land's riches.
+	if species == "grimjaw":
+		loot["grimjaw_hide"] = 3
+		loot["grimjaw_tooth"] = 1
+		loot["sucho_claw"] = 3
+		loot["reed_perch"] = 6
+	if species == "reaper":
+		loot["reaper_claw"] = 2
+		loot["pale_crystal"] = 6
+		loot["crystal_shard"] = 8
+		loot["ashmane_fur"] = 3
+	if species == "quetzal":
+		loot["wing_leather"] = 4
+		loot["ptera_crest"] = 1
+	if species == "stormcrest":
+		loot["storm_feather"] = 3
+		loot["wing_leather"] = 6
+		loot["glimmer_shard"] = 8
+		loot["ptera_crest"] = 2
+	if species == "cinder":
+		loot["molten_core"] = 1
+		loot["obsidian"] = 10
+		loot["emberstone"] = 8
+		loot["anky_plate"] = 4
 	# The Buried King: its crown, and a heap of old bone and crystal.
 	if species == "ossuar":
 		loot["bone_crown"] = 1
@@ -2827,7 +2983,8 @@ func _fall_and_fade() -> void:
 		_sprite.play("death_" + _facing)
 		_clip = "death"
 		fall = DinoArt.duration(art_key, "death")
-		_shake_near(0.4 if species == "ossuar" else (0.12 if species in ["rex", "longneck"] else 0.0), 220.0 if species == "ossuar" else 160.0)
+		var great: bool = bool(stats.get("boss", false)) and species != "alpha"
+		_shake_near(0.4 if great else (0.12 if species in ["rex", "longneck"] else 0.0), 220.0 if great else 160.0)
 	var tween := create_tween()
 	tween.tween_interval(fall + 0.9)
 	tween.tween_property(_sprite, "modulate", Color(0.45, 0.52, 0.49, 0.0), 0.8)
@@ -2885,7 +3042,7 @@ func restore(data: Dictionary) -> void:
 	order = str(data.get("order","follow"))
 	if order not in ORDERS: order = "follow"
 	var saddle_id := str(data.get("saddle", ""))
-	saddle = ItemDB.make(saddle_id) if tamed and species in ["stego","trike"] and saddle_id == species + "_saddle" else null
+	saddle = ItemDB.make(saddle_id) if tamed and preload("res://Forest/creatures/Rides.gd").can_ride(species) and saddle_id == species + "_saddle" else null
 	if is_mounted(): _mount_controller.dismount(true)
 	stance = str(data.get("stance", "neutral"))
 	if stance not in STANCES: stance = "neutral"
@@ -2897,6 +3054,20 @@ func restore(data: Dictionary) -> void:
 
 func _draw() -> void:
 	if stats == null or is_dead: return
+	# Pass 18: up a tree, only its eyes show in the leaves (and, about to
+	# drop, its shadow darkening the ground where it will land).
+	if lurk != null and lurk.hidden():
+		var eye_y := -hop - float(stats.height) * 0.55
+		draw_rect(Rect2(-3, eye_y, 1, 1), Color(1.0, 0.86, 0.3))
+		draw_rect(Rect2(2, eye_y, 1, 1), Color(1.0, 0.86, 0.3))
+		var warn: Array = lurk.warning()
+		if not warn.is_empty():
+			var at: Vector2 = warn[0]
+			var k: float = warn[1]
+			var pts := PackedVector2Array()
+			for i in 16: pts.append(at + Vector2(cos(i * TAU / 16.0) * (6.0 + 8.0 * k), sin(i * TAU / 16.0) * (2.5 + 3.0 * k)))
+			draw_colored_polygon(pts, Color(0.05, 0.03, 0.02, 0.2 + 0.35 * k))
+		return
 	draw_ellipse_shadow()
 	if in_water:
 		var ripple := float(stats.radius) + fmod(_clock * 9.0, 7.0)

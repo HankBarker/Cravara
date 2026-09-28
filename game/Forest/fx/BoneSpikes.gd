@@ -18,6 +18,16 @@ const OUTLINE := Color(0.16, 0.12, 0.1)
 const CRACK := Color(0.42, 0.3, 0.18, 0.85)
 const SAND := {"puff": Color(0.86, 0.74, 0.52, 0.85), "bits": [Color(0.78, 0.64, 0.42), Color(0.93, 0.84, 0.64), Color(0.95, 0.92, 0.84)], "alpha": 0.9}
 
+## Pass 18: the Pale Reaper's are crystal out of the ash ("crystal"), the
+## Cinderhulk's black glass out of the crater floor ("ember"); the king's bone.
+const LOOKS := {
+	"bone": {"lit": Color(0.93, 0.89, 0.78), "shade": Color(0.72, 0.66, 0.54), "ground": Color(0.36, 0.24, 0.12), "edge": Color(0.22, 0.13, 0.06, 0.95), "crack": Color(0.42, 0.3, 0.18, 0.85)},
+	"crystal": {"lit": Color(0.86, 0.96, 1.0), "shade": Color(0.5, 0.7, 0.86), "ground": Color(0.2, 0.22, 0.26), "edge": Color(0.55, 0.85, 1.0, 0.95), "crack": Color(0.35, 0.5, 0.6, 0.85),
+		"dust": {"puff": Color(0.7, 0.72, 0.74, 0.85), "bits": [Color(0.55, 0.57, 0.6), Color(0.8, 0.9, 0.98), Color(0.4, 0.42, 0.45)], "alpha": 0.9}},
+	"ember": {"lit": Color(0.3, 0.24, 0.3), "shade": Color(0.12, 0.08, 0.1), "ground": Color(0.3, 0.08, 0.02), "edge": Color(1.0, 0.45, 0.1, 0.95), "crack": Color(1.0, 0.5, 0.12, 0.9),
+		"dust": {"puff": Color(0.95, 0.45, 0.12, 0.85), "bits": [Color(1.0, 0.62, 0.2), Color(0.25, 0.2, 0.2), Color(0.9, 0.3, 0.08)], "alpha": 0.9}},
+}
+var look := "bone"
 var radius := 16.0
 var damage := 20
 var source: Node
@@ -73,7 +83,7 @@ func _strike() -> void:
 		if c.tamed and not c.is_dead and c.global_position.distance_to(global_position) <= radius + float(c.stats.radius):
 			c.take_damage(damage, source, 160.0)
 	var puff := PUFF.new()
-	puff.dust(Vector2.ZERO, Vector2.UP, SAND, 4, 8, 1.3)
+	puff.dust(Vector2.ZERO, Vector2.UP, LOOKS.get(look, {}).get("dust", SAND), 4, 8, 1.3)
 	puff.spawn(get_parent(), global_position, 2.0)
 	AudioManager.play_foley("thud", -12.0, 0.7)
 
@@ -90,6 +100,7 @@ func _rise() -> float:
 func _draw() -> void:
 	var rise := _rise()
 	if rise <= 0.0: return
+	var paint: Dictionary = LOOKS.get(look, LOOKS.bone)
 	for spike in _spikes:
 		var base: Vector2 = spike.at
 		var tall := roundf(float(spike.tall) * rise)
@@ -104,10 +115,10 @@ func _draw() -> void:
 			var half := roundf(wide * (1.0 - float(row) / tall))
 			var y := base.y - row - 1
 			if half >= 1.0:
-				draw_rect(Rect2(base.x - half, y, half, 1), BONE)
-				draw_rect(Rect2(base.x, y, half + 1, 1), BONE_SHADE)
+				draw_rect(Rect2(base.x - half, y, half, 1), paint.lit)
+				draw_rect(Rect2(base.x, y, half + 1, 1), paint.shade)
 			else:
-				draw_rect(Rect2(base.x, y, 1, 1), BONE)
+				draw_rect(Rect2(base.x, y, 1, 1), paint.lit)
 
 
 func _draw_mark() -> void:
@@ -119,15 +130,16 @@ func _draw_mark() -> void:
 	# Heaving sand: a darker disc that swells, ringed by a flickering edge
 	# once the spikes are about to come.
 	var r := radius * (0.5 + 0.5 * grow)
+	var paint: Dictionary = LOOKS.get(look, LOOKS.bone)
 	# Churned, darkening sand and a pulsing rim: plain to see on the dunes.
-	var shade := Color(0.36, 0.24, 0.12, (0.25 + 0.3 * grow) * fade)
+	var shade := Color(paint.ground, (0.25 + 0.3 * grow) * fade)
 	_mark.draw_set_transform(Vector2.ZERO, 0.0, Vector2(1.0, 0.6))
 	_mark.draw_circle(Vector2.ZERO, r, shade)
-	var edge := Color(0.22, 0.13, 0.06, 0.95)
+	var edge: Color = paint.edge
 	edge.a *= fade * (0.55 + 0.45 * absf(sin(t * 18.0))) if t < WARN else fade
 	_mark.draw_arc(Vector2.ZERO, r, 0.0, TAU, 24, edge, 2.0)
 	_mark.draw_set_transform(Vector2.ZERO)
 	# Cracks out from the middle.
 	for spike in _spikes:
 		var tip: Vector2 = spike.at * grow
-		_mark.draw_line(Vector2.ZERO, tip.round(), Color(CRACK, CRACK.a * fade), 1.0)
+		_mark.draw_line(Vector2.ZERO, tip.round(), Color(paint.crack, float(paint.crack.a) * fade), 1.0)

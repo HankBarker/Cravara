@@ -12,6 +12,13 @@ extends Node
 ##         (the keeper breathes the ash: ForestPlayer.ash).
 ##   mire  the Mirefen Bog: a green mist over the black water, the colours
 ##         dulled; mist drifting low; fireflies after dark.
+##   jungle  pass 18: the Glimmercap Jungle's shade under the giants, shafts of
+##         light slanting down through it, spores and falling leaves, the
+##         crystal's glimmer drifting after dark.
+##   volcano pass 18: Embercrack Ridge's red-brown smoke, embers rising on the
+##         heat, ash sifting down, the mountain rumbling.
+##   canopy  pass 18: the treetops: bright and open, the sky's haze, leaves
+##         blown past on the wind.
 ##   storm the Sunscar Dunes' sandstorms (a world event): now and then, after
 ##         a while in the dunes, a storm rolls in for a minute or so: a thick
 ##         tan haze, sand streaming sideways, the wind roaring. Then it passes.
@@ -24,6 +31,12 @@ const PRESETS := {
 		"tint": Color(0.86, 0.83, 0.79), "glow": 0.22, "hush": true, "rumble": true, "dread": true},
 	"mire": {"region": "glassmere", "axis": "west", "depth": 20.0, "floor": 0.5, "desat": 0.28, "haze": 0.7,
 		"tint": Color(0.5, 0.58, 0.46), "glow": 0.0, "hush": false, "rumble": false, "dread": false},
+	"jungle": {"region": "jungle", "axis": "far", "depth": 18.0, "floor": 0.6, "desat": 0.1, "haze": 0.85,
+		"tint": Color(0.16, 0.3, 0.2), "glow": 0.0, "hush": false, "rumble": false, "dread": false, "shade": 0.18, "shafts": 1.0},
+	"volcano": {"region": "volcano", "axis": "far", "depth": 22.0, "floor": 0.6, "desat": 0.3, "haze": 1.05,
+		"tint": Color(0.4, 0.22, 0.17), "glow": 0.45, "hush": false, "rumble": true, "dread": false, "shade": 0.06, "shafts": 0.0},
+	"canopy": {"region": "canopy", "axis": "none", "depth": 1.0, "floor": 1.0, "desat": 0.0, "haze": 0.55,
+		"tint": Color(0.78, 0.9, 0.96), "glow": 0.0, "hush": false, "rumble": false, "dread": false, "shade": 0.0, "shafts": 0.35},
 	"storm": {"region": "dunes", "axis": "none", "depth": 1.0, "floor": 1.0, "desat": 0.4, "haze": 3.3,
 		"tint": Color(0.84, 0.68, 0.46), "glow": 0.0, "hush": false, "rumble": false, "dread": false, "event": true},
 }
@@ -67,6 +80,8 @@ func setup(owner_session, preset_kind: String) -> void:
 	var tint: Color = preset.tint
 	mat.set_shader_parameter("ash_tint", Vector3(tint.r, tint.g, tint.b))
 	mat.set_shader_parameter("glow_strength", float(preset.glow))
+	mat.set_shader_parameter("shade", float(preset.get("shade", 0.0)))
+	mat.set_shader_parameter("shafts", float(preset.get("shafts", 0.0)))
 	rect.material = mat
 	rect.visible = false
 	layer.add_child(rect)
@@ -97,6 +112,25 @@ func setup(owner_session, preset_kind: String) -> void:
 		dust.texture = _soft_disc(48)
 		drift.append(dust)
 		_event_clock = _rng.randf_range(STORM_EVERY[0], STORM_EVERY[1])
+	elif kind == "jungle":
+		# Spores floating up, leaves drifting down; the glimmer after dark.
+		drift.append(_particles(36, Color(0.86, 0.95, 0.72, 0.7), 1.0, 1.5, 12.0, Vector2(1.0, -1.5), Vector2(0.3, -1.0)))
+		drift.append(_particles(14, Color(0.36, 0.52, 0.2, 1.0), 1.5, 2.5, 10.0, Vector2(4.0, 10.0), Vector2(0.4, 1.0)))
+		night_lights = _particles(30, Color(0.4, 0.96, 0.9, 1.0), 1.0, 1.5, 6.0, Vector2(0.0, -1.0), Vector2(0.0, -1.0))
+	elif kind == "volcano":
+		# Embers rising on the heat, ash sifting down.
+		var embers := _particles(44, Color(1.0, 0.52, 0.16, 1.0), 1.0, 2.0, 6.0, Vector2(2.0, -18.0), Vector2(0.2, -1.0))
+		embers.initial_velocity_min = 6.0
+		embers.initial_velocity_max = 18.0
+		drift.append(embers)
+		drift.append(_particles(40, Color(0.5, 0.48, 0.46, 0.8), 1.0, 2.0, 9.0, Vector2(-2.0, 12.0), Vector2(-0.3, 1.0)))
+	elif kind == "canopy":
+		# Leaves blown past, motes in the sun.
+		var leaves := _particles(18, Color(0.42, 0.62, 0.24, 1.0), 1.5, 2.5, 8.0, Vector2(-12.0, 3.0), Vector2(-1.0, 0.2))
+		leaves.initial_velocity_min = 20.0
+		leaves.initial_velocity_max = 40.0
+		drift.append(leaves)
+		drift.append(_particles(20, Color(1.0, 1.0, 0.82, 0.8), 1.0, 1.2, 8.0, Vector2(0.0, -2.0), Vector2(0.3, -1.0)))
 	elif kind == "ash":
 		drift.append(_particles(70, Color(0.92, 0.9, 0.86, 0.9), 1.0, 2.0, 9.0, Vector2(-2.0, 14.0), Vector2(-0.4, 1.0)))
 		drift.append(_particles(10, Color(1.0, 0.56, 0.22, 1.0), 1.0, 2.0, 7.0, Vector2(-2.0, -6.0), Vector2(-0.4, 1.0)))
@@ -192,6 +226,9 @@ func _depth(keeper: Node2D) -> float:
 		d = float(world.layout.from_inner(c)) + 1.0 if world.region_of(c) == "pale_hills" else 0.0
 	elif preset.axis == "west":
 		d = float(world.layout.from_inner(c)) + 1.0 if world.region_of(c) == "glassmere" else 0.0
+	elif preset.axis == "far":
+		# Pass 18: cells in from the far ring's inner edge.
+		d = float(world.layout.from_inner(c)) + 1.0 if world.region_of(c) == preset.region else 0.0
 	else:
 		return 1.0
 	return clampf(d / float(preset.depth), 0.0, 1.0)

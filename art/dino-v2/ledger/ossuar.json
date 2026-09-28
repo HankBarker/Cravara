@@ -15,22 +15,6 @@
    "wide": 1.0
   }
  },
- "walk_side": {
-  "job": "39b1de9c-3667-48b2-aacc-3bcb61cbf9aa",
-  "tool": "animate_image",
-  "seed": 3366266,
-  "status": "done",
-  "cost": 2.0,
-  "prompt": "Walks in place: its legs step one after the other, its body bobs gently with each step and its tail sways. It stays in place, facing right.",
-  "frames": 9,
-  "submitted": 1790312942.2163107,
-  "finished": 1790313101.805328,
-  "score": {
-   "bright": 9,
-   "area": 1.0,
-   "wide": 1.09
-  }
- },
  "walk_down": {
   "job": "a5c5747b-2ed1-446b-b503-c2d0e13ab41c",
   "tool": "animate_image",
@@ -667,6 +651,42 @@
     },
     "raw": "C:\\Cravera\\art\\dino-v2\\raw\\ossuar\\hurt_side@2"
    }
+  ],
+  "walk_side": [
+   {
+    "job": "39b1de9c-3667-48b2-aacc-3bcb61cbf9aa",
+    "tool": "animate_image",
+    "seed": 3366266,
+    "status": "done",
+    "cost": 2.0,
+    "prompt": "Walks in place: its legs step one after the other, its body bobs gently with each step and its tail sways. It stays in place, facing right.",
+    "frames": 9,
+    "submitted": 1790312942.2163107,
+    "finished": 1790313101.805328,
+    "score": {
+     "bright": 9,
+     "area": 1.0,
+     "wide": 1.09
+    }
+   },
+   {
+    "job": "59f0b462-6301-46e1-b6d8-1b4f019f45dd",
+    "tool": "animate_image",
+    "seed": 3367267,
+    "status": "done",
+    "cost": 2.0,
+    "prompt": "Walks in place with long heavy strides, like on a treadmill: each planted foot slides steadily back under the body while the other swings forward, the body bobbing with each step and the tail swaying. It stays in place, facing right.",
+    "frames": 9,
+    "submitted": 1790482395.6117406,
+    "finished": 1790482515.6967134,
+    "score": {
+     "bright": 63,
+     "area": 1.09,
+     "wide": 1.12,
+     "base": 78
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\ossuar\\walk_side@1"
+   }
   ]
  },
  "run_down": {
@@ -676,14 +696,15 @@
   "status": "done",
   "cost": 1.0,
   "prompt": "Runs in place with long fast strides, its body leaning forward and its tail held straight out behind. It stays in place, facing the viewer the whole time.",
-  "frames": 9,
+  "frames": 8,
   "submitted": 1790313062.8883574,
   "finished": 1790313151.0033917,
   "score": {
    "bright": 13,
    "area": 1.11,
    "wide": 1.03
-  }
+  },
+  "method": "walk_front.py (run gait from the down drawing)"
  },
  "run_up": {
   "job": "8c6098f8-4fea-4d82-a737-35ff5d7ffd37",
@@ -692,14 +713,15 @@
   "status": "done",
   "cost": 1.0,
   "prompt": "Runs in place with long fast strides, its body leaning forward and its tail held straight out behind. It stays in place with its back to the viewer the whole time.",
-  "frames": 9,
+  "frames": 8,
   "submitted": 1790313113.3392699,
   "finished": 1790313226.0607638,
   "score": {
    "bright": 29,
    "area": 1.0,
    "wide": 1.0
-  }
+  },
+  "method": "walk_front.py (run gait from the up drawing)"
  },
  "run_side": {
   "job": "172bfa44-7a93-4005-b8e5-054a57ab16d7",
@@ -961,5 +983,22 @@
   "status": "done",
   "method": "lunge_front.py (hurt from the side drawing)",
   "frames": 5
+ },
+ "walk_side": {
+  "job": "39b1de9c-3667-48b2-aacc-3bcb61cbf9aa",
+  "tool": "animate_image",
+  "seed": 3366266,
+  "status": "done",
+  "cost": 2.0,
+  "prompt": "Walks in place: its legs step one after the other, its body bobs gently with each step and its tail sways. It stays in place, facing right.",
+  "frames": 9,
+  "submitted": 1790312942.2163107,
+  "finished": 1790482573.0010526,
+  "score": {
+   "bright": 9,
+   "area": 1.0,
+   "wide": 1.09
+  },
+  "method": "copied from run_side (pass 18: its walks slid, or sparkled)"
  }
 }

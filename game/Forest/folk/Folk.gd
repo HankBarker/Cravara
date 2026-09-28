@@ -209,6 +209,9 @@ const BEASTS := {
 	"sucho": ["Suchomimus", "Any fish", Ways.LESSONS.sucho, "Not ridden. It fishes the mere for you."],
 	"rex": ["Rex", "Any raw meat", Ways.LESSONS.rex, "Rex saddles are the stuff of legend."],
 	"spino": ["Spinosaur", "Any fish", Ways.LESSONS.spino, "The bog's king carries no one. Yet."],
+	"ptera": ["Pteranodon", "Any fish", Ways.LESSONS.ptera, "Saddle one and it will carry you into the sky, and up into the treetops."],
+	"thyla": ["Thylacoleo", "Any raw meat", Ways.LESSONS.thyla, "A killer at your side, and it climbs."],
+	"dimorph": ["Dimorphodon", "Any fish", Ways.LESSONS.dimorph, "Too small to ride. It'll shriek at anything that comes near you."],
 	"alpha": ["Skarn", "Nothing", "Skarn leads the Shardback pack from its den in the north-east. It won't take food. It takes keepers.", "Beat it and the pack loses its nerve."],
 }
 

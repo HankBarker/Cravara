@@ -135,8 +135,10 @@ func count(goal: Dictionary) -> int:
 			return n
 		# A saddle made, bought or fitted.
 		"saddle":
-			var n := InventoryManager.get_item_count("stego_saddle") + InventoryManager.get_item_count("trike_saddle")
-			n += int(tally.get("craft:stego_saddle", 0)) + int(tally.get("craft:trike_saddle", 0))
+			# (Pass 18: any beast's saddle.)
+			var n := 0
+			for sp in preload("res://Forest/creatures/Rides.gd").RIDES:
+				n += InventoryManager.get_item_count(sp + "_saddle") + int(tally.get("craft:" + sp + "_saddle", 0))
 			for c in get_tree().get_nodes_in_group("forest_creatures"):
 				if c.tamed and not c.is_dead and c.get("saddle") != null: n += 1
 			return n
@@ -154,7 +156,8 @@ func count(goal: Dictionary) -> int:
 		"defeat":
 			var n := int(tally.get("defeat:" + str(goal.id), 0))
 			# A boss beaten before the task was taken still counts.
-			if str(goal.id) in ["alpha", "ossuar", "maw"] and session._milestones.get(str(goal.id), false): n = maxi(n, 1)
+			var fell := str({"cinder": "cinderhulk"}.get(str(goal.id), str(goal.id)))
+			if fell in ["alpha", "ossuar", "maw", "grimjaw", "reaper", "stormcrest", "cinderhulk"] and session._milestones.get(fell, false): n = maxi(n, 1)
 			return n
 		"region": return mini(1, int(tally.get("region:" + str(goal.id), 0)))
 		"visit": return mini(1, int(tally.get("visit:" + str(goal.id), 0)))
@@ -208,10 +211,10 @@ func describe(goal: Dictionary) -> String:
 			var id := str(goal.id)
 			if id.begins_with("chest:"):
 				return {"chest:house": "Open old chests in fallen buildings", "chest:treasure": "Open a hoard on a lake's island", "chest:camp": "Open a lost camp's pack", "chest:larder": "Open an old inn's larder"}.get(id, "Open ancient caches")
-			return {"blast": "Blast rock apart with bombs", "bred": "Have a pair lay an egg", "ride": "Seconds in the saddle", "tend": "Have your beasts tended", "meal": "Take a meal off an old inn's table"}.get(id, id.capitalize())
+			return {"blast": "Blast rock apart with bombs", "bred": "Have a pair lay an egg", "ride": "Seconds in the saddle", "fly": "Seconds on the wing", "tend": "Have your beasts tended", "meal": "Take a meal off an old inn's table"}.get(id, id.capitalize())
 		"kills": return "Bring down beasts"
 		"herd": return "Companions at your side"
-		"saddle": return "Get a stego or trike saddle"
+		"saddle": return "Get a saddle for one of your beasts"
 		"lore": return "Read carvings"
 		"house": return "Build a home"
 		"defeat": return "Defeat %s" % str(FC.SPECIES.get(str(goal.id), {}).get("name", str(goal.id)).split(",")[0])

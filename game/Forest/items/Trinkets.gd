@@ -43,6 +43,8 @@ const EFFECTS := {
 	"wading": ["+%s%% wading pace", 100.0, 1.0],
 	# Pass 15: a meal's (Core Keeper's food): more vitality to have.
 	"vigor": ["+%s max vitality", 1.0, 100.0],
+	# Pass 18: the volcano's heat (ForestPlayer.heat_guard).
+	"heat_guard": ["Keeps off %s%% of the volcano's heat", 100.0, 0.9],
 }
 
 

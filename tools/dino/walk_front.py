@@ -53,6 +53,17 @@ RIG = {
     "ossuar": {"legs": 9, "gap": 3, "sway": 1},
     # Pass 14: the Sailking (its crystal run lost the sail from the front).
     "spino": {"legs": 11, "gap": 4, "sway": 1},
+    # Pass 18: the Reedstalker (its generated front and back walks and runs
+    # jittered, legs splaying and arms flicking out).
+    "deino": {"legs": 8, "gap": 2, "sway": 1},
+    # The Treeshadow (its generated front and back walks and runs twisted
+    # the whole cat round to the side mid-stride).
+    "thyla": {"legs": 11, "gap": 3, "sway": 1},
+    # Grimjaw (its generated chomp from behind swung the croc round side-on).
+    "grimjaw": {"legs": 16, "gap": 6, "sway": 1},
+    # The Pale Reaper (its generated slashes and roars from the front and
+    # behind grew great crescents of light every try).
+    "reaper": {"legs": 20, "gap": 4, "sway": 1},
 }
 GAIT = {
     "walk": {"lift": 2.0, "bob": 1.0},

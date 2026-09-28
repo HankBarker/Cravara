@@ -1,0 +1,489 @@
+{
+ "idle_side": {
+  "job": "a68d775a-a6e9-46e1-b1e3-610e3174557a",
+  "tool": "animate_image_pixminimax",
+  "seed": 1714696,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stands still in a relaxed pose; its body rises and falls very slightly and its tail sways a little. It stays in place, facing right.",
+  "frames": 9,
+  "submitted": 1790477648.8139107,
+  "finished": 1790477772.555549,
+  "score": {
+   "bright": 1,
+   "area": 1.01,
+   "wide": 1.06,
+   "base": 20
+  }
+ },
+ "idle_down": {
+  "job": "6520f360-5876-4bb0-b636-7c98ac6e42a3",
+  "tool": "animate_image_pixminimax",
+  "seed": 15057203,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stands still in a relaxed pose; its body rises and falls very slightly and its tail sways a little. It stays in place, facing the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790477649.6153114,
+  "finished": 1790477829.8597581,
+  "score": {
+   "bright": 3,
+   "area": 1.04,
+   "wide": 1.0,
+   "base": 22
+  }
+ },
+ "idle_up": {
+  "job": "aedb092d-ace9-4c10-a67a-8bf63d4c54df",
+  "tool": "animate_image_pixminimax",
+  "seed": 14789769,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stands still in a relaxed pose; its body rises and falls very slightly and its tail sways a little. It stays in place with its back to the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790477650.6090956,
+  "finished": 1790477863.7568045,
+  "score": {
+   "bright": 2,
+   "area": 1.06,
+   "wide": 1.0,
+   "base": 10
+  }
+ },
+ "walk_side": {
+  "job": "328339c3-dbd7-4463-8aa9-2f369281fb06",
+  "tool": "animate_image",
+  "seed": 15641494,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Walks in place on its folded wings and short hind legs, rocking from side to side with each step. It stays in place, facing right.",
+  "frames": 9,
+  "submitted": 1790477651.5509317,
+  "finished": 1790477787.2410257,
+  "score": {
+   "bright": 3,
+   "area": 1.02,
+   "wide": 1.12,
+   "base": 20
+  }
+ },
+ "walk_down": {
+  "job": "62655da6-2c9e-48ec-b832-0dc5f5381ff3",
+  "tool": "animate_image",
+  "seed": 15384276,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Walks in place on its folded wings and short hind legs, rocking from side to side with each step. It stays in place, facing the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790477652.2498934,
+  "finished": 1790477741.6195629,
+  "score": {
+   "bright": 0,
+   "area": 1.0,
+   "wide": 1.19,
+   "base": 22
+  }
+ },
+ "walk_up": {
+  "job": "2e2695ae-277a-4cc8-9cdb-36fcda4031e9",
+  "tool": "animate_image",
+  "seed": 15386776,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Walks in place on its folded wings and short hind legs, rocking from side to side with each step. It stays in place with its back to the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790477653.9237385,
+  "finished": 1790477795.4260628,
+  "score": {
+   "bright": 0,
+   "area": 1.03,
+   "wide": 1.0,
+   "base": 10
+  }
+ },
+ "bite_side": {
+  "job": "21b403d2-9bac-48d2-8fb9-3e7ce792aedf",
+  "tool": "animate_image_pixminimax",
+  "seed": 828289,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Draws its head back, then jabs forward with its long beak and snaps it shut. It stays in place, facing right.",
+  "frames": 9,
+  "submitted": 1790477656.3322613,
+  "finished": 1790477982.5380633,
+  "score": {
+   "bright": 5,
+   "area": 1.16,
+   "wide": 1.38,
+   "base": 20
+  }
+ },
+ "bite_down": {
+  "job": "33ecbb4b-791e-47cf-8f2e-7d01385fd494",
+  "tool": "animate_image_pixminimax",
+  "seed": 11889148,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Draws its head back, then jabs forward with its long beak and snaps it shut. It stays in place, facing the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790477657.2578733,
+  "finished": 1790477950.4118688,
+  "score": {
+   "bright": 4,
+   "area": 1.11,
+   "wide": 1.17,
+   "base": 22
+  }
+ },
+ "bite_up": {
+  "job": "b268a424-171c-4353-8900-86d67118356e",
+  "tool": "animate_image_pixminimax",
+  "seed": 11201919,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Draws its head back, then jabs forward with its long beak and snaps it shut. It stays in place with its back to the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790477744.701507,
+  "finished": 1790478016.772848,
+  "score": {
+   "bright": 1,
+   "area": 1.14,
+   "wide": 1.08,
+   "base": 10
+  }
+ },
+ "eat_side": {
+  "job": "163062ae-7f06-43fb-af9b-468f4439bdd6",
+  "tool": "animate_image_pixminimax",
+  "seed": 12972000,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Dips its long beak to the ground, snaps up a fish and gulps it down, then lifts its head. It stays in place, facing right.",
+  "frames": 13,
+  "submitted": 1790477799.6312764,
+  "finished": 1790478027.0541794,
+  "score": {
+   "bright": 9,
+   "area": 1.24,
+   "wide": 1.35,
+   "base": 20
+  }
+ },
+ "eat_down": {
+  "job": "6aa05364-5f8e-4255-b468-5dde14b22bb7",
+  "tool": "animate_image_pixminimax",
+  "seed": 423097,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Dips its long beak to the ground, snaps up a fish and gulps it down, then lifts its head. It stays in place, facing the viewer the whole time.",
+  "frames": 13,
+  "submitted": 1790477800.779087,
+  "finished": 1790478062.3437676,
+  "score": {
+   "bright": 32,
+   "area": 1.66,
+   "wide": 1.47,
+   "base": 22
+  },
+  "method": "lunge_front.py (eat from the down drawing)"
+ },
+ "eat_up": {
+  "job": "0fc43976-8930-4560-a30c-8f094fad9e69",
+  "tool": "animate_image_pixminimax",
+  "seed": 7891489,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Dips its long beak to the ground, snaps up a fish and gulps it down, then lifts its head. It stays in place with its back to the viewer the whole time.",
+  "frames": 13,
+  "submitted": 1790477801.5144086,
+  "finished": 1790478098.7065032,
+  "score": {
+   "bright": 20,
+   "area": 1.13,
+   "wide": 1.33,
+   "base": 10
+  }
+ },
+ "takeoff_side": {
+  "job": "1856c235-611b-44d3-8cd1-057cdf029c19",
+  "tool": "animate_image_pixminimax",
+  "seed": 8549323,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Crouches low, then spreads its wings wide and springs up into the air with a strong flap. It stays in place, facing right.",
+  "frames": 9,
+  "submitted": 1790477836.726333,
+  "finished": 1790478146.6756825,
+  "score": {
+   "bright": 0,
+   "area": 1.95,
+   "wide": 2.24,
+   "base": 20
+  }
+ },
+ "look_side": {
+  "job": "74781f5c-c99a-4925-8326-aff9213af983",
+  "tool": "animate_image_pixminimax",
+  "seed": 10387888,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stands in place and turns its head to look to one side, then to the other side, then back ahead, its body staying still. It stays in place, facing right.",
+  "frames": 13,
+  "submitted": 1790477989.2538557,
+  "finished": 1790478212.4318545,
+  "score": {
+   "bright": 0,
+   "area": 1.0,
+   "wide": 1.0,
+   "base": 20
+  }
+ },
+ "look_down": {
+  "job": "b6d7f1b6-058b-4022-91d9-f1f1a82d93cc",
+  "tool": "animate_image_pixminimax",
+  "seed": 14723780,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stands in place and turns its head to look to one side, then to the other side, then back ahead, its body staying still. It stays in place, facing the viewer the whole time.",
+  "frames": 13,
+  "submitted": 1790478032.0883656,
+  "finished": 1790478173.9722216,
+  "score": {
+   "bright": 1,
+   "area": 1.0,
+   "wide": 1.0,
+   "base": 22
+  }
+ },
+ "look_up": {
+  "job": "dd30a417-246e-430a-940b-6cdf6b428111",
+  "tool": "animate_image_pixminimax",
+  "seed": 10164409,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stands in place and turns its head to look to one side, then to the other side, then back ahead, its body staying still. It stays in place with its back to the viewer the whole time.",
+  "frames": 13,
+  "submitted": 1790478032.8118868,
+  "finished": 1790478331.2184489,
+  "score": {
+   "bright": 1,
+   "area": 1.0,
+   "wide": 1.0,
+   "base": 10
+  }
+ },
+ "hurt_side": {
+  "job": "62181139-404a-4694-85e2-31f89423501e",
+  "tool": "animate_image_pixminimax",
+  "seed": 8344226,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Flinches: jerks its head and body back, then returns to its stance. It stays in place, facing right.",
+  "frames": 5,
+  "submitted": 1790478068.2968893,
+  "finished": 1790478217.4477983,
+  "score": {
+   "bright": 2,
+   "area": 1.09,
+   "wide": 1.12,
+   "base": 20
+  }
+ },
+ "_history": {
+  "takeoff_down": [
+   {
+    "job": "797ba88b-1a22-475a-a4e5-ef96b21c06e8",
+    "tool": "animate_image_pixminimax",
+    "seed": 3725748,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Crouches low, then spreads its wings wide and springs up into the air with a strong flap. It stays in place, facing the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790477869.4851513,
+    "finished": 1790478154.800481,
+    "score": {
+     "bright": 7,
+     "area": 1.54,
+     "wide": 1.92,
+     "base": 22
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\ptera\\takeoff_down@0"
+   },
+   {
+    "job": "4e98c722-678c-4bdf-a412-38a7115e13e1",
+    "tool": "animate_image_pixminimax",
+    "seed": 3726748,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Crouches low, then spreads its wings wide and springs up into the air with a strong flap. It stays in place, facing the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790478225.41936,
+    "finished": 1790478318.0298753,
+    "score": {
+     "bright": 6,
+     "area": 1.58,
+     "wide": 1.78,
+     "base": 22
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\ptera\\takeoff_down@1"
+   }
+  ],
+  "takeoff_up": [
+   {
+    "job": "270e8179-d056-443c-923d-372882e80a46",
+    "tool": "animate_image_pixminimax",
+    "seed": 14948696,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Crouches low, then spreads its wings wide and springs up into the air with a strong flap. It stays in place with its back to the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790477955.6959913,
+    "finished": 1790478162.8154294,
+    "score": {
+     "bright": 7,
+     "area": 1.73,
+     "wide": 2.0,
+     "base": 10
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\ptera\\takeoff_up@0"
+   },
+   {
+    "job": "5e95eb43-79d3-4a3d-9d5b-6baa4c964e02",
+    "tool": "animate_image_pixminimax",
+    "seed": 14949696,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Crouches low, then spreads its wings wide and springs up into the air with a strong flap. It stays in place with its back to the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790478226.1930923,
+    "finished": 1790478400.5286949,
+    "score": {
+     "bright": 4,
+     "area": 2.11,
+     "wide": 1.94,
+     "base": 10
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\ptera\\takeoff_up@1"
+   }
+  ]
+ },
+ "hurt_down": {
+  "job": "79aad5ad-3f21-4920-93ab-e3d6dce48a9d",
+  "tool": "animate_image_pixminimax",
+  "seed": 11452159,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Flinches: jerks its head and body back, then returns to its stance. It stays in place, facing the viewer the whole time.",
+  "frames": 5,
+  "submitted": 1790478177.0773742,
+  "finished": 1790478252.293626,
+  "score": {
+   "bright": 5,
+   "area": 1.01,
+   "wide": 1.08,
+   "base": 22
+  }
+ },
+ "hurt_up": {
+  "job": "0fd43983-d465-4941-b852-7552b5ef2bb6",
+  "tool": "animate_image_pixminimax",
+  "seed": 1420953,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Flinches: jerks its head and body back, then returns to its stance. It stays in place with its back to the viewer the whole time.",
+  "frames": 5,
+  "submitted": 1790478178.2996511,
+  "finished": 1790478256.6855302,
+  "score": {
+   "bright": 3,
+   "area": 1.03,
+   "wide": 1.0,
+   "base": 10
+  }
+ },
+ "death_side": {
+  "job": "c1ed2a75-8f6f-4d9d-9983-e82caefa1fac",
+  "tool": "animate_image_pixminimax",
+  "seed": 9605992,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stumbles, its legs give way and it falls over onto its side, then lies still. It stays in place, facing right.",
+  "frames": 13,
+  "submitted": 1790478180.7155077,
+  "finished": 1790478346.7729037,
+  "score": {
+   "bright": 3,
+   "area": 1.09,
+   "wide": 1.53,
+   "base": 20
+  }
+ },
+ "death_down": {
+  "job": "731c2a93-298e-44ac-8b51-31193b7d015b",
+  "tool": "animate_image_pixminimax",
+  "seed": 1100968,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stumbles, its legs give way and it falls over onto its side, then lies still. It stays in place, facing the viewer the whole time.",
+  "frames": 13,
+  "submitted": 1790478181.6726093,
+  "finished": 1790478357.058365,
+  "score": {
+   "bright": 0,
+   "area": 1.0,
+   "wide": 1.56,
+   "base": 22
+  }
+ },
+ "death_up": {
+  "job": "b5f41998-c7a2-42f6-a2e7-b0f0c77f0d34",
+  "tool": "animate_image_pixminimax",
+  "seed": 1337805,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stumbles, its legs give way and it falls over onto its side, then lies still. It stays in place with its back to the viewer the whole time.",
+  "frames": 13,
+  "submitted": 1790478182.7931793,
+  "finished": 1790478367.0045674,
+  "score": {
+   "bright": 4,
+   "area": 1.06,
+   "wide": 1.33,
+   "base": 10
+  }
+ },
+ "takeoff_down": {
+  "job": "29648022-b9cd-481a-b164-57f2565b4ecb",
+  "tool": "animate_image_pixminimax",
+  "seed": 3727748,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Crouches low, then spreads its wings wide and springs up into the air with a strong flap. It stays in place, facing the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790478420.5718458,
+  "finished": 1790478542.7814481,
+  "score": {
+   "bright": 9,
+   "area": 1.67,
+   "wide": 1.83,
+   "base": 22
+  }
+ },
+ "takeoff_up": {
+  "job": "72d1ce3a-0be8-4799-9b85-b6789ebdc461",
+  "tool": "animate_image_pixminimax",
+  "seed": 14950696,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Crouches low, then spreads its wings wide and springs up into the air with a strong flap. It stays in place with its back to the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790478519.3374155,
+  "finished": 1790478611.6051624,
+  "score": {
+   "bright": 3,
+   "area": 1.84,
+   "wide": 2.03,
+   "base": 10
+  }
+ }
+}

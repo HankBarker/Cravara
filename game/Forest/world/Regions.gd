@@ -13,6 +13,10 @@ const INFO := {
 	"pale_hills": {"name": "The Pale Lands", "blurb": "Ash falls here like snow, from the mountain beyond. Nothing sings.", "map": Color("a8a39a")},
 	# Pass 15: underground (each cave names itself as the keeper goes in).
 	"caves": {"name": "Underground", "blurb": "", "map": Color("2a2830")},
+	# Pass 18: the far ring and the treetops (Layout version 3).
+	"jungle": {"name": "The Glimmercap Jungle", "blurb": "Trees older than the Sky-Fangs, and crystal in everything that lives under them.", "map": Color("24503a")},
+	"volcano": {"name": "Embercrack Ridge", "blurb": "The mountain that smoulders. The ground here is hot through your boots.", "map": Color("3a302c")},
+	"canopy": {"name": "The Canopy", "blurb": "Bark and branches, a long way up. Watch the sky.", "map": Color("5a4a2c")},
 }
 
 

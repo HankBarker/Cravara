@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[ext_resource type="Texture2D" path="res://Forest/art/items/arapaima.png" id="2"]
+[resource]
+script = ExtResource("1")
+id = "arapaima"
+name = "Arapaima"
+description = "A giant armoured river fish, its scales turning red toward the tail. A fight to land."
+icon = ExtResource("2")
+max_stack = 10

@@ -36,7 +36,8 @@ const ACTIVE := 1500.0
 ## or two on the path without a beast; "a little bit more", not everywhere.)
 const RADIUS := 20
 ## The beasts drawn only once their clips are exported.
-const EXPORTED_ONLY := ["dimetrodon", "proto", "anky", "compy", "carno", "yuty", "deino", "utah", "sucho", "spino"]
+const EXPORTED_ONLY := ["dimetrodon", "proto", "anky", "compy", "carno", "yuty", "deino", "utah", "sucho", "spino",
+	"ptera", "dimorph", "thyla", "quetzal"]
 ## A streamed world's life by land: [species, weight, [fewest, most], coat,
 ## [shallowest, deepest] into the land].
 const LAND_LIFE := {
@@ -62,6 +63,25 @@ const LAND_LIFE := {
 		["allo", 4, [1, 1], "", [0.0, 1.0]], ["lystro", 3, [3, 4], "", [0.0, 1.0]], ["raptor", 3, [3, 4], "", [0.0, 1.0]],
 		["stego", 2, [2, 3], "", [0.0, 1.0]], ["compy", 2, [5, 8], "", [0.0, 1.0]], ["utah", 3, [2, 3], "", [0.1, 1.0]],
 	],
+	# Pass 18: the far ring and the treetops (Layout version 3). The jungle's
+	# herds under the giants, its glowing raptors, the thylacoleo waiting in
+	# the trees, the pterosaurs; Embercrack Ridge's ember beasts, very strong;
+	# the treetops' flyers and the thylacoleo that hunts along the boughs.
+	"jungle": [
+		["longneck", 3, [1, 3], "brontoshade", [0.0, 1.0]], ["parasaur", 3, [2, 4], "", [0.0, 1.0]], ["stego", 2, [2, 3], "", [0.1, 1.0]],
+		["raptor", 3, [3, 4], "glowspine", [0.1, 1.0]], ["thyla", 2, [1, 1], "", [0.1, 1.0]], ["dimorph", 3, [4, 6], "", [0.0, 1.0]],
+		["ptera", 2, [2, 3], "", [0.2, 1.0]], ["carno", 1, [1, 1], "junglehorn", [0.5, 1.0]], ["trike", 1, [2, 2], "", [0.3, 1.0]],
+		["dodo", 1, [2, 3], "", [0.0, 0.5]],
+	],
+	"volcano": [
+		["raptor", 3, [3, 4], "ember", [0.0, 1.0]], ["allo", 2, [1, 2], "ember", [0.0, 1.0]], ["dimetrodon", 3, [1, 2], "ember", [0.0, 1.0]],
+		["anky", 2, [1, 2], "ember", [0.0, 1.0]], ["trike", 2, [2, 2], "ember", [0.1, 1.0]], ["carno", 1, [1, 1], "ember", [0.35, 1.0]],
+		["rex", 1, [1, 1], "ember", [0.45, 1.0]], ["compy", 2, [6, 9], "ember", [0.0, 1.0]],
+	],
+	"canopy": [
+		["ptera", 4, [2, 4], "", [0.0, 1.0]], ["dimorph", 4, [4, 7], "", [0.0, 1.0]], ["thyla", 2, [1, 2], "", [0.0, 1.0]],
+		["quetzal", 1, [1, 1], "", [0.3, 1.0]],
+	],
 }
 ## Chances a streamed chunk has a site, and a second.
 const SITE_ODDS := 0.8
@@ -69,7 +89,9 @@ const SECOND_ODDS := 0.35
 ## A beast of a group born crystal-grown, out past the plains (a variant of its own).
 const CRYSTAL_ODDS := 0.06
 ## The great roaming beasts (ForestPlaytest.ROAMERS): [species, coat, land, depth].
-const ROAMERS := [["allo", "dune", "dunes", Vector2(0.6, 0.95)], ["trike", "old", "pale_hills", Vector2(0.3, 0.9)], ["rex", "", "dunes", Vector2(0.75, 0.98)]]
+const ROAMERS := [["allo", "dune", "dunes", Vector2(0.6, 0.95)], ["trike", "old", "pale_hills", Vector2(0.3, 0.9)], ["rex", "", "dunes", Vector2(0.75, 0.98)],
+	# Pass 18: the jungle's old ankylosaur, grown over with thorn and crystal.
+	["anky", "thornback", "jungle", Vector2(0.3, 0.9)]]
 
 var session
 var world

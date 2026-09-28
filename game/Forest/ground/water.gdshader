@@ -31,6 +31,13 @@ ivec2 land_of(ivec2 cell) {
 	vec4 v = texelFetch(land_map, t, 0);
 	return ivec2(int(v.r * 255.0 + 0.5), int(v.g * 255.0 + 0.5));
 }
+// Pass 18: a cell's small place (the land map's b): 4 is a hot spring.
+int micro_of(ivec2 cell) {
+	ivec2 t = cell - land_origin;
+	if (land_wrap > 0) t = land_texel(cell);
+	else if (t.x < 0 || t.y < 0 || t.x >= land_size.x || t.y >= land_size.y) return 0;
+	return int(texelFetch(land_map, t, 0).b * 255.0 + 0.5);
+}
 
 
 const vec3 W_DEEP = vec3(0.106, 0.290, 0.431);
@@ -116,6 +123,39 @@ void fragment() {
 		float l = dot(col, vec3(0.3, 0.59, 0.11));
 		vec3 murk = mix(vec3(0.16, 0.2, 0.12), vec3(0.46, 0.47, 0.3), smoothstep(0.15, 0.9, l));
 		col = mix(col, murk, 0.88 * f);
+	}
+	// Pass 18: the volcano's lava (land 7; a hot spring's water is milky
+	// turquoise): a black crust along the banks, dark red, then hot orange
+	// toward the middle; crust plates and bright seams drifting slowly.
+	if (land.x == 7) {
+		if (micro_of(cell) == 4) {
+			float l2 = dot(col, vec3(0.3, 0.59, 0.11));
+			col = mix(vec3(0.22, 0.52, 0.52), vec3(0.7, 0.92, 0.88), smoothstep(0.2, 0.95, l2));
+		} else {
+			vec2 lq = vec2(p) - vec2(t * 1.6, t * 0.9);
+			float flow = vnoise(lq / vec2(9.0, 6.0), 51u);
+			float seam = vnoise(lq / vec2(4.0, 3.0) + vec2(t * 0.2, 0.0), 53u);
+			float heat = clamp(depth * 0.35 + flow * 0.6 - 0.15, 0.0, 1.0);
+			col = mix(vec3(0.5, 0.1, 0.03), vec3(0.95, 0.42, 0.08), smoothstep(0.2, 0.8, heat));
+			if (seam > 0.86) col = mix(col, vec3(1.0, 0.78, 0.32), 0.8);
+			if (vnoise(lq / 7.0, 57u) > 0.72 && depth > 1.2) col = mix(col, vec3(0.16, 0.06, 0.04), 0.85);
+			if (shore <= 1.01) col = vec3(0.14, 0.05, 0.03);
+			else if (shore <= 2.0 && rnd(p, 59u) > 0.5) col = vec3(0.36, 0.08, 0.03);
+		}
+	}
+	// Pass 18: the treetops' open air (land 8): the jungle far below, dark
+	// leaves and the odd fleck of light, mist drifting over it; a lighter
+	// fringe of leaves hanging off each bough's edge.
+	if (land.x == 8) {
+		vec2 aq = vec2(p) + vec2(t * 2.0, t * 0.6);
+		float far_leaves = vnoise(vec2(p) / 6.0, 81u) * 0.6 + vnoise(vec2(p) / 17.0, 83u) * 0.4;
+		col = mix(vec3(0.02, 0.05, 0.04), vec3(0.1, 0.2, 0.11), smoothstep(0.3, 0.8, far_leaves));
+		col *= 1.0 - clamp((depth - 1.0) / 7.0, 0.0, 1.0) * 0.45;
+		if (rnd(p, 85u) > 0.9975) col = vec3(0.45, 0.55, 0.2);
+		float mist = vnoise(aq / vec2(30.0, 14.0), 87u);
+		col = mix(col, vec3(0.5, 0.62, 0.55), smoothstep(0.62, 0.9, mist) * 0.25);
+		if (shore <= 1.01) col = mix(vec3(0.12, 0.3, 0.12), vec3(0.3, 0.5, 0.2), rnd(p, 89u));
+		else if (shore <= 2.0 && rnd(p, 91u) > 0.55) col = vec3(0.1, 0.24, 0.1);
 	}
 	COLOR = vec4(col, 1.0);
 }

@@ -4,6 +4,9 @@ extends Node2D
 ## strikes run through the creature's DinoMoves (the stego's tail sweep, the
 ## trike's gore) with the rider's aim, striking wild creatures only.
 const DinoMoves = preload("res://Forest/creatures/DinoMoves.gd")
+## Pass 18: every rideable beast's pace and strike, and the pteranodon's wings.
+const Rides = preload("res://Forest/creatures/Rides.gd")
+const DinoArt = preload("res://Forest/creatures/DinoArt.gd")
 ## Seconds ridden toward the next whole one (pass 17).
 var _ride_clock := 0.0
 var creature
@@ -80,7 +83,12 @@ func riding_offset() -> Vector2:
 func _calculate_riding_offset() -> Vector2:
 	# The seat moves with the saddle in every frame of the current clip.
 	var clip: String = creature._clip if creature._clip != "" else "idle"
-	return _appearance.rider_offset(creature.species, creature._facing, creature._sprite.flip_h, clip, creature._sprite.frame)
+	return _appearance.rider_offset(creature.species, creature._facing, creature._sprite.flip_h, clip, creature._sprite.frame, flying()) - Vector2(0.0, roundf(creature.hop))
+
+
+## A pteranodon on the wing under its rider.
+func flying() -> bool:
+	return creature.flight != null and creature.flight.airborne
 
 func refresh_appearance():
 	if not is_instance_valid(creature) or not creature._sprite: return
@@ -88,7 +96,7 @@ func refresh_appearance():
 		# Bare or saddled clips, back at the creature's own sprite offset.
 		creature._apply_art()
 		return
-	var desired: SpriteFrames = _appearance.build(creature.species,rider,creature._sprite.flip_h)
+	var desired: SpriteFrames = _appearance.build(creature.species,rider,creature._sprite.flip_h,flying())
 	if creature._sprite.sprite_frames != desired:
 		var animation: StringName = creature._sprite.animation
 		var frame: int = creature._sprite.frame
@@ -97,7 +105,7 @@ func refresh_appearance():
 		if desired.has_animation(animation):
 			creature._sprite.play(animation)
 			creature._sprite.set_frame_and_progress(mini(frame,desired.get_frame_count(animation)-1),progress)
-	creature._sprite.position = _appearance.sprite_position(creature.species)
+	creature._sprite.position = _appearance.sprite_position(creature.species, flying()) - Vector2(0.0, roundf(creature.hop))
 
 func update_mounted(delta: float):
 	if not is_mounted(): return
@@ -106,6 +114,10 @@ func update_mounted(delta: float):
 		return
 	_strike_cooldown = maxf(0,_strike_cooldown-delta)
 	_heal_cooldown = maxf(0,_heal_cooldown-delta)
+	# Pass 18: on the wing, a pteranodon flies its rider.
+	if flying():
+		_update_flying(delta)
+		return
 	_tick_press(delta)
 	var move_velocity: Vector2 = creature.moves.tick(delta)
 	creature._attack_time = creature.moves.remaining()
@@ -115,7 +127,7 @@ func update_mounted(delta: float):
 	var sprinting: bool = direction.length() > 0 and Input.is_action_pressed("Sprint")
 	# Riding is the fast road (pass 13): quicker than a keeper's walk, and a
 	# gallop that never runs out of breath.
-	var speed: float = 50.0 if creature.species == "stego" else 62.0
+	var speed: float = float(Rides.of(creature.species).get("speed", 62.0))
 	# Taming (pass 13): a rider's seat and spur, and the saddle-hours it teaches.
 	var sk = creature.get_tree().get_first_node_in_group("skills")
 	if sk:
@@ -128,7 +140,7 @@ func update_mounted(delta: float):
 			_ride_clock -= 1.0
 			SignalBus.place_visited.emit("ride")
 	if sprinting:
-		speed *= 1.55 + (sk.value("mount_sprint") if sk else 0.0)
+		speed *= Rides.SPRINT + (sk.value("mount_sprint") if sk else 0.0)
 	creature.in_water = is_instance_valid(creature._world) and creature._world.is_water_at(creature.global_position)
 	if creature.in_water: speed *= creature.WATER_SPEED_MULTIPLIER
 	creature.velocity = creature.velocity.move_toward(direction * speed, 240.0 * delta)
@@ -239,11 +251,11 @@ func _exit_tree():
 
 func mount_attack(aim_world: Vector2) -> bool:
 	if not is_mounted() or creature.is_dead or rider.controls_locked or _strike_cooldown > 0 or creature.moves.busy(): return false
-	var m: Dictionary = creature.moves.find(str(DinoMoves.MOUNT_MOVE.get(creature.species, "")))
+	var m: Dictionary = creature.moves.find(str(DinoMoves.MOUNT_MOVE.get(creature.species, Rides.of(creature.species).get("move", ""))))
 	if m.is_empty(): return false
 	_strike_aim = creature.global_position.direction_to(aim_world)
 	if _strike_aim == Vector2.ZERO: _strike_aim = creature.facing_vector()
-	_strike_cooldown = 0.95 if creature.species == "trike" else 1.15
+	_strike_cooldown = float(Rides.of(creature.species).get("cooldown", 1.1))
 	_strike_hit = false
 	creature._attack_target = null
 	creature.stop()
@@ -295,6 +307,56 @@ func _tick_press(delta: float) -> void:
 	# A release that never reached the game (the button came up over a panel).
 	if live and not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 		mount_release(creature.get_global_mouse_position())
+
+## Pass 18: a pteranodon's rider flies it: the arrow keys anywhere (over the
+## trees, the water, the treetops' open air), Sprint for speed; Space brings it
+## down onto open ground (toggle_flight); E rises into the treetops over the
+## jungle, or dives back down to its floor (the session's canopy_flight).
+func _update_flying(delta: float) -> void:
+	var direction := Vector2.ZERO
+	if not rider.controls_locked: direction = rider.get_movement_input()
+	var speed: float = float(Rides.of(creature.species).get("fly_speed", 120.0))
+	var sk = creature.get_tree().get_first_node_in_group("skills")
+	if sk:
+		speed *= 1.0 + sk.value("mount_speed")
+		if direction != Vector2.ZERO: sk.gain("taming", delta * float(sk.XP.ride_second))
+	if direction != Vector2.ZERO:
+		_ride_clock += delta
+		if _ride_clock >= 1.0:
+			_ride_clock -= 1.0
+			SignalBus.place_visited.emit("ride")
+			SignalBus.place_visited.emit("fly")
+	if direction.length() > 0 and Input.is_action_pressed("Sprint"): speed *= 1.3
+	creature.velocity = creature.velocity.move_toward(direction * speed, 300.0 * delta)
+	creature.move_and_slide()
+	var f = creature.flight
+	f.alt = move_toward(f.alt, Rides.RIDE_ALT, 40.0 * delta)
+	creature.hop = f.alt
+	creature.untouchable = false
+	creature.state = "ridden"
+	if creature.velocity.length() > 3.0: creature._face(creature.velocity, true)
+	creature._play_clip("glide" if creature.velocity.length() > speed * 0.8 and DinoArt.has_clip(creature.art_key, "glide") else "fly", false, 1.0)
+	sync_rider()
+
+
+## Space on a flyer: up from the ground, or down onto open ground below.
+func toggle_flight() -> bool:
+	if not is_mounted() or creature.flight == null: return false
+	var f = creature.flight
+	if not f.airborne:
+		f.take_off()
+		f.alt = 8.0
+		refresh_appearance()
+		creature.notice.emit("Up! Space to land; over the jungle, E to rise into the treetops.")
+		return true
+	var w = creature._world
+	if is_instance_valid(w) and (w.is_blocked_at(creature.global_position) or w.is_water_at(creature.global_position)):
+		creature.notice.emit("Nowhere to land here.")
+		return false
+	f.land()
+	refresh_appearance()
+	return true
+
 
 func feed_mount() -> bool:
 	if not is_mounted() or creature.is_dead or rider.controls_locked or _heal_cooldown > 0 or creature.health >= int(creature.stats.hp): return false

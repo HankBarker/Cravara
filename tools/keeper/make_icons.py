@@ -91,6 +91,32 @@ ICONS = {
     "hitching_post": ("a small wooden hitching post with a crossbar and an iron ring, game item icon", "art/pass11/objects/hitching_post.png"),
     "big_gate": ("a wide wooden double gate of heavy lashed logs, game item icon", "art/pass11/objects/big_gate.png"),
     "saddlebag": ("a pair of leather saddlebags joined by a strap, buckled shut, game item icon", "art/keeper-v2/source/sunward/south.png"),
+    # Pass 18: the Treeshadow (thylacoleo), Skywing (pteranodon) and Obsidian
+    # (volcano) sets, the far ring's weapons, the new beasts' spoils and the
+    # bosses' trophies.
+    "thyla_helmet": ("a hood made from a tawny gold big cat's head pelt with dark brown tiger stripes and small round ears, game item icon", "art/keeper-v2/source/thyla/south.png"),
+    "thyla_chestplate": ("a jerkin of tawny gold striped big cat pelt with a thick cream fur collar and small hooked claws at the cuffs, game item icon", "art/keeper-v2/source/thyla/south.png"),
+    "thyla_leggings": ("a pair of trousers of tawny striped pelt bound with green jungle vine, and soft brown boots, game item icon", "art/keeper-v2/source/thyla/south.png"),
+    "sky_helmet": ("a light pale grey-blue helmet with a long pointed crest sweeping back like a pteranodon's head, game item icon", "art/keeper-v2/source/sky/south.png"),
+    "sky_chestplate": ("a short mantle of pale grey-blue wing leather over a fitted grey jerkin with rust-red trim, game item icon", "art/keeper-v2/source/sky/south.png"),
+    "sky_leggings": ("a pair of light grey wing-leather leggings and brown boots, game item icon", "art/keeper-v2/source/sky/south.png"),
+    "obsidian_helmet": ("a heavy helmet of glossy black volcanic glass plates with thin glowing orange cracks, game item icon", "art/keeper-v2/source/obsidian/south.png"),
+    "obsidian_chestplate": ("a black obsidian breastplate with thin glowing orange ember cracks between the plates, game item icon", "art/keeper-v2/source/obsidian/south.png"),
+    "obsidian_leggings": ("a pair of black obsidian greaves and boots with glowing ember-orange seams, game item icon", "art/keeper-v2/source/obsidian/south.png"),
+    "glimmer_spear": ("a spear with a glowing green crystal shard head lashed to a vine-wrapped wooden shaft, diagonal, game item icon", "art/dino-v2/base/thyla_side.png"),
+    "obsidian_blade": ("a sword with a black glossy obsidian glass blade and an orange glowing emberstone grip, diagonal, game item icon", "art/dino-v2/base/cinder_side.png"),
+    "reaper_scythe": ("a scythe with a huge pale icy curved claw as its blade on a pale grey wooden haft, diagonal, game item icon", "art/dino-v2/base/reaper_side.png"),
+    "storm_glaive": ("a glaive with a green crystal blade bound with long grey feathers and a red crest feather, diagonal, game item icon", "art/dino-v2/base/quetzal_side.png"),
+    "cinderbrand": ("a heavy war hammer with a black obsidian head holding a glowing molten orange core, diagonal, game item icon", "art/dino-v2/base/cinder_side.png"),
+    "thyla_pelt": ("a folded tawny gold big cat pelt with dark brown stripes, game item icon", "art/dino-v2/base/thyla_side.png"),
+    "thyla_claw": ("a single large hooked dark claw from a big cat's thumb, game item icon", "art/dino-v2/base/thyla_side.png"),
+    "wing_leather": ("a folded sheet of thin pale grey-blue leathery wing membrane, game item icon", "art/dino-v2/base/pterafly_side.png"),
+    "ptera_crest": ("a long curved red and cream bony pteranodon head crest, no creature, game item icon", "art/dino-v2/base/ptera_side.png"),
+    "dimorph_tooth": ("three small sharp needle-like white teeth, game item icon", "art/dino-v2/base/dimorph_side.png"),
+    "reaper_claw": ("a huge pale curved scythe-like claw with frost and pale blue crystal at its base, game item icon", "art/dino-v2/base/reaper_side.png"),
+    "storm_feather": ("a single long grey feather crackling with small blue lightning sparks, game item icon", "art/dino-v2/base/quetzal_side.png"),
+    "molten_core": ("a round glowing molten orange core of rock with black cooling crust and bright cracks, game item icon", "art/dino-v2/base/cinder_side.png"),
+    "ember_forge": ("a small squat forge of black stone blocks with a glowing orange fire mouth and a chimney, game item icon", "art/dino-v2/base/cinder_side.png"),
 }
 ARMOUR = ("_helmet", "_chestplate", "_leggings")
 

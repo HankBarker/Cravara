@@ -16,6 +16,10 @@ uniform float desat = 0.72;
 uniform float haze_strength = 1.0;
 uniform float glow_strength = 0.22;
 uniform float gust = 0.0;
+// Pass 18: the jungle's shade (the screen darkened under the canopy) and its
+// shafts of light slanting down through it (the treetops' too, fainter).
+uniform float shade = 0.0;
+uniform float shafts = 0.0;
 
 float hash(vec2 p) {
 	return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
@@ -46,6 +50,14 @@ void fragment() {
 		haze += band * 0.3 * gust * amount;
 	}
 	graded = mix(graded, ash_tint * mix(1.0, 0.22, night), min(haze, 0.92));
+	graded *= 1.0 - shade * amount;
+	if (shafts > 0.0) {
+		vec2 sp = floor(SCREEN_UV * vec2(480.0, 270.0));
+		float a1 = sin((sp.x + sp.y * 0.55) * 0.045 + TIME * 0.15) * 0.5 + 0.5;
+		float a2 = sin((sp.x + sp.y * 0.55) * 0.11 - TIME * 0.07 + 1.3) * 0.5 + 0.5;
+		float lit = floor(smoothstep(0.8, 0.97, a1 * a2) * 3.0) / 3.0;
+		graded += vec3(0.9, 0.95, 0.62) * lit * 0.12 * shafts * amount * (1.0 - night);
+	}
 	// The mountain's glow low in the northern haze, after dark.
 	float glow = smoothstep(0.35, 0.0, SCREEN_UV.y) * night * amount * glow_strength;
 	graded += glow_tint * glow;

@@ -21,6 +21,10 @@ const SETS := {
 	# Pass 12: the tribes' own dress.
 	"sunward": {"name": "Sunward", "text": "The wraps keep out half the ash; quicker on sand"},
 	"ashen": {"name": "Ashen", "text": "Raiders take you for one of their own"},
+	# Pass 18: the jungle's hunter, the treetops' flyer and the volcano's glass.
+	"thyla": {"name": "Treeshadow", "text": "Beasts notice you from half as far; you move 6% faster"},
+	"sky": {"name": "Skywing", "text": "You move 10% faster; rolls keep you clear 40% longer"},
+	"obsidian": {"name": "Obsidian", "text": "Keeps off 60% of the volcano's heat; fire harms you less"},
 }
 const PIECES := ["_helmet", "_chestplate", "_leggings"]
 
@@ -48,6 +52,8 @@ static func speed_mult(player) -> float:
 	match active(player):
 		"leather": return 1.06
 		"bone": return 1.12
+		"thyla": return 1.06
+		"sky": return 1.1
 	return 1.0
 
 
@@ -59,6 +65,27 @@ static func sand_speed_mult(player) -> float:
 ## How much of the Pale Lands' ash the set keeps out (the head wraps).
 static func ash_guard(player) -> float:
 	return 0.5 if active(player) == "sunward" else 0.0
+
+
+## Pass 18: how much of the volcano's heat the set keeps off (obsidian
+## plate: ForestPlayer.heat).
+static func heat_guard(player) -> float:
+	return 0.6 if active(player) == "obsidian" else 0.0
+
+
+## Pass 18: how far a beast notices the keeper, times this (Treeshadow pelt).
+static func notice_mult(player) -> float:
+	return 0.5 if active(player) == "thyla" else 1.0
+
+
+## Pass 18: rolls keep the keeper clear this much longer (Skywing leather).
+static func dodge_bonus(player) -> float:
+	return 0.4 if active(player) == "sky" else 0.0
+
+
+## Pass 18: less harm from fire (the Obsidian set).
+static func fire_guard(player) -> float:
+	return 0.5 if active(player) == "obsidian" else 0.0
 
 
 ## The Ashen raiders' dress: raiders don't come for a keeper wearing it.

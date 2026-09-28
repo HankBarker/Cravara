@@ -30,13 +30,20 @@ FRAME = {"dodo": (20, 24), "longneck": (70, 60), "raptor": (42, 32), "rex": (76,
          # Pass 12 (drawn by PixelLab create_character v3, tools/dino/pick12.py).
          "dimetrodon": (60, 56), "carno": (68, 66), "yuty": (68, 68), "anky": (56, 52), "proto": (32, 30), "compy": (24, 20),
          # Pass 13 (PixelLab v3, tools/dino/pick13.py; the carno redrawn so).
-         "utah": (52, 54), "deino": (42, 44), "sucho": (72, 64), "spino": (108, 90)}
+         "utah": (52, 54), "deino": (42, 44), "sucho": (72, 64), "spino": (108, 90),
+         # Pass 18 (PixelLab v3, tools/dino/pick18.py): the jungle's, the
+         # treetops' and the bosses'. The pteranodon and the quetzal are drawn
+         # twice, grounded and flying.
+         "ptera": (36, 38), "pterafly": (64, 58), "dimorph": (30, 28), "thyla": (44, 44),
+         "grimjaw": (126, 116), "quetzal": (126, 120), "quetzalfly": (124, 152), "cinder": (120, 120), "reaper": (112, 120)}
 # Animation canvas: room for tail sweeps, rearing, lunges and leaps.
 CANVAS = {"dodo": (48, 48), "longneck": (128, 112), "raptor": (96, 72), "rex": (128, 96),
           "stego": (112, 80), "trike": (96, 72), "alpha": (128, 96),
           "allo": (112, 84), "lystro": (48, 48), "parasaur": (112, 88), "ossuar": (136, 104),
           "dimetrodon": (112, 96), "carno": (128, 112), "yuty": (128, 112), "anky": (112, 88), "proto": (64, 56), "compy": (48, 40),
-          "utah": (112, 96), "deino": (96, 80), "sucho": (136, 112), "spino": (184, 144)}
+          "utah": (112, 96), "deino": (96, 80), "sucho": (136, 112), "spino": (184, 144),
+          "ptera": (88, 80), "pterafly": (104, 96), "dimorph": (56, 52), "thyla": (104, 88),
+          "grimjaw": (200, 160), "quetzal": (200, 176), "quetzalfly": (200, 200), "cinder": (184, 160), "reaper": (184, 176)}
 GROUND = 6  # feet sit this many rows above the canvas bottom
 VIEWS = ("side", "down", "up")
 # Babies (pass 11, tools/dino/babies.py): their own frame and canvas, their
@@ -110,7 +117,8 @@ def build_palette(images, colours=64):
 
 def keys():
     return ["dodo", "longneck", "raptor", "rex", "stego", "trike", "stego_saddle", "trike_saddle", "alpha", "allo", "lystro", "parasaur", "ossuar",
-            "dimetrodon", "carno", "yuty", "anky", "proto", "compy", "utah", "deino", "sucho", "spino"]
+            "dimetrodon", "carno", "yuty", "anky", "proto", "compy", "utah", "deino", "sucho", "spino",
+            "ptera", "pterafly", "dimorph", "thyla", "grimjaw", "quetzal", "quetzalfly", "cinder", "reaper"]
 
 
 def baby_views(key):

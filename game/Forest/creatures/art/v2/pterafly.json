@@ -1,0 +1,55 @@
+{
+ "key": "pterafly",
+ "species": "pterafly",
+ "canvas": [
+  104,
+  96
+ ],
+ "ground": 89,
+ "origin": {
+  "side": [
+   20,
+   32
+  ],
+  "down": [
+   20,
+   32
+  ],
+  "up": [
+   20,
+   32
+  ]
+ },
+ "clips": {
+  "fly": {
+   "fps": 10,
+   "loop": true,
+   "frames": 8
+  },
+  "glide": {
+   "fps": 6,
+   "loop": true,
+   "frames": 8
+  },
+  "swoop": {
+   "fps": 12,
+   "loop": false,
+   "frames": 9
+  },
+  "screech": {
+   "fps": 10,
+   "loop": false,
+   "frames": 9
+  },
+  "hurt": {
+   "fps": 12,
+   "loop": false,
+   "frames": 5
+  },
+  "death": {
+   "fps": 10,
+   "loop": false,
+   "frames": 13
+  }
+ }
+}

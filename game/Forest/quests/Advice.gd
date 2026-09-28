@@ -21,6 +21,10 @@ const WEAPONS := [
 	[27, "Allosaur teeth make a Cleaver: four teeth, three tyrant scales and two prism. Twenty-seven damage."],
 	[32, "Rustiron from the allosaurs' ground makes a Rustjaw Sabre: five lumps and three allo teeth. A sweeping blade."],
 	[40, "The Scarhorn's horns make a lance, and the mere's bog iron a harpoon that runs through three. Forty damage and more."],
+	# Pass 18: the far ring's.
+	[48, "In the jungle, glimmer crystal and a thylacoleo's claw make a Glimmer Spear: forty-four damage, and it glows."],
+	[56, "The volcano's obsidian makes an Obsidian Blade at an ember forge, and the Pale Reaper's claw a scythe that sweeps wider still."],
+	[65, "The great bosses' own: Stormcrest's feathers make a Stormwing Glaive, the Cinderhulk's core the Cinderbrand."],
 ]
 ## The next armour up, by the defence the keeper wears now: [under, advice].
 const ARMOUR := [
@@ -29,6 +33,9 @@ const ARMOUR := [
 	[14, "Raptor fangs and hides make Fangbound armour. Hunt a pack, and roll when they leap."],
 	[20, "Prism crystal makes Skyshard armour (a power-two pickaxe breaks the violet seams), or trike hide and horn make Hornguard."],
 	[30, "The big hunters' parts make the best armour: allosaur teeth and tyrant scales for Rustback, stego plates for Plateback."],
+	# Pass 18: the far ring's.
+	[40, "Past the Pale Lands: the thylacoleo's pelt makes Treeshadow armour (the beasts barely see you), the pteranodon's wing leather Skywing."],
+	[48, "Obsidian armour, forged at an ember forge from the volcano's glass, is the strongest there is, and it keeps off the heat."],
 ]
 
 
@@ -152,8 +159,22 @@ static func guide(session) -> String:
 		if not guarded and _count("sail_veil") + _count("ashmane_mantle") <= 0:
 			return "The Pale Lands' ash will choke you. A Sail-skin Veil keeps most of it out: dimetrodon sail-scales and proto frills, from the dunes."
 		return Regions.say("You've a veil for the ash. The Pale Lands lie to the {dir:pale_hills}, and the last Keeper's camp with them.", world)
+	# Pass 18: a new world's far ring (the jungle, its treetops, the volcano).
+	var far: bool = world.has_method("has_region") and world.has_region("jungle")
+	if far and not _been(session, "jungle"):
+		return Regions.say("Past the Pale Lands and the bog the jungle begins, the Glimmercap: trees so tall you can't see their tops. Go {dir:jungle}, and keep going.", world)
+	if far and not _been(session, "canopy"):
+		return "A whole country of branches sits up in the jungle's giants. Climb a rope ladder, or win a pteranodon over with fish and fly up."
+	if far and not _been(session, "volcano"):
+		var keeper = session.get("player")
+		var cool: bool = keeper != null and keeper.has_method("heat_guard") and float(keeper.heat_guard()) > 0.0
+		if not cool and not bool(m.get("reaper", false)):
+			return "The volcano's heat will cook you. The Pale Reaper's claw makes an Emberward Charm against it: its hollow lies deep in the Pale Lands' ash."
+		return Regions.say("Embercrack Ridge, the volcano, lies {dir:volcano}. Hot springs cool you. The lava doesn't.", world)
 	if weapon != "": return "You've seen the wilds. Now arm yourself for their great beasts. " + weapon
 	if armour != "": return "Now armour yourself for the great beasts. " + armour
+	if far and not bool(m.get("cinderhulk", false)):
+		return "One great beast is left above all: the Cinderhulk, in the volcano's crater. When it curls into its shell, get back. When the shell cracks, strike."
 	return Regions.say("You've done more than any Keeper I knew. The crystal grows thickest the further out you go, and the rex still roams the dunes to the {dir:dunes}.", world)
 
 
@@ -187,7 +208,7 @@ static func warden(session) -> String:
 			return "Your %s's hurt badly. Bring it to me and I'll tend it: a coin a beast." % str(c.stats.name).to_lower()
 	if tamed.is_empty():
 		return str(TAME_ORDER[0][1]) + " Everything starts with one beast that trusts you."
-	var mounts: Array = tamed.filter(func(c): return str(c.species) in ["stego", "trike"])
+	var mounts: Array = tamed.filter(func(c): return preload("res://Forest/creatures/Rides.gd").can_ride(str(c.species)))
 	if not mounts.is_empty():
 		var saddled := false
 		for c in mounts:

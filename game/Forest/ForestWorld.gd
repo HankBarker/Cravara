@@ -68,10 +68,12 @@ var map_memory
 var micro := {}
 ## Where each is (name -> its middle cell), for the life placed in them.
 var micro_at := {}
-const MICRO := ["", "red_meadow", "haven", "oasis"]
+const MICRO := ["", "red_meadow", "haven", "oasis", "hot_spring"]
 const MICRO_NAMES := {"red_meadow": ["The Red Meadow", "Crimson grass as far as you can see, and grain in it."],
 	"haven": ["Stillwater Haven", "Dry ground in the bog. The hunters don't come here."],
-	"oasis": ["An Oasis", "Palms and sweet water in the sand."]}
+	"oasis": ["An Oasis", "Palms and sweet water in the sand."],
+	# Pass 18: the volcano's springs (ChunkGen M_SPRING).
+	"hot_spring": ["A Hot Spring", "Steaming water in the hot rock. It cools you, and the fish like it hot."]}
 
 ## The micro place a cell is in ("" for none).
 func micro_of(c: Vector2i) -> String:
@@ -243,7 +245,7 @@ func _process(delta: float) -> void:
 	for y in range(here.y - 6, here.y + 7):
 		for x in range(here.x - 6, here.x + 7):
 			var p = props.get(Vector2i(x, y))
-			if is_instance_valid(p) and p.kind in ["workbench","campfire","cooking_pot"] and p.global_position.distance_to(player.global_position) < 88:
+			if is_instance_valid(p) and p.kind in ["workbench","campfire","cooking_pot","ember_forge"] and p.global_position.distance_to(player.global_position) < 88:
 				stations.append(p.kind)
 	CraftingManager.set_nearby_stations(stations)
 
@@ -530,6 +532,8 @@ func deep_rock_or_rim(c: Vector2i) -> bool:
 func render_bounds() -> Rect2i:
 	var b := bounds()
 	if caves and caves.strip.has_area(): b = b.merge(caves.strip)
+	# Pass 18: the treetops over the jungle (Layout version 3).
+	if layout and int(layout.version) >= 3: b = b.merge(layout.canopy_rect())
 	return b
 
 
@@ -549,7 +553,13 @@ func region_of(c: Vector2i) -> String:
 
 
 func has_region(region: String) -> bool:
+	if region in ["jungle", "volcano", "canopy"]: return layout != null and int(layout.version) >= 3
 	return region in ["forest", "bonelands", "glassmere", "pale_hills", "dunes"]
+
+
+## Pass 18: a treetop cell (the canopy's block, south of the world).
+func in_canopy(c: Vector2i) -> bool:
+	return layout != null and int(layout.version) >= 3 and layout.canopy_rect().has_point(c)
 
 
 ## The pass-10 world's rim (the Bonelands' own walls are laid by it).
@@ -560,6 +570,9 @@ func _old_edge(c: Vector2i) -> bool:
 ## What the world's rim says to a keeper who tries it.
 func edge_text(c: Vector2i) -> String:
 	if region_of(c) == "caves": return "Solid rock. There's no way through."
+	if region_of(c) == "jungle": return "The jungle only thickens beyond, a wall of trunks and vines. No way through."
+	if region_of(c) == "volcano": return "Rivers of fire and cliffs of black glass. Nothing lives beyond."
+	if region_of(c) == "canopy": return "Nothing but air out there, and a long way down."
 	if region_of(c) == "pale_hills" and (c.y <= bounds().position.y + 1 or layout.is_rings()):
 		return "The ash lies deep here, and the mountain beyond still smoulders. Not yet."
 	return "The wilds go on beyond here, one day."
@@ -673,6 +686,8 @@ func is_deep_at(pos: Vector2) -> bool:
 func on_edge(c: Vector2i) -> bool:
 	# A cave's outer rock is the only edge down there (pass 15).
 	if caves and caves.strip.has_point(c): return caves.deep_rock.has(c)
+	# (The treetops have no rim of their own: the open air is theirs.)
+	if in_canopy(c): return false
 	var b := bounds()
 	return c.x <= b.position.x + 1 or c.x >= b.end.x - 1 or c.y <= b.position.y + 1 or c.y >= b.end.y - 1
 
@@ -1048,6 +1063,13 @@ func _spawn_prop(c: Vector2i, kind: String) -> void:
 	p.sandstone=kind in Prop.SANDSTONE and land in ["bonelands", "dunes"]
 	p.chalk=kind in Prop.SANDSTONE and land == "pale_hills"
 	p.ashen=kind in Prop.ASHEN_KINDS and land == "pale_hills"
+	p.boggy=kind == "tree" and land == "glassmere"
+	# (A cave's rock is its land's: the lava tubes' basalt, the Glimmer Grotto's moss.)
+	var rock_land := land
+	if land == "caves" and caves:
+		rock_land = str(caves.cave_at(c).get("land", "caves"))
+	p.basalt=kind in Prop.BASALT and rock_land == "volcano"
+	p.mossy=kind in Prop.MOSSY and rock_land == "jungle"
 	p.ground=ground_kind_at(c)
 	# Pass 17: a wooden chest (a house's, a larder, a hoard, a pack), a meal taken.
 	if kind == "cache" and cache_kinds.has(c): p.chest_look = true
@@ -1092,7 +1114,7 @@ func _index_solids(p, add: bool) -> void:
 					if _solid_cells[c].is_empty(): _solid_cells.erase(c)
 
 ## How many hits a prop takes; stone outlasts timber.
-const STRUCTURE_HP := {"tree":3,"wall":3,"ore":3,"rock":8,"wood_wall":4,"wood_floor":3,"workbench":6,"chest":6,"torch":3,"campfire":5,"cooking_pot":5,"sun_sail":5,"wood_door":5,"thatch_roof":3,"hide_bed":5,"tent":8,"stone_wall":10,"stone_floor":6,"stone_door":8,"slate_roof":5,
+const STRUCTURE_HP := {"ember_forge":10,"tree":3,"wall":3,"ore":3,"rock":8,"wood_wall":4,"wood_floor":3,"workbench":6,"chest":6,"torch":3,"campfire":5,"cooking_pot":5,"sun_sail":5,"wood_door":5,"thatch_roof":3,"hide_bed":5,"tent":8,"stone_wall":10,"stone_floor":6,"stone_door":8,"slate_roof":5,
 	"bogwood_wall":6,"bogwood_floor":4,"palewood_wall":5,"palewood_floor":4,"sandstone_wall":9,"sandstone_floor":6,"crystal_wall":12,"crystal_floor":7,
 	"incubator":5,"hitching_post":4,"big_gate":8}
 
@@ -1164,6 +1186,24 @@ func is_water_at(pos: Vector2) -> bool: return water.has(to_cell(pos))
 
 ## The Pale Lands' ash (pass 12): the keeper breathes it out there (ForestPlayer).
 func is_ashen_at(pos: Vector2) -> bool: return region_of(to_cell(pos)) == "pale_hills"
+
+## Pass 18: out on the volcano (its heat: ForestPlayer.heat).
+func is_volcanic_at(pos: Vector2) -> bool: return region_of(to_cell(pos)) == "volcano"
+
+## Lava within `reach` cells (the volcano's water that isn't a hot spring).
+func lava_near(pos: Vector2, reach: int) -> bool:
+	var c := to_cell(pos)
+	if region_of(c) != "volcano": return false
+	for dy in range(-reach, reach + 1):
+		for dx in range(-reach, reach + 1):
+			var p := c + Vector2i(dx, dy)
+			if water.has(p) and int(micro.get(p, 0)) != 4: return true
+	return false
+
+## In a hot spring's water (it cools the volcano's heat at once).
+func spring_at(pos: Vector2) -> bool:
+	var c := to_cell(pos)
+	return water.has(c) and int(micro.get(c, 0)) == 4
 
 ## Out of the ash: under a roof, or in a tent's shelter (within a cell or two).
 const SHELTERS := ["tent", "sunward_tent", "ashen_tent", "folk_hut", "folk_camp", "keeper_camp"]
@@ -1328,7 +1368,26 @@ func get_interaction_hint(pos: Vector2) -> String:
 				var empty: bool = not cache_bags.has(c) or cache_bags[c].is_empty()
 				if empty: return "An emptied cache" if not cache_kinds.has(c) else "Nothing left in " + what
 				return "E · Look in " + what
-			"chair": return "An old chair · AXE: break it up for planks"
+			"rope_ladder": return "E · Climb up into the treetops"
+			"rope_top": return "E · Climb down to the jungle floor"
+			"giant_tree": return "A giant of the jungle. It was old when the Sky-Fangs fell."
+			"giant_crown": return "The giant's trunk runs on up into the sky."
+			"vines": return "E · Pull down some vine"
+			"glowcap": return "E · Pick the glowing caps"
+			"jungle_bush": return "E · Pick jungle berries"
+			"giant_fern": return "E · Cut fronds for fiber"
+			"fruit_pod": return "E · Pick the canopy fruit"
+			"canopy_flower": return "E · Pick the orchid"
+			"glimmer_crystal": return "PICKAXE POWER 2 · Glimmer crystal"
+			"ember_crystal": return "PICKAXE POWER 2 · Ember crystal"
+			"sulfur": return "PICKAXE · Sulfur"
+			"amber": return "PICKAXE · Amber"
+			"charred_tree": return "AXE · A burnt tree (charcoal)"
+			"vent": return "A vent in the rock. The air shimmers over it."
+			"ember_forge": return "E · Ember Forge: obsidian and the fire's own gear"
+			"anvil": return "An old smith's anvil, scorched black."
+			"eyrie_nest": return "Stormcrest's nest: branches, bones and storm feathers."
+			"chair": return "E · Sit" if props[c].is_placed or placed.has(c) else "E · Sit · AXE: break it up for planks"
 			"table": return "An old table · AXE: break it up for planks"
 			"table_food": return "A bare table" if searched.has(c) else "E · Take the meal left on the table"
 			"barrel": return "A barrel" if props[c].is_placed or searched.has(c) else "E · Pry the barrel open"
@@ -1552,6 +1611,9 @@ func interact_at(pos: Vector2, item_id: String) -> bool:
 			var session_node := get_tree().get_first_node_in_group("forest_session")
 			if prop.kind in ["cave_mouth", "cave_exit"] and session_node and session_node.has_method("cave_travel"):
 				return session_node.cave_travel(prop.cell, prop.kind == "cave_mouth")
+			# Pass 18: a giant's rope, up into the treetops or back down.
+			if prop.kind in ["rope_ladder", "rope_top"] and session_node and session_node.has_method("canopy_travel"):
+				return session_node.canopy_travel(prop.cell, prop.kind == "rope_ladder")
 			if prop.kind == "explorer":
 				var life := get_tree().get_first_node_in_group("cave_life")
 				return life != null and life.talk_to_explorer(prop.cell)
@@ -1573,7 +1635,7 @@ func interact_at(pos: Vector2, item_id: String) -> bool:
 						if ui.has_method("is_chest_open_for") and ui.is_chest_open_for(chest): ui.close_chest()
 						else: ui.open_chest(chest)
 						return true
-				"workbench","campfire","cooking_pot":
+				"workbench","campfire","cooking_pot","ember_forge":
 					if ui and ui.has_method("open_panels"):
 						_process(0.5)
 						ui.open_panels()
@@ -1588,6 +1650,10 @@ func interact_at(pos: Vector2, item_id: String) -> bool:
 					return _open_cache(target, prop)
 				"table_food":
 					return _take_meal(target, prop)
+				"chair":
+					# Pass 18: a chair is for sitting in.
+					var seat_session := get_tree().get_first_node_in_group("forest_session")
+					return seat_session != null and seat_session.player.sit_on(prop)
 				"barrel":
 					# (The keeper's own barrels hold nothing but what they put there.)
 					if prop.is_placed or placed.has(target): return false
@@ -1681,7 +1747,7 @@ func interact_at(pos: Vector2, item_id: String) -> bool:
 		_spawn_floor(c, item_id)
 		return true
 	# (Pass 17: the fallen buildings' chairs, tables and barrels, for the keeper's own house too.)
-	if (item_id in Prop.WALLS or item_id in ["campfire","cooking_pot","workbench","torch","chest","wood_door","stone_door","hide_bed","tent","incubator","sun_sail","hitching_post","big_gate","chair","table","barrel"]) and not water.has(c) and not props.has(c):
+	if (item_id in Prop.WALLS or item_id in ["campfire","cooking_pot","workbench","torch","chest","wood_door","stone_door","hide_bed","tent","incubator","sun_sail","hitching_post","big_gate","chair","table","barrel","ember_forge"]) and not water.has(c) and not props.has(c):
 		if _placement_overlaps_actor(c,item_id):
 			last_feedback="A creature or survivor is standing in the way."
 			return false

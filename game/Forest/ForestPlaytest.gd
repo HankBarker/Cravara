@@ -20,12 +20,17 @@ const FOREST_MUSIC := "res://Forest/audio/forest-plains.mp3"
 ## its list: [file, its level against the others (dB)].
 const BIOME_MUSIC := {
 	"forest": [["res://Forest/audio/forest-plains.mp3", 0.0], ["res://Forest/audio/music/sparse-wandering-melody.mp3", 1.4]],
-	"glassmere": [["res://Forest/audio/music/prehistoric-bog.mp3", 1.4], ["res://Forest/audio/music/jungle-deep.mp3", 1.7],
-		["res://Forest/audio/music/prehistoric-bog-2.mp3", 0.8], ["res://Forest/audio/music/bog.mp3", -1.8]],
+	"glassmere": [["res://Forest/audio/music/prehistoric-bog.mp3", 1.4], ["res://Forest/audio/music/prehistoric-bog-2.mp3", 0.8]],
 	"dunes": [["res://Forest/audio/music/des-enigme.mp3", 1.9], ["res://Forest/audio/cravara-ost.mp3", 0.8]],
 	"pale_hills": [["res://Forest/audio/music/volcanic-drones.mp3", 1.4], ["res://Forest/audio/music/prehistoric-unease.mp3", 2.6]],
 	"bonelands": [["res://Forest/audio/music/prehistoric-stalking.mp3", -1.5], ["res://Forest/audio/music/untitled.mp3", 1.2]],
 	"caves": [["res://Forest/audio/boss-echoes.mp3", -0.6], ["res://Forest/audio/music/prehistoric-stalking-2.mp3", -0.8]],
+	# Pass 18: Hank's jungle tracks move to the jungle (the bog keeps its own
+	# two), the Volcanic Drones to the volcano, and the treetops take the
+	# Jungle travel music.
+	"jungle": [["res://Forest/audio/music/jungle-deep.mp3", 1.7], ["res://Forest/audio/music/bog.mp3", -1.8]],
+	"volcano": [["res://Forest/audio/music/volcanic-drones.mp3", 1.4], ["res://Forest/audio/music/prehistoric-unease.mp3", 2.6]],
+	"canopy": [["res://Forest/audio/music/bog.mp3", -1.8], ["res://Forest/audio/music/jungle-deep.mp3", 1.7]],
 }
 const BOSS_MUSIC := "res://Forest/audio/music/the-final-rumble.mp3"
 ## Where each land's playlist is (land -> index).
@@ -38,6 +43,12 @@ const BOSS = preload("res://Forest/creatures/AlphaBoss.gd")
 ## in Glassmere's deep water, and the piranha bay.
 const OSSUAR_BOSS = preload("res://Forest/creatures/OssuarBoss.gd")
 const OLD_MAW = preload("res://Forest/creatures/OldMaw.gd")
+## Pass 18: each land's great boss (LandBoss.gd): Grimjaw in the bog,
+## the Pale Reaper in the Pale Lands, Stormcrest in the treetops, the
+## Cinderhulk in the volcano's crater.
+const LAND_BOSSES := [preload("res://Forest/creatures/GrimjawBoss.gd"), preload("res://Forest/creatures/ReaperBoss.gd"),
+	preload("res://Forest/creatures/StormcrestBoss.gd"), preload("res://Forest/creatures/CinderBoss.gd")]
+var land_bosses: Array = []
 const PIRANHAS = preload("res://Forest/creatures/Piranhas.gd")
 ## Wind, insects by day and crickets by night.
 const AMBIENCE = preload("res://Forest/fx/Ambience.gd")
@@ -143,6 +154,12 @@ func _ready():
 	var at_rings2 := cli.find("--rings2")
 	if at_rings2 >= 0:
 		fresh = {"layout": "rings", "version": 2, "seed": int(cli[at_rings2 + 1]) if at_rings2 + 1 < cli.size() and cli[at_rings2 + 1].is_valid_int() else 726151}
+	# Pass 18: `--rings3 SEED`, the far ring and the treetops (a new journey's now).
+	var at_rings3 := cli.find("--rings3")
+	if at_rings3 >= 0:
+		fresh = {"layout": "rings", "version": 3, "seed": int(cli[at_rings3 + 1]) if at_rings3 + 1 < cli.size() and cli[at_rings3 + 1].is_valid_int() else 726151}
+	# Pass 18: `--far-playtest` (no-save runs): the far ring straight away (_set_up_far_playtest).
+	if _far_playtest(): fresh = {"layout": "rings", "version": 3, "seed": 424242}
 	if not fresh.is_empty() and not get_tree().get_meta("forest_continue", false):
 		world.layout_kind = str(fresh.get("layout", "legacy"))
 		world.world_seed = int(fresh.get("seed", world.world_seed))
@@ -226,6 +243,13 @@ func _ready():
 	add_child(ossuar)
 	ossuar.setup(self)
 	_bt("ossuar")
+	for kind in LAND_BOSSES:
+		var great: Node = kind.new()
+		great.process_mode = Node.PROCESS_MODE_PAUSABLE
+		add_child(great)
+		great.setup(self)
+		land_bosses.append(great)
+	_bt("land bosses")
 	var ambience := AMBIENCE.new()
 	add_child(ambience)
 	ambience.setup(player)
@@ -242,7 +266,10 @@ func _ready():
 	tribes.setup(self)
 	_bt("tribes")
 	# The regions' air (pass 12): the Pale Lands' ash and hush, the Mirefen's mist.
-	for air_kind in ["ash", "mire", "storm"]:
+	var airs := ["ash", "mire", "storm"]
+	# Pass 18: the far ring's and the treetops' air (a version 3 world's).
+	if world.layout and int(world.layout.version) >= 3: airs += ["jungle", "volcano", "canopy"]
+	for air_kind in airs:
 		var air = preload("res://Forest/fx/RegionAir.gd").new()
 		add_child(air)
 		air.setup(self, air_kind)
@@ -317,6 +344,7 @@ func _ready():
 		if _folk_playtest(): _set_up_folk_playtest()
 		if _wilds_playtest():
 			_toast("Wilds playtest: the Mirefen Bog (west, a boat), the Sunward oasis and the Ossuary (south), the Pale Lands' ash (north: wear the veil). M: the map.")
+		if _far_playtest(): _set_up_far_playtest()
 		# A new expedition from the menu opens with the story of the wilds (and
 		# so does --intro-playtest, a no-save run to watch it again).
 		var intro_preview := "--intro-playtest" in OS.get_cmdline_user_args() and "--no-save-playtest" in OS.get_cmdline_user_args()
@@ -339,7 +367,9 @@ func _ready():
 func _starter_inventory():
 	for i in InventoryManager.inventory.size():
 		InventoryManager.inventory[i] = {"item": null, "quantity": 0}
-	for entry in [["basic_axe", 1], ["basic_pickaxe", 1], ["bone_dagger", 1], ["berry", 12], ["net", 3], ["trex_meat", 5], ["bucket", 1], ["torch", 4], ["log", 8], ["stone", 8], ["plant_fiber", 12]]:
+	var starting: Array = [["basic_axe", 1], ["basic_pickaxe", 1], ["bone_dagger", 1], ["berry", 12], ["net", 3], ["trex_meat", 5], ["bucket", 1], ["torch", 4], ["log", 8], ["stone", 8], ["plant_fiber", 12]]
+	if _far_playtest(): starting = _far_kit()
+	for entry in starting:
 		var item = ItemDB.make(entry[0])
 		if item:
 			InventoryManager.add_item(item, entry[1])
@@ -373,6 +403,112 @@ func _starter_inventory():
 				InventoryManager.add_item(kit_item, entry[1])
 	InventoryManager.hotbar_start = 0
 	InventoryManager.inventory_changed.emit()
+
+## Pass 18: --far-playtest (no-save runs only; Hank: "a playtest where I'm
+## closer to the jungle with decent gear and a pteranodon"). A new world's far
+## ring straight away: a camp just inside the jungle, where it meets the
+## volcano (a hide bed to wake at, a fire, a bench, a chest), the Treeshadow
+## armour on with the Emberward Charm and a Shadowpaw Charm, a saddled
+## pteranodon of the keeper's own, and this kit: the jungle's and the forge's
+## blades, a bow, crystal tools, the other two new sets to try, hunters'
+## saddles and the hide for more, fish for the pteranodon, food and bombs.
+## --volcano-playtest ("the same thing but the volcano area"): the same, camped
+## at the way into the Embercrack Crater, in Obsidian armour with an
+## Emberglass Ring, an Ember Forge set up at the camp.
+const FAR_KIT := [["glimmer_spear", 1], ["obsidian_blade", 1], ["reed_bow", 1], ["bone_arrow", 60], ["crystal_axe", 1], ["crystal_pickaxe", 1],
+	["cooked_meat", 15], ["prime_steak", 5], ["berry", 20], ["reed_perch", 10], ["torch", 6], ["bomb", 6], ["net", 4], ["ancient_coin", 50],
+	["raptor_saddle", 1], ["thyla_saddle", 1], ["grimjaw_hide", 2], ["ember_forge", 1], ["bucket", 1],
+	["log", 10], ["stone", 10], ["plant_fiber", 12]]
+
+func _far_playtest() -> bool:
+	var args := OS.get_cmdline_user_args()
+	return ("--far-playtest" in args or "--volcano-playtest" in args) and "--no-save-playtest" in args
+
+func _volcano_playtest() -> bool:
+	return _far_playtest() and "--volcano-playtest" in OS.get_cmdline_user_args()
+
+## The kit, and the new sets the keeper isn't wearing (and the charm they're not).
+func _far_kit() -> Array:
+	var kit: Array = FAR_KIT.duplicate()
+	for set_id in (["thyla", "sky"] if _volcano_playtest() else ["sky", "obsidian"]):
+		for piece in ["_helmet", "_chestplate", "_leggings"]: kit.append([set_id + piece, 1])
+	kit.append(["emberward_charm", 1] if _volcano_playtest() else ["windcrest_pin", 1])
+	return kit
+
+
+func _set_up_far_playtest() -> void:
+	var L = world.layout
+	if L == null or int(L.version) < 3: return
+	var volcano := _volcano_playtest()
+	var start := Vector2i.ZERO
+	if volcano:
+		# Out on the path into the crater, clear of the cone (its lava river-free side).
+		var toward := Vector2.from_angle(float(world.gen.get("_to_camp")))
+		start = world.gen.volcano_at + Vector2i((toward * (float(world.gen.CONE.y) + 14.0)).round())
+	else:
+		# Just past the volcano's edge, a little way into the jungle.
+		var va: float = float(L.angles.get("volcano", 0.0))
+		for step in 12:
+			var a: float = va + L.VOLCANO_HALF + 0.1 + 0.04 * step
+			var r: float = L.outer_edge(a) + 70.0
+			var c := Vector2i((Vector2.from_angle(a) * r).round())
+			if L.region_of(c) == "jungle":
+				start = c
+				break
+	world.stream_to(start)
+	var at: Vector2 = world.get_open_position(Vector2(start) * 16.0 + Vector2(8, 8), 40.0)
+	player.global_position = at
+	player.velocity = Vector2.ZERO
+	player.get_node("Camera2D").reset_smoothing()
+	var here: Vector2i = world.to_cell(at)
+	# The camp round the keeper (theirs, like anything they set down).
+	var bed_cell := NO_BED
+	var pieces: Array = [[Vector2i(-3, -2), "hide_bed"], [Vector2i(0, -3), "campfire"], [Vector2i(3, -2), "workbench"], [Vector2i(4, 1), "chest"]]
+	if volcano: pieces.append([Vector2i(-4, 1), "ember_forge"])
+	for entry in pieces:
+		var c := _free_cell_near(here + entry[0])
+		if c == NO_BED: continue
+		world._spawn_prop(c, str(entry[1]))
+		world.props[c].is_placed = true
+		world.placed[c] = str(entry[1])
+		if str(entry[1]) == "hide_bed": bed_cell = c
+	if bed_cell != NO_BED:
+		_spawn_bed_cell = bed_cell
+		_has_spawn_bed = true
+	var worn := "obsidian" if volcano else "thyla"
+	for piece in [["head", "_helmet"], ["chest", "_chestplate"], ["legs", "_leggings"]]:
+		player.equip_armor(str(piece[0]), ItemDB.make(worn + str(piece[1])))
+	player._set_equipment("trinket_0", ItemDB.make("emberglass_ring" if volcano else "emberward_charm"))
+	player._set_equipment("trinket_1", ItemDB.make("shadowpaw_charm"))
+	# The pteranodon: the keeper's own, saddled, on its feet beside them.
+	var ptera = _spawn_creature("ptera", world.get_open_position(at + Vector2(30, 12), 10.0))
+	if is_instance_valid(ptera):
+		ptera._become_tamed()
+		if ptera.flight != null and ptera.flight.airborne: ptera.flight.land()
+		ptera.saddle = ItemDB.make("ptera_saddle")
+		ptera._mount_controller.refresh_appearance()
+	if volcano:
+		_toast("Volcano playtest: the way into the Embercrack Crater (the Cinderhulk sleeps inside). Your camp, an Ember Forge and your pteranodon here: E rides it, Space takes off and lands. Mind the heat bar: hot springs cool you. M: the map.")
+		return
+	var ways := Vector2(world.gen.volcano_at - here).angle()
+	var toward_volcano: String = Regions.COMPASS[int(round(wrapf(ways, 0.0, TAU) / (TAU / 8.0))) % 8]
+	_toast("Far-ring playtest: the jungle's edge, your camp and your pteranodon here. E rides it, Space takes off and lands, E over the jungle rises into the treetops. The volcano is %s. M: the map (the bosses' lairs are skulls)." % toward_volcano)
+
+
+const NO_BED := Vector2i(9999, 9999)
+
+## A cell for a camp piece: `c` or the nearest round it with dry ground and
+## nothing on it.
+func _free_cell_near(c: Vector2i) -> Vector2i:
+	for r in range(0, 4):
+		for dy in range(-r, r + 1):
+			for dx in range(-r, r + 1):
+				if maxi(absi(dx), absi(dy)) != r: continue
+				var n := c + Vector2i(dx, dy)
+				if world.terrain.has(n) and not world.water.has(n) and not world.props.has(n) and not world.floors.has(n):
+					return n
+	return NO_BED
+
 
 ## --wilds-playtest (no-save runs only): a fresh journey with pass 11's kit.
 func _wilds_playtest() -> bool:
@@ -418,6 +554,58 @@ func cave_travel(cell: Vector2i, going_in: bool) -> bool:
 	if into_cave and is_instance_valid(cave_life): cave_life.on_enter(cave)
 	_track_cave()
 	return true
+
+## Pass 18: up a giant's rope ladder into the treetops, or back down (Hank:
+## "ropes down so that you could be able to go in between the two"). The
+## rope's top in the canopy stands straight over its foot on the ground.
+func canopy_travel(cell: Vector2i, going_up: bool) -> bool:
+	var L = world.layout
+	if L == null or int(L.version) < 3: return false
+	if is_instance_valid(player.mounted_creature) and not player.mounted_creature.has_method("can_fly"):
+		_toast("Dismount first: you'll climb this alone.")
+		return true
+	var target: Vector2i = L.canopy_of(cell) if going_up else L.ground_of(cell)
+	var to: Vector2 = Vector2(target + Vector2i(0, 1)) * 16.0 + Vector2(8, 8)
+	var from: Vector2 = player.global_position
+	world.stream_to(world.to_cell(to))
+	player.global_position = world.get_open_position(to, 10.0)
+	player.velocity = Vector2.ZERO
+	player.get_node("Camera2D").reset_smoothing()
+	# Companions that follow climb too (the big ones wait below: tie them up).
+	for c in get_tree().get_nodes_in_group("forest_creatures"):
+		if c.tamed and not c.is_dead and str(c.order) == "follow" and c.global_position.distance_to(from) < 260.0 and float(c.stats.radius) <= 10.0:
+			c.global_position = world.get_open_position(player.global_position + Vector2(randf_range(-24, 24), randf_range(8, 24)), float(c.stats.radius))
+	AudioManager.play_sfx("satchel_close")
+	if going_up and not _milestones.get("canopy_climbed", false):
+		_milestones["canopy_climbed"] = true
+		hud.show_banner("The Canopy", "Bark and branches, a long way up. Watch the sky.")
+	return true
+
+
+## Pass 18: a pteranodon's rider over the jungle rises into the treetops (the
+## canopy over that very spot), or in the treetops dives back down to the
+## jungle floor under them. False where there's nowhere to go.
+func canopy_flight(steed) -> bool:
+	var L = world.layout
+	if L == null or int(L.version) < 3: return false
+	var here: String = world.region_of(world.to_cell(steed.global_position))
+	if here != "jungle" and here != "canopy": return false
+	var cell: Vector2i = world.to_cell(steed.global_position)
+	var target: Vector2i = L.canopy_of(cell) if here == "jungle" else L.ground_of(cell)
+	var to: Vector2 = Vector2(target) * 16.0 + Vector2(8, 8)
+	world.stream_to(target)
+	steed.global_position = to
+	steed.velocity = Vector2.ZERO
+	player.global_position = to
+	player.get_node("Camera2D").reset_smoothing()
+	steed._mount_controller.sync_rider()
+	AudioManager.play_sfx("swing")
+	if here == "jungle" and not _milestones.get("canopy_climbed", false):
+		_milestones["canopy_climbed"] = true
+		hud.show_banner("The Canopy", "Bark and branches, a long way up. Watch the sky.")
+	_toast("Up into the treetops." if here == "jungle" else "Down through the leaves to the jungle floor.")
+	return true
+
 
 func _track_cave() -> void:
 	var inside: bool = world.region_of(world.to_cell(player.global_position)) == "caves"
@@ -910,6 +1098,12 @@ func _unhandled_input(event):
 	# (the fishing reel owns Space) consumed the key; the player refuses rolls
 	# while mounted, acting, locked or respawning.
 	if event.is_action_pressed("dodge") and not event.is_echo():
+		# Pass 18: on a flyer, Space takes it up or brings it down.
+		var steed = player.mounted_creature
+		if is_instance_valid(steed) and steed.flight != null and not player.controls_locked:
+			steed._mount_controller.toggle_flight()
+			get_viewport().set_input_as_handled()
+			return
 		if not player.controls_locked and _dodge_guard <= 0.0: player.request_roll()
 		get_viewport().set_input_as_handled()
 		return
@@ -1106,7 +1300,15 @@ func _interact_creature():
 	if boating.is_boating():
 		boating.leave()
 		return
+	if player.sitting_on != null:
+		player.stand_up()
+		return
 	if is_instance_valid(player.mounted_creature):
+		# Pass 18: on the wing, E rises into the treetops or dives to the floor.
+		var steed = player.mounted_creature
+		if steed.flight != null and steed.flight.airborne:
+			if not canopy_flight(steed): _toast("Land first (Space) to get down.")
+			return
 		_toast("Back on your feet." if player.mounted_creature.dismount() else "No safe place to dismount here.")
 		return
 	var target := get_global_mouse_position()
@@ -1119,14 +1321,14 @@ func _interact_creature():
 		var aimed = world.props.get(world._target_cell(target))
 		if is_instance_valid(aimed) and _can_reach_prop(aimed) and world.interact_at(target, ""):
 			if aimed.kind in ["bush","fern","mushroom","flowers","cattail","wild_grain","wild_lotus","wild_melon","wild_pepper","wild_gourd"]: player.play_action("pickup",target)
-			elif is_instance_valid(aimed): player.play_gesture("interact", aimed.global_position)
+			elif is_instance_valid(aimed) and player.sitting_on == null: player.play_gesture("interact", aimed.global_position)
 			if world.last_feedback != "": _toast(world.last_feedback)
 			return
 	var creature = _nearest_creature()
 	var prop = _interaction_prop()
 	if prop and (not creature or _prop_distance(prop) < creature.global_position.distance_to(player.global_position)):
 		if world.interact_at(prop.global_position, ""):
-			if is_instance_valid(prop): player.play_gesture("interact", prop.global_position)
+			if is_instance_valid(prop) and player.sitting_on == null: player.play_gesture("interact", prop.global_position)
 			if world.last_feedback != "": _toast(world.last_feedback)
 			return
 	# Food set down for a beast whose way that is (fish for a Suchomimus,
@@ -1176,7 +1378,7 @@ func _prop_distance(prop: Node2D) -> float:
 	return feet.distance_to(nearest)
 
 ## Props that answer E from nearby (landmarks too: E reads their carving).
-const _INTERACTIVE := ["workbench","campfire","cooking_pot","cave_mouth","cave_exit","explorer","wild_grain","wild_lotus","wild_melon","wild_pepper","wild_gourd","chest","wood_door","stone_door","hide_bed","shrine","tent","cache","relic","roots","nest","incubator","bone_pile","boat","clam_bed","keeper_camp","ossuary","dune_ribs","dune_skull","big_gate","ashen_totem","table_food","barrel"]
+const _INTERACTIVE := ["workbench","campfire","cooking_pot","cave_mouth","cave_exit","explorer","wild_grain","wild_lotus","wild_melon","wild_pepper","wild_gourd","chest","wood_door","stone_door","hide_bed","shrine","tent","cache","relic","roots","nest","incubator","bone_pile","boat","clam_bed","keeper_camp","ossuary","dune_ribs","dune_skull","big_gate","ashen_totem","table_food","barrel","chair","rope_ladder","rope_top","ember_forge"]
 
 func _interaction_prop():
 	var nearest = null
@@ -1683,7 +1885,8 @@ func save_journey(path: String = SAVE_FILE) -> bool:
 	for creature in get_tree().get_nodes_in_group("forest_creatures"):
 		# The alpha and the Buried King wake fresh each load until beaten
 		# (AlphaBoss, OssuarBoss); the king's bone raptors crumble with it.
-		if not creature.is_dead and creature.species not in ["alpha", "ossuar"] and creature.variant != "bone" and not creature.has_meta("tribe_beast"):
+		# Pass 18: so do all the lands' bosses (LandBoss), and the help they call.
+		if not creature.is_dead and not bool(creature.stats.get("boss", false)) and creature.variant != "bone" and not creature.has_meta("tribe_beast") and not creature.has_meta("boss_add"):
 			creatures.append(creature.serialize())
 	var drops: Array = []
 	for drop in get_tree().get_nodes_in_group("dropped_items"):
@@ -1898,6 +2101,8 @@ const BOSS_BACK := Vector2(600.0, 900.0)
 ## (Hank: "the old maw be able to spawn there as well on those lakes"), one
 ## Maw at a time.
 var _maw_clock := 2.0
+## Pass 18: Grimjaw's mere (GrimjawBoss): Old Maw keeps out of it.
+var grimjaw_mere := Vector2i(9999, 9999)
 func _tend_maw() -> void:
 	if world == null or world.chunks == null or world.gen == null or world.gen.meres.is_empty(): return
 	if is_instance_valid(maw):
@@ -1910,7 +2115,7 @@ func _tend_maw() -> void:
 	var mere = null
 	var nearest := INF
 	for m in world.gen.meres:
-		if not world.chunks.is_loaded(Vector2i(m.at)): continue
+		if not world.chunks.is_loaded(Vector2i(m.at)) or Vector2i(m.at) == grimjaw_mere: continue
 		var d := (Vector2(m.at) * 16.0).distance_to(player.global_position)
 		if d < nearest:
 			nearest = d
@@ -2012,6 +2217,8 @@ func _prepare_bosses() -> void:
 	_bt("alpha den")
 	ossuar.prepare()
 	_bt("ossuary")
+	for great in land_bosses: great.prepare()
+	_bt("land bosses")
 	# The tribes' villages are peopled afresh too (tribesmen aren't saved).
 	if tribes: tribes.populate()
 	_bt("villages")

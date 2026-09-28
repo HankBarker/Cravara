@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="Item" load_steps=2 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "obsidian_chestplate"
+name = "Obsidian Cuirass"
+description = "Plates of obsidian over emberstone, warm to the touch. Obsidian set: keeps off 60% of the volcano's heat; fire and lava harm you less."
+icon_generator = "forest"
+max_stack = 1
+rarity = "legendary"
+armor_slot = "chest"
+defense = 21

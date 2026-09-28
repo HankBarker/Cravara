@@ -312,3 +312,17 @@ Everything from these tools still goes through the quantize gate:
 - Folk costs at 32x32: creation about 6 generations; walking-8-frames and breathing-idle in four
   directions, 1 generation a direction each. A tier-2 account runs 10 jobs at once, so queue
   a character's second animation once its first has finished.
+
+## Pass 18 notes
+- **Budget**: the pass started at about 1518 generations and ended at 953 (about 565 spent) on:
+  - 189 clip jobs (about 1 generation each, plus retries);
+  - three armour states (20-40 each);
+  - about 34 icons and about 30 props and drawings (1 each);
+  - a few redos (and some wasted by the retry race below: see dinosaurs.md).
+- **Armour sets as states**: run `create_character_state` on the base keeper
+  (`4664c6a4-6dcf-494b-8904-7d39a2afd9cc`). Three at once were done in a few minutes. Then run
+  `tools/keeper/pl_fetch.py character <id> art/keeper-v2/source/<set>`. States: Treeshadow
+  `c861c6fa-d842-4d96-bbf7-d0173dc4fcc8`, Skywing `45633d8d-04cf-43bf-b919-f5e7cc9af42a`, Obsidian
+  `27b6fcc4-6421-4554-bb9d-162c595ab146`.
+- **Concurrency**: the account runs 8-10 jobs at once. Other tools wait on "rate limit" (make_icons
+  retries every 20 s), so they can run beside a clip run.

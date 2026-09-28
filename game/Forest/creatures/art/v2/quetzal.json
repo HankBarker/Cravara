@@ -1,0 +1,71 @@
+{
+ "key": "quetzal",
+ "species": "quetzal",
+ "canvas": [
+  200,
+  176
+ ],
+ "ground": 169,
+ "origin": {
+  "side": [
+   37,
+   50
+  ],
+  "down": [
+   37,
+   50
+  ],
+  "up": [
+   37,
+   50
+  ]
+ },
+ "clips": {
+  "idle": {
+   "fps": 6,
+   "loop": true,
+   "frames": 8
+  },
+  "walk": {
+   "fps": 9,
+   "loop": true,
+   "frames": 8
+  },
+  "bite": {
+   "fps": 14,
+   "loop": false,
+   "frames": 9,
+   "hit": 6,
+   "hit_view": {
+    "side": 6,
+    "down": 7,
+    "up": 6
+   }
+  },
+  "buffet": {
+   "fps": 10,
+   "loop": false,
+   "frames": 9
+  },
+  "roar": {
+   "fps": 10,
+   "loop": false,
+   "frames": 13
+  },
+  "takeoff": {
+   "fps": 12,
+   "loop": false,
+   "frames": 9
+  },
+  "hurt": {
+   "fps": 12,
+   "loop": false,
+   "frames": 5
+  },
+  "death": {
+   "fps": 10,
+   "loop": false,
+   "frames": 13
+  }
+ }
+}

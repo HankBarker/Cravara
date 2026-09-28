@@ -23,6 +23,17 @@ extends RefCounted
 ## cell out when asked (pure functions of the seed), keeping the answers for
 ## the chunks in use (world/Chunks.gd streams the world a chunk at a time).
 ## Version 1 (pass 15's journeys) is exactly as it was.
+##
+## Pass 18: rings version 3 (Hank: "past the Ashlands, on one side we'll have
+## the volcano... and then the jungle will be kind of, like, surrounding
+## everywhere else. So the jungle is going to be a huge biome"). Version 2's
+## lands, the Pale Lands and the Bonelands now ending at a wandering outer edge
+## (~1260 cells), then the far ring out to a square edge at 1860: the volcano
+## (Embercrack Ridge) straight on past the Pale Lands, the jungle all the rest.
+## The treetops over the jungle (Hank: "fly up into the treetops... that could
+## be its own new biome") are a block of cells of their own south of the world:
+## the canopy over a jungle cell is that cell + CANOPY_SHIFT. Versions 1 and 2
+## are untouched.
 
 const LANDS := ["forest", "glassmere", "dunes", "pale_hills", "bonelands"]
 ## The legacy world's boxes (cells), as ForestWorld had them.
@@ -38,6 +49,18 @@ const MIDDLE := 150.0
 const HALF := 210
 ## Version 2 (pass 16): the same rings, six times as far.
 const V2 := {"plains": 460.0, "middle": 860.0, "half": 1200, "plains_wander": 40.0, "middle_wander": 60.0, "bend": 150.0, "bend_min": 200.0}
+## Version 3 (pass 18): version 2's rings, the outer lands' far edge, the far ring.
+const V3 := {"plains": 460.0, "middle": 860.0, "outer": 1260.0, "half": 1860, "plains_wander": 40.0, "middle_wander": 60.0, "outer_wander": 70.0, "bend": 150.0, "bend_min": 200.0}
+## The volcano's half-width round the compass (radians), about the Pale Lands' direction.
+const VOLCANO_HALF := 0.8
+## Every land by its index: LANDS, the cave strip (5), the far ring's jungle
+## (6) and volcano (7), and the treetops (8).
+const NAMES := ["forest", "glassmere", "dunes", "pale_hills", "bonelands", "caves", "jungle", "volcano", "canopy"]
+const JUNGLE := 6
+const VOLCANO := 7
+const CANOPY := 8
+## The treetops over a jungle cell lie this far from it.
+const CANOPY_SHIFT := Vector2i(0, 4000)
 ## The side of a chunk (cells): the lands' answers are kept a chunk at a time.
 const CHUNK := 32
 
@@ -47,6 +70,7 @@ var seed := 0
 var version := 1
 var _plains_r := PLAINS
 var _middle_r := MIDDLE
+var _outer_r := 0.0
 var _half := HALF
 var _bend := 30.0
 var _bend_min := 40.0
@@ -61,6 +85,8 @@ var _warp: FastNoiseLite
 const LUT := 1024
 var _plains_lut := PackedFloat32Array()
 var _middle_lut := PackedFloat32Array()
+## Version 3: the outer lands' far edge round the compass.
+var _outer_lut := PackedFloat32Array()
 ## Rings: the direction (radians, 0 east, clockwise) each land lies in.
 var angles := {}
 
@@ -82,6 +108,9 @@ static func rings(world_seed: int, rings_version := 1) -> RefCounted:
 		l._half = int(V2.half)
 		l._bend = float(V2.bend)
 		l._bend_min = float(V2.bend_min)
+	if rings_version >= 3:
+		l._outer_r = float(V3.outer)
+		l._half = int(V3.half)
 	l._build_rings()
 	return l
 
@@ -100,6 +129,7 @@ func bounds() -> Rect2i:
 
 
 func region_of(c: Vector2i) -> String:
+	if version >= 3 and canopy_rect().has_point(c): return "canopy"
 	if kind == "legacy":
 		if L_BONELANDS.has_point(c): return "bonelands"
 		if L_GLASSMERE.has_point(c): return "glassmere"
@@ -107,6 +137,7 @@ func region_of(c: Vector2i) -> String:
 		if L_DUNES.has_point(c): return "dunes"
 		return "forest"
 	if not _bounds.has_point(c): return "forest"
+	if version >= 3: return NAMES[land_index(c)]
 	if version >= 2: return LANDS[land_index(c)]
 	return LANDS[_grid[(c.y - _bounds.position.y) * _bounds.size.x + (c.x - _bounds.position.x)]]
 
@@ -122,6 +153,10 @@ func _build_rings() -> void:
 	var bog := r.randf_range(0.0, TAU)
 	var pale := wrapf(bog + PI * 0.5 + r.randf_range(-0.6, 0.6), 0.0, TAU)
 	angles = {"glassmere": bog, "dunes": wrapf(bog + PI, 0.0, TAU), "pale_hills": pale, "bonelands": wrapf(pale + PI, 0.0, TAU), "forest": 0.0}
+	if version >= 3:
+		# The volcano straight on past the ash; the jungle's middle past the ridges.
+		angles.volcano = pale
+		angles.jungle = wrapf(pale + PI, 0.0, TAU)
 	_edge = FastNoiseLite.new()
 	_edge.seed = seed ^ 0x1A7F
 	_edge.frequency = 0.9
@@ -138,6 +173,11 @@ func _build_rings() -> void:
 		var a := float(k) / float(LUT) * TAU
 		_plains_lut[k] = _plains_r + _edge.get_noise_2d(cos(a) * 2.0, sin(a) * 2.0) * wander_p
 		_middle_lut[k] = _middle_r + _edge.get_noise_2d(cos(a) * 2.0 + 40.0, sin(a) * 2.0) * wander_m
+	if version >= 3:
+		_outer_lut.resize(LUT)
+		for k in LUT:
+			var a := float(k) / float(LUT) * TAU
+			_outer_lut[k] = _outer_r + _edge.get_noise_2d(cos(a) * 2.0 + 80.0, sin(a) * 2.0) * float(V3.outer_wander)
 	# A streamed world works its cells out when they're asked for.
 	if version >= 2: return
 	_grid.resize(_bounds.size.x * _bounds.size.y)
@@ -174,6 +214,22 @@ func plains_edge(a: float) -> float:
 func middle_edge(a: float) -> float:
 	return _lut(_middle_lut, a)
 
+## Version 3: where the Pale Lands and the Bonelands end and the far ring
+## begins (before that, the world's edge).
+func outer_edge(a: float) -> float:
+	return _lut(_outer_lut, a) if version >= 3 else world_edge(a)
+
+## Version 3: the treetops' block (the world's square, shifted south).
+func canopy_rect() -> Rect2i:
+	return Rect2i(_bounds.position + CANOPY_SHIFT, _bounds.size) if version >= 3 else Rect2i()
+
+## The jungle cell under a treetop cell (and back).
+static func ground_of(c: Vector2i) -> Vector2i:
+	return c - CANOPY_SHIFT
+
+static func canopy_of(c: Vector2i) -> Vector2i:
+	return c + CANOPY_SHIFT
+
 func _lut(table: PackedFloat32Array, a: float) -> float:
 	var f := wrapf(a, 0.0, TAU) / TAU * float(LUT)
 	var k := int(f)
@@ -195,6 +251,7 @@ func _bent(c: Vector2i) -> float:
 ## The land's index (LANDS) a cell is in: region_of without the name.
 func land_index(c: Vector2i) -> int:
 	if kind == "legacy": return LANDS.find(region_of(c))
+	if version >= 3 and canopy_rect().has_point(c): return CANOPY
 	if not _bounds.has_point(c): return 0
 	if version >= 2: return _chunk_lands(c)[posmod(c.y, CHUNK) * CHUNK + posmod(c.x, CHUNK)]
 	return _grid[(c.y - _bounds.position.y) * _bounds.size.x + (c.x - _bounds.position.x)]
@@ -224,6 +281,7 @@ func _chunk_lands(c: Vector2i) -> PackedByteArray:
 func _inner_at(c: Vector2i, land: int) -> float:
 	if land == 0: return 999.0
 	var a := _angle(c)
+	if land >= JUNGLE: return Vector2(c).length() - outer_edge(a)
 	return Vector2(c).length() - (plains_edge(a) if land <= 2 else middle_edge(a))
 
 func _land_at(c: Vector2i) -> int:
@@ -233,6 +291,8 @@ func _land_at(c: Vector2i) -> int:
 	var b := _bent(c)
 	if d < middle_edge(a):
 		return 1 if absf(angle_difference(b, float(angles.glassmere))) < PI * 0.5 else 2
+	if version >= 3 and d >= outer_edge(a):
+		return VOLCANO if absf(angle_difference(b, float(angles.volcano))) < VOLCANO_HALF else JUNGLE
 	return 3 if absf(angle_difference(b, float(angles.pale_hills))) < PI * 0.5 else 4
 
 
@@ -254,8 +314,12 @@ func depth(c: Vector2i) -> float:
 		"glassmere", "dunes":
 			var lo := plains_edge(a)
 			return clampf((d - lo) / maxf(1.0, middle_edge(a) - lo), 0.0, 1.0)
+	if land in ["jungle", "volcano"]:
+		var lo_far := outer_edge(a)
+		return clampf((d - lo_far) / maxf(1.0, world_edge(a) - lo_far), 0.0, 1.0)
+	if land == "canopy": return depth(ground_of(c))
 	var inner := middle_edge(a)
-	return clampf((d - inner) / maxf(1.0, world_edge(a) - inner), 0.0, 1.0)
+	return clampf((d - inner) / maxf(1.0, outer_edge(a) - inner), 0.0, 1.0)
 
 
 ## Cells from a land's side nearer camp (for fades: the dunes' sand coming in).
@@ -274,6 +338,8 @@ func from_inner(c: Vector2i) -> float:
 	match region_of(c):
 		"glassmere", "dunes": return d - plains_edge(a)
 		"pale_hills", "bonelands": return d - middle_edge(a)
+		"jungle", "volcano": return d - outer_edge(a)
+		"canopy": return from_inner(ground_of(c))
 	return 999.0
 
 
@@ -287,11 +353,31 @@ func centre(land: String, at_depth := 0.5) -> Vector2i:
 			"dunes": return Vector2i(0, L_DUNES.position.y + int(L_DUNES.size.y * at_depth))
 		return Vector2i.ZERO
 	if land == "forest": return Vector2i.ZERO
+	if land == "canopy": return canopy_of(centre("jungle", at_depth))
 	var a := float(angles.get(land, 0.0))
-	var lo := plains_edge(a) if land in ["glassmere", "dunes"] else middle_edge(a)
-	var hi := middle_edge(a) if land in ["glassmere", "dunes"] else world_edge(a)
+	var lo := _lo_edge(land, a)
+	var hi := _hi_edge(land, a)
 	var d := lerpf(lo, hi, at_depth)
 	return Vector2i(roundi(cos(a) * d), roundi(sin(a) * d))
+
+
+## A ring land's inner and outer edges in the direction `a`.
+func _lo_edge(land: String, a: float) -> float:
+	if land in ["glassmere", "dunes"]: return plains_edge(a)
+	if land in ["jungle", "volcano"]: return outer_edge(a)
+	return middle_edge(a)
+
+func _hi_edge(land: String, a: float) -> float:
+	if land in ["glassmere", "dunes"]: return middle_edge(a)
+	if land in ["pale_hills", "bonelands"]: return outer_edge(a)
+	return world_edge(a)
+
+
+## How far round the compass a land reaches either side of its middle line.
+func sector_half(land: String) -> float:
+	if land == "volcano": return VOLCANO_HALF
+	if land == "jungle": return PI - VOLCANO_HALF
+	return PI * 0.5
 
 
 ## A land's cells (every one, in row order; worked out once).
@@ -365,15 +451,16 @@ func point_in(land: String, r: RandomNumberGenerator, depth_band := Vector2(0.0,
 		if land == "forest":
 			ang = r.randf_range(0.0, TAU)
 			dist = plains_edge(ang) * dd
+		elif land == "canopy":
+			var below := point_in("jungle", r, depth_band, across_band)
+			return canopy_of(below) if below != Vector2i(9999, 9999) else below
 		else:
-			ang = float(angles.get(land, 0.0)) + r.randf_range(across_band.x, across_band.y) * PI * 0.5
-			var lo := plains_edge(ang) if land in ["glassmere", "dunes"] else middle_edge(ang)
-			var hi := middle_edge(ang) if land in ["glassmere", "dunes"] else world_edge(ang)
-			dist = lerpf(lo, hi, dd)
+			ang = float(angles.get(land, 0.0)) + r.randf_range(across_band.x, across_band.y) * sector_half(land)
+			dist = lerpf(_lo_edge(land, ang), _hi_edge(land, ang), dd)
 		var c := Vector2i(roundi(cos(ang) * dist), roundi(sin(ang) * dist))
 		# (Its land worked out afresh: points all over the world would churn
 		# through the chunks' kept answers.)
-		if _bounds.has_point(c) and LANDS[_land_at(c)] == land: return c
+		if _bounds.has_point(c) and NAMES[_land_at(c)] == land: return c
 	return Vector2i(9999, 9999)
 
 
@@ -387,4 +474,5 @@ func across(c: Vector2i) -> float:
 			"glassmere", "bonelands": return clampf(float(c.y) / 56.0, -1.0, 1.0)
 		return 0.0
 	if land == "forest": return 0.0
-	return clampf(angle_difference(float(angles.get(land, 0.0)), _angle(c)) / (PI * 0.5), -1.0, 1.0)
+	if land == "canopy": return across(ground_of(c))
+	return clampf(angle_difference(float(angles.get(land, 0.0)), _angle(c)) / sector_half(land), -1.0, 1.0)

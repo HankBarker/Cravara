@@ -20,7 +20,8 @@ ICON_DIR = os.path.join(ROOT, "game", "Forest", "art", "items")
 C = "game/Forest/creatures/art/"
 
 # id: (name, rarity, effects, story, source, icon prompt, colour source)
-# source: ("beast", species, chance) | ("chest", kinds) | ("craft", {ingredients}) | ("tinker", [a, b], {extra})
+# source: ("beast", species, chance) | ("chest", kinds) | ("craft", {ingredients}[, {"station":..,"hidden_until":..}])
+#         | ("tinker", [a, b], {extra}) | ("boss", species): a great beast's sure drop (ForestCreature._die)
 TRINKETS = {
     # --- a beast's rare drop -------------------------------------------------------------
     "sickle_toe": ("Sickle Toe", "rare", {"crit": 0.05}, "A raptor's killing claw on a thong.",
@@ -112,6 +113,32 @@ TRINKETS = {
                        ("tinker", ["wayfarer_anklet", "sandblade_plume"], {"prism_crystal": 1}), "a leather anklet with brass beads and a long striped feather, game item icon", "art/dino-v2/first/utah_side.png"),
     "apex_signet": ("Apex Signet", "legendary", {"melee": 0.12, "crit": 0.08, "knock": 0.25}, "The rex's eye set in the allosaur's ring.",
                     ("tinker", ["tyrant_eye", "rust_signet"], {"prism_crystal": 2}), "a heavy rust-red ring set with a glowing amber slit-pupil eye stone, game item icon", C + "rex.png"),
+    # --- pass 18: the jungle's, the treetops' and the volcano's ------------------------------
+    "shadowpaw_charm": ("Shadowpaw Charm", "rare", {"crit": 0.05, "dodge": 0.2}, "A thylacoleo's paw on a cord. You strike first, out of the leaves.",
+                        ("beast", "thyla", 0.06), "a small striped tawny paw charm with a hooked claw on a leather cord, game item icon", "art/dino-v2/base/thyla_side.png"),
+    "windcrest_pin": ("Windcrest Pin", "rare", {"fishing": 0.2, "speed": 0.05}, "A sliver of pteranodon crest. Fish rise to you, and the wind is at your back.",
+                      ("beast", "ptera", 0.06), "a small curved red and cream bone crest made into a cloak pin, game item icon", "art/dino-v2/base/ptera_side.png"),
+    "needle_cord": ("Needle-fang Cord", "rare", {"crit": 0.03, "bleed": 1.0}, "Dimorphodon teeth on a cord, fine as needles.",
+                    ("beast", "dimorph", 0.04), "a cord strung with many tiny needle-like white teeth, game item icon", "art/dino-v2/base/dimorph_side.png"),
+    "glimmer_idol": ("Glimmer Idol", "epic", {"light": 0.6, "luck": 0.12}, "A little idol of green crystal from a jungle temple. It glows.",
+                     ("chest", ["temple"]), "a small carved idol of glowing green crystal on a stone base, game item icon", "art/keeper-v2/source/sunward/south.png"),
+    "amber_beetle": ("Amber Beetle", "rare", {"regen": 0.15, "luck": 0.08}, "A beetle caught in amber a long time ago.",
+                     ("chest", ["temple", "cache"]), "a smooth drop of golden amber with a small beetle inside, on a cord, game item icon", "art/keeper-v2/source/sunward/south.png"),
+    "emberglass_ring": ("Emberglass Ring", "epic", {"fire": 0.4, "melee": 0.05, "heat_guard": 0.2}, "Black glass round a coal that never goes out.",
+                        ("chest", ["forge"]), "a black glass ring set with a glowing orange ember stone, game item icon", "art/dino-v2/base/cinder_side.png"),
+    "claw_wraps": ("Climber's Claws", "rare", {"crit": 0.04, "speed": 0.04}, "Thylacoleo claws strapped to the palms, as the jungle folk climb.",
+                   ("craft", {"thyla_claw": 2, "vine": 3}), "a pair of leather hand wraps with hooked claws on the palms, game item icon", "art/dino-v2/base/thyla_side.png"),
+    "grimjaw_tooth": ("Grimjaw's Tooth", "legendary", {"melee": 0.08, "wading": 0.4, "fishing": 0.2}, "A tooth of the Mire King as long as your hand. The mire parts for you.",
+                      ("boss", "grimjaw"), "a huge curved yellowed crocodile tooth on a thick olive cord, game item icon", "art/dino-v2/base/grimjaw_side.png"),
+    "emberward_charm": ("Emberward Charm", "epic", {"heat_guard": 0.6, "fire": 0.3}, "A Reaper's claw bound with pale crystal and Ashmane fur. The Pale Lands' cold is in it.",
+                        ("craft", {"reaper_claw": 1, "pale_crystal": 3, "ashmane_fur": 2}, {"hidden_until": "reaper"}),
+                        "a pale icy claw bound with blue crystal and grey fur into a charm, frost glinting, game item icon", "art/dino-v2/base/reaper_side.png"),
+    "stormcrest_plume": ("Stormcrest Plume", "legendary", {"speed": 0.12, "dodge": 0.35}, "Stormcrest's feathers, bound with glimmer. You move like the wind before a storm.",
+                         ("craft", {"storm_feather": 2, "glimmer_shard": 3}, {"hidden_until": "stormcrest"}),
+                         "a plume of long grey storm feathers with a red crest feather and a green crystal bead, game item icon", "art/dino-v2/base/quetzal_side.png"),
+    "molten_heart": ("Molten Heart", "legendary", {"heat_guard": 0.9, "fire": 0.6, "regen": 0.3, "defense": 3}, "The Cinderhulk's core in an obsidian cage. The volcano knows you now.",
+                     ("craft", {"molten_core": 1, "obsidian": 4, "emberstone": 4}, {"hidden_until": "cinderhulk", "station": "ember_forge"}),
+                     "a glowing molten orange heart-shaped core in a cage of black obsidian, game item icon", "art/dino-v2/base/cinder_side.png"),
 }
 
 ICONS = {tid: (t[5], t[6]) for tid, t in TRINKETS.items()}
@@ -141,15 +168,18 @@ def recipes():
     rows = []
     for tid, t in TRINKETS.items():
         name, _, effects, story, source = t[0], t[1], t[2], t[3], t[4]
+        extra = {}
         if source[0] == "craft":
             ing = source[1]
+            extra = source[2] if len(source) > 2 else {}
         elif source[0] == "tinker":
             ing = {source[1][0]: 1, source[1][1]: 1}
             ing.update(source[2])
         else:
             continue
-        rows.append('\t{"name":"%s","item_id":"%s","ingredients":%s,"station":"workbench","category":"Trinkets","description":"%s"},'
-                    % (name, tid, json.dumps(ing, separators=(",", ":")), story.replace('"', '\\"')))
+        hidden = ',"hidden_until":"%s"' % extra["hidden_until"] if extra.get("hidden_until") else ""
+        rows.append('\t{"name":"%s","item_id":"%s","ingredients":%s,"station":"%s","category":"Trinkets","description":"%s"%s},'
+                    % (name, tid, json.dumps(ing, separators=(",", ":")), extra.get("station", "workbench"), story.replace('"', '\\"'), hidden))
     return "\n".join(rows)
 
 

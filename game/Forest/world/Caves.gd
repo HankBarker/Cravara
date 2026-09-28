@@ -24,6 +24,11 @@ const KINDS := {
 	"grotto": {"name": "The Crystal Grotto", "size": Vector2i(52, 40), "chambers": 4, "crystal": 0.45, "blurb": "Sky-Fang crystal on every wall, and eyes that glow the same colour."},
 	"explorer": {"name": "The Lost Explorer's Cave", "size": Vector2i(34, 26), "chambers": 2, "crystal": 0.08, "blurb": "Someone's voice, faint, further in."},
 	"lair": {"name": "The Sleeper's Lair", "size": Vector2i(60, 44), "chambers": 3, "crystal": 0.1, "blurb": "Bones everywhere, and a sound like a storm breathing."},
+	# Pass 18: the far ring's caves (a version 3 world's): the jungle's glowing
+	# grotto, and the volcano's lava tubes (lava pooled in their chambers; their
+	# cells drawn as the volcano's ground: land_index_at).
+	"glimmer": {"name": "The Glimmer Grotto", "size": Vector2i(50, 38), "chambers": 4, "crystal": 0.38, "blurb": "Glowing crystal and mushrooms, and eyes that glow the same green."},
+	"lavatube": {"name": "The Lava Tubes", "size": Vector2i(58, 40), "chambers": 4, "crystal": 0.18, "blurb": "Rock that runs red, and heat like an oven's mouth."},
 }
 ## Which caves each land has.
 const PLAN := {
@@ -33,8 +38,12 @@ const PLAN := {
 	"pale_hills": ["grotto", "hollow"],
 	"bonelands": ["grotto", "lair"],
 }
+## Pass 18: a version 3 world's far-ring caves, laid after the rest (so a
+## version 2 world's strip is exactly as it was).
+const PLAN_V3 := {"jungle": ["glimmer", "hollow"], "volcano": ["lavatube", "lair"]}
 ## How deep into its land each kind lies.
-const DEPTH := {"hollow": Vector2(0.15, 0.6), "warren": Vector2(0.2, 0.7), "grotto": Vector2(0.45, 0.9), "explorer": Vector2(0.3, 0.8), "lair": Vector2(0.55, 0.95)}
+const DEPTH := {"hollow": Vector2(0.15, 0.6), "warren": Vector2(0.2, 0.7), "grotto": Vector2(0.45, 0.9), "explorer": Vector2(0.3, 0.8), "lair": Vector2(0.55, 0.95),
+	"glimmer": Vector2(0.3, 0.85), "lavatube": Vector2(0.3, 0.8)}
 ## Their names for the map and the banners, by land.
 const NAMES := {
 	"forest": {"hollow": "The Rootway Hollow", "warren": "The Compy Warren"},
@@ -42,6 +51,8 @@ const NAMES := {
 	"dunes": {"lair": "The Sleeper's Lair", "warren": "The Sandbone Warren"},
 	"pale_hills": {"grotto": "The Pale Grotto", "hollow": "The Ash Hollow"},
 	"bonelands": {"grotto": "The Crystal Grotto", "lair": "The Ridge Lair"},
+	"jungle": {"glimmer": "The Glimmer Grotto", "hollow": "The Root Hollow"},
+	"volcano": {"lavatube": "The Lava Tubes", "lair": "The Magma Lair"},
 }
 const GAP := 8
 const STEPS8 := [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1), Vector2i(1, 1), Vector2i(-1, 1), Vector2i(1, -1), Vector2i(-1, -1)]
@@ -67,6 +78,23 @@ func _init(world) -> void:
 	w = world
 
 
+## Which caves each land has in this world (the far ring's in version 3).
+func lands_plan() -> Dictionary:
+	var out := PLAN.duplicate()
+	if w.layout and int(w.layout.version) >= 3:
+		for land in PLAN_V3: out[land] = PLAN_V3[land]
+	return out
+
+
+## Pass 18: the land a strip cell is drawn as: a lava tube's are the volcano's
+## (7), the rest the caves' rock (5).
+func land_index_at(c: Vector2i) -> int:
+	if not strip.has_point(c): return 5
+	for cave in caves:
+		if str(cave.kind) == "lavatube" and cave.box.has_point(c): return 7
+	return 5
+
+
 ## Lay every cave: its mouth in its land, its inside in the strip.
 func place() -> void:
 	caves.clear()
@@ -80,8 +108,9 @@ func place() -> void:
 	var x0 := b.end.x + 12
 	var y := b.position.y
 	var col_w := 0
-	for land in PLAN:
-		for kind in PLAN[land]:
+	var plan := lands_plan()
+	for land in plan:
+		for kind in plan[land]:
 			var size: Vector2i = KINDS[kind].size
 			if y + size.y > b.end.y:
 				x0 += col_w + GAP
@@ -134,8 +163,9 @@ func place_streamed() -> void:
 	var x0 := b.end.x + 12
 	var y := b.position.y
 	var col_w := 0
-	for land in PLAN:
-		for kind in PLAN[land]:
+	var plan := lands_plan()
+	for land in plan:
+		for kind in plan[land]:
 			var size: Vector2i = KINDS[kind].size
 			if y + size.y > b.end.y:
 				x0 += col_w + GAP
@@ -264,6 +294,16 @@ func _carve(cave: Dictionary, r: RandomNumberGenerator) -> void:
 		for x in range(0, 3): floor[entry + Vector2i(x, y)] = true
 	for c in floor:
 		_set_t(c, 1)
+	# Pass 18: the lava tubes' pools of lava (a chamber or two off the way through).
+	if cave.kind == "lavatube":
+		for k in range(1, rooms.size()):
+			if k > 2: break
+			var lava_at: Vector2 = rooms[k][0]
+			for y in range(-3, 4):
+				for x in range(-4, 5):
+					var c := Vector2i(lava_at.round()) + Vector2i(x, y)
+					if floor.has(c) and Vector2(x, y * 1.3).length() < 3.2 and Vector2(c - entry).length() > 9.0:
+						_set_t(c, 2)
 	# A pool or two in the bigger caves (water drips from the rock).
 	if cave.kind in ["grotto", "lair", "warren"]:
 		var pool_at: Vector2 = rooms[rooms.size() - 1][0]
@@ -347,6 +387,14 @@ func _furnish(cave: Dictionary, r: RandomNumberGenerator) -> void:
 			put.call("mushroom", 3, 4.0)
 		"lair":
 			put.call("bone_pile", 6, 8.0)
+			put.call("cache", 1, 12.0)
+		"glimmer":
+			put.call("glimmer_crystal", 6, 5.0)
+			put.call("glowcap", 5, 4.0)
+			put.call("cache", 1, 10.0)
+		"lavatube":
+			put.call("ember_crystal", 5, 6.0)
+			put.call("vent", 3, 6.0)
 			put.call("cache", 1, 12.0)
 
 

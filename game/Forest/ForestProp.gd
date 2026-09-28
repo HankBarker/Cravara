@@ -23,6 +23,16 @@ var rich_vein := false
 var sandstone := false
 ## Up in the Pale Hills, stone is chalk (pass 11).
 var chalk := false
+## Pass 18: the volcano's stone is black basalt (its crystal ore glows ember
+## red); the jungle's is mossy (its crystal ore glimmers teal).
+var basalt := false
+var mossy := false
+## Pass 18: a tree in the Mirefen is a swamp tree (a cypress hung with moss, a
+## mangrove on its stilt roots, a weeping willow, a crooked mirewood): only
+## its look, so a world's trees stand where they always did.
+var boggy := false
+const BOG_TREES := [preload("res://Forest/art/v9/bog_cypress.png"), preload("res://Forest/art/v9/bog_mangrove.png"),
+	preload("res://Forest/art/v9/bog_willow.png"), preload("res://Forest/art/v9/bog_mirewood.png")]
 ## Pass 17: a fallen building's floor, laid from the seed (Chunks; a broken
 ## one is remembered: ForestWorld.floors_gone); a cache that's a wooden chest
 ## (a fallen house's, an inn's larder, a lake's hoard, a lost camp's pack).
@@ -39,7 +49,8 @@ func required_power() -> int:
 	return 2 if kind=="ore" and rich_vein else 1
 var atlas: Texture2D = preload("res://WorldObjects/Images/Objects.png")
 const ART = {
-	"hide_bed": preload("res://Forest/art/v4/hide_bed.png"),
+	# Pass 18: drawn from above like the chest (tools/world/make_furniture_art.py).
+	"hide_bed": preload("res://Forest/art/v9/bed.png"),
 	"wall": preload("res://Forest/art/v2/wall.png"),
 	"wall_alt": preload("res://Forest/art/v2/wall_alt.png"),
 	"ore": preload("res://Forest/art/v2/ore.png"),
@@ -100,6 +111,28 @@ const SANDSTONE = {
 	"ore": preload("res://Forest/art/bonelands/sand_ore.png"),
 	"rock": preload("res://Forest/art/bonelands/sand_rock.png"),
 }
+## Pass 18: the volcano's and the jungle's stone (tools/world/make_giants.py).
+const BASALT = {
+	"wall": preload("res://Forest/art/v9/wall_basalt.png"),
+	"wall_alt": preload("res://Forest/art/v9/wall_alt_basalt.png"),
+	"ore": preload("res://Forest/art/v9/ore_ember.png"),
+	"rock": preload("res://Forest/art/v9/basalt.png"),
+}
+const MOSSY = {
+	"wall": preload("res://Forest/art/v9/wall_moss.png"),
+	"wall_alt": preload("res://Forest/art/v9/wall_alt_moss.png"),
+	"ore": preload("res://Forest/art/v9/ore_glimmer.png"),
+}
+## Pass 18: the giant trees (a trunk on the jungle floor, its crown in the
+## treetops): three looks each, drawn far taller than the screen; see-through
+## while the keeper is behind one (GIANT_FADE).
+const GIANTS := ["giant_tree", "giant_crown"]
+const GIANT_ART := {
+	"giant_tree": [preload("res://Forest/art/v9/giant_tree_0.png"), preload("res://Forest/art/v9/giant_tree_1.png"), preload("res://Forest/art/v9/giant_tree_2.png")],
+	"giant_crown": [preload("res://Forest/art/v9/giant_crown_0.png"), preload("res://Forest/art/v9/giant_crown_1.png"), preload("res://Forest/art/v9/giant_crown_2.png")],
+}
+const GIANT_FADE := 0.42
+var _giant_alpha := 1.0
 ## The Pale Hills' stone (tools/world/make_bonelands_art.py).
 const CHALK = {
 	"wall": preload("res://Forest/art/bonelands/chalk_wall.png"),
@@ -185,13 +218,46 @@ const WILD := {
 	# Drip Cave's lost explorer.
 	"cave_exit": {"solid": Rect2(), "height": 0.0, "landmark": true},
 	"explorer": {"solid": Rect2(-8, -4, 16, 8), "height": 16.0, "landmark": true},
-	# Pass 17: the fallen buildings' furniture (art/v8, tools/world/make_ruin_art.py).
+	# Pass 17: the fallen buildings' furniture; pass 18 drew the chair, tables
+	# and barrel again from above like the chest (art/v9,
+	# tools/world/make_furniture_art.py); the rubble is still art/v8.
 	# A laid table's meal and a barrel's stores are taken once (E; `harvested`).
 	"chair": {"solid": Rect2(-5, -2, 10, 6), "height": 18.0, "tool": "axe", "hp": 2, "drop": ["plank", 1]},
-	"table": {"solid": Rect2(-11, -4, 22, 8), "height": 16.0, "tool": "axe", "hp": 3, "drop": ["plank", 2]},
-	"table_food": {"solid": Rect2(-11, -4, 22, 8), "height": 16.0, "tool": "axe", "hp": 3, "drop": ["plank", 2]},
+	"table": {"solid": Rect2(-12, -4, 24, 8), "height": 16.0, "tool": "axe", "hp": 3, "drop": ["plank", 2]},
+	"table_food": {"solid": Rect2(-12, -4, 24, 8), "height": 16.0, "tool": "axe", "hp": 3, "drop": ["plank", 2]},
 	"barrel": {"solid": Rect2(-6, -3, 12, 7), "height": 16.0, "tool": "axe", "hp": 2, "drop": ["plank", 1]},
 	"rubble": {"solid": Rect2(-11, -3, 22, 7), "height": 10.0, "tool": "pickaxe", "hp": 3, "drop": ["stone", 3]},
+	# Pass 18: the far ring and the treetops (art/v9: tools/world/make_far_art.py
+	# and make_giants.py). The giants are never felled; their rope ladders
+	# (and the ropes' tops, up in the canopy) take the keeper up and down.
+	"giant_tree": {"solid": Rect2(-24, -7, 48, 12), "height": 0.0, "landmark": true},
+	"giant_crown": {"solid": Rect2(-17, -6, 34, 10), "height": 0.0, "landmark": true},
+	"rope_ladder": {"solid": Rect2(), "height": 0.0, "landmark": true},
+	"rope_top": {"solid": Rect2(), "height": 0.0, "landmark": true},
+	"vines": {"solid": Rect2(), "height": 0.0, "tool": "", "hp": 1, "drop": ["vine", 2], "sway": [150.0, 1.2]},
+	"jungle_tree": {"solid": Rect2(-6, -2, 12, 8), "height": 92.0, "tool": "axe", "hp": 4, "drop": ["log", 3], "sway": [96.0, 0.7]},
+	"giant_fern": {"solid": Rect2(), "height": 26.0, "tool": "", "hp": 1, "drop": ["plant_fiber", 3], "sway": [28.0, 1.4]},
+	"jungle_bush": {"solid": Rect2(-8, -3, 16, 7), "height": 20.0, "tool": "", "hp": 1, "drop": ["jungle_berry", 3], "sway": [22.0, 1.2]},
+	"glowcap": {"solid": Rect2(), "height": 14.0, "tool": "", "hp": 1, "drop": ["glowcap", 2]},
+	"jungle_flower": {"solid": Rect2(), "height": 14.0, "tool": "", "hp": 1, "drop": ["plant_fiber", 1], "sway": [16.0, 1.2]},
+	"fallen_log": {"solid": Rect2(-20, -5, 40, 9), "height": 16.0, "tool": "axe", "hp": 3, "drop": ["log", 3]},
+	"glimmer_crystal": {"solid": Rect2(-8, -4, 16, 8), "height": 28.0, "tool": "pickaxe", "hp": 5, "power": 2, "drop": ["glimmer_shard", 2]},
+	"leaf_clump": {"solid": Rect2(), "height": 18.0, "tool": "", "hp": 1, "drop": ["plant_fiber", 2], "sway": [20.0, 1.5]},
+	"canopy_flower": {"solid": Rect2(), "height": 12.0, "tool": "", "hp": 1, "drop": ["orchid", 1]},
+	"fruit_pod": {"solid": Rect2(), "height": 12.0, "tool": "", "hp": 1, "drop": ["canopy_fruit", 2]},
+	"bromeliad": {"solid": Rect2(), "height": 12.0, "tool": "", "hp": 1, "drop": ["plant_fiber", 1]},
+	"amber": {"solid": Rect2(-6, -3, 12, 6), "height": 12.0, "tool": "pickaxe", "hp": 3, "drop": ["amber", 1]},
+	"charred_tree": {"solid": Rect2(-5, -2, 10, 7), "height": 44.0, "tool": "axe", "hp": 2, "drop": ["charcoal", 2]},
+	"basalt": {"solid": Rect2(-13, -6, 26, 12), "height": 30.0, "tool": "pickaxe", "hp": 8, "drop": ["stone", 3]},
+	"vent": {"solid": Rect2(-8, -3, 16, 6), "height": 10.0, "landmark": true},
+	"ember_crystal": {"solid": Rect2(-7, -3, 14, 7), "height": 26.0, "tool": "pickaxe", "hp": 6, "power": 2, "drop": ["emberstone", 2]},
+	"sulfur": {"solid": Rect2(-6, -3, 12, 6), "height": 10.0, "tool": "pickaxe", "hp": 3, "drop": ["sulfur", 2]},
+	"ash_bush": {"solid": Rect2(), "height": 14.0, "tool": "", "hp": 1, "drop": ["plant_fiber", 1]},
+	# The volcano's fallen forges: the ember forge (a crafting station for the
+	# volcano's own gear) and the smiths' anvil.
+	"ember_forge": {"solid": Rect2(-14, -6, 28, 12), "height": 30.0, "landmark": true},
+	"anvil": {"solid": Rect2(-7, -3, 14, 7), "height": 12.0, "landmark": true},
+	"eyrie_nest": {"solid": Rect2(-18, -6, 36, 12), "height": 18.0, "landmark": true},
 }
 const WILD_CROPS := preload("res://Forest/life/FoodData.gd").WILD_CROPS
 ## Pass 13: the great bones that can be searched through (like a bone pile).
@@ -217,7 +283,9 @@ static func wild_art(prop_kind: String) -> Texture2D:
 	if _wild_art.has(prop_kind): return _wild_art[prop_kind]
 	var path := "res://Forest/art/pass11/%s.png" % prop_kind
 	var tex: Texture2D = null
-	if WILD_CROPS.has(prop_kind):
+	if ResourceLoader.exists("res://Forest/art/v9/%s.png" % prop_kind):
+		tex = load("res://Forest/art/v9/%s.png" % prop_kind)
+	elif WILD_CROPS.has(prop_kind):
 		# A wild crop is its crop's ripe stage.
 		var sheet: Texture2D = preload("res://Forest/Gardening.gd").sheet(str(WILD_CROPS[prop_kind][0]))
 		if sheet:
@@ -323,6 +391,9 @@ const ROOFS := ["thatch_roof","slate_roof"]
 var _flicker := 0.0
 
 func _process(delta: float) -> void:
+	if kind in GIANTS:
+		_giant_see_through(delta)
+		return
 	if kind=="chest":
 		_chest_check-=delta
 		if _chest_check<=0:
@@ -363,6 +434,19 @@ func receive_hit(amount := 1) -> void:
 	set_process(true)
 	queue_redraw()
 
+## A giant's trunk goes see-through while the keeper (or their mount) is
+## behind it: above its foot and within its width.
+func _giant_see_through(delta: float) -> void:
+	var keeper := get_tree().get_first_node_in_group("player") as Node2D
+	var target := 1.0
+	if keeper:
+		var d := keeper.global_position - global_position
+		if d.y < 2.0 and d.y > -300.0 and absf(d.x) < 30.0: target = GIANT_FADE
+	if is_equal_approx(_giant_alpha, target): return
+	_giant_alpha = move_toward(_giant_alpha, target, delta * 3.0)
+	modulate.a = _giant_alpha
+
+
 func _shake_offset() -> float:
 	return roundf(sin(_hit_flash*130)*2.0) if _hit_flash>0 else 0.0
 
@@ -397,7 +481,7 @@ func _ready() -> void:
 		material = _ashen_material
 	elif SWAY.has(kind): material = _sway_material(kind)
 	elif WILD.has(kind) and WILD[kind].has("sway"): material = _wild_sway(kind)
-	set_process(kind in ["campfire","cooking_pot","thatch_roof","slate_roof","chest","cave_exit"])
+	set_process(kind in ["campfire","cooking_pot","thatch_roof","slate_roof","chest","cave_exit"] or kind in GIANTS)
 	collision_layer = 16
 	collision_mask = 0
 	if has_parts():
@@ -627,6 +711,7 @@ func _draw_visual() -> void:
 	if WILD.has(kind):
 		# (A laid table whose meal was taken is a bare one.)
 		var tex := cave_mouth_art(ground) if kind == "cave_mouth" else wild_art("table" if kind == "table_food" and harvested else kind)
+		if kind in GIANTS: tex = GIANT_ART[kind][variant % 3]
 		if tex:
 			var dim := Color(0.62, 0.62, 0.6) if kind == "clam_bed" and harvested else (Color(0.82, 0.8, 0.76) if kind == "barrel" and harvested else Color.WHITE)
 			_contact_back(float(tex.get_width()) * 0.8)
@@ -642,6 +727,8 @@ func _draw_visual() -> void:
 		if has_parts(): return
 		var key := "wall_alt" if kind == "wall" and variant % 3 == 1 else kind
 		var texture: Texture2D = CHALK[key] if chalk and CHALK.has(key) else (SANDSTONE[key] if sandstone and SANDSTONE.has(key) else ART[key])
+		if basalt and BASALT.has(key): texture = BASALT[key]
+		elif mossy and MOSSY.has(key): texture = MOSSY[key]
 		var bottom := 8 if kind in ["wall", "ore"] or kind in WALLS or kind in FLOORS else 7
 		_contact_back(float(texture.get_width()) * 0.8)
 		draw_texture(texture, Vector2(-texture.get_width()/2, bottom-texture.get_height()), Color("b99be8") if rich_vein else Color.WHITE)
@@ -655,6 +742,10 @@ func _draw_visual() -> void:
 		return
 	match kind:
 		"tree":
+			if boggy:
+				var swamp: Texture2D = BOG_TREES[variant % BOG_TREES.size()]
+				draw_texture(swamp, Vector2(-swamp.get_width() / 2, 7 - swamp.get_height()))
+				return
 			var regions := [Rect2(366, 0, 66, 80), Rect2(436, 0, 63, 79), Rect2(502, 0, 82, 82), Rect2(586, 9, 77, 73), Rect2(305, 0, 61, 79)]
 			var region: Rect2 = regions[variant % regions.size()]
 			draw_texture_rect_region(atlas, Rect2(Vector2(-region.size.x / 2, -region.size.y + 7), region.size), region)

@@ -146,6 +146,20 @@ static func clips() -> Dictionary:
 				{"f": 0, "b": [0, 1], "hip": [0, 1], "hm": [-2, -2], "ho": [2, -2], "fm": [3, -1], "fo": [-3, -1], "km": 1, "ko": -1},
 			],
 		}},
+		# Pass 18: sitting in a chair (Hank: "I can sit in the chair"). The hips
+		# drop onto the seat, the feet stay planted together in front, the hands
+		# rest on the knees.
+		"sit": {"frames": 1, "duration": 1.0, "loop": true, "views": {
+			"side": [
+				{"f": 0, "b": [0, 2], "hip": [0, 2], "hm": [3, 1], "ho": [3, 1], "fm": [3, 0], "fo": [3, 0], "km": 1, "ko": 1},
+			],
+			"down": [
+				{"f": 0, "b": [0, 2], "hip": [0, 2], "hm": [-2, 1], "ho": [2, 1], "fm": [0, 0], "fo": [0, 0], "km": -1, "ko": 1},
+			],
+			"up": [
+				{"f": 0, "b": [0, 2], "hip": [0, 2], "hm": [0, 1], "ho": [0, 1], "fm": [0, 0], "fo": [0, 0], "km": 1, "ko": -1},
+			],
+		}},
 		# Afloat (pass 12, Boating.gd): seated in the rowboat, paddling on one
 		# side: catch forward, pull back along the hull, lift and reach again.
 		# Legs as in "ride" (the hull hides them). The paddle is drawn by

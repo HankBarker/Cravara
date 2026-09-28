@@ -26,7 +26,8 @@ func _water_name() -> String:
 	var waters: Dictionary = preload("res://Forest/life/FoodData.gd").WATERS
 	for land in waters:
 		if str(fish.get("id", "")) in waters[land][0]:
-			return {"glassmere": "MIRE FISHING", "dunes": "OASIS FISHING", "pale_hills": "COLD POOL FISHING", "bonelands": "CANYON FISHING"}.get(land, "RIVER FISHING")
+			return {"glassmere": "MIRE FISHING", "dunes": "OASIS FISHING", "pale_hills": "COLD POOL FISHING", "bonelands": "CANYON FISHING",
+				"jungle": "JUNGLE RIVER FISHING", "volcano": "HOT SPRING FISHING"}.get(land, "RIVER FISHING")
 	return "RIVER FISHING"
 
 func configure(profile: Dictionary, seed_value: int, on_left := true):

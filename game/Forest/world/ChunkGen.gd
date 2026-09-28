@@ -39,14 +39,57 @@ const CRYSTAL_RIM := 1100.0
 const CRYSTAL_DENSITY := 0.011
 ## The map's colours (ForestMap's): each land's, the small places', and the
 ## ground's own (a chunk's block of the map picture is worked out with it).
-const MAP_LAND := [Color("386153"), Color("4a6448"), Color("b89a5e"), Color("a8a39a"), Color("9a8458")]
-const MAP_MICRO := [Color(0, 0, 0, 0), Color("9a4038"), Color("6f9a5e"), Color("3f8f78")]
+const MAP_LAND := [Color("386153"), Color("4a6448"), Color("b89a5e"), Color("a8a39a"), Color("9a8458"), Color("3a3a3a"), Color("24503a"), Color("3a302c"), Color("5a4a2c")]
+const MAP_MICRO := [Color(0, 0, 0, 0), Color("9a4038"), Color("6f9a5e"), Color("3f8f78"), Color("5fa8a0")]
 const MAP_NIGHT := Color("0b252c")
 
 var w
 var L
 var seed := 0
 var half := 1200
+
+## Pass 18: the far ring and the treetops (Layout version 3; Hank: "the
+## jungle... very lush, very, very tall trees... the trees to extend all the
+## way up past the screen"; "the volcano area is very dangerous"; "fly up into
+## the treetops... walking along branches and bark").
+const JUNGLE := 6
+const VOLCANO := 7
+const CANOPY := 8
+## The giant trees stand on a lattice, one to a square of GIANT cells (where
+## the jungle floor there takes one); in the treetops each is a platform of
+## bark (CROWN_R) with boughs running to its neighbours (BRANCH_W, half-widths
+## at the trunks and midway), leaf mats spreading off them, open air between.
+const GIANT := 14
+const CROWN_R := 4.6
+const BRANCH_W := Vector2(2.1, 1.25)
+## A giant's link to the next square east, south (and, failing those, the
+## south-east one), and its rope ladder down to the ground.
+const LINK_ODDS := 0.78
+const ROPE_ODDS := 0.12
+## The volcano: its cone's inner and outer radii (cells), the way in (radians
+## either side of the line toward camp), the crater's lava lake, its rivers.
+const CONE := Vector2(24.0, 40.0)
+const CONE_GAP := 0.3
+const CRATER_LAKE := 10.0
+const LAVA_RIVERS := 9
+var _v3 := false
+var _va := 0.0
+var volcano_at := Vector2i(9999, 9999)
+var _to_camp := 0.0
+var _rivers: Array = []
+var n_jungle: FastNoiseLite
+var n_jriver: FastNoiseLite
+var n_lava: FastNoiseLite
+var n_basalt: FastNoiseLite
+var n_leaf: FastNoiseLite
+## The giant trees found so far, by lattice square (NO_CELL where none).
+var _giants := {}
+## Pass 18: Stormcrest's eyrie (StormcrestBoss): the giant nearest the
+## jungle's heart, its crown the widest in the treetops (EYRIE_R cells), with
+## boughs to every neighbour and a rope up at one of them.
+const EYRIE_R := 10.0
+var eyrie := NO_CELL
+var _eyrie_rope := Vector2i(999999, 999999)
 ## Noise: the plains (the old world's own), their streams and lakes, their
 ## thickets; the bog's marsh and pools; the dunes' swell, drift and badlands;
 ## the Pale Lands' hills and groves; the Bonelands' dryness; the shore sand.
@@ -133,12 +176,59 @@ func _init(owner_world) -> void:
 	_gm = float(L.angles.get("glassmere", 0.0))
 	_pa = float(L.angles.get("pale_hills", 0.0))
 	_caves = w.get("caves")
+	_v3 = int(L.version) >= 3
+	if _v3: _far_init()
+
+
+## Pass 18: the far ring's noise, the volcano's place and its lava rivers.
+func _far_init() -> void:
+	n_jungle = _noise(0x7A61, 0.035, 3)
+	n_jriver = _noise(0x7A62, 0.0032, 2)
+	n_lava = _noise(0xE1A0, 0.02, 2)
+	n_basalt = _noise(0xE1A1, 0.05, 2)
+	n_leaf = _noise(0x7A63, 0.09, 2)
+	_va = float(L.angles.get("volcano", 0.0))
+	var lo: float = L.outer_edge(_va)
+	var hi: float = L.world_edge(_va)
+	volcano_at = Vector2i((Vector2.from_angle(_va) * lerpf(lo, hi, 0.5)).round())
+	_to_camp = (-Vector2(volcano_at)).angle()
+	var r := RandomNumberGenerator.new()
+	r.seed = seed ^ 0xE1A2
+	_find_eyrie()
+	_rivers.clear()
+	for i in LAVA_RIVERS:
+		# Round the cone, but none down the way in (there's a path there).
+		var a := _to_camp + PI * 0.22 + (TAU - PI * 0.44) * (float(i) + r.randf_range(0.1, 0.9)) / float(LAVA_RIVERS)
+		_rivers.append({"a": a, "len": r.randf_range(70.0, 190.0), "w": r.randf_range(1.4, 2.6), "salt": i * 97})
+
+
+func _find_eyrie() -> void:
+	eyrie = NO_CELL
+	var mid: Vector2i = L.centre("jungle", 0.5)
+	var sq := Vector2i(floori(float(mid.x) / GIANT), floori(float(mid.y) / GIANT))
+	var best := INF
+	var best_sq := sq
+	for dy in range(-5, 6):
+		for dx in range(-5, 6):
+			var g := giant_of(sq.x + dx, sq.y + dy)
+			if g == NO_CELL: continue
+			var d := Vector2(g - mid).length()
+			if d < best:
+				best = d
+				eyrie = g
+				best_sq = sq + Vector2i(dx, dy)
+	if eyrie == NO_CELL: return
+	for step in [Vector2i(-1, 0), Vector2i(0, 1), Vector2i(1, 0), Vector2i(0, -1)]:
+		if giant_of(best_sq.x + step.x, best_sq.y + step.y) != NO_CELL:
+			_eyrie_rope = best_sq + step
+			break
 
 
 ## A cell's land for the plan (Layout.land_index's answer, worked out afresh:
 ## the plan's cells lie all over the world, and the layout keeps its answers
 ## only for the chunks in use).
 func _land(c: Vector2i) -> int:
+	if _v3 and L.canopy_rect().has_point(c): return CANOPY
 	if not L.bounds().has_point(c): return 0
 	return _land_inner(c.x, c.y)
 
@@ -158,6 +248,11 @@ func _land_inner(x: int, y: int) -> int:
 	if d < me:
 		_inner_out = d - pe
 		return 1 if absf(angle_difference(bent, _gm)) < PI * 0.5 else 2
+	if _v3:
+		var oe: float = L.outer_edge(a)
+		if d >= oe:
+			_inner_out = d - oe
+			return VOLCANO if absf(angle_difference(bent, _va)) < L.VOLCANO_HALF else JUNGLE
 	_inner_out = d - me
 	return 3 if absf(angle_difference(bent, _pa)) < PI * 0.5 else 4
 
@@ -172,6 +267,7 @@ func worker_copy() -> RefCounted:
 	g._by_chunk = _by_chunk
 	g.meres = meres
 	g.flora_kinds = flora_kinds
+	g.springs = springs
 	return g
 
 
@@ -240,6 +336,8 @@ func _base(x: int, y: int, land: int, inner: float, feats: Array) -> int:
 			if wash: return T_DIRT
 			if n > 0.3 and inner > 4.0: _o = 2 if _h(x, y, 0x10) < 0.28 else 1
 			return T_GRASS
+		JUNGLE: return _jungle(x, y, inner)
+		VOLCANO: return _volcano(x, y, inner)
 	return T_GRASS
 
 
@@ -324,6 +422,9 @@ func chunk(cx: int, cy: int) -> Dictionary:
 	var strip: Rect2i = caves.strip if caves != null else Rect2i()
 	var any_strip := strip.intersects(box)
 	var all_in := in_bounds.encloses(box)
+	var canopy: Rect2i = L.canopy_rect() if _v3 else Rect2i()
+	var any_canopy := _v3 and canopy.intersects(box)
+	if any_canopy: _canopy_prep(box)
 	var meres_here: Array = []
 	for f in feats:
 		if str(f.kind) == "mere": meres_here.append(f)
@@ -333,8 +434,14 @@ func chunk(cx: int, cy: int) -> Dictionary:
 			if any_strip and strip.has_point(Vector2i(x, y)):
 				var cell: Array = caves.sink_cell(Vector2i(x, y))
 				tb[i] = int(cell[0])
-				lb[i] = 5
+				lb[i] = caves.land_index_at(Vector2i(x, y))
 				if str(cell[1]) != "": fprops[i] = [str(cell[1]), ""]
+				i += 1
+				continue
+			if any_canopy and canopy.has_point(Vector2i(x, y)):
+				lb[i] = CANOPY
+				tb[i] = _canopy(x, y)
+				ib[i] = _inner_out
 				i += 1
 				continue
 			if not all_in and not in_bounds.has_point(Vector2i(x, y)):
@@ -386,13 +493,18 @@ func chunk(cx: int, cy: int) -> Dictionary:
 			inners[k] = clampi(int(floor(ib[j])), 0, 255) if land != 0 else 255
 			depths[k] = depth[j]
 			if t == T_WATER and land == 1 and int(depth[j]) >= 3: deep[k] = 1
-			if t != NONE and land != 5:
+			# Pass 18: lava and the open air of the treetops are never walked
+			# (a hot spring is water: deep only in its middle).
+			if t == T_WATER and (land == CANOPY or (land == VOLCANO and (mb[j] != M_SPRING or int(depth[j]) >= 3))): deep[k] = 1
+			# (A lava tube's cells are drawn as the volcano's, but they're a cave's.)
+			var in_strip := any_strip and strip.has_point(Vector2i(x, y))
+			if t != NONE and land != 5 and not in_strip:
 				style[k] = sb[j] if sb[j] != S_NONE else _style(x, y, land, float(ib[j]), t, tb, j, bw)
 			var kind := ""
 			if fprops.has(j):
 				kind = str(fprops[j][0])
 				if str(fprops[j][1]) != "": lores[k] = str(fprops[j][1])
-			elif t != NONE and land != 5 and cleared[j] != 1:
+			elif t != NONE and land != 5 and not in_strip and cleared[j] != 1:
 				kind = _prop(x, y, land, float(ib[j]), t, int(style[k]), tb, ob, box, j, bw)
 				if cleared[j] == 2 and kind in SCRUB: kind = ""
 			if kind != "": props.append([k, kind])
@@ -431,7 +543,7 @@ func _map_block(terrain: PackedByteArray, style: PackedByteArray, micro: PackedB
 				var t := int(terrain[k])
 				var land := int(lands[k])
 				var colour := MAP_NIGHT
-				if t != NONE and land < 5:
+				if t != NONE and land != 5 and land < MAP_LAND.size():
 					colour = MAP_LAND[land]
 					if micro[k] != 0: colour = MAP_MICRO[int(micro[k])]
 					var s := int(style[k])
@@ -440,8 +552,11 @@ func _map_block(terrain: PackedByteArray, style: PackedByteArray, micro: PackedB
 					elif s == S_MUD: colour = Color("3f4f3a")
 					elif s == S_STONE: colour = Color("8a8a80")
 					elif land == 2 or land == 4: colour = Color("5a7a4c")
-					if t == T_DIRT: colour = Color("7a7750")
-					elif t == T_WATER: colour = Color("2a6e8c") if deep[k] != 0 else Color("4ab6c4")
+					if land == JUNGLE and t == T_MOSS: colour = Color("1c4630")
+					if t == T_DIRT: colour = Color("7a7750") if land < 5 else (Color("241f1e") if land == VOLCANO else Color("4a3a24"))
+					elif t == T_WATER:
+						if land == VOLCANO and micro[k] != M_SPRING: colour = Color("d8581e") if deep[k] != 0 else Color("f08a2c")
+						else: colour = Color("2a6e8c") if deep[k] != 0 else Color("4ab6c4")
 					if rock.has(k): colour = colour.darkened(0.35)
 				sum += colour
 		out[b] = Color(sum.r / 16.0, sum.g / 16.0, sum.b / 16.0, 1.0)
@@ -535,6 +650,15 @@ func _style(x: int, y: int, land: int, inner: float, t: int, tb: PackedByteArray
 					or tb[j + 2] == T_WATER or tb[j - 2] == T_WATER or tb[j + 2 * bw] == T_WATER or tb[j - 2 * bw] == T_WATER:
 				return S_NONE
 			if _h(x, y, 7) < clampf(inner / 10.0, 0.0, 1.0): return S_SAND
+		JUNGLE:
+			# Mud along the rivers and pools, and in the wettest hollows.
+			if tb[j + 1] == T_WATER or tb[j - 1] == T_WATER or tb[j + bw] == T_WATER or tb[j - bw] == T_WATER:
+				return S_MUD if n_jungle.get_noise_2d(x * 1.7, y * 1.7) < 0.2 else S_NONE
+			if n_jungle.get_noise_2d(x, y) < -0.48: return S_MUD
+		VOLCANO:
+			# Ash drifts (pale), obsidian glass (black and glassy) round the lava.
+			if tb[j + 1] == T_WATER or tb[j - 1] == T_WATER or tb[j + bw] == T_WATER or tb[j - bw] == T_WATER: return S_STONE
+			if n_basalt.get_noise_2d(x * 0.6, y * 0.6) < -0.32: return S_SAND
 	return S_NONE
 
 
@@ -572,6 +696,7 @@ func _prop(x: int, y: int, land: int, inner: float, t: int, style: int, tb: Pack
 	var outcrop := int(ob[j])
 	if outcrop == 1: return "wall"
 	if outcrop == 2: return "ore"
+	if land >= JUNGLE: return _far_prop(x, y, land, inner, t, style, tb, ob, box, j, bw)
 	var c2 := x * x + y * y
 	if t == T_WATER:
 		# Lilies on the bog's still water (not its deep).
@@ -803,6 +928,13 @@ func _stamp_micro(f: Dictionary, area: Rect2i, box: Rect2i, tb: PackedByteArray,
 					sb[j] = S_NONE
 					if cleared[j] == 0: cleared[j] = 2
 					tb[j] = T_WATER if d < float(f.get("pond", 2.0)) else T_GRASS
+				M_SPRING:
+					mb[j] = M_SPRING
+					ob[j] = 0
+					sb[j] = S_NONE
+					cleared[j] = 1
+					fprops.erase(j)
+					tb[j] = T_WATER if d < float(f.get("pond", 2.0)) else T_GRASS
 
 
 # ------------------------------------------------------------------ the plan
@@ -923,9 +1055,14 @@ func plan() -> void:
 	buildings.clear()
 	var timing := "--gen-timing" in OS.get_cmdline_user_args()
 	var t := Time.get_ticks_usec()
-	for step in [_plan_meres, _plan_camp, _plan_sites, _plan_den, _plan_dunes, _plan_pale, _plan_haven, _plan_meadow,
+	springs.clear()
+	var steps := [_plan_meres, _plan_camp, _plan_sites, _plan_den, _plan_dunes, _plan_pale, _plan_haven, _plan_meadow,
 			_plan_lakes, _plan_ruins, _plan_buildings, _plan_caves, _plan_nests, _plan_wild_nests, _plan_finds, _plan_veins,
-			_plan_crops, _bucket]:
+			_plan_crops]
+	# Pass 18: the far ring's own places (a version 3 world's only).
+	if _v3: steps += [_plan_volcano, _plan_springs, _plan_hollow, _plan_eyrie]
+	steps.append(_bucket)
+	for step in steps:
 		step.call()
 		if timing:
 			print("PLAN %s %dms" % [step.get_method(), (Time.get_ticks_usec() - t) / 1000])
@@ -1437,8 +1574,15 @@ const BUILDINGS := {
 	"inn": ["###########", "#B..f..f.B#", "#c.......c#", "#..f...t..#", "#.......C.#", "#b.b...r..#", "#####D#####", "     R     "],
 	"hut": ["#####", "#b.C#", "#...#", "#c.B#", "##D##", "  R  "],
 	"cottage": ["########", "#B.t.cb#", "#......#", "#r...C.#", "####D###", "    R   "],
+	# Pass 18: the jungle's overgrown temples (Sky-Fang crystal grown up through
+	# the floor, glowcaps in the corners, two chests) and the volcano's fallen
+	# forges (the ember forge still warm, an anvil, the smiths' stores).
+	"temple": [" ######### ", "##g.....g##", "#..C...C..#", "#....i....#", "#.r.....r.#", "##.......##", " ####D#### ", "     R     "],
+	"forge": ["#########", "#F..A..B#", "#.......#", "#e.....C#", "####D####", "    R    "],
 }
 const BUILD_WEIGHTS := {"house": 4, "inn": 2, "hut": 4, "cottage": 3}
+## Pass 18: the far ring's own kinds of building.
+const BUILD_WEIGHTS_BY := {6: {"temple": 4, "hut": 2, "cottage": 1}, 7: {"forge": 4, "hut": 1}}
 ## A land's [wall, floor, door]s (an inn is timber in the plains).
 const BUILD_STUFF := {
 	0: [["stone_wall", "stone_floor", "stone_door"], ["wood_wall", "wood_floor", "wood_door"]],
@@ -1446,22 +1590,26 @@ const BUILD_STUFF := {
 	2: [["sandstone_wall", "sandstone_floor", "wood_door"]],
 	3: [["palewood_wall", "palewood_floor", "wood_door"], ["stone_wall", "stone_floor", "stone_door"]],
 	4: [["sandstone_wall", "sandstone_floor", "stone_door"], ["stone_wall", "stone_floor", "stone_door"]],
+	6: [["stone_wall", "stone_floor", "stone_door"], ["wood_wall", "wood_floor", "wood_door"]],
+	7: [["stone_wall", "stone_floor", "stone_door"]],
 }
-const BUILD_NAMES := {"house": "An old house", "inn": "An old inn", "hut": "A fallen hut", "cottage": "An old cottage"}
-const BUILDS_IN := {"forest": 26, "glassmere": 16, "dunes": 14, "pale_hills": 14, "bonelands": 12}
-const LAND_OF := {"forest": 0, "glassmere": 1, "dunes": 2, "pale_hills": 3, "bonelands": 4}
+const BUILD_NAMES := {"house": "An old house", "inn": "An old inn", "hut": "A fallen hut", "cottage": "An old cottage",
+	"temple": "An overgrown temple", "forge": "A fallen forge"}
+const BUILDS_IN := {"forest": 26, "glassmere": 16, "dunes": 14, "pale_hills": 14, "bonelands": 12, "jungle": 18, "volcano": 9}
+const LAND_OF := {"forest": 0, "glassmere": 1, "dunes": 2, "pale_hills": 3, "bonelands": 4, "jungle": 6, "volcano": 7}
 ## A building shut up whole (no wall down) with a boulder at its door.
 const SEALED := 0.35
 func _plan_buildings() -> void:
 	var r := _rng(0xB11D)
 	for land_name in BUILDS_IN:
 		var land := int(LAND_OF[land_name])
+		if land >= JUNGLE and not _v3: continue
 		var made := 0
 		for attempt in int(BUILDS_IN[land_name]) * 30:
 			if made >= int(BUILDS_IN[land_name]): break
 			var c := _point(land_name, r, Vector2(0.14, 0.94) if land == 0 else Vector2(0.08, 0.94))
 			if c == NO_CELL or (land == 0 and Vector2(c).length() < 50.0): continue
-			var kind := _weighted(BUILD_WEIGHTS, r)
+			var kind := _weighted(BUILD_WEIGHTS_BY.get(land, BUILD_WEIGHTS), r)
 			var rows: Array = BUILDINGS[kind]
 			if not _building_room(rows, c, land): continue
 			_building(kind, rows, c, land, r)
@@ -1501,7 +1649,8 @@ func _building(kind: String, rows: Array, at: Vector2i, land: int, r: RandomNumb
 	for y in rows.size():
 		var i := str(rows[y]).find("D")
 		if i >= 0: door = Vector2i(i, y)
-	var furniture := {"b": "hide_bed", "c": "chair", "t": "table", "f": "table_food", "B": "barrel", "C": "cache", "r": "rubble"}
+	var furniture := {"b": "hide_bed", "c": "chair", "t": "table", "f": "table_food", "B": "barrel", "C": "cache", "r": "rubble",
+		"i": "glimmer_crystal", "g": "glowcap", "F": "ember_forge", "A": "anvil", "e": "ember_crystal"}
 	var cells := {}
 	for y in rows.size():
 		var row := str(rows[y])
@@ -1529,7 +1678,7 @@ func _building(kind: String, rows: Array, at: Vector2i, land: int, r: RandomNumb
 					# Some of it long gone.
 					if prop in ["chair", "barrel"] and r.randf() < 0.25: prop = ""
 					cells[c] = [prop, on]
-					if prop == "cache": cache_kinds[c] = "larder" if kind == "inn" else "house"
+					if prop == "cache": cache_kinds[c] = {"inn": "larder", "temple": "temple", "forge": "forge"}.get(kind, "house")
 	# Rubble where walls fell (a heap inside, by the gap).
 	for c in cells.keys():
 		if str(cells[c][0]) != "" or str(cells[c][1]) != "": continue
@@ -1550,11 +1699,12 @@ func _building(kind: String, rows: Array, at: Vector2i, land: int, r: RandomNumb
 ## throughout... not a lot more, just a bit more... random encounters"): an
 ## ancient cache here and there (by old bones, now and then), and the lost
 ## camps of travellers (a tent, their pack, a barrel, a cold hearth of stones).
-const FINDS_IN := {"forest": [16, 7], "glassmere": [11, 5], "dunes": [11, 5], "pale_hills": [11, 5], "bonelands": [10, 5]}
+const FINDS_IN := {"forest": [16, 7], "glassmere": [11, 5], "dunes": [11, 5], "pale_hills": [11, 5], "bonelands": [10, 5], "jungle": [16, 6], "volcano": [8, 3]}
 func _plan_finds() -> void:
 	var r := _rng(0xF1D5)
 	for land_name in FINDS_IN:
 		var land := int(LAND_OF[land_name])
+		if land >= JUNGLE and not _v3: continue
 		var counts: Array = FINDS_IN[land_name]
 		var caches := 0
 		for attempt in int(counts[0]) * 30:
@@ -1592,13 +1742,16 @@ func _plan_finds() -> void:
 ## most), its kind the land's (NEST_LIFE: raptors only well out into the
 ## plains), on open ground clear of the rest. Each brings its guardians
 ## (Spawners' nest sites).
-const WILD_NESTS := {0: 0.11, 1: 0.07, 2: 0.06, 3: 0.05, 4: 0.05}
+const WILD_NESTS := {0: 0.11, 1: 0.07, 2: 0.06, 3: 0.05, 4: 0.05, 6: 0.06, 7: 0.03}
 const NEST_LIFE := {
 	0: {"dodo": 3, "lystro": 3, "stego": 2, "trike": 2, "parasaur": 1, "longneck": 1, "raptor": 1},
 	1: {"parasaur": 3, "longneck": 2, "stego": 1, "lystro": 1},
 	2: {"raptor": 2, "lystro": 2, "stego": 1, "allo": 1},
 	3: {"trike": 3, "raptor": 2, "longneck": 1, "allo": 1},
 	4: {"allo": 2, "raptor": 2, "lystro": 2, "stego": 1},
+	# Pass 18: the jungle's and the volcano's.
+	6: {"parasaur": 3, "longneck": 2, "raptor": 2, "stego": 1, "thyla": 1},
+	7: {"raptor": 2, "dimetrodon": 2, "allo": 1, "anky": 1},
 }
 func _plan_wild_nests() -> void:
 	var FC = preload("res://Forest/creatures/ForestCreature.gd")
@@ -1656,3 +1809,278 @@ func _plan_crops() -> void:
 				if not open_at(c, 0): continue
 				_prop_at(c, str(entry[0]))
 				laid += 1
+
+
+# ------------------------------------------------------------------ pass 18: the far ring and the treetops
+
+## The micro mark of a volcano's hot spring (its water is water, not lava).
+const M_SPRING := 4
+## Hot springs in the volcano's ground: [{at, r}] (the plan's).
+var springs: Array = []
+
+
+## The jungle floor: dark moss and grass under the canopy, wide rivers winding
+## through it and pools, mossy outcrops (crystal-rich) here and there.
+func _jungle(x: int, y: int, inner: float) -> int:
+	if _jungle_wet(x, y): return T_WATER
+	var n := n_jungle.get_noise_2d(x, y)
+	if n > 0.62 and inner > 4.0: _o = 2 if _h(x, y, 0x6A5) < 0.4 else 1
+	return T_MOSS if n > 0.02 else T_GRASS
+
+
+## A jungle river (wide and winding) or pool.
+func _jungle_wet(x: int, y: int) -> bool:
+	var wx := x + n_warp.get_noise_2d(x, y) * 60.0
+	var wy := y + n_warp.get_noise_2d(y + 911, x - 37) * 60.0
+	if absf(n_jriver.get_noise_2d(wx, wy)) < 0.034: return true
+	return n_lake.get_noise_2d(x * 1.3 + 500.0, y * 1.3) < -0.64
+
+
+## The volcano: its cone (a wall of rock round the crater but for the way in,
+## the crater's floor round a lava lake), lava rivers running out from its
+## foot, lava pools, basalt outcrops (ember ore in some).
+func _volcano(x: int, y: int, inner: float) -> int:
+	var off := Vector2(x - volcano_at.x, y - volcano_at.y)
+	var r := off.length()
+	var wob := n_basalt.get_noise_2d(x, y) * 4.0
+	if r < CONE.y + wob:
+		if r < CRATER_LAKE + n_lava.get_noise_2d(x, y) * 3.0: return T_WATER
+		if r > CONE.x + wob * 0.5 and absf(angle_difference(off.angle(), _to_camp)) > CONE_GAP:
+			_o = 2 if _h(x, y, 0xE1A3) < 0.12 else 1
+		return T_DIRT
+	var ang := off.angle()
+	for river in _rivers:
+		var run: float = r - CONE.y
+		if run < 0.0 or run > float(river.len): continue
+		var bend := n_lava.get_noise_2d(run * 0.9 + float(river.salt), float(river.salt)) * 0.55
+		var width: float = float(river.w) * (1.0 - run / float(river.len) * 0.55)
+		if absf(angle_difference(ang, float(river.a) + bend * minf(1.0, run / 30.0))) * r < width: return T_WATER
+	if n_lava.get_noise_2d(x * 1.4, y * 1.4) < -0.7 and inner > 6.0: return T_WATER
+	var b := n_basalt.get_noise_2d(x, y)
+	if b > 0.58 and inner > 4.0: _o = 2 if _h(x, y, 0xE1A4) < 0.22 else 1
+	if r < CONE.y + 26.0: return T_DIRT
+	return T_MOSS if b < -0.3 else T_GRASS
+
+
+## The giant tree of a lattice square: its trunk's cell, or NO_CELL (none
+## there: water, rock, a clearing, the jungle's rim).
+func giant_of(sx: int, sy: int) -> Vector2i:
+	var key := Vector2i(sx, sy)
+	var got = _giants.get(key)
+	if got != null: return got
+	var hv := hash(Vector3i(sx, sy, 0x6A1A ^ seed))
+	var gx := sx * GIANT + 2 + int(hv & 0xFF) % (GIANT - 4)
+	var gy := sy * GIANT + 2 + int((hv >> 8) & 0xFF) % (GIANT - 4)
+	var keep_inner := _inner_out
+	var out := Vector2i(gx, gy)
+	if not L.bounds().has_point(out) or _land_inner(gx, gy) != JUNGLE or _inner_out < 6.0:
+		out = NO_CELL
+	elif n_thicket.get_noise_2d(gx, gy) < -0.5 or _jungle_wet(gx, gy) or _jungle_wet(gx + 1, gy) or _jungle_wet(gx - 1, gy) or n_jungle.get_noise_2d(gx, gy) > 0.5:
+		out = NO_CELL
+	_inner_out = keep_inner
+	if _giants.size() > 20000: _giants.clear()
+	_giants[key] = out
+	return out
+
+
+## Whether two neighbouring giants' crowns are joined by a bough.
+func _linked(a: Vector2i, b: Vector2i) -> bool:
+	if eyrie != NO_CELL and (a == eyrie or b == eyrie): return true
+	return _h(a.x * 3 + b.x, a.y * 3 + b.y, 0x6A1B) < LINK_ODDS
+
+
+## Whether a giant has a rope ladder down from its crown.
+func has_rope(sx: int, sy: int) -> bool:
+	if Vector2i(sx, sy) == _eyrie_rope: return true
+	return _h(sx, sy, 0x6A1C) < ROPE_ODDS
+
+
+## A box's treetops, worked out once before its cells (chunk()): the giants'
+## crowns (platform centres) and their boughs ([a, b] segments) that reach it.
+var _cplat := PackedVector2Array()
+var _cseg: Array = []
+func _canopy_prep(box: Rect2i) -> void:
+	_cplat = PackedVector2Array()
+	_cseg = []
+	var g0: Vector2i = box.position - L.CANOPY_SHIFT
+	var g1: Vector2i = box.end - L.CANOPY_SHIFT
+	var s0 := Vector2i(floori(float(g0.x) / GIANT) - 1, floori(float(g0.y) / GIANT) - 1)
+	var s1 := Vector2i(floori(float(g1.x) / GIANT) + 1, floori(float(g1.y) / GIANT) + 1)
+	for sy in range(s0.y, s1.y + 1):
+		for sx in range(s0.x, s1.x + 1):
+			var a := giant_of(sx, sy)
+			if a == NO_CELL: continue
+			_cplat.append(Vector2(a))
+			for step in [Vector2i(1, 0), Vector2i(0, 1), Vector2i(1, 1)]:
+				var b := giant_of(sx + step.x, sy + step.y)
+				if b == NO_CELL: continue
+				# The diagonal only where the square's own two are missing.
+				if step == Vector2i(1, 1) and giant_of(sx + 1, sy) != NO_CELL and giant_of(sx, sy + 1) != NO_CELL: continue
+				if not _linked(a, b): continue
+				_cseg.append([Vector2(a), Vector2(b)])
+
+
+## A treetop cell (land 8): bark (a crown's platform: grass; a bough: dirt),
+## a leaf mat (moss) or the open air (water, never walked). _canopy_prep has
+## gathered the crowns and boughs near it.
+func _canopy(x: int, y: int) -> int:
+	var g: Vector2i = Vector2i(x, y) - L.CANOPY_SHIFT
+	_inner_out = 999.0
+	var p := Vector2(g)
+	var best := 99.0
+	for a in _cplat:
+		var d := p.distance_squared_to(a)
+		if d < 144.0: best = minf(best, sqrt(d) - CROWN_R)
+	var bough := 99.0
+	for seg in _cseg:
+		var a: Vector2 = seg[0]
+		var b: Vector2 = seg[1]
+		if p.x < minf(a.x, b.x) - 6.0 or p.x > maxf(a.x, b.x) + 6.0 or p.y < minf(a.y, b.y) - 6.0 or p.y > maxf(a.y, b.y) + 6.0: continue
+		var q := Geometry2D.get_closest_point_to_segment(p, a, b)
+		var t := clampf(a.distance_to(q) / maxf(1.0, a.distance_to(b)), 0.0, 1.0)
+		bough = minf(bough, p.distance_to(q) - lerpf(BRANCH_W.x, BRANCH_W.y, sin(t * PI)))
+	if eyrie != NO_CELL:
+		var e := p.distance_to(Vector2(eyrie)) - EYRIE_R
+		if e < 14.0: best = minf(best, e)
+	var wob := n_leaf.get_noise_2d(g.x, g.y)
+	if best < wob * 0.8: return T_GRASS
+	if bough < 0.0: return T_DIRT
+	if minf(best, bough) < 2.2 + wob * 2.0 and wob > 0.12: return T_MOSS
+	return T_WATER
+
+
+## What grows or lies on a far-ring or treetop cell.
+func _far_prop(x: int, y: int, land: int, inner: float, t: int, style: int, tb: PackedByteArray, ob: PackedByteArray, box: Rect2i, j: int, bw: int) -> String:
+	match land:
+		JUNGLE: return _jungle_prop(x, y, inner, t, style, tb, ob, j, bw)
+		VOLCANO: return _volcano_prop(x, y, inner, t, style, tb, ob, j, bw)
+		CANOPY: return _canopy_prop(x, y, t, tb, j, bw)
+	return ""
+
+
+func _jungle_prop(x: int, y: int, inner: float, t: int, style: int, tb: PackedByteArray, ob: PackedByteArray, j: int, bw: int) -> String:
+	if t == T_WATER:
+		return "lily_pads" if _grid_point(x, y, 3, 0x6A6) and _h(x, y, 0x6A7) < 0.22 else ""
+	# The giants: the trunk on its cell, a rope ladder beside some, nothing
+	# else crowding the foot of one.
+	var sx := floori(float(x) / GIANT)
+	var sy := floori(float(y) / GIANT)
+	for dy in range(-1, 2):
+		for dx in range(-1, 2):
+			var g := giant_of(sx + dx, sy + dy)
+			if g == NO_CELL: continue
+			if g.x == x and g.y == y: return "giant_tree"
+			if has_rope(sx + dx, sy + dy) and x == g.x and y == g.y + 2: return "rope_ladder"
+			if absi(x - g.x) <= 2 and y >= g.y - 2 and y <= g.y + 2: return ""
+	if t == T_DIRT: return ""
+	var clearing := n_thicket.get_noise_2d(x, y) < -0.45
+	if _grid_point(x, y, 2, 0x6A8) and _room(tb, ob, j, bw):
+		var roll := _h(x, y, 0x6A9)
+		var by_water: bool = tb[j + 1] == T_WATER or tb[j - 1] == T_WATER or tb[j + bw] == T_WATER or tb[j - bw] == T_WATER
+		if by_water: return "reeds" if roll < 0.3 else ("giant_fern" if roll < 0.5 else "")
+		if clearing:
+			return "flowers" if roll < 0.06 else ("jungle_flower" if roll < 0.1 else ("fern" if roll < 0.14 else ""))
+		if roll < 0.1: return "jungle_tree"
+		if roll < 0.22: return "giant_fern"
+		if roll < 0.3: return "fern"
+		if roll < 0.36: return "jungle_bush"
+		if roll < 0.42: return "vines"
+		if roll < 0.45: return "glowcap"
+		if roll < 0.48: return "jungle_flower"
+		if roll < 0.49: return "fallen_log"
+	# Sky-Fang crystal breaks through the jungle floor far more than anywhere.
+	if _h(x, y, 0x6AA) < 0.018 and _room(tb, ob, j, bw): return "glimmer_crystal"
+	if t == T_GRASS and style == S_NONE and posmod(hash(Vector3i(x, y, seed ^ 0x6AB)), 1000) < 5 and _room(tb, ob, j, bw): return "roots"
+	return ""
+
+
+func _volcano_prop(x: int, y: int, inner: float, t: int, style: int, tb: PackedByteArray, ob: PackedByteArray, j: int, bw: int) -> String:
+	if t == T_WATER: return ""
+	var off := Vector2(x - volcano_at.x, y - volcano_at.y)
+	if off.length() < CONE.y + 4.0: return ""
+	if _grid_point(x, y, 4, 0xE1A5) and _room(tb, ob, j, bw):
+		var roll := _h(x, y, 0xE1A6)
+		if roll < 0.12: return "charred_tree"
+		if roll < 0.26: return "basalt"
+		if roll < 0.3: return "vent"
+		if roll < 0.33: return "ember_crystal"
+		if roll < 0.36: return "sulfur"
+		if roll < 0.42: return "ash_bush"
+		if roll < 0.44: return "bone_pile"
+	if _h(x, y, 0xE1A7) < 0.004 and _room(tb, ob, j, bw): return "ember_crystal"
+	return ""
+
+
+func _canopy_prop(x: int, y: int, t: int, tb: PackedByteArray, j: int, bw: int) -> String:
+	if t == T_WATER: return ""
+	var g: Vector2i = Vector2i(x, y) - L.CANOPY_SHIFT
+	var sx := floori(float(g.x) / GIANT)
+	var sy := floori(float(g.y) / GIANT)
+	var a := giant_of(sx, sy)
+	# The eyrie: bare bark round its great nest (a giant's own crown and rope aside).
+	var giant_bit: bool = a != NO_CELL and (a == g or (has_rope(sx, sy) and g == a + Vector2i(0, 2)))
+	if not giant_bit and eyrie != NO_CELL and Vector2(g).distance_to(Vector2(eyrie)) < EYRIE_R - 1.0:
+		if g == eyrie + Vector2i(0, 4): return "eyrie_nest"
+		return "bone_pile" if _grid_point(x, y, 5, 0x7A66) and _h(x, y, 0x7A67) < 0.2 else ""
+	if a != NO_CELL:
+		# The giant's trunk runs on up through its crown; the rope's top.
+		if a == g: return "giant_crown"
+		if has_rope(sx, sy) and g == a + Vector2i(0, 2): return "rope_top"
+		if absi(g.x - a.x) <= 1 and g.y >= a.y - 1 and g.y <= a.y + 1: return ""
+	if t == T_DIRT: return ""
+	if _grid_point(x, y, 3, 0x7A64):
+		var roll := _h(x, y, 0x7A65)
+		if t == T_MOSS:
+			return "leaf_clump" if roll < 0.28 else ("canopy_flower" if roll < 0.36 else ("fruit_pod" if roll < 0.42 else ""))
+		return "bromeliad" if roll < 0.12 else ("amber" if roll < 0.18 else ("fruit_pod" if roll < 0.24 else ""))
+	return ""
+
+
+## The volcano's own places: the path up the cone (cleared), the forge ruins
+## by its foot, the crater (the Cinderhulk's, a POI).
+func _plan_volcano() -> void:
+	if volcano_at == NO_CELL: return
+	pois.append({"name": "The Embercrack Crater", "kind": "volcano", "cell": volcano_at})
+	_mark(volcano_at)
+	for k in 8:
+		_mark(volcano_at + Vector2i((Vector2.from_angle(k * TAU / 8.0) * CONE.y).round()))
+
+
+## Pass 18: the Pale Reaper's hollow (ReaperBoss), deep in the Pale Lands
+## where the ash lies thickest, on the way to the volcano: a clearing ringed
+## with old bones and crystal.
+func _plan_hollow() -> void:
+	var r := _rng(0x9A1F)
+	for attempt in 400:
+		var c: Vector2i = L.point_in("pale_hills", r, Vector2(0.74, 0.92), Vector2(-0.45, 0.45))
+		if c == NO_CELL or not open_at(c, 3) or _near_water_probe(c, 8) or not _spaced(c, 30.0): continue
+		_clear(c, 10.0)
+		for k in 9:
+			var a := TAU * float(k) / 9.0 + r.randf_range(-0.2, 0.2)
+			_prop_at(c + Vector2i((Vector2.from_angle(a) * Vector2(9.0, 7.0) * r.randf_range(0.9, 1.1)).round()), "bone_pile" if k % 3 != 2 else "pale_crystal")
+		_prop_at(c + Vector2i(-3, -2), "dune_skull")
+		pois.append({"name": "The Reaper's Hollow", "kind": "reaper_hollow", "cell": c})
+		_mark(c)
+		return
+
+
+## Pass 18: Stormcrest's eyrie, up in the treetops over the jungle's heart
+## (its crown and boughs are the treetops' own: _canopy).
+func _plan_eyrie() -> void:
+	if eyrie == NO_CELL: return
+	pois.append({"name": "Stormcrest's Eyrie", "kind": "eyrie", "cell": L.canopy_of(eyrie + Vector2i(0, 2))})
+
+
+## Hot springs in the volcano's ground: steaming water (fish that like it hot),
+## the only water there that isn't lava.
+func _plan_springs() -> void:
+	var r := _rng(0xE1A8)
+	for n in 14:
+		for attempt in 60:
+			var c: Vector2i = L.point_in("volcano", r, Vector2(0.08, 0.9), Vector2(-0.9, 0.9))
+			if c == NO_CELL or Vector2(c - volcano_at).length() < CONE.y + 40.0: continue
+			if not open_at(c, 3) or not _spaced(c, 24.0): continue
+			var rad := r.randf_range(2.6, 4.2)
+			springs.append({"at": c, "r": rad})
+			_add({"kind": "micro", "at": c, "r": rad + 1.5, "micro": M_SPRING, "pond": rad, "amp": 1.0})
+			break

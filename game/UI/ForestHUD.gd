@@ -401,11 +401,18 @@ func _process(delta: float) -> void:
 		if bleeding: bleed_label.text = "BLEEDING  %ds" % ceili(player.bleed.time_left)
 		_tick_meal_line(bleeding)
 		var ash: float = float(player.get("ash")) if player.get("ash") != null else 0.0
-		_ash_box.visible = ash > 0.04
+		# Pass 18: the volcano's heat shares the row (whichever is worse).
+		var heat: float = float(player.get("heat")) if player.get("heat") != null else 0.0
+		var hot := heat > ash
+		_ash_box.visible = maxf(ash, heat) > 0.04
 		if _ash_box.visible:
-			var choking := ash >= 1.0
-			ash_label.text = "CHOKING" if choking else "ASH  %d%%" % int(round(ash * 100.0))
-			ash_label.add_theme_color_override("font_color", UI.EMBER if choking else ASH)
+			var choking := maxf(ash, heat) >= 1.0
+			if hot:
+				ash_label.text = "BURNING" if choking else "HEAT  %d%%" % int(round(heat * 100.0))
+				ash_label.add_theme_color_override("font_color", UI.EMBER if choking else Color("f0a060"))
+			else:
+				ash_label.text = "CHOKING" if choking else "ASH  %d%%" % int(round(ash * 100.0))
+				ash_label.add_theme_color_override("font_color", UI.EMBER if choking else ASH)
 			# Under the gifts line and the bleed box, whichever show.
 			var gifts_on: bool = is_instance_valid(_gifts_box) and _gifts_box.visible
 			_ash_box.position.y = UNDER_PLATE + (14.0 if gifts_on else 0.0) + (14.0 if bleeding else 0.0)
@@ -1268,7 +1275,7 @@ func show_companion_commands(creature: Node = null, from_hold := false) -> void:
 	_wheel_moved = false
 	_wheel_outer.clear()
 	_wheel_inner.clear()
-	var mountable: bool = creature != null and creature.species in ["stego","trike"]
+	var mountable: bool = creature != null and preload("res://Forest/creatures/Rides.gd").can_ride(str(creature.species))
 	var worker: bool=creature!=null and creature.species in ["stego","trike","dodo"]
 	command_panel = Panel.new()
 	command_panel.add_theme_stylebox_override("panel",StyleBoxEmpty.new())

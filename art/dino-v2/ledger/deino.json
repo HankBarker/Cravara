@@ -23,7 +23,7 @@
   "status": "done",
   "cost": 1.0,
   "prompt": "Stands still in a relaxed pose; its body rises and falls very slightly and its tail sways a little. It stays in place with its back to the viewer the whole time.",
-  "frames": 9,
+  "frames": 8,
   "submitted": 1790370879.831592,
   "finished": 1790371256.6926012,
   "score": {
@@ -31,7 +31,8 @@
    "area": 1.04,
    "wide": 1.21,
    "base": 0
-  }
+  },
+  "method": "lunge_front.py (idle from the up drawing)"
  },
  "walk_side": {
   "job": "5085f7b8-9332-4f83-8aa4-a20bbc12442f",
@@ -57,7 +58,7 @@
   "status": "done",
   "cost": 1.0,
   "prompt": "Walks in place: its legs step one after the other, its body bobs gently with each step and its tail sways. It stays in place with its back to the viewer the whole time.",
-  "frames": 9,
+  "frames": 8,
   "submitted": 1790371032.1973813,
   "finished": 1790371211.2938366,
   "score": {
@@ -65,7 +66,8 @@
    "area": 1.0,
    "wide": 1.42,
    "base": 0
-  }
+  },
+  "method": "walk_front.py (walk gait from the up drawing)"
  },
  "run_side": {
   "job": "777704ff-55cc-4f69-9009-0afd422c6a26",
@@ -561,7 +563,7 @@
   "status": "done",
   "cost": 1.0,
   "prompt": "Runs in place with long fast strides, its body leaning forward and its tail held straight out behind. It stays in place with its back to the viewer the whole time.",
-  "frames": 9,
+  "frames": 8,
   "submitted": 1790371213.2082934,
   "finished": 1790371796.8586352,
   "score": {
@@ -569,7 +571,8 @@
    "area": 1.02,
    "wide": 1.0,
    "base": 0
-  }
+  },
+  "method": "walk_front.py (run gait from the up drawing)"
  },
  "walk_down": {
   "job": "af6f3feb-cb4d-41b5-8ad0-6ec7807b9933",
@@ -578,7 +581,7 @@
   "status": "done",
   "cost": 1.0,
   "prompt": "Walks in place: its legs step one after the other, its body bobs gently with each step and its tail sways. It stays in place, facing the viewer the whole time.",
-  "frames": 9,
+  "frames": 8,
   "submitted": 1790371259.1275606,
   "finished": 1790371424.5960104,
   "score": {
@@ -587,7 +590,7 @@
    "wide": 1.0,
    "base": 0
   },
-  "method": "AI clip + cap_clamp.py (tol 1)"
+  "method": "walk_front.py (walk gait from the down drawing)"
  },
  "slash_side": {
   "job": "d2ec4aa2-94d0-4ead-a23a-de993aeb2791",
@@ -613,7 +616,7 @@
   "status": "done",
   "cost": 1.0,
   "prompt": "Stands still in a relaxed pose; its body rises and falls very slightly and its tail sways a little. It stays in place, facing the viewer the whole time.",
-  "frames": 9,
+  "frames": 8,
   "submitted": 1790371310.000686,
   "finished": 1790371457.822472,
   "score": {
@@ -621,7 +624,8 @@
    "area": 1.11,
    "wide": 1.5,
    "base": 0
-  }
+  },
+  "method": "lunge_front.py (idle from the down drawing)"
  },
  "pounce_side": {
   "job": "d20a6d71-8689-4ffb-9de9-a885a7475dba",
@@ -655,7 +659,8 @@
    "area": 1.34,
    "wide": 1.09,
    "base": 0
-  }
+  },
+  "method": "lunge_front.py (pounce from the down drawing)"
  },
  "pounce_up": {
   "job": "586343e7-c37b-4625-b104-1cb47f880f6a",
@@ -672,7 +677,8 @@
    "area": 1.44,
    "wide": 1.53,
    "base": 0
-  }
+  },
+  "method": "lunge_front.py (pounce from the up drawing)"
  },
  "threat_side": {
   "job": "b7b95037-08cf-4665-8322-a7c3a6c77c0b",
@@ -783,7 +789,7 @@
   "status": "done",
   "cost": 1.0,
   "prompt": "Runs in place with long fast strides, its body leaning forward and its tail held straight out behind. It stays in place, facing the viewer the whole time.",
-  "frames": 9,
+  "frames": 8,
   "submitted": 1790372005.2215707,
   "finished": 1790372120.5484862,
   "score": {
@@ -793,7 +799,7 @@
    "base": 0
   },
   "kept_attempt": "C:\\Cravera\\art\\dino-v2\\raw\\deino\\run_down@0",
-  "method": "AI clip + cap_clamp.py (tol 1)"
+  "method": "walk_front.py (run gait from the down drawing)"
  },
  "hurt_up": {
   "job": "f6cf4b1c-5051-4212-a43b-79e2d5d67d65",
@@ -828,7 +834,8 @@
    "wide": 2.45,
    "base": 0
   },
-  "kept_attempt": "C:\\Cravera\\art\\dino-v2\\raw\\deino\\slash_down@2"
+  "kept_attempt": "C:\\Cravera\\art\\dino-v2\\raw\\deino\\slash_down@2",
+  "method": "lunge_front.py (slash from the down drawing)"
  },
  "slash_up": {
   "job": "c06a9ce9-c6fb-4e7c-a772-39859cf040e9",
@@ -845,7 +852,8 @@
    "area": 1.5,
    "wide": 2.63,
    "base": 0
-  }
+  },
+  "method": "lunge_front.py (slash from the up drawing)"
  },
  "threat_down": {
   "job": "024774a8-02e3-4089-b41d-61b13d4f7cfd",
@@ -862,7 +870,8 @@
    "area": 1.76,
    "wide": 2.14,
    "base": 0
-  }
+  },
+  "method": "lunge_front.py (threat from the down drawing)"
  },
  "threat_up": {
   "job": "6941fbf2-810a-49c6-b497-14a39b22b9f0",
@@ -879,7 +888,8 @@
    "area": 1.46,
    "wide": 1.0,
    "base": 0
-  }
+  },
+  "method": "lunge_front.py (threat from the up drawing)"
  },
  "look_side": {
   "job": "893e0eac-8219-4cc2-a4da-99a338cc3462",

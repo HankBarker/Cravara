@@ -104,6 +104,37 @@ const QUESTS := [
 		"ask": "Old Maw. The fishers won't say its name out loud. It hunts the deep water of the Mirefen's meres, and it takes boats. Take a boat out, and when it breaches, strike.",
 		"done": "Old Maw, beaten! The fishers will sing about you. Badly, but they'll sing.",
 		"goals": [{"type": "defeat", "id": "maw", "count": 1}], "reward": {"ancient_coin": 25, "xp:combat": 150}},
+	# Pass 18: each land's great boss.
+	{"id": "guide_grimjaw", "giver": "guide", "line": "guide_hunt", "title": "The Mire King", "needs": "streamed",
+		"ask": "There's something older than Old Maw in the Mirefen. Grimjaw, the fishers call it: a croc as long as a longneck, lying under the water at the bank of the farthest mere. Keep off the water's edge when the ripples come for you.",
+		"done": "Grimjaw, dead! Its hide makes a saddle fit for any hunter. Ask the warden: you can ride raptors and rexes now.",
+		"goals": [{"type": "defeat", "id": "grimjaw", "count": 1}], "reward": {"ancient_coin": 30, "xp:combat": 200}},
+	{"id": "guide_reaper", "giver": "guide", "line": "guide_hunt", "title": "Harrow", "needs": "region:pale_hills",
+		"ask": "Deep in the Pale Lands, where the ash lies thickest, there's a hollow ringed with bones. The Ashen won't go near it. Something with scythes for claws keeps it: Harrow, the Pale Reaper. Watch the ground for its shadow when it leaps, and roll through its shriek.",
+		"done": "The Reaper's claws... cold as the grave, even now. Bind one into a charm and the volcano's heat will never touch you.",
+		"goals": [{"type": "defeat", "id": "reaper", "count": 1}], "reward": {"ancient_coin": 35, "xp:combat": 250}},
+	{"id": "guide_stormcrest", "giver": "guide", "line": "guide_hunt", "title": "Queen of the Canopy", "needs": "region:canopy",
+		"ask": "Up in the treetops over the jungle's heart there's an eyrie of broken branches and bones. Stormcrest nests there, the greatest thing that flies. When she takes to the sky, the storm comes with her. Watch for the crackle before the lightning.",
+		"done": "Stormcrest has fallen! The sky's a little quieter. Her feathers still crackle, look.",
+		"goals": [{"type": "defeat", "id": "stormcrest", "count": 1}], "reward": {"ancient_coin": 40, "xp:combat": 300}},
+	{"id": "guide_cinder", "giver": "guide", "line": "guide_hunt", "title": "The mountain's heart", "needs": "region:volcano",
+		"ask": "In the crater of Embercrack, on the floor beside the lava lake, the Cinderhulk sleeps. An ankylosaur the mountain's fire got into. When it curls into its shell, get back. When the shell cracks, strike.",
+		"done": "The Cinderhulk... and its core, still burning. There's nothing in the wilds you haven't faced now, Keeper.",
+		"goals": [{"type": "defeat", "id": "cinder", "count": 1}], "reward": {"ancient_coin": 50, "xp:combat": 400, "perk:second_wind": 1}},
+
+	# Pass 18: the far ring (a new world's): the jungle, the treetops, the volcano.
+	{"id": "guide_jungle", "giver": "guide", "line": "guide_far", "title": "The Glimmercap", "needs": "region:jungle",
+		"ask": "Past the Pale Lands and the bog the jungle begins: trees so tall you can't see their tops, and the crystal in everything. The beasts there glow with it. Go and see it for yourself.",
+		"done": "You've seen the giants, then. Keep your eyes on the branches over you: things drop out of them.",
+		"goals": [{"type": "region", "id": "jungle", "count": 1}], "reward": {"ancient_coin": 20, "xp:gathering": 80}},
+	{"id": "guide_canopy", "giver": "guide", "line": "guide_far", "title": "Up in the canopy", "needs": "region:jungle",
+		"ask": "The jungle folk had rope ladders up the giants, and a whole country up there in the branches. Find a ladder and climb, or tame a pteranodon and fly.",
+		"done": "The canopy! Bark and branches as wide as roads, and nothing but sky below them. Mind the flyers.",
+		"goals": [{"type": "region", "id": "canopy", "count": 1}], "reward": {"ancient_coin": 25, "vine": 6}},
+	{"id": "guide_volcano", "giver": "guide", "line": "guide_far", "title": "Embercrack Ridge", "needs": "region:volcano",
+		"ask": "Beyond the Pale Lands the ground turns black and the air burns: Embercrack Ridge, the volcano. The heat will cook you if you stay. Find hot springs to cool off, or a charm against it. Bring me obsidian from its rock.",
+		"done": "Obsidian! Keener than steel. At an ember forge you could make armour of it that laughs at the heat.",
+		"goals": [{"type": "region", "id": "volcano", "count": 1}, {"type": "have", "id": "obsidian", "count": 5, "take": false}], "reward": {"ancient_coin": 30, "emberstone": 2}},
 
 	# Tamsin, the Trader: go out, bring things back.
 	{"id": "trader_fossils", "giver": "merchant", "line": "merchant_goods", "title": "Bones of the old world",
@@ -204,6 +235,15 @@ const QUESTS := [
 		"ask": "Beasts get hurt keeping you safe. Bring your hurt companions to me and I'll patch them up. It's a coin each, and worth it.",
 		"done": "There. Good as new. Don't let them bleed out in the wilds.",
 		"goals": [{"type": "deed", "id": "tend", "count": 1}], "reward": {"ancient_coin": 3, "xp:taming": 40}},
+	# Pass 18: a hunter's saddle (Grimjaw's hide), and wings.
+	{"id": "warden_hunter", "giver": "warden", "line": "warden_riding", "title": "A hunter under you", "needs": "milestone:grimjaw",
+		"ask": "With Grimjaw's hide you can make a saddle for a hunter: a raptor, an allosaur, even a rex. Tame one, saddle it, and ride it.",
+		"done": "Now that's a sight: a keeper on a hunter's back. Mind it doesn't eat the neighbours.",
+		"goals": [{"type": "saddle", "count": 2}], "reward": {"bloody_bait": 3, "xp:taming": 150}},
+	{"id": "warden_wings", "giver": "warden", "line": "warden_riding", "title": "Wings", "needs": "region:jungle",
+		"ask": "The pteranodons of the jungle fish the rivers. Win one over with fish from your own hand, saddle it, and it'll carry you into the sky. Space to take off, E over the jungle to rise into the treetops.",
+		"done": "You flew! I watched you go over the trees. I've never been so jealous of anyone.",
+		"goals": [{"type": "tame", "ids": ["ptera"], "count": 1}, {"type": "deed", "id": "fly", "count": 60}], "reward": {"ancient_coin": 20, "xp:taming": 200}},
 
 	# Pass 17: Nell, the Brood-Keeper: eggs, hatchlings and bloodlines.
 	{"id": "breeder_clutch", "giver": "breeder", "line": "breeder_line", "title": "A clutch of your own",

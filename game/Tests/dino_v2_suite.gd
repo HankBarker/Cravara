@@ -156,10 +156,12 @@ func catalogue() -> void:
 		check(DinoArt.hit_frame(key, "tail_swing_far", "side") >= 3, key + " far sweep lands after its wind-up")
 	# Every move's clips exist for its species (and the saddled variant).
 	for sp in DinoMoves.MOVES:
+		# (Pass 18: Stormcrest is drawn as a quetzal: CREATURE.ART_OF.)
+		var art: String = CREATURE.art_species(sp)
 		for m in DinoMoves.MOVES[sp]:
-			check(DinoArt.has_clip(sp, m.clip), sp + " has the " + m.id + " clip")
+			check(DinoArt.has_clip(art, m.clip), sp + " has the " + m.id + " clip")
 			if m.has("windup"):
-				check(DinoArt.has_clip(sp, m.windup), sp + " has the " + m.id + " wind-up")
+				check(DinoArt.has_clip(art, m.windup), sp + " has the " + m.id + " wind-up")
 	for sp in DinoMoves.MOUNT_MOVE:
 		var m: Dictionary = {}
 		for mv in DinoMoves.MOVES[sp]:

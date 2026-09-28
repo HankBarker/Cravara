@@ -1,0 +1,628 @@
+{
+ "idle_side": {
+  "job": "ccb533b8-76c5-4f4c-8dc7-cce910c90864",
+  "tool": "animate_image_pixminimax",
+  "seed": 5966190,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stands still in a relaxed pose; its body rises and falls very slightly and its tail sways a little. It stays in place, facing right.",
+  "frames": 9,
+  "submitted": 1790482677.0221214,
+  "finished": 1790482818.2479908,
+  "score": {
+   "bright": 83,
+   "area": 1.0,
+   "wide": 1.01,
+   "base": 923
+  }
+ },
+ "idle_down": {
+  "job": "21f0649f-3c9f-4a3c-b8c7-aaa433ec874d",
+  "tool": "animate_image_pixminimax",
+  "seed": 14917851,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stands still in a relaxed pose; its body rises and falls very slightly and its tail sways a little. It stays in place, facing the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790482820.4591258,
+  "finished": 1790482923.7749755,
+  "score": {
+   "bright": 38,
+   "area": 1.0,
+   "wide": 1.04,
+   "base": 830
+  }
+ },
+ "idle_up": {
+  "job": "94fff6bb-f993-4770-81ce-d44b2cafdfd4",
+  "tool": "animate_image_pixminimax",
+  "seed": 6067251,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stands still in a relaxed pose; its body rises and falls very slightly and its tail sways a little. It stays in place with its back to the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790482824.3844042,
+  "finished": 1790482933.2666552,
+  "score": {
+   "bright": 2,
+   "area": 1.01,
+   "wide": 1.02,
+   "base": 482
+  }
+ },
+ "walk_side": {
+  "job": "a7897511-5c39-42f7-8635-dacae25f9a85",
+  "tool": "animate_image",
+  "seed": 4239942,
+  "status": "done",
+  "cost": 4.0,
+  "prompt": "Walks in place: its legs step one after the other, its body bobs gently with each step and its tail sways. It stays in place, facing right.",
+  "frames": 9,
+  "submitted": 1790482825.3072517,
+  "finished": 1790482942.6478856,
+  "score": {
+   "bright": 21,
+   "area": 1.01,
+   "wide": 1.11,
+   "base": 923
+  }
+ },
+ "walk_down": {
+  "job": "0cfde6e2-8db3-4bad-963b-27ff17fe8335",
+  "tool": "animate_image",
+  "seed": 4851587,
+  "status": "done",
+  "cost": 4.0,
+  "prompt": "Walks in place: its legs step one after the other, its body bobs gently with each step and its tail sways. It stays in place, facing the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790482826.180691,
+  "finished": 1790482953.4299307,
+  "score": {
+   "bright": 41,
+   "area": 1.06,
+   "wide": 1.08,
+   "base": 830
+  }
+ },
+ "walk_up": {
+  "job": "55c35daa-6ddb-4f49-8c84-3adff94de951",
+  "tool": "animate_image",
+  "seed": 15381821,
+  "status": "done",
+  "cost": 4.0,
+  "prompt": "Walks in place: its legs step one after the other, its body bobs gently with each step and its tail sways. It stays in place with its back to the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790482827.1362774,
+  "finished": 1790482963.5798628,
+  "score": {
+   "bright": 0,
+   "area": 1.01,
+   "wide": 1.03,
+   "base": 482
+  }
+ },
+ "run_side": {
+  "job": "963a74e9-725b-48e8-a157-ac9de13084d8",
+  "tool": "animate_image_pixminimax",
+  "seed": 8459133,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Runs in place with long fast strides, its body leaning forward and its tail held straight out behind. It stays in place, facing right.",
+  "frames": 9,
+  "submitted": 1790482880.7292035,
+  "finished": 1790482973.770169,
+  "score": {
+   "bright": 59,
+   "area": 1.03,
+   "wide": 1.43,
+   "base": 923
+  }
+ },
+ "run_down": {
+  "job": "19fce3ea-42a0-4382-854b-862846fab6ad",
+  "tool": "animate_image_pixminimax",
+  "seed": 14489925,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Runs in place with long fast strides, its body leaning forward and its tail held straight out behind. It stays in place, facing the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790482881.9719641,
+  "finished": 1790482985.1895785,
+  "score": {
+   "bright": 39,
+   "area": 1.04,
+   "wide": 1.52,
+   "base": 830
+  }
+ },
+ "run_up": {
+  "job": "c13d7508-727d-46f2-bede-83f3332dee1f",
+  "tool": "animate_image_pixminimax",
+  "seed": 11122065,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Runs in place with long fast strides, its body leaning forward and its tail held straight out behind. It stays in place with its back to the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790482987.2447524,
+  "finished": 1790483212.2541392,
+  "score": {
+   "bright": 43,
+   "area": 1.0,
+   "wide": 1.58,
+   "base": 482
+  }
+ },
+ "roar_side": {
+  "job": "b2c4832f-c1ab-4234-8197-40f46cf56c83",
+  "tool": "animate_image_pixminimax",
+  "seed": 12100054,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Raises its long clawed arms high and throws its head back in a shriek, then lowers them. It stays in place, facing right.",
+  "frames": 13,
+  "submitted": 1790482992.9953334,
+  "finished": 1790483116.517249,
+  "score": {
+   "bright": 83,
+   "area": 1.19,
+   "wide": 1.52,
+   "base": 923
+  }
+ },
+ "hurt_side": {
+  "job": "ae6decfd-8aba-4f35-8919-773af3dc9817",
+  "tool": "animate_image_pixminimax",
+  "seed": 1778712,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Flinches: jerks its head and body back, then returns to its stance. It stays in place, facing right.",
+  "frames": 5,
+  "submitted": 1790482997.7053964,
+  "finished": 1790483160.012403,
+  "score": {
+   "bright": 34,
+   "area": 1.02,
+   "wide": 1.23,
+   "base": 923
+  }
+ },
+ "_history": {
+  "slash_up": [
+   {
+    "job": "c312e9e3-89ca-448f-8b1e-8d2f600e77aa",
+    "tool": "animate_image_pixminimax",
+    "seed": 11386661,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Raises its long scythe claws high, then slashes them down in a wide sweep, then settles back into its stance. It stays in place with its back to the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790482990.414569,
+    "finished": 1790483055.9515634,
+    "score": {
+     "bright": 1584,
+     "area": 2.29,
+     "wide": 2.68,
+     "base": 482
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\reaper\\slash_up@0"
+   },
+   {
+    "job": "fdf99785-5487-4e27-9eb9-ef6492f15b9b",
+    "tool": "animate_image_pixminimax",
+    "seed": 11387661,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Raises its long scythe claws high, then slashes them down in a wide sweep, then settles back into its stance. It stays in place with its back to the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790483161.5718665,
+    "finished": 1790483250.3153775,
+    "score": {
+     "bright": 2054,
+     "area": 2.36,
+     "wide": 2.78,
+     "base": 482
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\reaper\\slash_up@1"
+   },
+   {
+    "job": "4ce173e8-2283-4863-9d19-1643df29dca0",
+    "tool": "animate_image_pixminimax",
+    "seed": 11388661,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Raises its long scythe claws high, then slashes them down in a wide sweep, then settles back into its stance. It stays in place with its back to the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790483365.2293355,
+    "finished": 1790483493.1182394,
+    "score": {
+     "bright": 1562,
+     "area": 1.94,
+     "wide": 2.95,
+     "base": 482
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\reaper\\slash_up@2"
+   }
+  ],
+  "slash_side": [
+   {
+    "job": "da618527-af33-4f91-912e-1817c262a416",
+    "tool": "animate_image_pixminimax",
+    "seed": 9898573,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Raises its long scythe claws high, then slashes them down in a wide sweep, then settles back into its stance. It stays in place, facing right.",
+    "frames": 9,
+    "submitted": 1790482988.7197497,
+    "finished": 1790483091.9638116,
+    "score": {
+     "bright": 1923,
+     "area": 1.55,
+     "wide": 1.54,
+     "base": 923
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\reaper\\slash_side@0"
+   },
+   {
+    "job": "183b4dfd-6d75-4067-8ab6-6a90d07d3c6d",
+    "tool": "animate_image_pixminimax",
+    "seed": 9899573,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Raises its long scythe claws high, then slashes them down in a wide sweep, then settles back into its stance. It stays in place, facing right.",
+    "frames": 9,
+    "submitted": 1790483217.8114762,
+    "finished": 1790483352.7313821,
+    "score": {
+     "bright": 1242,
+     "area": 1.53,
+     "wide": 1.57,
+     "base": 923
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\reaper\\slash_side@1"
+   },
+   {
+    "job": "0e0b004f-fff8-4f49-8571-a64221a91827",
+    "tool": "animate_image_pixminimax",
+    "seed": 9900573,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Raises its long scythe claws high, then slashes them down in a wide sweep, then settles back into its stance. It stays in place, facing right.",
+    "frames": 9,
+    "submitted": 1790483393.5464816,
+    "finished": 1790483483.5579147,
+    "score": {
+     "bright": 1232,
+     "area": 1.59,
+     "wide": 1.56,
+     "base": 923
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\reaper\\slash_side@2"
+   }
+  ],
+  "slash_down": [
+   {
+    "job": "39278c59-4d4a-4c30-a5c2-74ab88fec284",
+    "tool": "animate_image_pixminimax",
+    "seed": 5393622,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Raises its long scythe claws high, then slashes them down in a wide sweep, then settles back into its stance. It stays in place, facing the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790482989.634504,
+    "finished": 1790483103.103111,
+    "score": {
+     "bright": 1457,
+     "area": 2.66,
+     "wide": 2.45,
+     "base": 830
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\reaper\\slash_down@0"
+   },
+   {
+    "job": "61c31db2-f094-471a-a193-f1c02754b103",
+    "tool": "animate_image_pixminimax",
+    "seed": 5394622,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Raises its long scythe claws high, then slashes them down in a wide sweep, then settles back into its stance. It stays in place, facing the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790483218.748302,
+    "finished": 1790483362.7771456,
+    "score": {
+     "bright": 3020,
+     "area": 3.16,
+     "wide": 2.56,
+     "base": 830
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\reaper\\slash_down@1"
+   },
+   {
+    "job": "a66a5ba9-beb4-4b41-91ad-ef3c3fbc533a",
+    "tool": "animate_image_pixminimax",
+    "seed": 5395622,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Raises its long scythe claws high, then slashes them down in a wide sweep, then settles back into its stance. It stays in place, facing the viewer the whole time.",
+    "frames": 9,
+    "submitted": 1790483453.9058976,
+    "finished": 1790483576.118885,
+    "score": {
+     "bright": 4127,
+     "area": 2.53,
+     "wide": 2.54,
+     "base": 830
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\reaper\\slash_down@2"
+   }
+  ],
+  "roar_down": [
+   {
+    "job": "63490ec1-041d-455e-9d34-3324db92a23c",
+    "tool": "animate_image_pixminimax",
+    "seed": 2805969,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Raises its long clawed arms high and throws its head back in a shriek, then lowers them. It stays in place, facing the viewer the whole time.",
+    "frames": 13,
+    "submitted": 1790482994.4445314,
+    "finished": 1790483131.6438112,
+    "score": {
+     "bright": 144,
+     "area": 1.48,
+     "wide": 1.87,
+     "base": 830
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\reaper\\roar_down@0"
+   },
+   {
+    "job": "ccb53e3f-4a7b-45c1-80f5-08797dde67b4",
+    "tool": "animate_image_pixminimax",
+    "seed": 2806969,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Raises its long clawed arms high and throws its head back in a shriek, then lowers them. It stays in place, facing the viewer the whole time.",
+    "frames": 13,
+    "submitted": 1790483316.8172834,
+    "finished": 1790483451.697819,
+    "score": {
+     "bright": 236,
+     "area": 1.47,
+     "wide": 2.21,
+     "base": 830
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\reaper\\roar_down@1"
+   },
+   {
+    "job": "e32e52fd-3990-4df4-966a-eb236283721b",
+    "tool": "animate_image_pixminimax",
+    "seed": 2807969,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Raises its long clawed arms high and throws its head back in a shriek, then lowers them. It stays in place, facing the viewer the whole time.",
+    "frames": 13,
+    "submitted": 1790483544.3104255,
+    "finished": 1790483659.220276,
+    "score": {
+     "bright": 403,
+     "area": 1.51,
+     "wide": 2.08,
+     "base": 830
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\reaper\\roar_down@2"
+   }
+  ],
+  "roar_up": [
+   {
+    "job": "15dd26f6-6133-49e0-a456-3ba9d79163ab",
+    "tool": "animate_image_pixminimax",
+    "seed": 7642298,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Raises its long clawed arms high and throws its head back in a shriek, then lowers them. It stays in place with its back to the viewer the whole time.",
+    "frames": 13,
+    "submitted": 1790482995.1894758,
+    "finished": 1790483152.6679645,
+    "score": {
+     "bright": 354,
+     "area": 1.58,
+     "wide": 2.34,
+     "base": 482
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\reaper\\roar_up@0"
+   },
+   {
+    "job": "6680ea95-a61b-4437-a480-af4da1232397",
+    "tool": "animate_image_pixminimax",
+    "seed": 7643298,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Raises its long clawed arms high and throws its head back in a shriek, then lowers them. It stays in place with its back to the viewer the whole time.",
+    "frames": 13,
+    "submitted": 1790483317.6395707,
+    "finished": 1790483541.378031,
+    "score": {
+     "bright": 355,
+     "area": 1.52,
+     "wide": 2.59,
+     "base": 482
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\reaper\\roar_up@1"
+   },
+   {
+    "job": "66967ecb-55c6-418f-91be-c2afb67e39e8",
+    "tool": "animate_image_pixminimax",
+    "seed": 7644298,
+    "status": "done",
+    "cost": 1.0,
+    "prompt": "Raises its long clawed arms high and throws its head back in a shriek, then lowers them. It stays in place with its back to the viewer the whole time.",
+    "frames": 13,
+    "submitted": 1790483578.4924624,
+    "finished": 1790483717.6408384,
+    "score": {
+     "bright": 372,
+     "area": 1.6,
+     "wide": 2.51,
+     "base": 482
+    },
+    "raw": "C:\\Cravera\\art\\dino-v2\\raw\\reaper\\roar_up@2"
+   }
+  ]
+ },
+ "hurt_down": {
+  "job": "71edb52e-c671-4fcd-8363-019ee8e90d00",
+  "tool": "animate_image_pixminimax",
+  "seed": 16331385,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Flinches: jerks its head and body back, then returns to its stance. It stays in place, facing the viewer the whole time.",
+  "frames": 5,
+  "submitted": 1790483163.4688969,
+  "finished": 1790483255.7745442,
+  "score": {
+   "bright": 107,
+   "area": 1.08,
+   "wide": 1.18,
+   "base": 830
+  }
+ },
+ "hurt_up": {
+  "job": "6ce7a174-7a17-49e7-954d-418c7dd62736",
+  "tool": "animate_image_pixminimax",
+  "seed": 10185789,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Flinches: jerks its head and body back, then returns to its stance. It stays in place with its back to the viewer the whole time.",
+  "frames": 5,
+  "submitted": 1790483164.9786294,
+  "finished": 1790483261.4749007,
+  "score": {
+   "bright": 13,
+   "area": 1.03,
+   "wide": 1.41,
+   "base": 482
+  }
+ },
+ "death_side": {
+  "job": "c8b8b485-71f2-4f68-b88e-d8d58f26d7b4",
+  "tool": "animate_image_pixminimax",
+  "seed": 6811769,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stumbles, its legs give way and it falls over onto its side, then lies still. It stays in place, facing right.",
+  "frames": 13,
+  "submitted": 1790483166.2818406,
+  "finished": 1790483274.3770967,
+  "score": {
+   "bright": 39,
+   "area": 1.02,
+   "wide": 1.54,
+   "base": 923
+  }
+ },
+ "death_down": {
+  "job": "188e47e8-c502-4adb-b2fd-cead34d9d82c",
+  "tool": "animate_image_pixminimax",
+  "seed": 15198599,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stumbles, its legs give way and it falls over onto its side, then lies still. It stays in place, facing the viewer the whole time.",
+  "frames": 13,
+  "submitted": 1790483167.1577528,
+  "finished": 1790483289.729824,
+  "score": {
+   "bright": 0,
+   "area": 1.11,
+   "wide": 2.49,
+   "base": 830
+  }
+ },
+ "death_up": {
+  "job": "508c1101-ef3a-46ad-8493-ca46959cba48",
+  "tool": "animate_image_pixminimax",
+  "seed": 10631787,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Stumbles, its legs give way and it falls over onto its side, then lies still. It stays in place with its back to the viewer the whole time.",
+  "frames": 13,
+  "submitted": 1790483167.8954477,
+  "finished": 1790483314.4662364,
+  "score": {
+   "bright": 67,
+   "area": 1.08,
+   "wide": 2.68,
+   "base": 482
+  }
+ },
+ "slash_side": {
+  "job": "7f59978c-d8cc-493e-9734-317d2b27c07a",
+  "tool": "animate_image_pixminimax",
+  "seed": 9901573,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Raises its long scythe claws high, then slashes them down in a wide sweep, then settles back into its stance. It stays in place, facing right.",
+  "frames": 9,
+  "submitted": 1790483542.5020926,
+  "finished": 1790483643.3707685,
+  "score": {
+   "bright": 2235,
+   "area": 1.6,
+   "wide": 1.59,
+   "base": 923
+  },
+  "kept_attempt": "C:\\Cravera\\art\\dino-v2\\raw\\reaper\\slash_side@1"
+ },
+ "slash_up": {
+  "job": "bedd5170-b388-46e2-a81c-cd6903d7a7bc",
+  "tool": "animate_image_pixminimax",
+  "seed": 11389661,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Raises its long scythe claws high, then slashes them down in a wide sweep, then settles back into its stance. It stays in place with its back to the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790483543.3168879,
+  "finished": 1790483785.0733085,
+  "score": {
+   "bright": 983,
+   "area": 1.84,
+   "wide": 2.98,
+   "base": 482
+  },
+  "method": "lunge_front.py (slash from the up drawing)"
+ },
+ "slash_down": {
+  "job": "07af3c10-4a2d-4ad1-8a8d-f278c61db685",
+  "tool": "animate_image_pixminimax",
+  "seed": 5396622,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Raises its long scythe claws high, then slashes them down in a wide sweep, then settles back into its stance. It stays in place, facing the viewer the whole time.",
+  "frames": 9,
+  "submitted": 1790483611.498511,
+  "method": "lunge_front.py (slash from the down drawing)",
+  "finished": 1790483785.0733027
+ },
+ "roar_down": {
+  "job": "1a2d0ade-c96f-4abe-b9c9-e17e6fa28a51",
+  "tool": "animate_image_pixminimax",
+  "seed": 2808969,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Raises its long clawed arms high and throws its head back in a shriek, then lowers them. It stays in place, facing the viewer the whole time.",
+  "frames": 13,
+  "submitted": 1790483683.0857446,
+  "method": "lunge_front.py (roar from the down drawing)",
+  "finished": 1790483785.0733101
+ },
+ "roar_up": {
+  "job": "c318f3a2-b752-4a4d-b492-d8a1926f86c8",
+  "tool": "animate_image_pixminimax",
+  "seed": 7645298,
+  "status": "done",
+  "cost": 1.0,
+  "prompt": "Raises its long clawed arms high and throws its head back in a shriek, then lowers them. It stays in place with its back to the viewer the whole time.",
+  "frames": 13,
+  "submitted": 1790483740.8749545,
+  "method": "lunge_front.py (roar from the up drawing)",
+  "finished": 1790483785.073311
+ }
+}

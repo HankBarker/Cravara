@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="Item" load_steps=2 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "amber_beetle"
+name = "Amber Beetle"
+description = "A beetle caught in amber a long time ago."
+icon_generator = "forest"
+max_stack = 1
+rarity = "rare"
+equipment_slot = "trinket"
+effects = {
+"regen": 0.15,
+"luck": 0.08
+}

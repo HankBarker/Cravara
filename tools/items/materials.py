@@ -22,6 +22,26 @@ ITEMS = {
     "sandstone_floor": ("Sandstone Floor", 99, True, "Sandstone flags. Place on the world grid; houses need a floor."),
     "crystal_wall": ("Crystal-set Wall", 99, True, "Slate bound with Sky-Fang crystal: the strongest wall there is. Place on the world grid."),
     "crystal_floor": ("Crystal-set Floor", 99, True, "Slate flags with crystal in the seams. Place on the world grid; houses need a floor."),
+    # Pass 18: the far ring's and the treetops' stuff.
+    "vine": ("Jungle Vine", 99, False, "Tough, springy vine pulled down from the jungle's trees. Good as rope."),
+    "glimmer_shard": ("Glimmer Shard", 99, False, "Sky-Fang crystal grown green and bright in the jungle. It glows in the dark."),
+    "orchid": ("Canopy Orchid", 30, False, "A pale orchid from the treetops. Healers and dyers want it."),
+    "amber": ("Amber", 40, False, "Golden resin from the giants' bark, hard as stone. Some pieces have things caught inside."),
+    "charcoal": ("Charcoal", 99, False, "A burnt tree's heart. It burns hot, and blasting powder needs it."),
+    "emberstone": ("Emberstone", 40, False, "The volcano's own ore: rock that never quite cools. The best blades are forged from it."),
+    "sulfur": ("Sulfur", 60, False, "Yellow crust from the volcano's vents. It stinks, and it makes a bomb twice the bomb."),
+    "obsidian": ("Obsidian", 60, False, "Black volcanic glass. Keener than any stone, and it laughs at the heat."),
+    # Pass 18: the new beasts' spoils and the bosses' trophies (their armour,
+    # weapons and trinkets are made of these), and the volcano's forge.
+    "thyla_pelt": ("Treeshadow Pelt", 40, False, "A thylacoleo's striped pelt, soft and silent among the leaves."),
+    "thyla_claw": ("Treeshadow Claw", 40, False, "The hooked thumb-claw a thylacoleo climbs and kills with."),
+    "wing_leather": ("Wing Leather", 40, False, "Thin, tough skin from a pteranodon's wing. It holds the wind."),
+    "ptera_crest": ("Pteranodon Crest", 20, False, "A long bony crest, light as a reed and hard as horn."),
+    "dimorph_tooth": ("Dimorph Tooth", 60, False, "A dimorphodon's needle tooth. They have far too many."),
+    "reaper_claw": ("Reaper's Claw", 10, False, "A scythe of a claw from the Pale Reaper. Frost clings to it, even in the sun."),
+    "storm_feather": ("Storm Feather", 20, False, "A great grey feather from Stormcrest's wing. It crackles when you stroke it."),
+    "molten_core": ("Molten Core", 5, False, "The Cinderhulk's burning heart: heavy as iron, and never cool."),
+    "ember_forge": ("Ember Forge", 3, True, "A forge of black stone that burns emberstone. Stand by it to forge obsidian and the fire's own gear. Place on the world grid."),
 }
 
 

@@ -69,7 +69,8 @@ const PER_LEVEL := {
 const KILL_XP := {"compy": 3, "dodo": 4, "lystro": 5, "proto": 10, "raptor": 12, "deino": 18,
 	"parasaur": 20, "dimetrodon": 26, "trike": 30, "stego": 30, "utah": 38, "allo": 45,
 	"longneck": 45, "anky": 55, "sucho": 60, "carno": 80, "rex": 110, "yuty": 130, "spino": 150,
-	"alpha": 300, "ossuar": 500}
+	"alpha": 300, "ossuar": 500, "grimjaw": 450, "reaper": 550, "stormcrest": 650, "cinder": 800, "quetzal": 120,
+	"dimorph": 6, "ptera": 40, "thyla": 55}
 ## A blow that lands teaches a little of its own (damage x this, at most HIT_XP_MAX).
 const HIT_XP := 0.05
 const HIT_XP_MAX := 1.5
@@ -81,7 +82,7 @@ const FIGURES: Dictionary = STARS.FIGURES
 
 ## The lore each beast needs before it will take the keeper (0: none).
 const LORE := {"raptor": 1, "deino": 1, "allo": 2, "carno": 2, "utah": 2, "sucho": 2, "yuty": 2,
-	"rex": 3, "spino": 3}
+	"rex": 3, "spino": 3, "thyla": 2, "ptera": 2}
 const LORE_NAMES := ["", "Pack-lore", "Hunter-lore", "Apex-lore"]
 
 ## XP for what the keeper does (see gain calls around the game).

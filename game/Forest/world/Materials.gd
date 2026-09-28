@@ -15,6 +15,10 @@ const NATIVE := {
 	"pale_hills": {"tree": ["palewood", 2], "pine": ["palewood", 2], "birch": ["palewood", 2], "dead_tree": ["palewood", 1]},
 	"dunes": {"rock": ["sandstone", 2], "wall": ["sandstone", 1]},
 	"bonelands": {"rock": ["sandstone", 2], "wall": ["sandstone", 1]},
+	# Pass 18: the jungle's crystal ore grows glimmer; the volcano's black rock
+	# gives obsidian and its crystal ore emberstone.
+	"jungle": {"ore": ["glimmer_shard", 1]},
+	"volcano": {"rock": ["obsidian", 2], "wall": ["obsidian", 1], "ore": ["emberstone", 1], "basalt": ["obsidian", 1]},
 }
 
 ## The pieces: kind -> [material, "wall"/"floor", strength (blows to break), stone-built].

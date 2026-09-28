@@ -61,10 +61,35 @@ SHAPES = {
     ("hurt", "down"): ([1.0, 0.94, 0.92, 0.96, 1.0], [1.0, 1.02, 1.02, 1.01, 1.0]),
     ("death", "down"): ([1.0, 0.98, 0.95, 0.9, 0.84, 0.76, 0.68, 0.6, 0.54, 0.5, 0.48, 0.47, 0.47],
                         [1.0, 1.0, 1.01, 1.02, 1.04, 1.06, 1.08, 1.1, 1.12, 1.13, 1.14, 1.14, 1.14]),
+    # Pass 18: the Reedstalker's threat (its generated front one stood it up
+    # like a man with its arms thrown up; from behind it reared its tail into
+    # a post). From the front it rears, then thrusts its head at you and holds
+    # the hiss; from behind it rears up and puffs out, then settles.
+    ("threat", "down"): ([1.0, 1.04, 1.08, 1.1, 0.95, 0.91, 0.91, 0.95, 1.0],
+                         [1.0, 1.0, 1.02, 1.03, 1.05, 1.07, 1.07, 1.03, 1.0]),
+    ("threat", "up"): ([1.0, 1.03, 1.06, 1.09, 1.1, 1.1, 1.08, 1.04, 1.0],
+                       [1.0, 1.01, 1.02, 1.03, 1.05, 1.05, 1.03, 1.01, 1.0]),
+    # The Reedstalker's slash from the front and behind (the generated ones
+    # threw its arms out like a man's, or shot one arm out sideways): a rear
+    # and a snap, like a bite; contact on 5.
+    ("slash", "down"): ([1.0, 1.03, 1.06, 1.06, 0.95, 0.9, 0.93, 0.97, 1.0],
+                        [1.0, 1.0, 1.0, 1.0, 1.03, 1.05, 1.03, 1.01, 1.0]),
+    ("slash", "up"): ([1.0, 0.97, 0.94, 0.94, 1.05, 1.08, 1.05, 1.02, 1.0],
+                      [1.0, 1.0, 1.0, 1.0, 0.98, 0.97, 0.98, 0.99, 1.0]),
+    # Its pounce (the generated ones stood it up tall like a man): a crouch,
+    # the take-off on 4, the leap (bigger toward the viewer, smaller away; the
+    # game's hop lifts the body), the strike on 9, and the recovery.
+    ("pounce", "down"): ([1.0, 0.96, 0.92, 0.9, 1.0, 1.04, 1.07, 1.09, 1.1, 0.9, 0.94, 0.97, 1.0],
+                         [1.0, 1.01, 1.03, 1.04, 1.0, 1.03, 1.05, 1.07, 1.08, 1.1, 1.06, 1.03, 1.0]),
+    ("pounce", "up"): ([1.0, 0.96, 0.92, 0.9, 1.0, 1.03, 1.05, 1.06, 1.06, 0.93, 0.96, 0.98, 1.0],
+                       [1.0, 1.01, 1.03, 1.04, 1.0, 0.99, 0.98, 0.97, 0.97, 1.02, 1.01, 1.0, 1.0]),
+    # Breathing from behind, like the front idle.
+    ("idle", "up"): ([1.0, 1.02, 1.04, 1.045, 1.04, 1.02, 1.0, 0.99],
+                     [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]),
     # A flinch side-on: the body drops into its hips and comes back.
     ("hurt", "side"): ([1.0, 0.94, 0.92, 0.96, 1.0], [1.0, 1.0, 1.0, 1.0, 1.0]),
 }
-CONTACT = {"bite": 5, "chomp": 7, "eat": 0, "roar": 0, "hurt": 0, "idle": 0, "stomp": 8, "death": 0}
+CONTACT = {"bite": 5, "chomp": 7, "slash": 5, "pounce": 9, "eat": 0, "roar": 0, "threat": 0, "hurt": 0, "idle": 0, "stomp": 8, "death": 0}
 
 
 def build(key, clip, view):
@@ -115,7 +140,7 @@ def write(key, clip, view, frames):
     led[name] = entry
     gen.save_ledger(key, led)
     # The contact frame for this facing (attacks only), as export.py reads it.
-    if CONTACT.get(clip, 0) > 0 and clip in ("bite", "chomp", "stomp"):
+    if CONTACT.get(clip, 0) > 0 and clip in ("bite", "chomp", "stomp", "slash"):
         import json
         hits_path = os.path.join(HERE, "hits.json")
         hits = json.load(open(hits_path, encoding="utf-8")) if os.path.exists(hits_path) else {}

@@ -43,7 +43,12 @@ FIXES = {
                  ["tail_side.py", "{k}", "--far"]],
     "parasaur": [["lunge_front.py", "{k}", c] for c in ("idle", "eat", "stomp", "roar", "hurt", "death")]
     + [["walk_front.py", "{k}"], ["walk_front.py", "{k}", "--run"]],
-    "deino": [["cap_clamp.py", "{k}", "walk_down", "run_down", "--tol", "1"]],
+    # Pass 18: every front and back clip but the flinch, the fall and the
+    # glance, rebuilt from the drawings (Hank: "when it roars and when it...
+    # move[s] down or straight up... they just look a little wonky").
+    "deino": [["walk_front.py", "{k}"], ["walk_front.py", "{k}", "--view", "up"],
+              ["walk_front.py", "{k}", "--run"], ["walk_front.py", "{k}", "--run", "--view", "up"]]
+    + [["lunge_front.py", "{k}", c, "--view", v] for c in ("idle", "threat", "slash", "pounce") for v in ("down", "up")],
     "sucho": [["hold", "bite_down", "5,6", "7"],
               ["lift_back.py", "{k}", "roar", "--hip", "91", "--lift", "4"]],
     "spino": [["lift_back.py", "{k}", "bite", "--hip", "120", "--lift", "5"]],
@@ -59,7 +64,7 @@ CRYSTAL_EXTRA = {
     "stego": [["keep", "tail_swing_up"], ["tail_front.py", "{k}", "--view", "up"], ["copy", "tail_swing_up", "threat_up"]],
     "parasaur": [["keep", "roar_up"], ["lunge_front.py", "{k}", "roar", "--view", "up"]],
     "utah": [["keep", "walk_down"], ["keep", "run_down"], ["walk_front.py", "{k}"], ["walk_front.py", "{k}", "--run"]],
-    "deino": [["keep", "slash_up"], ["lunge_front.py", "{k}", "bite", "--view", "up"], ["move", "bite_up", "slash_up"]],
+    "deino": [["keep", c + "_" + v] for c in ("walk", "run", "idle", "threat", "slash", "pounce") for v in ("down", "up")],
     # The Suchomimus' front and back actions reared its snout and tail into spikes and bars.
     "sucho": [["keep", "bite_down"], ["keep", "bite_up"], ["keep", "chomp_down"], ["keep", "eat_down"],
               ["keep", "eat_up"], ["keep", "hurt_down"], ["keep", "run_up"],

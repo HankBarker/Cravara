@@ -28,21 +28,27 @@ func make_creature(kind: String):
 func verify():
 	for kind in CREATURE.SPECIES:
 		var c = make_creature(kind)
+		# Pass 18: a flyer is checked on its feet (a pteranodon lands); one that
+		# never lands (the dimorphodons) has its wings' clips instead.
+		var grounded: bool = c.flight == null or str(c.flight.spec.ground) != ""
+		if c.flight != null and c.flight.airborne and grounded: c.flight.land()
+		var gait := "walk" if grounded else "fly"
 		# Dinosaur v2: every body clip and every species attack in all three facings.
-		var needed: Array = ["idle","walk","hurt","death"]
+		var needed: Array = ["idle","walk","hurt","death"] if grounded else ["fly","hurt","death"]
 		for m in c.moves.moves():
 			needed.append(m.clip)
 			if m.has("windup"): needed.append(m.windup)
 		# A side-on species (the compy, like the babies) is only ever drawn side-on.
-		var facings: Array = ["side","down","up"] if preload("res://Forest/creatures/DinoArt.gd").has_view(c.art_key, "walk", "down") else ["side"]
+		var facings: Array = ["side","down","up"] if preload("res://Forest/creatures/DinoArt.gd").has_view(c.art_key, gait, "down") else ["side"]
 		for clip in needed:
 			for direction in facings:
 				check(c._sprite.sprite_frames.has_animation(clip+"_"+direction), kind+" has "+clip+"_"+direction)
 		for direction in facings:
-			check(c._sprite.sprite_frames.get_frame_count("walk_"+direction)==8 and c._sprite.sprite_frames.get_animation_loop("walk_"+direction), kind+" walk loops 8 frames "+direction)
+			check(c._sprite.sprite_frames.get_frame_count(gait+"_"+direction)==8 and c._sprite.sprite_frames.get_animation_loop(gait+"_"+direction), kind+" "+gait+" loops 8 frames "+direction)
 			check(not c._sprite.sprite_frames.get_animation_loop("death_"+direction), kind+" death is one-shot "+direction)
 		check(not c.interact("wood").consume, kind+" rejects wrong food without consuming")
-		if not c.stats.predator:
+		# (Pass 18: the wild quetzal is a plant-eater that will never be tamed.)
+		if not c.stats.predator and int(c.stats.feeds) > 0:
 			# Pass 13: each beast has its own way (TamingWays); the hand-fed
 			# ones are fed here, the rest are won in the pass-13 suite.
 			if preload("res://Forest/creatures/TamingWays.gd").way(kind) in ["hand", "calm"]:

@@ -1,0 +1,97 @@
+{
+ "key": "thyla",
+ "species": "thyla",
+ "canvas": [
+  104,
+  88
+ ],
+ "ground": 81,
+ "origin": {
+  "side": [
+   30,
+   38
+  ],
+  "down": [
+   30,
+   38
+  ],
+  "up": [
+   30,
+   38
+  ]
+ },
+ "clips": {
+  "idle": {
+   "fps": 6,
+   "loop": true,
+   "frames": 8
+  },
+  "walk": {
+   "fps": 9,
+   "loop": true,
+   "frames": 8
+  },
+  "run": {
+   "fps": 13,
+   "loop": true,
+   "frames": 8
+  },
+  "pounce": {
+   "fps": 14,
+   "loop": false,
+   "frames": 13,
+   "hit": 8,
+   "hit_view": {
+    "side": 8,
+    "down": 9,
+    "up": 9
+   },
+   "takeoff": 3,
+   "takeoff_view": {
+    "side": 3,
+    "down": 4,
+    "up": 4
+   }
+  },
+  "maul": {
+   "fps": 14,
+   "loop": false,
+   "frames": 9
+  },
+  "roar": {
+   "fps": 10,
+   "loop": false,
+   "frames": 13
+  },
+  "stalk": {
+   "fps": 6,
+   "loop": true,
+   "frames": 8
+  },
+  "look": {
+   "fps": 7,
+   "loop": false,
+   "frames": 13
+  },
+  "rest": {
+   "fps": 6,
+   "loop": false,
+   "frames": 13
+  },
+  "eat": {
+   "fps": 8,
+   "loop": false,
+   "frames": 13
+  },
+  "hurt": {
+   "fps": 12,
+   "loop": false,
+   "frames": 5
+  },
+  "death": {
+   "fps": 10,
+   "loop": false,
+   "frames": 13
+  }
+ }
+}

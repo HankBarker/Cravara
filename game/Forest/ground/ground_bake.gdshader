@@ -248,7 +248,11 @@ void fragment() {
 			s = 1;
 		}
 		bool tinted = false;
-		vec4 st = k == K_STONE ? vec4(0.0) : stamp_at(p, k, tinted);
+		// Pass 18: no grass tufts or flowers on the volcano's cinder, nor any
+		// marks on the treetops' bark (its grain is its own).
+		int land_k = land_of(ivec2(floor(vec2(p) / 16.0))).x;
+		bool bare = land_k == 8 || (land_k == 7 && (k == K_GRASS || k == K_MOSS));
+		vec4 st = (k == K_STONE || bare) ? vec4(0.0) : stamp_at(p, k, tinted);
 		vec3 col;
 		if (k == K_STONE) {
 			col = slab_gap ? GRASS[base_shade(p, K_GRASS)] : (s < 0 ? MOSS[1] : STONE[clamp(s, 0, 4)]);
@@ -316,6 +320,70 @@ void fragment() {
 			vec3 wet = (k == K_DIRT || k == K_SOIL) ? mix(vec3(0.12, 0.1, 0.08), vec3(0.3, 0.25, 0.18), smoothstep(0.15, 0.6, lb))
 				: mix(col, vec3(lb) * vec3(0.86, 1.0, 0.7), 0.35) * 0.82;
 			col = mix(col, wet, fb);
+		}
+		// Pass 18: the jungle floor (land 6): deep shade under the canopy, the
+		// litter of fallen leaves, sunflecks where light gets through.
+		if (land.x == 6) {
+			float fj = clamp(float(land.y) / 10.0 + (bayer4(p) - 0.5) * 0.12, 0.0, 1.0);
+			float lj = dot(col, vec3(0.3, 0.59, 0.11));
+			vec3 jc;
+			if (k == K_GRASS || k == K_MOSS) {
+				jc = mix(vec3(0.05, 0.13, 0.08), vec3(0.24, 0.42, 0.2), smoothstep(0.12, 0.7, lj));
+				if (rnd(p, 6061u) < 0.05) jc = mix(vec3(0.36, 0.22, 0.1), vec3(0.55, 0.36, 0.14), rnd(p, 6062u));
+			} else {
+				jc = mix(vec3(0.1, 0.07, 0.05), vec3(0.34, 0.25, 0.16), smoothstep(0.12, 0.7, lj));
+			}
+			if (fbm(vec2(p) / 34.0, 6063u) > 0.7 + (bayer4(p) - 0.5) * 0.06) jc = jc * 1.35 + vec3(0.05, 0.07, 0.01);
+			col = mix(col, jc, fj);
+		}
+		// Pass 18: the volcano (land 7): cinder and ash, black glass round the
+		// lava, cracks glowing with the heat below, the lava's burnt bank.
+		if (land.x == 7) {
+			float lv = dot(col, vec3(0.3, 0.59, 0.11));
+			vec3 vc;
+			if (k == K_STONE) {
+				vc = mix(vec3(0.03, 0.03, 0.04), vec3(0.16, 0.15, 0.19), smoothstep(0.2, 0.7, lv));
+				if (rnd(p, 7071u) < 0.04) vc = vec3(0.42, 0.4, 0.5);
+			} else if (k == K_SAND || k == K_MOSS) {
+				vc = mix(vec3(0.27, 0.25, 0.24), vec3(0.58, 0.55, 0.52), smoothstep(0.1, 0.8, lv));
+			} else if (k == K_DIRT || k == K_SOIL) {
+				vc = mix(vec3(0.05, 0.045, 0.05), vec3(0.2, 0.18, 0.19), smoothstep(0.1, 0.8, lv));
+			} else {
+				vc = mix(vec3(0.1, 0.09, 0.09), vec3(0.36, 0.32, 0.3), smoothstep(0.1, 0.8, lv));
+			}
+			if (rnd(p, 7072u) < 0.015) vc *= 0.6;
+			// (Only in cracked patches here and there, thicker toward the lava.)
+			float zone = fbm(vec2(p) / 70.0, 7075u) + (land.y < 6 ? 0.0 : 0.0);
+			float cr = abs(vnoise(vec2(p) / 13.0, 7073u) - 0.5);
+			if (zone > 0.64 && cr < 0.011 && k != K_STONE) vc = mix(vec3(0.85, 0.28, 0.06), vec3(1.0, 0.62, 0.2), rnd(p, 7074u));
+			else if (zone > 0.58 && cr < 0.006 && k != K_STONE) vc = vec3(0.5, 0.14, 0.05);
+			if (dn == K_WATER) {
+				vc = vec3(0.32, 0.08, 0.04);
+			} else if (up == K_WATER || lf == K_WATER || rt == K_WATER) {
+				vc = vec3(0.45, 0.13, 0.05);
+			}
+			col = vc;
+		}
+		// Pass 18: the treetops (land 8): bark (a crown's platform mossy, a
+		// bough bare, its grain running along it), leaf mats; the open air
+		// below is the water layer's. A bough's edge shows its side.
+		if (land.x == 8) {
+			float lt = dot(col, vec3(0.3, 0.59, 0.11));
+			vec3 tc;
+			if (k == K_MOSS) {
+				tc = mix(vec3(0.1, 0.26, 0.1), vec3(0.42, 0.62, 0.24), smoothstep(0.12, 0.7, lt));
+				if (rnd(p, 8081u) < 0.08) tc *= 0.7;
+			} else {
+				float grain = vnoise(vec2(p) / vec2(2.5, 9.0), 8082u) * 0.6 + vnoise(vec2(p) / vec2(9.0, 2.5), 8083u) * 0.4;
+				tc = mix(vec3(0.22, 0.15, 0.1), vec3(0.58, 0.45, 0.3), smoothstep(0.2, 0.8, grain * 0.7 + lt * 0.5));
+				if (k == K_GRASS && fbm(vec2(p) / 14.0, 8084u) > 0.58) tc = mix(tc, vec3(0.26, 0.42, 0.18), 0.7);
+			}
+			if (dn == K_WATER) {
+				tc = vec3(0.16, 0.1, 0.07);
+			} else if (d2 == K_WATER) {
+				tc = vec3(0.28, 0.19, 0.12);
+			}
+			col = tc;
 		}
 		// The caves (pass 15, land 5): bare rock underfoot, darkness past the walls.
 		if (land.x == 5) {

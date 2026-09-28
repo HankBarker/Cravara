@@ -23,6 +23,9 @@ uniform vec2 frame_size = vec2(64.0, 64.0);
 // Pass 14: the Sky-Fang's sickness (Skytouched, 1): pale crystal veins glow
 // through the hide, a slow pulse running along them.
 uniform float sick = 0.0;
+// Pass 18: Embercrack Ridge's beasts (the ember variant): the hide gone dark as
+// cooled rock, lava glowing red-orange in its cracks, a slow pulse of heat.
+uniform float ember = 0.0;
 // The sprite's modulate (the hurt flash, a variant's tint, the death fade).
 // COLOR in fragment() already carries the texture's colour in Godot 4, so the
 // modulate is taken here, before it's mixed in.
@@ -90,6 +93,16 @@ void fragment() {
 			// The hide itself goes a little cold and grey under the sickness.
 			rgb = mix(rgb, vec3(dot(rgb, vec3(0.3, 0.59, 0.11))) * vec3(0.86, 0.96, 1.12), 0.3 * hide * sick);
 			rgb = mix(rgb, glow * (0.8 + 0.3 * pulse), vein * hide * sick * (0.72 + 0.28 * pulse));
+		}
+		if (ember > 0.0) {
+			vec2 ep = mod(floor(UV / TEXTURE_PIXEL_SIZE), frame_size);
+			float ea = sin(ep.x * 0.51 + sin(ep.y * 0.23 + mark_seed * 2.3) * 2.9 + mark_seed * 3.7);
+			float eb = sin(ep.y * 0.41 + sin(ep.x * 0.27 + mark_seed) * 2.4);
+			float crack = (1.0 - smoothstep(0.0, 0.2, abs(ea))) * step(-0.35, eb);
+			float heat = 0.62 + 0.38 * sin(TIME * 1.7 - ep.x * 0.09 + ep.y * 0.05);
+			float el = dot(rgb, vec3(0.3, 0.59, 0.11));
+			rgb = mix(rgb, vec3(el) * vec3(0.52, 0.44, 0.42), 0.62 * hide * ember);
+			rgb = mix(rgb, vec3(1.0, 0.42, 0.1) * (0.78 + 0.35 * heat), crack * hide * ember * (0.7 + 0.3 * heat));
 		}
 		if (marking == 1) {
 			rgb = mix(rgb, mark_color.rgb * (0.6 + hsv.z), band * 0.6);

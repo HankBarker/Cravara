@@ -10,7 +10,7 @@ func _ready():
 	creature=get_parent();_rng.seed=creature.get_instance_id()
 	emitter=AudioStreamPlayer2D.new();emitter.bus="SFX"
 	# The big hunters carry: a rex is heard well before it's seen.
-	emitter.max_distance={"rex":420,"alpha":400,"allo":330,"ossuar":460,"parasaur":330,"carno":400,"yuty":440,"spino":460,"sucho":330,"utah":330}.get(creature.species,250)
+	emitter.max_distance={"rex":420,"alpha":400,"allo":330,"ossuar":460,"parasaur":330,"carno":400,"yuty":440,"spino":460,"sucho":330,"utah":330,"grimjaw":480,"reaper":480,"quetzal":460,"stormcrest":520,"cinder":520}.get(creature.species,250)
 	emitter.attenuation=1.6;emitter.add_to_group("creature_voices");add_child(emitter)
 	_ambient_left=_rng.randf_range(6,24)
 ## Pass 12's beasts borrow a kin's voice, pitched to suit: the Scarhorn a
@@ -20,7 +20,14 @@ func _ready():
 const VOICE:={"carno":["allo",0.84],"yuty":["rex",0.78],"dimetrodon":["allo",1.22],"anky":["trike",0.76],"proto":["lystro",0.88],"compy":["raptor",1.6],
 	# Pass 13: the Sandblade a deep raptor's shriek, the deinonychus a raptor's
 	# call, the Suchomimus a hissing allosaur, the spinosaur a rex pitched up.
-	"utah":["raptor",0.74],"deino":["raptor",0.9],"sucho":["allo",1.12],"spino":["rex",0.9]}
+	"utah":["raptor",0.74],"deino":["raptor",0.9],"sucho":["allo",1.12],"spino":["rex",0.9],
+	# Pass 18 (until their own voices): a pteranodon's high cry, the
+	# dimorphodons' shrieks, the thylacoleo's growl.
+	"ptera":["raptor",1.35],"dimorph":["raptor",1.9],"thyla":["allo",1.3],
+	# Pass 18's bosses: Grimjaw an allosaur's hiss dropped low, the Reaper a
+	# raptor's shriek deepened, Stormcrest a raptor's cry, the Cinderhulk a
+	# trike's bellow from under the mountain.
+	"grimjaw":["allo",0.7],"reaper":["raptor",0.62],"quetzal":["raptor",0.95],"stormcrest":["raptor",0.85],"cinder":["trike",0.58]}
 ## Pass 15: each species' own voice (tools/audio/elevenlabs_sfx.py), several
 ## takes of each cue so a herd never repeats itself; the old borrowed voices
 ## where there's none yet.

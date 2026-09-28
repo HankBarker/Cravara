@@ -564,3 +564,40 @@ density climbs.
 - **Falling rock** (`fx/FallingRock.gd`) and **bombs** (`fx/Bomb.gd`) hurt beasts with a Vector2
   source (`take_damage(amount, point, knock)`), so no one blames the keeper. A bomb's blast makes
   nearby wild beasts bolt (`_flee_time`).
+
+## Pass 18: flyers, a tree ambusher, riding everything, and a boss for every land
+- **Flight** (`creatures/Flight.gd`, `FLYERS`):
+  - Airborne means collision is off and `hop` is the altitude (the shadow stays on the ground).
+  - It is untouchable above REACHABLE 20 px.
+  - It swoops at a quarry. Dimorphs hunt the keeper in flocks; pteranodons and quetzals go only for
+    what struck them.
+  - A boss holds its wings (`held`: no landing or take-off by itself; `land_at(spot)`).
+  - Big drawings must fly low enough to stay on screen (quetzal alt 42, Stormcrest 34). Stormcrest's
+    152 px drawing went off the top of the screen at 70 px.
+- **Tree ambush** (`creatures/Lurk.gd`, TREE_LURK): up a tree it's hidden (eyes only) and
+  untouchable. Quarry under it gets a shadow warning of DROP_WARN 0.85 s, then the drop (damage
+  x1.4, knock 220).
+- **Riding** (`creatures/Rides.gd`): 17 species, each with a pace, a strike (a DinoMoves id) and a
+  cooldown. The hunters' saddles need `grimjaw_hide`.
+  - Saddles are painted onto the clips (`tools/dino/saddle_paint.py`) with per-frame `seat` shifts,
+    `seat_at`, and `rider_behind` for the front view.
+  - A ridden ptera flies (`MountController._update_flying`; Space is `toggle_flight`, E is
+    `ForestPlaytest.canopy_flight`).
+- **Land bosses** (`creatures/LandBoss.gd` plus Grimjaw, Reaper, Stormcrest and Cinder):
+  - Raised within RAISE 900 px of the lair once its ground is loaded.
+  - Dormant until the keeper is within `wake_cells()` of the *beast*; leashed by `leash_cells()`
+    from the *lair*.
+  - Helpers: `call_help` adds (meta `boss_add`: no loot, never saved, freed when the fight ends),
+    `rain_rocks`, `spikes_at` (bone, crystal or ember looks), `mark_ground` and `blast`.
+  - A boss species can wear another's art (`ForestCreature.ART_OF`: stormcrest -> quetzal;
+    `art_species()`).
+  - **`prepare()` must clear `awake` before freeing the beast.** `_process` grants the victory to
+    any awake boss whose beast is gone, so a reset mid-fight (a load) read as a win.
+  - Harm scaling for fight phases: `ForestCreature.guard_mult` (the Cinderhulk's shell 0.1, cracked
+    1.8) and `plates_off` (PLATED ignored).
+- **Testing bosses**:
+  - Heat and ash take health directly and ignore `is_invulnerable`. A suite that walks the keeper
+    through the volcano must reset heat, ash and health before a fight (Pass18Suite `_revive`).
+  - Hold the boss (`set_process(false)`) while teleporting the keeper to its lair, or it wakes
+    before it's seen asleep.
+  - The keeper may magnet-pick a dropped trophy, so check the pack as well as the ground.

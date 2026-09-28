@@ -35,6 +35,9 @@ var _age := 0.0
 var _look: Texture2D
 var _shadow: Node2D
 var _wobble := 1.0
+## Pass 18: a lava bomb (the Cinderhulk's eruption): glowing as it falls, it
+## bursts into embers where it lands (never a boulder), and spares its maker.
+var molten := false
 
 
 func setup(at: Vector2, owner_world, quake = null, keep := true) -> void:
@@ -44,7 +47,7 @@ func setup(at: Vector2, owner_world, quake = null, keep := true) -> void:
 	may_stay = keep
 	_wobble = 1.0 if randf() < 0.5 else -1.0
 	var land: String = world.region_of(world.to_cell(position)) if world else "forest"
-	_look = Prop.SANDSTONE.rock if land in ["bonelands", "dunes"] else (Prop.CHALK.rock if land == "pale_hills" else Prop.ART.rock)
+	_look = Prop.SANDSTONE.rock if land in ["bonelands", "dunes"] else (Prop.CHALK.rock if land == "pale_hills" else (Prop.BASALT.rock if land == "volcano" else Prop.ART.rock))
 
 
 func _ready() -> void:
@@ -89,7 +92,7 @@ func _draw() -> void:
 	for i in 3:
 		var k := float(i + 1)
 		draw_rect(Rect2(Vector2(sway - 1 + (i - 1) * 3, at.y - 4.0 - k * 6.0).round(), Vector2(1, 3)), Color(0.8, 0.76, 0.68, 0.35 - 0.1 * float(i)))
-	draw_texture(_look, at)
+	draw_texture(_look, at, Color(1.5, 0.72, 0.36) if molten else Color.WHITE)
 
 
 func _draw_shadow() -> void:
@@ -118,12 +121,18 @@ func _land() -> void:
 	for c in preload("res://Forest/creatures/ForestCreature.gd").near(tree, global_position, 60.0):
 		if c.is_dead: continue
 		var d: float = c.global_position.distance_to(global_position)
+		if molten and str(c.species) == "cinder": continue
 		if d <= HIT + float(c.stats.radius): c.take_damage(beast_damage, global_position, 120.0)
 		if d <= 20.0 + float(c.stats.radius): crowded = true
 	var cell: Vector2i = world.to_cell(global_position)
 	var wet: bool = world.water.has(cell)
 	var near_keeper: bool = is_instance_valid(keeper) and keeper.global_position.distance_to(global_position) < 24.0
 	var puff := PUFF.new()
+	if molten:
+		puff.dust(Vector2.ZERO, Vector2.UP, {"puff": Color(1.0, 0.5, 0.15, 0.85), "bits": [Color(1.0, 0.62, 0.2), Color(0.9, 0.3, 0.08), Color(0.2, 0.12, 0.1)], "alpha": 0.9}, 6, 12, 1.8)
+		puff.spawn(get_parent(), global_position, 2.0)
+		AudioManager.play_at(IMPACT, global_position, -1.0, randf_range(0.7, 0.85), 620.0)
+		return
 	if wet:
 		puff.splash(Vector2.ZERO, Vector2.UP, true)
 	else:

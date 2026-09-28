@@ -121,7 +121,12 @@ $suites = @(
     # camps), the earthquake's shake, cracks and falling rock, the dimetrodon's
     # bite, the axe's reach, trees shouldered down, bombs, the map's icons and
     # pins, quest lines and advice, three new folk, words in their bubbles.
-    @{Name='pass17'; Args=@('res://Tests/Pass17Suite.tscn')}
+    @{Name='pass17'; Args=@('res://Tests/Pass17Suite.tscn')},
+    # Pass 18: the far ring (the jungle's giants, the canopy and its ropes, the
+    # eyrie, the volcano's lava, heat and springs), the thylacoleo, the
+    # pterosaurs, riding and flying, the four land bosses' fights, the new gear
+    # and recipes, sitting, the bog's trees, the far ring's tasks and advice.
+    @{Name='pass18'; Args=@('res://Tests/Pass18Suite.tscn')}
 )
 if ($FromSuite -ne '' -and $FromSuite -notin $suites.Name) { throw ('Unknown suite: ' + $FromSuite) }
 $started = $FromSuite -eq ''

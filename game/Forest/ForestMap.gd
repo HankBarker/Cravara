@@ -592,6 +592,12 @@ func _draw_marks() -> void:
 		if kind == "ossuary":
 			if _shows("bosses", cell, true): _icon(at, "skull")
 			continue
+		# Pass 18: the Reaper's hollow and Stormcrest's eyrie are their bosses'
+		# (a skull below, at the lair); the crater a flame.
+		if kind in ["reaper_hollow", "eyrie"]: continue
+		if kind == "volcano":
+			if _shows("ruins", cell): _icon(at, "flame")
+			continue
 		# Pass 17: the fallen buildings and the lost camps.
 		if kind in ["building", "lost_camp"]:
 			if _shows("buildings", cell): _small(at, "house" if kind == "building" else "tent", KINDS[10][2])
@@ -616,6 +622,12 @@ func _draw_marks() -> void:
 	if boss and boss.den != Vector2i(9999, 9999) and is_instance_valid(boss.alpha) and not boss.alpha.is_dead and not hidden_kinds.has("bosses"):
 		var den := to_view(boss.centre())
 		if _on_map(den): _icon(den, "skull")
+	# Pass 18: the lands' great bosses at their lairs (hidden while one is down, back when it rises again).
+	if session != null and not hidden_kinds.has("bosses") and session.get("land_bosses") != null:
+		for great in session.land_bosses:
+			if great.lair == Vector2i(9999, 9999) or session.boss_down(great.boss_id()): continue
+			var lair_at := to_view(great.centre())
+			if _on_map(lair_at): _icon(lair_at, "skull")
 	# Old Maw, somewhere under the bog's deep water.
 	if not hidden_kinds.has("bosses"):
 		for beast in get_tree().get_nodes_in_group("sea_beasts"):

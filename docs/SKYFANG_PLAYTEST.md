@@ -1,5 +1,167 @@
 # Cravera: The Skyfang Wilds
 
+## Eighteenth pass: the jungle and its treetops, the volcano, riding every great beast, and a boss for every land
+
+The jungle, the treetops and the volcano are in a **new expedition's** world (the main menu makes
+every new world this way). An older expedition keeps its world exactly as it was, but it still gets
+Grimjaw, the Pale Reaper, riding, the new furniture, the bog's trees, the deinonychus and Ossuar
+fixes, and all the new gear its lands can make.
+
+**Fixes first**
+1. **The deinonychus** ("when it roars and when it, like, looks to move down or straight up... a
+   little wonky"): its walks and runs toward and away from you are rebuilt from its own drawing
+   (the legs step, the body stays itself), and so are its roar, its slash, its pounce and its idle
+   from those sides. Its crystal-grown kind too.
+2. **Chairs, tables, beds and barrels** are drawn from above now, like the chest, so they sit in the
+   world. **E on a chair sits you in it**; sitting mends you slowly (a point every two seconds,
+   unless you're bleeding). Any key that moves you stands you up; so does a blow.
+3. **The bog's trees** ("in the bog, maybe we could add a little bit more variation"): four swamp
+   trees of their own: bald cypresses hung with moss, mangroves on stilt roots, weeping willows,
+   and crooked black mirewoods. Only their look changed, so a world's trees stand where they did.
+4. **Ossuar's movement** ("I seen some of its movement, like it might be a little off"): its walk
+   slid along the sand (the feet stepped in place while it moved), crystal sparks blinked on and
+   off at its feet, and from the front and behind its run swelled and shrank. It now lopes (its
+   run, slowed), the sparks are gone, and its front and back runs are rebuilt from its drawing.
+
+**A bigger world** ("past the Ashlands, on one side we'll have the volcano... the jungle will be
+kind of, like, surrounding everywhere else")
+5. A new world is **about 2.4 times the size**: past the Pale Lands and the Bonelands lies a fourth
+   ring. On the Pale Lands' side is **Embercrack Ridge**, the volcano. **The Glimmercap Jungle**
+   runs round everywhere else, and above it is **the Canopy**, a land of its own.
+
+**The Glimmercap Jungle** ("very lush, very, very tall trees... extend all the way up past the
+screen... like walking into the redwoods")
+6. **Giant trees** every dozen steps or so, their trunks running up off the top of the screen.
+   They turn see-through when you walk behind them. Among them grow **jungle trees you can fell**,
+   giant ferns, bushes, glowing mushrooms, flowers, mossy fallen logs and **glimmer crystal**, the
+   jungle's green-glowing Sky-Fang crystal (a power-two pickaxe). Rivers run through it with
+   **new fish: glowfin, arapaima and shock eels**.
+7. **Its beasts**: shadowy **Brontoshade longnecks**, parasaurs, stegos and trikes, packs of
+   **Glowspine raptors** (crystal-grown and glowing), **dimorphodon flocks** that dive at you,
+   **pteranodons** fishing the rivers, the **Junglehorn carnotaurus**, and a mini-boss: **Thornback,
+   the Old Anky**, grown over with thorn and crystal. **The crystal takes the jungle's beasts**
+   ("the crystals taking over the dinosaurs"): about a quarter of them are crystal-sick, half of
+   those fully grown over.
+8. **The thylacoleo** ("something that's able to, like, jump from the trees down at you"): the
+   Treeshadow waits up in a tree, just two eyes in the leaves, out of reach. Walk under it and a
+   **shadow darkens the ground where it will land**; roll clear, or take the blow. Then it hunts
+   you on the ground, and after a while it climbs back up.
+9. **Overgrown temples** stand in the jungle, with their chests (trinkets and treasure), and there
+   are jungle huts and cottages.
+10. **The Glimmer Grotto**: the jungle's cave, glowing crystal and mushrooms, Glowspine raptors
+    and a thylacoleo in the dark.
+
+**The Canopy** ("fly up into the treetops and that could be its own new biome... walking along
+branches and bark... ropes down... a lot more flying dinosaurs... that's where you'd have a quetzal")
+11. **Rope ladders** hang from some of the giants: E climbs up into the treetops, and E at the top
+    climbs back down. Up there the giants' crowns are platforms of bark, joined by **boughs you walk
+    along**, with leaf mats between. Everything else is open air, a long way down: you can't walk
+    off it.
+12. Up there are orchids, canopy fruit, bromeliads and amber in the bark, pteranodons and
+    dimorphodons, thylacoleos hunting along the boughs, and **wild quetzals**, huge and few: left
+    alone, they leave you alone.
+13. **Stormcrest's eyrie**, the widest crown in the treetops, sits over the jungle's heart.
+
+**Embercrack Ridge** ("very dangerous... volcanic-style looking rexes... red glowing veins and
+glowing crystals... very strong dinosaurs... rare materials and ores and new buildings")
+14. **Black ash and basalt**, cracks glowing with the heat, **lava rivers** running down from the
+    cone, charred trees, fumaroles, ember crystal and sulfur. The cone has a way in on the side
+    facing camp, and the **Embercrack Crater** has a lava lake at its heart.
+15. **The heat**: a heat bar fills while you're on volcanic ground, three times as fast beside
+    lava. When it's full it burns you, and heat slows you once it's past 60%. **Hot springs**
+    cool you fast (their fish, ember carp and scaldfin, like it hot). Shelter slows the heat. So
+    do **Obsidian armour** and an **Emberward Charm**, and the Molten Heart all but ends it.
+    **Lava can't be crossed.**
+16. **Ember beasts**, with the mountain's fire in their veins and much stronger than their kin:
+    **Cracked Tyrannos**, **Blazehorns**, Cinderclaw raptors, ember allosaurs, dimetrodons,
+    **Magmaplate ankylosaurs**, Emberhorn carnotaurs and ember compies.
+17. **Emberstone** (the volcano's ore), **obsidian**, **sulfur** and **charcoal**. **Fallen forges**
+    stand in the ash with their anvils and their chests. **The Lava Tubes** are the volcano's
+    caves, with pools of lava in their chambers and ember beasts in the dark.
+
+**Riding** ("you should be able to ride basically every major dino... adding the saddles for them
+and animations for them as well")
+18. **Seventeen beasts can be ridden** now: stegos, trikes, longnecks, parasaurs, ankylosaurs,
+    dimetrodons, raptors, deinonychus, Utahraptors, thylacoleos, allosaurs, carnotaurs,
+    Yutyrannus, rexes, Suchomimus, spinosaurs and pteranodons. Each has a saddle drawn onto its own
+    animations, and you ride every stride, bite and sweep. Each has its own pace and its own strike.
+19. The plant-eaters' saddles are made at the workbench as before. **The hunters' saddles need
+    Grimjaw's hide** (they show up once Grimjaw has fallen).
+20. **Flying** ("if you can tame a pteranodon, you would then be able to fly up into the
+    treetops"): tame a pteranodon with fish from your hand and saddle it. **Space takes off**
+    (and lands you on open ground). The arrow keys fly anywhere, over trees, water and the air,
+    and Sprint flies faster. **Over the jungle, E rises into the treetops** above that spot, and
+    in the treetops E dives back down.
+
+**A boss for every land** ("a main boss in all these areas that helps to progress capabilities")
+Each is raised at its lair when you come near, wakes when you come close or strike it, and has its
+name and health across the top and the fight music. Walk away (or fall) and it rests, healed.
+Beaten, it opens something up, drops a hoard, and comes back after ten or fifteen minutes.
+21. **Grimjaw, the Mire King** (the bog): a sarcosuchus as long as a longneck, lying under the water
+    at the bank of the Mirefen's farthest mere, only its eyes showing. It bites and clubs with its
+    tail. Near water it **slides under, and a wake runs at you** through the water; the water
+    churns where it's about to burst out, jaws first. Below 60% a deinonychus pack answers its
+    bellow; below 30% it rages. **Its hide makes the hunters' saddles**, and it drops Grimjaw's
+    Tooth (a trinket).
+22. **Harrow, the Pale Reaper** (the Pale Lands): a crystal-maned therizinosaurus in the Reaper's
+    Hollow, deep in the ash, ringed with bones. It slashes wide with scythe claws (they bleed) and
+    charges. **It leaps**: its shadow marks your spot, and it comes down there claws first. It
+    sends **crystal spikes** up along the ground at you, and it **shrieks a ring of ash** outward
+    (roll through it). Below 60% Ashfang raptors come out of the ash. **Its claw makes the
+    Emberward Charm** (the heat) and the Reaper's Scythe.
+23. **Stormcrest, Queen of the Canopy** (the treetops): the quetzalcoatlus on the eyrie. On foot
+    she bites, and **buffets with her wings** to throw you. Then she **takes to the sky**, circling
+    and swooping (high up she can't be reached, only as she comes low), while **lightning strikes
+    where you stand**: the ring crackles first. Then she lands again. Below 60% her screech brings
+    a dimorphodon flock; below 30% the lightning comes in threes. **Her storm feathers** make the
+    Stormcrest Plume and the Stormwing Glaive.
+24. **The Cinderhulk** (the volcano, in the crater): an ankylosaur the mountain's fire got into.
+    Its plates shrug off light blows. It clubs with its tail and stamps the crater floor. **At its
+    roar the crater erupts**, raining lava bombs round you (their shadows first). **Black glass
+    spears up** at you along the floor. Twice it **curls into a molten shell**: nothing hurts it
+    much, and the heat round it scorches. Then it vents, and **its shell cracks open, and it takes
+    far more** for a while. Ember beasts climb out of the crater to help it. **Its molten core**
+    makes the Molten Heart and the Cinderbrand.
+25. **Is there a Pale Lands boss?** There wasn't; Harrow is it. Skarn (the forest), the Buried King
+    (the dunes), Old Maw (the deep water) and the four above make seven.
+
+**New gear** ("for any new dinosaurs we're looking to add, there's new armors and new trinkets")
+26. **Treeshadow** armour (thylacoleo pelt and claws, vine): beasts notice you from half as far,
+    and you move 6% faster. **Skywing** (pteranodon wing leather, crests, dimorph teeth): 10%
+    faster, and rolls keep you clear 40% longer. **Obsidian** (obsidian, emberstone, Ashmane fur,
+    at an Ember Forge): the strongest there is, and it keeps off 60% of the heat and burns.
+27. **Weapons**: the Glimmer Spear (44), the Obsidian Blade (48), the Reaper's Scythe (52), the
+    Stormwing Glaive (58) and the Cinderbrand (64, smashing). Five older weapons that showed an empty
+    hand now show in it too.
+28. **Trinkets**: Shadowpaw Charm (thylacoleo), Windcrest Pin (pteranodon), Needle-fang Cord
+    (dimorphodon), Glimmer Idol and Amber Beetle (temple chests), Emberglass Ring (forge chests),
+    Climber's Claws, Grimjaw's Tooth, the Emberward Charm, the Stormcrest Plume and the Molten Heart.
+29. **The Ember Forge**: stone, emberstone, obsidian and planks at the workbench. Set it down and
+    obsidian and the fire's own gear are made at it (so are the fallen forges' own).
+
+**Tasks and advice**
+30. Orrin has a new line for the far ring (the jungle, the canopy, the volcano) and the four new
+    boss hunts. The warden has a hunter's saddle and **Wings** (tame a pteranodon and fly a
+    minute). "What next?" knows the far ring: how to get up into the canopy, and what to do about
+    the heat.
+
+**Checked**
+31. `Tests/Pass18Suite.tscn` (124 checks) passes, and so does everything in the headless and
+    rendered runners. An older world still generates exactly as before (`Tests/ChunkSum.tscn`).
+    A new world runs at about 10 ms a frame everywhere, the jungle, canopy, volcano and the
+    Cinderhulk's crater included (`art/forest-playtest/perf-p18-stream.txt`). The pictures are in
+    `art/pass18/lookbook.png`. The art took about 565 PixelLab generations (953 left this cycle).
+
+**Honest limits**
+32. The new beasts and bosses borrow other beasts' voices, pitched to suit, for now.
+33. A few views are built from the drawing (the body rears or stretches) rather than drawn frame by
+    frame: the Reaper's slash and roar from the front and behind, the thylacoleo's maul from behind,
+    Grimjaw's chomp from behind. Every generated take spun the beast side-on or drew great glowing
+    crescents.
+34. The jungle, the treetops, the volcano and Stormcrest are in new worlds only. You can't fall
+    out of the treetops. You can't climb a rope while riding (dismount first); fly a pteranodon up instead.
+
+
 ## Seventeenth pass: a livelier world, fallen houses and lake hoards, a real earthquake, bombs, quest lines and three new folk
 
 All of this is in a **new expedition's** world. An expedition started in pass 16 gets it too, but

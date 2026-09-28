@@ -33,6 +33,9 @@ const WAYS := {
 	"rex": "respect", "utah": "respect",
 	"carno": "dodge",
 	"sucho": "fish", "spino": "fish",
+	# Pass 18: the pteranodon comes down to fish set out for it; the thylacoleo
+	# respects a keeper who dodges its leaps; a dimorphodon eats from the hand.
+	"ptera": "fish", "thyla": "dodge", "dimorph": "hand",
 }
 ## The armour set (SetBonus) that carries a beast's kin-smell.
 const KIN_SET := {"allo": "rust", "yuty": "ashen"}
@@ -40,7 +43,7 @@ const KIN_NAME := {"rust": "the Rustback set", "ashen": "the Ashen gear"}
 ## Marks (stands, cleared rocks, respect, dodged charges) before it eats from you.
 const MARKS := {"trike": 1, "anky": 3, "rex": 3, "utah": 3, "carno": 3}
 ## Trust one eaten offering is worth.
-const OFFER_TRUST := {"longneck": 2, "allo": 3, "yuty": 3, "sucho": 3, "spino": 4}
+const OFFER_TRUST := {"longneck": 2, "allo": 3, "yuty": 3, "sucho": 3, "spino": 4, "ptera": 3}
 ## Ways where the food is set down, not handed over.
 const SET_DOWN := ["offering", "kin", "fish"]
 ## A keeper this near an offering keeps the beast from coming to it.
@@ -148,4 +151,7 @@ const LESSONS := {
 	"sucho": "Fish, set down at the water's edge, and back away. Hunter-lore.",
 	"rex": "A rex respects nothing but nerve: strike it and get clear unhurt, three times. Then meat, a lot of it. Apex-lore.",
 	"spino": "The bog's king eats fish. Set them down by the mere and keep your distance. Apex-lore.",
+	"ptera": "It lives on fish. Set glowfin down where it lands and back off; it comes down to eat. Hunter-lore.",
+	"thyla": "It springs from the trees. Dodge its leap three times and it'll look at you differently. Hunter-lore.",
+	"dimorph": "A little fish from your hand, and mind its teeth.",
 }

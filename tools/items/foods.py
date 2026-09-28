@@ -189,6 +189,24 @@ ITEMS = {
                          icon="a rust-red whiskered catfish, side view, " + P, fish=True),
     "bonegill": dict(name="Bonegill", stack=20, story="A pale fish striped like a ribcage, with blood-red gills.",
                      icon="a pale bony fish with rib-like dark stripes and red gills, side view, " + P, fish=True),
+    # Pass 18: the jungle's rivers and the volcano's hot springs.
+    "glowfin": dict(name="Glowfin", stack=20, story="A little jungle fish that glows teal in the dark water. Crystal in it, some say.",
+                    icon="a small slender fish glowing teal-green with luminous spots along its side, side view, " + P, fish=True),
+    "arapaima": dict(name="Arapaima", stack=10, story="A giant armoured river fish, its scales turning red toward the tail. A fight to land.",
+                     icon="a huge armoured arapaima fish, grey-green scales turning red toward the tail, side view, " + P, fish=True),
+    "shock_eel": dict(name="Shock Eel", stack=20, story="It bites, and it stings. Hold it by the tail.",
+                      icon="a dark eel with a pale yellow belly and little blue sparks along its body, curled in an S, side view, " + P, fish=True),
+    "ember_carp": dict(name="Ember Carp", stack=20, story="A red carp from a volcano's hot spring, warm to the touch.",
+                       icon="a bright red-orange carp with fiery flame-like fins, side view, " + P, fish=True),
+    "scaldfin": dict(name="Scaldfin", stack=20, story="It lives in water that would boil you alive.",
+                     icon="a pale pink fish with translucent fins and tiny bubbles around it, side view, " + P, fish=True),
+    # Pass 18: the jungle's and the treetops' food.
+    "jungle_berry": dict(name="Jungle Berries", stack=40, story="Fat red berries from the jungle's shrubs. Sharp and sweet.",
+                         icon="a small cluster of plump glossy red berries on a green sprig, " + P, food=[14, 24, 4, 6]),
+    "canopy_fruit": dict(name="Canopy Fruit", stack=30, story="Sweet orange fruit that only grows up in the treetops.",
+                         icon="a bunch of three ripe orange tropical fruits on a short leafy stem, " + P, food=[28, 50, 8, 12]),
+    "glowcap": dict(name="Glowcap", stack=30, story="A mushroom that glows in the dark. It tastes of nothing, and keeps you going.",
+                    icon="a single glowing mushroom with a pale cyan cap and a softly shining stem, " + P, food=[8, 20, 6, 8]),
     # The old fish, drawn anew.
     "reed_perch": dict(redraw=True, icon="a green and gold striped river perch fish with a spiny dorsal fin, side view, " + P),
     "shardfin": dict(redraw=True, icon="a jade green fish with sharp translucent crystal shard fins, side view, " + P),
@@ -231,7 +249,8 @@ RECIPES = [
 ]
 # Ingredient groups, commonest first (a recipe takes from the front).
 GROUPS = {
-    "fish": ["reed_perch", "oasis_carp", "rust_catfish", "mire_eel", "ash_char", "fen_pike", "sunfin", "bonegill", "frostjaw", "shardfin", "moonscale"],
+    "fish": ["reed_perch", "oasis_carp", "rust_catfish", "mire_eel", "ash_char", "fen_pike", "sunfin", "bonegill", "frostjaw", "shardfin", "moonscale",
+             "glowfin", "ember_carp", "shock_eel", "scaldfin", "arapaima"],
     "meat": ["morsel", "trex_meat", "haunch", "titan_rib", "prime_meat"],
 }
 GROUP_NAMES = {"fish": "Any fish", "meat": "Any raw meat"}
@@ -245,12 +264,16 @@ MEAT = {
     "longneck": ["titan_rib", 3],
     "allo": ["prime_meat", 2], "carno": ["prime_meat", 3], "yuty": ["prime_meat", 3], "rex": ["prime_meat", 5],
     "sucho": ["prime_meat", 2], "spino": ["prime_meat", 4], "alpha": ["prime_meat", 4],
+    # Pass 18.
+    "ptera": ["trex_meat", 2], "dimorph": ["morsel", 1], "thyla": ["prime_meat", 2],
+    "grimjaw": ["prime_meat", 6], "quetzal": ["prime_meat", 4], "stormcrest": ["prime_meat", 6], "cinder": ["haunch", 8], "reaper": ["prime_meat", 5],
 }
 # A beast eats from its diet: "plants", "meat" or "fish" (ForestCreature's
 # stats.food says which). Any food of its diet wins a little trust; a favourite
 # wins twice as much.
 DIETS = {
-    "plants": ["berry", "mushroom", "wild_tuber", "redgrain", "mirelotus", "sun_melon", "cactus_fruit", "marrow_gourd", "beast_treat"],
+    "plants": ["berry", "mushroom", "wild_tuber", "redgrain", "mirelotus", "sun_melon", "cactus_fruit", "marrow_gourd", "beast_treat",
+               "jungle_berry", "canopy_fruit", "glowcap"],
     "meat": ["trex_meat", "morsel", "haunch", "titan_rib", "prime_meat", "bloody_bait"],
     "fish": GROUPS["fish"],
 }
@@ -260,6 +283,9 @@ FAVOURITES = {
     "compy": ["morsel"], "raptor": ["prime_meat"], "deino": ["prime_meat"], "utah": ["prime_meat"], "dimetrodon": ["prime_meat"],
     "allo": ["prime_meat"], "carno": ["prime_meat"], "yuty": ["prime_meat"], "rex": ["prime_meat"],
     "sucho": ["mire_eel"], "spino": ["mire_eel", "fen_pike"],
+    # Pass 18: the pteranodon lives on fish (the glowfin above all); the
+    # thylacoleo on meat; the dimorphodon takes little fish.
+    "ptera": ["glowfin", "arapaima"], "dimorph": ["glowfin"], "thyla": ["prime_meat"],
 }
 # Too small a bite for a big hunter.
 SCORNS = {"morsel": ["allo", "carno", "yuty", "rex", "utah", "spino", "sucho", "dimetrodon"]}
@@ -278,6 +304,8 @@ FISH = {
     "oasis_carp": ("Oasis Carp", "Gentle"), "sunfin": ("Sunfin", "Restless"),
     "ash_char": ("Ash Char", "Restless"), "frostjaw": ("Frostjaw", "Fierce"),
     "rust_catfish": ("Rust Catfish", "Gentle"), "bonegill": ("Bonegill", "Fierce"),
+    "glowfin": ("Glowfin", "Gentle"), "arapaima": ("Arapaima", "Fierce"), "shock_eel": ("Shock Eel", "Wild"),
+    "ember_carp": ("Ember Carp", "Restless"), "scaldfin": ("Scaldfin", "Fierce"),
 }
 # Each land's waters (a hole's fish is one of these), and how many holes it gets.
 WATERS = {
@@ -286,6 +314,9 @@ WATERS = {
     "dunes": [["oasis_carp", "oasis_carp", "sunfin"], 5],
     "pale_hills": [["ash_char", "ash_char", "frostjaw"], 5],
     "bonelands": [["rust_catfish", "rust_catfish", "bonegill"], 5],
+    # Pass 18: the jungle's rivers, and the volcano's hot springs (its only water).
+    "jungle": [["glowfin", "glowfin", "arapaima", "shock_eel", "reed_perch"], 8],
+    "volcano": [["ember_carp", "ember_carp", "scaldfin"], 4],
 }
 
 

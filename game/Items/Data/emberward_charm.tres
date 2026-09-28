@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="Item" load_steps=2 format=3]
+[ext_resource type="Script" path="res://Items/Item.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "emberward_charm"
+name = "Emberward Charm"
+description = "A Reaper's claw bound with pale crystal and Ashmane fur. The Pale Lands' cold is in it."
+icon_generator = "forest"
+max_stack = 1
+rarity = "epic"
+equipment_slot = "trinket"
+effects = {
+"heat_guard": 0.6,
+"fire": 0.3
+}

@@ -823,3 +823,44 @@ See `vision.md` for why.
   tool would, dropping its drops plus the land's own material (`Materials.native`), and records
   it as mined. It never touches the keeper's placed things, landmarks with parts, caches, nests
   or the edge.
+
+## Pass 18: the far ring, the canopy and the volcano (layout version 3)
+- **Versions**: new journeys are `Layout.V3` (MainMenu version 3). V2 must stay bit-identical:
+  `Tests/ChunkSum.tscn` = 424242 plan=1142329347 chunks=1982251042, 7771 plan=3717774488
+  chunks=2889383046. Every v3-only branch is guarded (`_v3`, `L.version >= 3`, land >= 6), and new
+  plan steps are appended only for v3 (`if _v3: steps += [...]`). Region looks that must reach
+  old worlds too go in the *drawing* (e.g. `ForestProp.boggy`: bog trees drawn as swamp trees),
+  never in the plan.
+- **Rings**: plains 460, bog/dunes to 860, Pale Lands/Bonelands to `outer_edge` (~1260, wander
+  70), then the far ring to a square edge at half 1860 (v2: 1200, so 2.4x the area). The volcano
+  is the far ring's sector on the pale angle (+-`VOLCANO_HALF` 0.8 rad); the jungle is the rest.
+  Land indices: 5 caves, 6 jungle, 7 volcano, 8 canopy.
+- **The canopy** is a block of cells at `CANOPY_SHIFT` (0, 4000) mirroring the jungle
+  (`L.canopy_of` / `ground_of`). Its terrain comes from the **giant lattice**. `giant_of` hashes one
+  giant per GIANT=14 square, with none on water, rock or the rim.
+  - Crowns are bark platforms (T_GRASS).
+  - Boughs join E/S (and diagonal) neighbours with LINK_ODDS 0.78 (T_DIRT).
+  - Leaf mats are moss.
+  - The rest is air. `water.gdshader` draws it, and it is made impassable as **deep water**.
+
+  Rope ladders sit at ROPE_ODDS 0.12 of giants (`rope_ladder` below, `rope_top` above, E travels).
+- **Stormcrest's eyrie** (`ChunkGen._find_eyrie`, run in `_far_init` so worker copies have it) is
+  the giant nearest `L.centre("jungle", 0.5)`. It has:
+  - a crown of EYRIE_R 10;
+  - forced boughs to every neighbour (`_linked`);
+  - a forced rope at one neighbour (`has_rope`);
+  - an `eyrie_nest` prop and the POI "eyrie".
+- **The volcano**: `volcano_at` sits at the far ring's middle depth.
+  - The cone is CONE (24, 40), with a gap of CONE_GAP toward camp (`_to_camp`).
+  - A lava lake of CRATER_LAKE 10 lies at its heart, and 9 lava rivers run down its flanks.
+  - **Lava is deep water in land 7** (the water shader draws it as lava).
+  - Hot springs are micro 4 (`M_SPRING`). `ForestWorld.MICRO` has "hot_spring", and `MAP_MICRO`
+    now has 5 colours; a table with 4 overflowed on the springs.
+- **The Reaper's Hollow** (`_plan_hollow`, v3) is a clearing ringed with bones and pale crystal at
+  pale depth 0.74-0.92. In older worlds `ReaperBoss.find_lair` uses
+  `open_near(L.centre("pale_hills", 0.86))`.
+- **Grimjaw's mere** is the bog's farthest non-lake mere, with its bank at
+  `at - radial*across*0.72 + along*along_r*0.25`. Old Maw skips it (`session.grimjaw_mere`).
+  `Tests/LairProbe.tscn` prints all the lairs and an ASCII map of the eyrie.
+- **Ground bake**: lands 6/7/8 have their own blocks in `ground_bake.gdshader`. There are no
+  grass or flower stamps on land 8, or on land 7's grass and moss (`bare`).

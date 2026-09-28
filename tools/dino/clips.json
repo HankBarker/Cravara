@@ -680,6 +680,123 @@
     "hurt",
     "death"
    ]
+  },
+  "ptera": {
+   "species": "ptera",
+   "body": "a tan pteranodon standing on its folded wings",
+   "clips": [
+    "idle",
+    "walk",
+    "bite",
+    "eat",
+    "takeoff",
+    "look",
+    "hurt",
+    "death"
+   ]
+  },
+  "pterafly": {
+   "species": "pterafly",
+   "body": "a tan pteranodon in flight",
+   "clips": [
+    "fly",
+    "glide",
+    "swoop",
+    "screech",
+    "hurt",
+    "death"
+   ]
+  },
+  "dimorph": {
+   "species": "dimorph",
+   "body": "a small green dimorphodon in flight",
+   "clips": [
+    "fly",
+    "swoop",
+    "hurt",
+    "death"
+   ]
+  },
+  "thyla": {
+   "species": "thyla",
+   "body": "a tawny thylacoleo marsupial lion",
+   "clips": [
+    "idle",
+    "walk",
+    "run",
+    "pounce",
+    "maul",
+    "roar",
+    "stalk",
+    "look",
+    "rest",
+    "eat",
+    "hurt",
+    "death"
+   ]
+  },
+  "grimjaw": {
+   "species": "grimjaw",
+   "body": "a giant olive sarcosuchus crocodile",
+   "clips": [
+    "idle",
+    "walk",
+    "bite",
+    "chomp",
+    "tail_swing",
+    "roar",
+    "hurt",
+    "death"
+   ]
+  },
+  "quetzal": {
+   "species": "quetzal",
+   "body": "a giant grey quetzalcoatlus standing on all fours",
+   "clips": [
+    "idle",
+    "walk",
+    "bite",
+    "buffet",
+    "roar",
+    "takeoff",
+    "hurt",
+    "death"
+   ]
+  },
+  "quetzalfly": {
+   "species": "quetzalfly",
+   "body": "a giant grey quetzalcoatlus in flight",
+   "clips": [
+    "fly",
+    "glide",
+    "swoop"
+   ]
+  },
+  "cinder": {
+   "species": "cinder",
+   "body": "a colossal black volcanic ankylosaurus with glowing lava seams",
+   "clips": [
+    "idle",
+    "walk",
+    "tail_swing",
+    "stomp",
+    "roar",
+    "hurt",
+    "death"
+   ]
+  },
+  "reaper": {
+   "species": "reaper",
+   "body": "a pale feathered therizinosaurus with long scythe claws",
+   "clips": [
+    "idle",
+    "walk",
+    "run",
+    "slash",
+    "roar",
+    "hurt",
+    "death"
+   ]
   }
  },
  "clips": {
@@ -710,7 +827,11 @@
    "motion": {
     "biped": "Walks in place: its legs step one after the other, its body bobs gently with each step and its tail sways.",
     "quadruped": "Walks in place on four legs: the legs step one after another, the body bobs gently and the tail sways.",
-    "dimetrodon": "Walks in place on its four splayed legs like a big lizard, its body swaying from side to side with each step and its tail swishing."
+    "dimetrodon": "Walks in place on its four splayed legs like a big lizard, its body swaying from side to side with each step and its tail swishing.",
+    "ptera": "Walks in place on its folded wings and short hind legs, rocking from side to side with each step.",
+    "quetzal": "Walks in place on all fours with its wings folded, lifting each long limb in turn, its long neck swaying.",
+    "thyla": "Walks in place on four legs like a big cat, its shoulders rolling with each step.",
+    "grimjaw": "Crawls in place on its short legs, its long body and tail swaying from side to side like a crocodile."
    }
   },
   "run": {
@@ -730,7 +851,8 @@
     "lystro": "Scurries in place on its four short stubby legs with quick little steps, its stout body bobbing and its head held low and forward.",
     "quadruped": "Trots in place on four legs with quick steps, its body bobbing.",
     "dimetrodon": "Scuttles in place on its four splayed legs with quick sprawling steps, its body swaying from side to side, its head held low and forward.",
-    "anky": "Walks in place on four legs: the legs step one after another, the body bobs gently and the tail sways."
+    "anky": "Walks in place on four legs: the legs step one after another, the body bobs gently and the tail sways.",
+    "thyla": "Bounds in place like a big cat at a full run, its back flexing with each stride."
    }
   },
   "eat": {
@@ -747,7 +869,9 @@
     "longneck": "Lowers its long neck down to the ground, eats the grass, then raises its neck back up.",
     "dodo": "Pecks at the ground twice to eat seeds, then straightens up.",
     "sucho": "Lowers its long snout to the ground, snaps up food and gulps it down with a few bites, then lifts its head back up.",
-    "spino": "Lowers its long snout to the ground, snaps up food and gulps it down with a few bites, then lifts its head back up."
+    "spino": "Lowers its long snout to the ground, snaps up food and gulps it down with a few bites, then lifts its head back up.",
+    "ptera": "Dips its long beak to the ground, snaps up a fish and gulps it down, then lifts its head.",
+    "thyla": "Lowers its head and tears at the meat at its feet, then looks up."
    }
   },
   "sniff": {
@@ -781,7 +905,11 @@
     "ground": false,
     "anchor": false
    },
-   "motion": "Stumbles, its legs give way and it falls over onto its side, then lies still."
+   "motion": {
+    "default": "Stumbles, its legs give way and it falls over onto its side, then lies still.",
+    "pterafly": "Folds its wings and tumbles down out of the air, falling onto its side, then lies still.",
+    "dimorph": "Folds its wings and tumbles down out of the air, falling onto its side, then lies still."
+   }
   },
   "bite": {
    "model": "pmm",
@@ -792,7 +920,12 @@
     "ground": true,
     "anchor": false
    },
-   "motion": "Pulls its head back with its jaws open, then snaps its head forward and bites, then returns to its stance."
+   "motion": {
+    "default": "Pulls its head back with its jaws open, then snaps its head forward and bites, then returns to its stance.",
+    "grimjaw": "Opens its long jaws wide, then lunges forward and snaps them shut, then returns to its stance.",
+    "quetzal": "Draws its long neck back, then stabs forward with its huge pointed beak and snaps it shut.",
+    "ptera": "Draws its head back, then jabs forward with its long beak and snaps it shut."
+   }
   },
   "chomp": {
    "model": "pmm",
@@ -803,7 +936,10 @@
     "ground": true,
     "anchor": false
    },
-   "motion": "Rears its head back, lunges forward and bites down hard, shakes its head from side to side, then lets go and returns to its stance."
+   "motion": {
+    "default": "Rears its head back, lunges forward and bites down hard, shakes its head from side to side, then lets go and returns to its stance.",
+    "grimjaw": "Lunges forward and clamps its long jaws shut, then twists and thrashes its head from side to side, then lets go."
+   }
   },
   "roar": {
    "model": "pmm",
@@ -816,7 +952,12 @@
    },
    "motion": {
     "default": "Crouches and tenses, throws its head back and opens its jaws wide in a roar, then lowers its head, ready to charge.",
-    "dimetrodon": "Raises its head and opens its jaws wide, holding the pose for a moment, then lowers its head back to its stance."
+    "dimetrodon": "Raises its head and opens its jaws wide, holding the pose for a moment, then lowers its head back to its stance.",
+    "grimjaw": "Lifts its head and opens its long jaws wide in a deep rumbling bellow, then lowers it again.",
+    "cinder": "Lifts its head and bellows, its whole body shuddering, then lowers its head.",
+    "reaper": "Raises its long clawed arms high and throws its head back in a shriek, then lowers them.",
+    "thyla": "Crouches, bares its teeth and snarls, then settles back.",
+    "quetzal": "Throws its head back and opens its long beak wide in a screech, flaring its folded wings."
    }
   },
   "slash": {
@@ -830,7 +971,8 @@
    },
    "motion": {
     "default": "Darts forward, snaps its jaws and swipes with its clawed hands, then springs back into its stance.",
-    "spino": "Rears up a little and rakes down with its big clawed arms, then settles back into its stance."
+    "spino": "Rears up a little and rakes down with its big clawed arms, then settles back into its stance.",
+    "reaper": "Raises its long scythe claws high, then slashes them down in a wide sweep, then settles back into its stance."
    }
   },
   "pounce": {
@@ -842,7 +984,10 @@
     "ground": false,
     "anchor": true
    },
-   "motion": "Crouches low, jumps forward into the air with its foot claws raised, lands and recovers."
+   "motion": {
+    "default": "Crouches low, jumps forward into the air with its foot claws raised, lands and recovers.",
+    "thyla": "Crouches low, then leaps forward with its claws out, lands and recovers."
+   }
   },
   "tail_swing": {
    "model": "pmm",
@@ -856,7 +1001,9 @@
    "motion": {
     "stego": "Swings its spiked tail out to the side in a wide fast sweep, then brings it back behind it. Its body and feet stay still.",
     "longneck": "Swings its long tail out to the side in a wide sweep, then brings it back behind it. Its body and feet stay still.",
-    "anky": "Swings its heavy clubbed tail out to the side in a wide fast sweep, then brings it back behind it. Its body and feet stay still."
+    "anky": "Swings its heavy clubbed tail out to the side in a wide fast sweep, then brings it back behind it. Its body and feet stay still.",
+    "cinder": "Swings its heavy clubbed tail out to the side in a wide fast sweep, then brings it back behind it. Its body and feet stay still.",
+    "grimjaw": "Swings its heavy tail out to the side in a wide sweep, then brings it back behind it. Its body stays low and still."
    }
   },
   "tail_swing_far": {
@@ -877,7 +1024,10 @@
     "ground": true,
     "anchor": true
    },
-   "motion": "Rears up on its hind legs, lifting its front legs high, then brings its front feet down hard onto the ground and settles."
+   "motion": {
+    "default": "Rears up on its hind legs, lifting its front legs high, then brings its front feet down hard onto the ground and settles.",
+    "cinder": "Rears up on its hind legs, then brings its front feet down hard onto the ground and settles."
+   }
   },
   "windup": {
    "model": "pmm",
@@ -956,7 +1106,8 @@
    "motion": {
     "biped": "Creeps forward in place in a low crouch, its head held low and level, stepping slowly and carefully.",
     "quadruped": "Creeps forward in place low to the ground, its head held low, stepping slowly and carefully.",
-    "dimetrodon": "Creeps forward in place on its four splayed legs, its belly low to the ground, slowly and carefully."
+    "dimetrodon": "Creeps forward in place on its four splayed legs, its belly low to the ground, slowly and carefully.",
+    "thyla": "Creeps forward low to the ground like a hunting cat, one slow step at a time."
    }
   },
   "rest": {
@@ -970,7 +1121,103 @@
    },
    "motion": {
     "default": "Slowly lowers its body and lies down on the ground with its legs folded under it, then rests there, breathing slowly.",
-    "biped": "Slowly crouches down and lies on its belly on the ground with its head resting down, then rests there, breathing slowly."
+    "biped": "Slowly crouches down and lies on its belly on the ground with its head resting down, then rests there, breathing slowly.",
+    "thyla": "Lies down on its belly and rests, its tail curling round."
+   }
+  },
+  "fly": {
+   "model": "ai",
+   "frames": 8,
+   "loop": true,
+   "fps": 10,
+   "clean": {
+    "ground": false,
+    "anchor": true,
+    "clamp_top": 10
+   },
+   "motion": {
+    "default": "Flies in place, beating its wings up and down in strong steady strokes, its body rising a little on each downstroke."
+   }
+  },
+  "glide": {
+   "model": "ai",
+   "frames": 8,
+   "loop": true,
+   "fps": 6,
+   "clean": {
+    "ground": false,
+    "anchor": true,
+    "clamp_top": 6
+   },
+   "motion": {
+    "default": "Glides in place with its wings held out wide and still, rocking gently from side to side on the wind."
+   }
+  },
+  "swoop": {
+   "model": "pmm",
+   "frames": 8,
+   "loop": false,
+   "fps": 12,
+   "clean": {
+    "ground": false,
+    "anchor": false
+   },
+   "motion": {
+    "default": "Sweeps its wings back and dives forward, snapping its long beak shut, then flaps back up.",
+    "dimorph": "Darts forward with its wings swept back and snaps its toothy jaws, then flaps back up."
+   }
+  },
+  "screech": {
+   "model": "pmm",
+   "frames": 8,
+   "loop": false,
+   "fps": 10,
+   "clean": {
+    "ground": false,
+    "anchor": true
+   },
+   "motion": {
+    "default": "Throws its head back and opens its long beak wide in a screech, flaring its wings, then settles."
+   }
+  },
+  "takeoff": {
+   "model": "pmm",
+   "frames": 8,
+   "loop": false,
+   "fps": 12,
+   "clean": {
+    "ground": false,
+    "anchor": false
+   },
+   "motion": {
+    "default": "Crouches low, then spreads its wings wide and springs up into the air with a strong flap."
+   }
+  },
+  "maul": {
+   "model": "pmm",
+   "frames": 8,
+   "loop": false,
+   "fps": 14,
+   "clean": {
+    "ground": true,
+    "anchor": false
+   },
+   "motion": {
+    "default": "Rears up and swipes down hard with its big clawed forepaws, then bites.",
+    "thyla": "Rears up on its hind legs and brings both big clawed forepaws down hard onto the ground in front of it, then bites. The body only: no slash marks, trails or effects."
+   }
+  },
+  "buffet": {
+   "model": "pmm",
+   "frames": 8,
+   "loop": false,
+   "fps": 10,
+   "clean": {
+    "ground": true,
+    "anchor": true
+   },
+   "motion": {
+    "default": "Rears up and spreads its huge wings, then beats them forward hard in one great gust, then folds them back."
    }
   }
  },
@@ -988,7 +1235,8 @@
   "utah",
   "deino",
   "sucho",
-  "spino"
+  "spino",
+  "reaper"
  ],
  "overrides": {
   "dimetrodon/walk_side": {

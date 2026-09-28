@@ -18,7 +18,7 @@ const ROOTS := [["wild_tuber", 1, 3, 90], ["berry_seed", 1, 1, 10]]
 ## Pass 14: which trinkets a kind of chest can hold and which beast drops which
 ## (written by tools/items/trinkets.py), and a chest's chance of holding one.
 const Sources = preload("res://Forest/items/TrinketSources.gd")
-const FIND_CHANCE := {"cache": 0.22, "relic": 0.12, "bones": 0.03, "treasure": 0.45, "house": 0.1, "camp": 0.08}
+const FIND_CHANCE := {"cache": 0.22, "relic": 0.12, "bones": 0.03, "treasure": 0.45, "house": 0.1, "camp": 0.08, "temple": 0.4, "forge": 0.3}
 ## Pass 17: the wilds' new chests (chest()): a lake island's hoard, a fallen
 ## house's chest, an old inn's larder, a lost camp's pack; and what a barrel in
 ## a fallen building kept.
@@ -46,12 +46,24 @@ const BARREL := [
 	["redgrain", 2, 4, 14], ["berry", 3, 6, 12], ["plant_fiber", 3, 6, 12], ["water_flask", 1, 1, 6], ["mushroom", 2, 3, 8],
 	["plank", 2, 4, 8], ["ancient_coin", 1, 2, 6], ["cooked_fish", 1, 2, 5], ["bone_arrow", 2, 4, 5],
 ]
+## Pass 18: an overgrown temple's chests (glimmer, amber, the old tribe's
+## gold) and a fallen forge's stores (the volcano's ore, the smiths' charcoal).
+const TEMPLE := [
+	["glimmer_shard", 2, 5, 14], ["amber", 1, 2, 10], ["ancient_coin", 3, 6, 12], ["sky_idol", 1, 1, 6], ["prism_crystal", 1, 2, 8],
+	["fossil_bone", 1, 2, 6], ["vine", 3, 6, 8], ["glowcap", 2, 4, 6], ["mushroom_potion", 1, 2, 5], ["orchid", 1, 2, 4],
+]
+const FORGE := [
+	["emberstone", 1, 3, 12], ["obsidian", 2, 4, 12], ["charcoal", 3, 6, 12], ["sulfur", 2, 4, 10], ["stone", 4, 8, 8],
+	["ancient_coin", 2, 4, 8], ["bomb", 1, 2, 4], ["torch", 1, 2, 4], ["rustiron", 1, 2, 6],
+]
 ## kind -> [table, coins [least, most], draws, its name, what the keeper opens]
 const CHESTS := {
 	"treasure": [TREASURE, [4, 9], 4, "A Sunken Hoard", "the hoard"],
 	"house": [HOUSE, [0, 3], 3, "An Old Chest", "the old chest"],
 	"larder": [LARDER, [0, 0], 4, "The Inn's Larder", "the larder"],
 	"camp": [CAMP, [1, 3], 3, "A Traveller's Pack", "the pack"],
+	"temple": [TEMPLE, [3, 7], 4, "A Temple Coffer", "the temple coffer"],
+	"forge": [FORGE, [1, 3], 4, "The Smiths' Stores", "the smiths' stores"],
 }
 
 

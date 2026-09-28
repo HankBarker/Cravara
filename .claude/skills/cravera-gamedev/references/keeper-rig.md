@@ -107,3 +107,16 @@ saddle contract); cel (32,32) = player origin; soles on cel row 43 (local +11).
   - Ashen: dropped by raiders; raiders take you for one of their own.
 - **Set bonuses** live in `Forest/equipment/SetBonus.gd`: 11 sets. `rig.json` has 211 parts and
   11 sets.
+
+## Pass 18: Treeshadow, Skywing and Obsidian
+- Sets `thyla`, `sky` and `obsidian` (item prefixes `thyla_`, `sky_`, `obsidian_`). rig.json now
+  has 14 sets and 250 parts. Set bonuses (`SetBonus`):
+  - Treeshadow: `notice_mult` 0.5, speed 1.06.
+  - Skywing: speed 1.1, `dodge_bonus` 0.4 (read by `Player/States/Roll.gd`).
+  - Obsidian: `heat_guard` 0.6, and `fire_guard` 0.5 on burns.
+- **Overrides**: `px` is a *list of points* (`[[x, y], ...]`), not one point. Skywing's mantle hem
+  was cut loose from the torso and floated by the feet: its corners in the front view (row 28) and
+  its trailing end in the side view (x 8-11, rows 22-28). Both are dropped
+  (`art/keeper-v2/source/sky/overrides.json`). Hung from the torso, the side one read as a hook.
+- Held sprites for 10 weapons were recoloured from existing ones (`tools/keeper/make_held18.py`
+  splits head and handle ramps by the base's wood hue), then run through `import_held.py`.
